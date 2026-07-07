@@ -1,0 +1,2 @@
+-- Initial schema placeholder.
+-- Add versioned database objects here as EAI domain modules are introduced.

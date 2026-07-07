@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: eai-backend
+  profiles:
+    default: dev
+  jpa:
+    open-in-view: false
+  flyway:
+    enabled: true
+
+server:
+  port: 8080
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
