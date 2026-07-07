@@ -107,6 +107,7 @@ public class EmailLeadImporter {
                 parsedLead.originalMessage(),
                 duplicate ? LeadStatus.DUPLICATED : LeadStatus.NEW,
                 null,
+                null,
                 now,
                 now,
                 null,

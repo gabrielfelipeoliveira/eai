@@ -86,6 +86,9 @@ Lead endpoints:
 - `PATCH /api/leads/{id}/status`
 - `PATCH /api/leads/{id}/assign-to-me`
 - `PATCH /api/leads/{id}/assign/{userId}`
+- `POST /api/leads/{id}/assign-automatically`
+- `POST /api/leads/distribute-pending`
+- `GET /api/leads/sla/overdue`
 - `POST /api/leads/{id}/notes`
 - `GET /api/leads/{id}/history`
 - `GET /api/leads/{id}/notes`
@@ -94,6 +97,16 @@ Lead endpoints:
 - `DELETE /api/leads/{id}/tags/{tagId}`
 - `POST /api/leads/{id}/whatsapp-link`
 - `GET /api/leads/{id}/communications`
+
+Lead distribution is implemented in `com.eai.domain.distribution`, `com.eai.application.distribution`, `com.eai.infrastructure.persistence.distribution`, and `com.eai.api.distribution`. Stores can run in `MANUAL`, `ROUND_ROBIN`, or `LEAST_BUSY` mode. Manual assignment remains available through seller self-assignment and manager assignment. Automatic assignment uses `LeadAssignmentStrategy` implementations and only considers active users with the `SELLER` role in the lead store.
+
+Distribution and SLA endpoints:
+
+- `GET /api/distribution/config`
+- `PUT /api/distribution/config`
+- `GET /api/dashboard/leads`
+
+SLA policy is store-scoped through `LeadSlaPolicy`. A lead is overdue to assign when it has no responsible seller after `minutesToAssign`; it is overdue to first contact when it has a responsible seller, no `firstContactAt`, and the configured first-contact limit has elapsed since assignment. Lead API responses expose `overdueToAssign` and `overdueToFirstContact` as calculated indicators.
 
 Communication templates are implemented in `com.eai.domain.message`, `com.eai.application.message`, `com.eai.infrastructure.persistence.message`, and `com.eai.api.message`. Templates are store-scoped and support placeholders for customer, phone, vehicle, seller, store, and city. WhatsApp link generation renders the selected active template, creates a `wa.me` URL, and records a lead communication entry.
 
@@ -139,9 +152,9 @@ frontend/src
 
 The frontend stores the access token and refresh token in browser storage through `services/tokenStorage`. Axios is configured in `services/api` to attach bearer tokens and refresh expired access tokens. Route protection is centralized in `components/ProtectedRoute`, while authenticated user state is exposed through `hooks/useAuth`.
 
-The authenticated layout uses a lateral menu with Dashboard, Leads, Usuarios, Empresas, Lojas, Templates, E-mails, and Configuracoes. Empresas is visible only to `ADMIN`. Lojas, Usuarios, Templates, and E-mails are visible to `ADMIN` and `MANAGER`; user creation and tenant linking are available only to `ADMIN`.
+The authenticated layout uses a lateral menu with Dashboard, Leads, Atrasados, Usuarios, Empresas, Lojas, Templates, E-mails, and Configuracoes. Empresas is visible only to `ADMIN`. Atrasados, Lojas, Usuarios, Templates, E-mails, and Configuracoes are visible to `ADMIN` and `MANAGER`; user creation and tenant linking are available only to `ADMIN`.
 
-The Leads screen is available at `/leads`. It provides CRM-style status cards, filters, a paginated table, lead creation, lead detail drawer, status chips, source chips, quick assignment, notes, tags, and history timeline.
+The Leads screen is available at `/leads`. It provides CRM-style status and SLA cards, filters, a paginated table, lead creation, lead detail drawer, status chips, source chips, quick assignment, automatic assignment, pending distribution, notes, tags, and history timeline. The overdue queue is available at `/leads/overdue`, and distribution/SLA configuration is available at `/settings`.
 
 ## Database
 

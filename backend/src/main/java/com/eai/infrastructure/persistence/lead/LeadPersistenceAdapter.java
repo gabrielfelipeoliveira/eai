@@ -4,6 +4,7 @@ import com.eai.application.lead.LeadRepository;
 import com.eai.application.lead.LeadSearchCriteria;
 import com.eai.application.lead.PageResult;
 import com.eai.domain.lead.Lead;
+import com.eai.domain.lead.LeadStatus;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -12,12 +13,31 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
 @Component
 public class LeadPersistenceAdapter implements LeadRepository {
+
+    private static final List<LeadStatus> PENDING_STATUSES = List.of(LeadStatus.NEW, LeadStatus.AVAILABLE);
+    private static final List<LeadStatus> OPEN_STATUSES = List.of(
+            LeadStatus.ASSIGNED,
+            LeadStatus.FIRST_CONTACT,
+            LeadStatus.IN_NEGOTIATION,
+            LeadStatus.VISIT_SCHEDULED,
+            LeadStatus.PROPOSAL_SENT
+    );
+    private static final List<LeadStatus> SLA_CANDIDATE_STATUSES = List.of(
+            LeadStatus.NEW,
+            LeadStatus.AVAILABLE,
+            LeadStatus.ASSIGNED,
+            LeadStatus.FIRST_CONTACT,
+            LeadStatus.IN_NEGOTIATION,
+            LeadStatus.VISIT_SCHEDULED,
+            LeadStatus.PROPOSAL_SENT
+    );
 
     private final SpringDataLeadRepository repository;
 
@@ -46,6 +66,31 @@ public class LeadPersistenceAdapter implements LeadRepository {
     @Override
     public Lead save(Lead lead) {
         return toDomain(repository.save(toEntity(lead)));
+    }
+
+    @Override
+    public List<Lead> findPendingByStoreId(UUID storeId) {
+        return repository.findByStoreIdAndAssignedToUserIdIsNullAndStatusInOrderByCreatedAtAsc(storeId, PENDING_STATUSES).stream()
+                .map(this::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Lead> findOverdueCandidatesByStoreId(UUID storeId) {
+        return repository.findByStoreIdAndStatusInOrderByCreatedAtAsc(storeId, SLA_CANDIDATE_STATUSES).stream()
+                .map(this::toDomain)
+                .toList();
+    }
+
+    @Override
+    public Optional<UUID> findMostRecentAssignedSellerId(UUID storeId) {
+        return repository.findTopByStoreIdAndAssignedToUserIdIsNotNullOrderByAssignedAtDescUpdatedAtDesc(storeId)
+                .map(LeadJpaEntity::getAssignedToUserId);
+    }
+
+    @Override
+    public long countOpenByAssignedToUserId(UUID userId) {
+        return repository.countByAssignedToUserIdAndStatusIn(userId, OPEN_STATUSES);
     }
 
     @Override
@@ -118,6 +163,7 @@ public class LeadPersistenceAdapter implements LeadRepository {
                 entity.getOriginalMessage(),
                 entity.getStatus(),
                 entity.getAssignedToUserId(),
+                entity.getAssignedAt(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt(),
                 entity.getFirstContactAt(),
@@ -141,6 +187,7 @@ public class LeadPersistenceAdapter implements LeadRepository {
         entity.setOriginalMessage(lead.getOriginalMessage());
         entity.setStatus(lead.getStatus());
         entity.setAssignedToUserId(lead.getAssignedToUserId());
+        entity.setAssignedAt(lead.getAssignedAt());
         entity.setCreatedAt(lead.getCreatedAt());
         entity.setUpdatedAt(lead.getUpdatedAt());
         entity.setFirstContactAt(lead.getFirstContactAt());

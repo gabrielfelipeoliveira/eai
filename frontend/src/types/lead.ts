@@ -34,12 +34,15 @@ export interface Lead {
   originalMessage: string | null;
   status: LeadStatus;
   assignedToUserId: string | null;
+  assignedAt: string | null;
   createdAt: string;
   updatedAt: string;
   firstContactAt: string | null;
   lastContactAt: string | null;
   lostReason: string | null;
   saleValue: number | null;
+  overdueToAssign: boolean;
+  overdueToFirstContact: boolean;
 }
 
 export interface LeadHistory {

@@ -1,5 +1,6 @@
 package com.eai.api.lead;
 
+import com.eai.application.distribution.LeadDistributionService;
 import com.eai.application.lead.CreateLeadCommand;
 import com.eai.application.lead.LeadSearchCriteria;
 import com.eai.application.lead.LeadService;
@@ -9,6 +10,8 @@ import com.eai.application.security.AuthenticatedUser;
 import com.eai.api.message.LeadCommunicationResponse;
 import com.eai.api.message.WhatsappLinkRequest;
 import com.eai.api.message.WhatsappLinkResponse;
+import com.eai.domain.distribution.LeadSlaPolicy;
+import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
 import jakarta.validation.Valid;
@@ -37,15 +40,17 @@ public class LeadController {
 
     private final LeadService leadService;
     private final MessageTemplateService templateService;
+    private final LeadDistributionService distributionService;
 
-    public LeadController(LeadService leadService, MessageTemplateService templateService) {
+    public LeadController(LeadService leadService, MessageTemplateService templateService, LeadDistributionService distributionService) {
         this.leadService = leadService;
         this.templateService = templateService;
+        this.distributionService = distributionService;
     }
 
     @PostMapping
     public LeadResponse createLead(@Valid @RequestBody LeadRequest request, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
-        return LeadResponse.fromDomain(leadService.createLead(new CreateLeadCommand(
+        return toResponse(leadService.createLead(new CreateLeadCommand(
                 request.companyId(),
                 request.storeId(),
                 request.customerName(),
@@ -88,17 +93,17 @@ public class LeadController {
                 phone,
                 null,
                 null
-        ), page, size, authenticatedUser), LeadResponse::fromDomain);
+        ), page, size, authenticatedUser), this::toResponse);
     }
 
     @GetMapping("/{id}")
     public LeadResponse getLead(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
-        return LeadResponse.fromDomain(leadService.getLead(id, authenticatedUser));
+        return toResponse(leadService.getLead(id, authenticatedUser));
     }
 
     @PutMapping("/{id}")
     public LeadResponse updateLead(@PathVariable UUID id, @Valid @RequestBody LeadRequest request, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
-        return LeadResponse.fromDomain(leadService.updateLead(id, new UpdateLeadCommand(
+        return toResponse(leadService.updateLead(id, new UpdateLeadCommand(
                 request.companyId(),
                 request.storeId(),
                 request.customerName(),
@@ -119,17 +124,37 @@ public class LeadController {
 
     @PatchMapping("/{id}/status")
     public LeadResponse changeStatus(@PathVariable UUID id, @Valid @RequestBody LeadStatusRequest request, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
-        return LeadResponse.fromDomain(leadService.changeStatus(id, request.status(), request.description(), authenticatedUser));
+        return toResponse(leadService.changeStatus(id, request.status(), request.description(), authenticatedUser));
     }
 
     @PatchMapping("/{id}/assign-to-me")
     public LeadResponse assignToMe(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
-        return LeadResponse.fromDomain(leadService.assignToMe(id, authenticatedUser));
+        return toResponse(leadService.assignToMe(id, authenticatedUser));
     }
 
     @PatchMapping("/{id}/assign/{userId}")
     public LeadResponse assign(@PathVariable UUID id, @PathVariable UUID userId, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
-        return LeadResponse.fromDomain(leadService.assign(id, userId, authenticatedUser));
+        return toResponse(leadService.assign(id, userId, authenticatedUser));
+    }
+
+    @PostMapping("/{id}/assign-automatically")
+    public LeadResponse assignAutomatically(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+        return toResponse(distributionService.assignAutomatically(id, authenticatedUser));
+    }
+
+    @PostMapping("/distribute-pending")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public List<LeadResponse> distributePending(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+        return distributionService.distributePending(authenticatedUser).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    @GetMapping("/sla/overdue")
+    public List<LeadResponse> listOverdue(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+        return distributionService.listOverdue(authenticatedUser).stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     @PostMapping("/{id}/notes")
@@ -182,5 +207,13 @@ public class LeadController {
     @DeleteMapping("/{id}/tags/{tagId}")
     public void deleteTag(@PathVariable UUID id, @PathVariable UUID tagId, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
         leadService.deleteTag(id, tagId, authenticatedUser);
+    }
+
+    private LeadResponse toResponse(Lead lead) {
+        LeadSlaPolicy policy = distributionService.findOrDefaultSla(lead.getCompanyId(), lead.getStoreId());
+        if (!policy.isActive()) {
+            return LeadResponse.fromDomain(lead);
+        }
+        return LeadResponse.fromDomain(lead, policy.getMinutesToAssign(), policy.getMinutesToFirstContact(), Instant.now());
     }
 }

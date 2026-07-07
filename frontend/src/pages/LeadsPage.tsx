@@ -1,10 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import AddIcon from '@mui/icons-material/Add';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import AutoModeIcon from '@mui/icons-material/AutoMode';
 import CloseIcon from '@mui/icons-material/Close';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import NotesIcon from '@mui/icons-material/Notes';
 import SearchIcon from '@mui/icons-material/Search';
+import SyncIcon from '@mui/icons-material/Sync';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import {
   Alert,
@@ -36,10 +39,12 @@ import { listCompanies } from '../services/companyService';
 import {
   addLeadNote,
   addLeadTag,
+  assignLeadAutomatically,
   assignLeadToMe,
   changeLeadStatus,
   createLead,
   deleteLeadTag,
+  distributePendingLeads,
   listLeadHistory,
   listLeadNotes,
   listLeads,
@@ -108,6 +113,7 @@ export function LeadsPage() {
   const [tagText, setTagText] = useState('');
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
   const canListUsers = hasAnyRole(['ADMIN', 'MANAGER']);
+  const canDistribute = hasAnyRole(['ADMIN', 'MANAGER']);
   const isAdmin = hasAnyRole(['ADMIN']);
 
   const emptyLeadValues = useMemo<LeadFormValues>(
@@ -231,6 +237,24 @@ export function LeadsPage() {
     },
   });
 
+  const assignAutomaticallyMutation = useMutation({
+    mutationFn: (leadId: string) => assignLeadAutomatically(leadId),
+    onSuccess: async (lead) => {
+      setSelectedLead(lead);
+      await invalidateLeadData(lead.id);
+    },
+  });
+
+  const distributePendingMutation = useMutation({
+    mutationFn: distributePendingLeads,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['leads'] }),
+        queryClient.invalidateQueries({ queryKey: ['lead-dashboard'] }),
+      ]);
+    },
+  });
+
   const changeStatusMutation = useMutation({
     mutationFn: ({ leadId, status }: { leadId: string; status: LeadStatus }) => changeLeadStatus(leadId, status, 'Alteracao feita no CRM'),
     onSuccess: async (lead) => {
@@ -274,6 +298,7 @@ export function LeadsPage() {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ['leads'] }),
       queryClient.invalidateQueries({ queryKey: ['lead-history', leadId] }),
+      queryClient.invalidateQueries({ queryKey: ['lead-dashboard'] }),
     ]);
   }
 
@@ -349,6 +374,14 @@ export function LeadsPage() {
     return counts;
   }, [leadsQuery.data?.content]);
 
+  const slaCounts = useMemo(() => {
+    const leads = leadsQuery.data?.content ?? [];
+    return {
+      overdueToAssign: leads.filter((lead) => lead.overdueToAssign).length,
+      overdueToFirstContact: leads.filter((lead) => lead.overdueToFirstContact).length,
+    };
+  }, [leadsQuery.data?.content]);
+
   const selectedTemplate = activeTemplatesQuery.data?.find((template) => template.id === selectedTemplateId);
   const whatsappPreview = selectedLead ? renderTemplate(selectedTemplate, selectedLead) : '';
 
@@ -361,12 +394,44 @@ export function LeadsPage() {
           </Typography>
           <Typography color="text.secondary">Gestao comercial de oportunidades por loja, origem e vendedor.</Typography>
         </Box>
-        <Button onClick={openCreateDrawer} startIcon={<AddIcon />} variant="contained">
-          Novo lead
-        </Button>
+        <Stack direction="row" spacing={1}>
+          {canDistribute && (
+            <Button
+              disabled={distributePendingMutation.isPending}
+              onClick={() => distributePendingMutation.mutate()}
+              startIcon={<SyncIcon />}
+              variant="outlined"
+            >
+              Distribuir pendentes
+            </Button>
+          )}
+          <Button onClick={openCreateDrawer} startIcon={<AddIcon />} variant="contained">
+            Novo lead
+          </Button>
+        </Stack>
       </Box>
 
       <Grid2 container spacing={1.5}>
+        <Grid2 size={{ xs: 6, md: 2.4 }}>
+          <Paper variant="outlined" sx={{ borderRadius: 1, p: 1.5, borderColor: slaCounts.overdueToAssign ? 'error.main' : 'divider' }}>
+            <Typography variant="caption" color="text.secondary">
+              SLA atribuicao
+            </Typography>
+            <Typography variant="h5" fontWeight={800} color={slaCounts.overdueToAssign ? 'error.main' : 'text.primary'}>
+              {slaCounts.overdueToAssign}
+            </Typography>
+          </Paper>
+        </Grid2>
+        <Grid2 size={{ xs: 6, md: 2.4 }}>
+          <Paper variant="outlined" sx={{ borderRadius: 1, p: 1.5, borderColor: slaCounts.overdueToFirstContact ? 'error.main' : 'divider' }}>
+            <Typography variant="caption" color="text.secondary">
+              SLA contato
+            </Typography>
+            <Typography variant="h5" fontWeight={800} color={slaCounts.overdueToFirstContact ? 'error.main' : 'text.primary'}>
+              {slaCounts.overdueToFirstContact}
+            </Typography>
+          </Paper>
+        </Grid2>
         {statuses.map((status) => (
           <Grid2 key={status} size={{ xs: 6, md: 2.4 }}>
             <Paper variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
@@ -542,7 +607,11 @@ export function LeadsPage() {
                 </TableCell>
                 <TableCell>{lead.vehicleInterest ?? '-'}</TableCell>
                 <TableCell>
-                  <Chip color={statusColors[lead.status]} label={lead.status} size="small" />
+                  <Stack direction="row" flexWrap="wrap" gap={0.75}>
+                    <Chip color={statusColors[lead.status]} label={lead.status} size="small" />
+                    {lead.overdueToAssign && <Chip color="error" icon={<WarningAmberIcon />} label="Atribuicao" size="small" variant="outlined" />}
+                    {lead.overdueToFirstContact && <Chip color="error" icon={<WarningAmberIcon />} label="Contato" size="small" variant="outlined" />}
+                  </Stack>
                 </TableCell>
                 <TableCell>
                   <Chip label={lead.source} size="small" variant="outlined" />
@@ -555,6 +624,11 @@ export function LeadsPage() {
                     {!lead.assignedToUserId && (
                       <Button onClick={() => assignToMeMutation.mutate(lead.id)} size="small" startIcon={<AssignmentIndIcon />} variant="outlined">
                         Assumir
+                      </Button>
+                    )}
+                    {canDistribute && !lead.assignedToUserId && (
+                      <Button onClick={() => assignAutomaticallyMutation.mutate(lead.id)} size="small" startIcon={<AutoModeIcon />} variant="outlined">
+                        Auto
                       </Button>
                     )}
                     <Button onClick={() => openDetailDrawer(lead)} size="small" variant="contained">
@@ -638,6 +712,8 @@ export function LeadsPage() {
               <Stack direction="row" flexWrap="wrap" gap={1}>
                 <Chip color={statusColors[selectedLead.status]} label={selectedLead.status} />
                 <Chip label={selectedLead.source} variant="outlined" />
+                {selectedLead.overdueToAssign && <Chip color="error" icon={<WarningAmberIcon />} label="Atrasado para atribuir" variant="outlined" />}
+                {selectedLead.overdueToFirstContact && <Chip color="error" icon={<WarningAmberIcon />} label="Atrasado para contato" variant="outlined" />}
                 <Chip label={storeName(selectedLead.storeId)} variant="outlined" />
                 {isAdmin && <Chip label={companyName(selectedLead.companyId)} variant="outlined" />}
               </Stack>
@@ -667,6 +743,11 @@ export function LeadsPage() {
                 <Button onClick={() => assignToMeMutation.mutate(selectedLead.id)} startIcon={<AssignmentIndIcon />} variant="outlined">
                   Assumir lead
                 </Button>
+                {canDistribute && (
+                  <Button onClick={() => assignAutomaticallyMutation.mutate(selectedLead.id)} startIcon={<AutoModeIcon />} variant="outlined">
+                    Atribuir auto
+                  </Button>
+                )}
                 <TextField
                   label="Status"
                   onChange={(event) => changeStatusMutation.mutate({ leadId: selectedLead.id, status: event.target.value as LeadStatus })}

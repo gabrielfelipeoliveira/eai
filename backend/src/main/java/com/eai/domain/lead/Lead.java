@@ -19,6 +19,7 @@ public class Lead {
     private String originalMessage;
     private LeadStatus status;
     private UUID assignedToUserId;
+    private Instant assignedAt;
     private final Instant createdAt;
     private Instant updatedAt;
     private Instant firstContactAt;
@@ -39,6 +40,7 @@ public class Lead {
             String originalMessage,
             LeadStatus status,
             UUID assignedToUserId,
+            Instant assignedAt,
             Instant createdAt,
             Instant updatedAt,
             Instant firstContactAt,
@@ -58,6 +60,7 @@ public class Lead {
         this.originalMessage = trimToNull(originalMessage);
         this.status = Objects.requireNonNull(status);
         this.assignedToUserId = assignedToUserId;
+        this.assignedAt = assignedAt;
         this.createdAt = Objects.requireNonNull(createdAt);
         this.updatedAt = Objects.requireNonNull(updatedAt);
         this.firstContactAt = firstContactAt;
@@ -95,6 +98,7 @@ public class Lead {
                 originalMessage,
                 initialStatus == LeadStatus.NEW && assignedToUserId != null ? LeadStatus.ASSIGNED : initialStatus,
                 assignedToUserId,
+                assignedToUserId == null ? null : now,
                 now,
                 now,
                 null,
@@ -116,6 +120,7 @@ public class Lead {
             String originalMessage,
             LeadStatus status,
             UUID assignedToUserId,
+            Instant assignedAt,
             Instant firstContactAt,
             Instant lastContactAt,
             String lostReason,
@@ -132,6 +137,7 @@ public class Lead {
         this.originalMessage = trimToNull(originalMessage);
         this.status = Objects.requireNonNull(status);
         this.assignedToUserId = assignedToUserId;
+        this.assignedAt = assignedToUserId == null ? null : assignedAt;
         this.firstContactAt = firstContactAt;
         this.lastContactAt = lastContactAt;
         this.lostReason = trimToNull(lostReason);
@@ -157,6 +163,7 @@ public class Lead {
 
     public LeadStatus assignTo(UUID userId) {
         this.assignedToUserId = Objects.requireNonNull(userId);
+        this.assignedAt = Instant.now();
         return changeStatus(LeadStatus.ASSIGNED);
     }
 
@@ -206,6 +213,10 @@ public class Lead {
 
     public UUID getAssignedToUserId() {
         return assignedToUserId;
+    }
+
+    public Instant getAssignedAt() {
+        return assignedAt;
     }
 
     public Instant getCreatedAt() {

@@ -67,8 +67,23 @@ export async function assignLeadToMe(id: string) {
   return response.data;
 }
 
+export async function assignLeadAutomatically(id: string) {
+  const response = await api.post<Lead>(`/leads/${id}/assign-automatically`);
+  return response.data;
+}
+
 export async function assignLead(id: string, userId: string) {
   const response = await api.patch<Lead>(`/leads/${id}/assign/${userId}`);
+  return response.data;
+}
+
+export async function distributePendingLeads() {
+  const response = await api.post<Lead[]>('/leads/distribute-pending');
+  return response.data;
+}
+
+export async function listOverdueLeads() {
+  const response = await api.get<Lead[]>('/leads/sla/overdue');
   return response.data;
 }
 

@@ -30,3 +30,5 @@ The platform is multi-company from the foundation: each customer company can ope
 The primary CRM workflow starts with lead intake by manual entry or automatic source. Leads move through availability, assignment, first contact, negotiation, visit scheduling, proposal, sale, loss, or duplication. Sellers work from their own store scope, managers monitor their store, and admins can inspect all companies and stores.
 
 Each lead keeps customer contact data, vehicle interest, origin, seller assignment, notes, tags, and status history so managers can audit response and follow-up activity.
+
+Lead distribution supports manual seller ownership and manager assignment, plus automatic strategies for round robin and least busy seller. SLA indicators highlight unassigned leads and assigned leads that have not received first contact inside the configured store policy.

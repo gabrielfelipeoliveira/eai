@@ -9,6 +9,8 @@ import { CompaniesPage } from '../pages/CompaniesPage';
 import { StoresPage } from '../pages/StoresPage';
 import { TemplatesPage } from '../pages/TemplatesPage';
 import { EmailAccountsPage } from '../pages/EmailAccountsPage';
+import { DistributionSettingsPage } from '../pages/DistributionSettingsPage';
+import { OverdueLeadsPage } from '../pages/OverdueLeadsPage';
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +31,16 @@ export const router = createBrowserRouter([
           {
             path: 'leads',
             element: <LeadsPage />,
+          },
+          {
+            path: 'leads/overdue',
+            element: <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']} />,
+            children: [
+              {
+                index: true,
+                element: <OverdueLeadsPage />,
+              },
+            ],
           },
           {
             path: 'users',
@@ -82,7 +94,13 @@ export const router = createBrowserRouter([
           },
           {
             path: 'settings',
-            element: <HomePage title="Configuracoes" />,
+            element: <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']} />,
+            children: [
+              {
+                index: true,
+                element: <DistributionSettingsPage />,
+              },
+            ],
           },
         ],
       },

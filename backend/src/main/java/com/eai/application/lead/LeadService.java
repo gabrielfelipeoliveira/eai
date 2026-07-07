@@ -1,5 +1,6 @@
 package com.eai.application.lead;
 
+import com.eai.application.common.ConflictException;
 import com.eai.application.common.ForbiddenException;
 import com.eai.application.common.NotFoundException;
 import com.eai.application.security.AuthenticatedUser;
@@ -18,6 +19,7 @@ import com.eai.domain.user.UserRole;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -100,6 +102,9 @@ public class LeadService {
             assertCanAssignUser(command.assignedToUserId(), command.companyId(), command.storeId(), authenticatedUser);
         }
         LeadStatus previousStatus = lead.getStatus();
+        Instant assignedAt = command.assignedToUserId() == null
+                ? null
+                : command.assignedToUserId().equals(lead.getAssignedToUserId()) ? lead.getAssignedAt() : Instant.now();
         lead.update(
                 command.companyId(),
                 command.storeId(),
@@ -112,6 +117,7 @@ public class LeadService {
                 command.originalMessage(),
                 command.status(),
                 command.assignedToUserId(),
+                assignedAt,
                 command.firstContactAt(),
                 command.lastContactAt(),
                 command.lostReason(),
@@ -136,6 +142,11 @@ public class LeadService {
 
     @Transactional
     public Lead assignToMe(UUID id, AuthenticatedUser authenticatedUser) {
+        Lead lead = findRequired(id);
+        assertCanAccessLead(lead, authenticatedUser);
+        if (lead.getAssignedToUserId() != null && !lead.getAssignedToUserId().equals(authenticatedUser.id())) {
+            throw new ConflictException("Lead already assigned");
+        }
         return assign(id, authenticatedUser.id(), authenticatedUser);
     }
 

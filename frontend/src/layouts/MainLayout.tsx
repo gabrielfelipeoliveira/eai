@@ -8,6 +8,7 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import ViewKanbanIcon from '@mui/icons-material/ViewKanban';
 import EmailIcon from '@mui/icons-material/Email';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import {
   AppBar,
   Box,
@@ -34,6 +35,7 @@ export function MainLayout() {
   const menuItems = [
     { label: 'Dashboard', path: '/', icon: <DashboardIcon /> },
     { label: 'Leads', path: '/leads', icon: <ViewKanbanIcon /> },
+    ...(hasAnyRole(['ADMIN', 'MANAGER']) ? [{ label: 'Atrasados', path: '/leads/overdue', icon: <WarningAmberIcon /> }] : []),
     ...(hasAnyRole(['ADMIN', 'MANAGER'])
       ? [{ label: 'Usuarios', path: '/users', icon: <GroupsIcon /> }]
       : []),
@@ -41,7 +43,7 @@ export function MainLayout() {
     ...(hasAnyRole(['ADMIN', 'MANAGER']) ? [{ label: 'Lojas', path: '/stores', icon: <StorefrontIcon /> }] : []),
     ...(hasAnyRole(['ADMIN', 'MANAGER']) ? [{ label: 'Templates', path: '/templates', icon: <TextSnippetIcon /> }] : []),
     ...(hasAnyRole(['ADMIN', 'MANAGER']) ? [{ label: 'E-mails', path: '/email-accounts', icon: <EmailIcon /> }] : []),
-    { label: 'Configuracoes', path: '/settings', icon: <SettingsIcon /> },
+    ...(hasAnyRole(['ADMIN', 'MANAGER']) ? [{ label: 'Configuracoes', path: '/settings', icon: <SettingsIcon /> }] : []),
   ];
 
   async function handleLogout() {

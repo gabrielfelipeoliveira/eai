@@ -55,6 +55,9 @@ public class LeadJpaEntity {
     @Column(name = "assigned_to_user_id")
     private UUID assignedToUserId;
 
+    @Column(name = "assigned_at")
+    private Instant assignedAt;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
@@ -167,6 +170,14 @@ public class LeadJpaEntity {
 
     public void setAssignedToUserId(UUID assignedToUserId) {
         this.assignedToUserId = assignedToUserId;
+    }
+
+    public Instant getAssignedAt() {
+        return assignedAt;
+    }
+
+    public void setAssignedAt(Instant assignedAt) {
+        this.assignedAt = assignedAt;
     }
 
     public Instant getCreatedAt() {

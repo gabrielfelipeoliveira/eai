@@ -117,6 +117,26 @@ curl -X POST http://localhost:8080/api/leads/<lead-id>/notes -H "Authorization: 
 curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/<lead-id>/history
 ```
 
+Configure distribution and SLA for the default store:
+
+```bash
+curl -X PUT http://localhost:8080/api/distribution/config \
+  -H "Authorization: Bearer <access-token>" \
+  -H "Content-Type: application/json" \
+  -d "{\"companyId\":\"00000000-0000-0000-0000-000000000101\",\"storeId\":\"00000000-0000-0000-0000-000000000201\",\"mode\":\"ROUND_ROBIN\",\"active\":true,\"minutesToAssign\":15,\"minutesToFirstContact\":30,\"slaActive\":true}"
+```
+
+Automatic distribution commands:
+
+```bash
+curl -X POST -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/<lead-id>/assign-automatically
+curl -X POST -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/distribute-pending
+curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/sla/overdue
+curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/dashboard/leads
+```
+
+`ROUND_ROBIN` assigns the next active seller after the latest assignment in the store. `LEAST_BUSY` assigns to the active seller with the fewest open leads.
+
 Generate a WhatsApp link using the seeded first-contact template and inspect the communication history:
 
 ```bash
