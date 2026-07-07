@@ -1,12 +1,22 @@
-# Architecture
+# Arquitetura
 
-## Overview
+Este documento e a referencia oficial de arquitetura do EAI. Decisoes de negocio ficam em `docs/business-rules.md`; casos de uso ficam em `docs/use-cases.md`; convencoes de API ficam em `docs/api.md`; convencoes de banco ficam em `docs/database.md`.
 
-EAI is split into a Spring Boot backend, a React frontend, and PostgreSQL infrastructure managed by Docker Compose.
+## Visao Geral
 
-## Backend
+O EAI e um monorepo com:
 
-The backend follows hexagonal architecture under the base package `com.eai`.
+- Backend Spring Boot.
+- Frontend React/Vite.
+- Infraestrutura PostgreSQL gerenciada localmente via Docker Compose.
+- Documentacao em `docs/`.
+- Onboarding de agentes em `.agents/`.
+
+## Arquitetura do Backend
+
+O backend segue arquitetura hexagonal, tambem conhecida como Ports and Adapters.
+
+Pacote base:
 
 ```text
 com.eai
@@ -16,123 +26,111 @@ com.eai
 └── api
 ```
 
-### Layers
+## Camadas do Backend
 
-- `domain`: entities, value objects, and domain rules.
-- `application`: use cases and application services.
-- `infrastructure`: persistence, external integrations, framework configuration, and adapters.
-- `api`: HTTP controllers, request DTOs, response DTOs, and API-specific error handling.
+### Domain
 
-Controllers must not contain business rules. They should delegate to application services and translate HTTP input and output.
+Responsabilidades:
 
-### Authentication and Users
+- Entidades de dominio.
+- Value objects quando forem introduzidos.
+- Invariantes de dominio.
+- Comportamento de dominio que nao exige infraestrutura.
+- Vocabulario do dominio.
 
-Authentication is implemented with Spring Security and stateless JWT access tokens. Refresh tokens are persisted in PostgreSQL so logout can revoke active sessions logically.
+Regras:
 
-User domain rules live in `com.eai.domain.user`. Application use cases and ports live in `com.eai.application`. Persistence adapters, JWT signing, BCrypt hashing, and Spring Security configuration live in `com.eai.infrastructure`. HTTP DTOs and controllers live in `com.eai.api`.
+- Nao deve depender de Spring.
+- Nao deve depender de JPA.
+- Nao deve depender de DTOs HTTP.
+- Nao deve conhecer banco de dados, controllers ou servicos externos.
 
-Tenant domain rules live in `com.eai.domain.tenant`. A `Company` represents a SaaS customer organization, and a `Store` belongs to one company. Users must be linked to a `companyId` and `storeId`; sellers are store-scoped.
+### Application
 
-Mandatory roles are `ADMIN`, `MANAGER`, `SELLER`, `RECEPTIONIST`, and `AUDITOR`.
+Responsabilidades:
 
-Permission rules:
+- Casos de uso.
+- Servicos de aplicacao.
+- Portas exigidas pelos casos de uso.
+- Orquestracao transacional enquanto a implementacao atual baseada em Spring for mantida.
+- Politicas de autorizacao e escopo de tenant ate que sejam extraidas para politicas dedicadas de aplicacao.
 
-- `ADMIN`: can view and manage companies, stores, users, and user tenant links.
-- `MANAGER`: can view users and manage stores in its company scope. If linked to a specific store, visibility is limited to that store.
-- `SELLER`: can only access store-scoped data for its own store.
+Regras:
 
-Authentication endpoints:
+- Nao deve expor entidades de persistencia.
+- Nao deve depender de DTOs da API.
+- Deve depender de portas em vez de adapters concretos de infraestrutura.
+- Deve manter comportamento de negocio fora dos controllers.
 
-- `POST /api/auth/login`
-- `POST /api/auth/refresh`
-- `GET /api/auth/me`
-- `POST /api/auth/logout`
+Divida tecnica atual:
 
-User endpoints:
+- Servicos de aplicacao atualmente usam anotacoes Spring como `@Service`, `@Transactional` e, em um caso, utilitarios Spring. Isso e aceito como estado atual, mas trabalho arquitetural futuro deve decidir se mantem essa integracao pragmatica com Spring ou move preocupacoes de framework para fora dos servicos de aplicacao.
 
-- `GET /api/users`
-- `GET /api/users/{id}`
-- `POST /api/users`
-- `PUT /api/users/{id}`
-- `PATCH /api/users/{id}/tenant`
-- `PATCH /api/users/{id}/activate`
-- `PATCH /api/users/{id}/deactivate`
+Status:
+PENDENTE DE DEFINIÇÃO
 
-Company endpoints:
+Perguntas para o Software Architect:
 
-- `GET /api/companies`
-- `GET /api/companies/{id}`
-- `POST /api/companies`
-- `PUT /api/companies/{id}`
+- Anotacoes Spring devem permanecer na camada de aplicacao?
+- Boundaries transacionais devem ir para infraestrutura/configuracao?
+- Autorizacao e escopo de tenant devem ser centralizados em politicas reutilizaveis de aplicacao?
 
-Store endpoints:
+### Infrastructure
 
-- `GET /api/stores`
-- `GET /api/stores?companyId={companyId}`
-- `GET /api/stores/{id}`
-- `POST /api/stores`
-- `PUT /api/stores/{id}`
+Responsabilidades:
 
-Lead management is implemented as the first Core CRM module. Lead domain objects live in `com.eai.domain.lead`; use cases and repository ports live in `com.eai.application.lead`; JPA entities, Spring Data repositories, and persistence adapters live in `com.eai.infrastructure.persistence.lead`; HTTP DTOs and controllers live in `com.eai.api.lead`.
+- Entidades JPA.
+- Repositorios Spring Data.
+- Adapters de persistencia.
+- Integracoes externas.
+- Detalhes de implementacao de seguranca.
+- Configuracao de framework.
+- Implementacao de schedulers.
+- Configuracao de OpenAPI e Spring Security.
 
-Lead visibility is store-scoped for `SELLER` and `MANAGER`. `ADMIN` can access all leads. Manual leads start as `AVAILABLE`; automatic sources start as `NEW`. Status changes and assignments create lead history records.
+Regras:
 
-Lead endpoints:
+- Implementa portas da aplicacao.
+- Contem detalhes especificos de framework.
+- Converte modelos de persistencia para modelos de dominio e vice-versa.
+- Nao deve conter orquestracao de casos de uso de negocio.
 
-- `POST /api/leads`
-- `GET /api/leads`
-- `GET /api/leads/{id}`
-- `GET /api/pipeline`
-- `PUT /api/leads/{id}`
-- `PATCH /api/leads/{id}/status`
-- `PATCH /api/leads/{id}/assign-to-me`
-- `PATCH /api/leads/{id}/assign/{userId}`
-- `POST /api/leads/{id}/follow-ups`
-- `GET /api/leads/{id}/follow-ups`
-- `GET /api/follow-ups`
-- `GET /api/follow-ups/my`
-- `PATCH /api/follow-ups/{id}/complete`
-- `PATCH /api/follow-ups/{id}/cancel`
-- `POST /api/leads/{id}/assign-automatically`
-- `POST /api/leads/distribute-pending`
-- `GET /api/leads/sla/overdue`
-- `POST /api/leads/{id}/notes`
-- `GET /api/leads/{id}/history`
-- `GET /api/leads/{id}/notes`
-- `POST /api/leads/{id}/tags`
-- `GET /api/leads/{id}/tags`
-- `DELETE /api/leads/{id}/tags/{tagId}`
-- `POST /api/leads/{id}/whatsapp-link`
-- `GET /api/leads/{id}/communications`
+### API
 
-Lead distribution is implemented in `com.eai.domain.distribution`, `com.eai.application.distribution`, `com.eai.infrastructure.persistence.distribution`, and `com.eai.api.distribution`. Stores can run in `MANUAL`, `ROUND_ROBIN`, or `LEAST_BUSY` mode. Manual assignment remains available through seller self-assignment and manager assignment. Automatic assignment uses `LeadAssignmentStrategy` implementations and only considers active users with the `SELLER` role in the lead store.
+Responsabilidades:
 
-Pipeline and follow-up agenda extend the CRM workflow. `GET /api/pipeline` returns leads grouped by existing `LeadStatus` values. Sellers see their own assigned pipeline, managers see their store scope, and admins see all leads. Follow-up tasks are stored in `follow_up_tasks`, are linked to a lead and responsible user, and expose effective `OVERDUE` status when a pending task is past `dueAt`. Creating, completing, and canceling follow-ups records lead history.
+- Controllers HTTP.
+- DTOs de requisicao.
+- DTOs de resposta.
+- Tratamento de erros da API.
+- Validacao especifica de HTTP.
 
-Distribution and SLA endpoints:
+Regras:
 
-- `GET /api/distribution/config`
-- `PUT /api/distribution/config`
-- `GET /api/dashboard/leads`
+- Controllers apenas orquestram o tratamento da requisicao.
+- Controllers delegam comportamento de negocio para servicos de aplicacao.
+- Controllers nao devem conter regras de negocio.
+- Controllers nao devem expor entidades de persistencia.
 
-SLA policy is store-scoped through `LeadSlaPolicy`. A lead is overdue to assign when it has no responsible seller after `minutesToAssign`; it is overdue to first contact when it has a responsible seller, no `firstContactAt`, and the configured first-contact limit has elapsed since assignment. Lead API responses expose `overdueToAssign` and `overdueToFirstContact` as calculated indicators.
+Divida tecnica atual:
 
-Communication templates are implemented in `com.eai.domain.message`, `com.eai.application.message`, `com.eai.infrastructure.persistence.message`, and `com.eai.api.message`. Templates are store-scoped and support placeholders for customer, phone, vehicle, seller, store, and city. WhatsApp link generation renders the selected active template, creates a `wa.me` URL, and records a lead communication entry.
+- Alguns enriquecimentos de resposta acontecem atualmente em controllers, como indicadores de SLA em respostas de lead. Isso deve ser revisado e provavelmente movido para um assembler de resposta ou caso de uso de consulta.
 
-Template endpoints:
+Status:
+PENDENTE DE DEFINIÇÃO
 
-- `GET /api/templates`
-- `GET /api/templates/{id}`
-- `GET /api/templates/active`
-- `POST /api/templates`
-- `PUT /api/templates/{id}`
-- `DELETE /api/templates/{id}`
+Perguntas para o Software Architect:
 
-`GET /api/leads` is always paginated and supports filters for status, source, assigned seller, store, creation period, free text, vehicle, and phone.
+- Assemblers de resposta devem ficar na camada de API ou aplicacao?
+- Modelos de resposta especificos para consultas devem ser introduzidos?
 
-Management reports are implemented in `com.eai.application.report`, with HTTP DTOs and controllers in `com.eai.api.report` and export adapters in infrastructure. Reports reuse the lead repository filtering port instead of introducing separate lead queries for each view. CSV is the initial export format through a `ReportExporter` port, so XLSX and PDF exporters can be added later without changing report use cases.
+## Relatorios Gerenciais
 
-Report endpoints:
+Relatorios gerenciais sao implementados em `com.eai.application.report`, com DTOs HTTP e controllers em `com.eai.api.report` e adapters de exportacao em infraestrutura.
+
+Os relatorios reutilizam a porta de filtragem do repositorio de leads em vez de introduzir consultas separadas para cada visao. CSV e o formato inicial de exportacao por meio da porta `ReportExporter`, permitindo adicionar exporters XLSX e PDF depois sem alterar os casos de uso de relatorio.
+
+Endpoints de relatorio:
 
 - `GET /api/reports/leads`
 - `GET /api/reports/sellers`
@@ -143,23 +141,38 @@ Report endpoints:
 - `GET /api/reports/leads/export.csv`
 - `GET /api/reports/sellers/export.csv`
 
-Report filters support creation period, store, seller, source, and company for admins. `ADMIN`, `MANAGER`, `SELLER`, and `AUDITOR` can view reports; sellers are scoped to their own leads, while managers and auditors follow company/store visibility.
+Os filtros de relatorio suportam periodo de criacao, loja, vendedor, origem e empresa para admins. `ADMIN`, `MANAGER`, `SELLER` e `AUDITOR` podem visualizar relatorios; vendedores ficam limitados aos proprios leads, enquanto gerentes e auditores seguem a visibilidade de empresa/loja.
 
-Email lead import is implemented in `com.eai.domain.email`, `com.eai.application.email`, `com.eai.infrastructure.persistence.email`, `com.eai.infrastructure.email`, and `com.eai.api.email`. E-mail accounts are store-scoped, use IMAP, and store encrypted passwords through the `EncryptionService` port. Import logic stays in application services: `EmailReader`, `EmailParser`, `LeadExtractor`, `DuplicateLeadChecker`, and `EmailLeadImporter`. Imported leads use source `EMAIL`; possible duplicates are marked with status `DUPLICATED`.
+## Importacao De Leads Por E-Mail
 
-Email account endpoints:
+A importacao de leads por e-mail e implementada em `com.eai.domain.email`, `com.eai.application.email`, `com.eai.infrastructure.persistence.email`, `com.eai.infrastructure.email` e `com.eai.api.email`.
 
-- `GET /api/email-accounts`
-- `GET /api/email-accounts/{id}`
-- `POST /api/email-accounts`
-- `PUT /api/email-accounts/{id}`
-- `DELETE /api/email-accounts/{id}`
-- `POST /api/email-accounts/{id}/test`
-- `POST /api/email-accounts/{id}/sync`
+Contas de e-mail pertencem ao escopo de uma loja, usam IMAP e armazenam senhas criptografadas por meio da porta `EncryptionService`. A logica de importacao permanece nos servicos de aplicacao: `EmailReader`, `EmailParser`, `LeadExtractor`, `DuplicateLeadChecker` e `EmailLeadImporter`.
 
-Administration settings are centralized through `com.eai.application.settings` and `com.eai.api.settings`. The module aggregates existing company, store, distribution, SLA, users, templates, e-mail accounts, and system preference data without duplicating the underlying business rules from each module.
+Leads importados usam origem `EMAIL`; possiveis duplicidades sao marcadas com status `DUPLICATED`.
 
-Settings endpoints:
+## Regras de Dependencia
+
+Dependencias permitidas:
+
+- `api` pode depender de `application` e `domain`.
+- `application` pode depender de `domain`.
+- `infrastructure` pode depender de `application` e `domain`.
+- `domain` depende apenas da linguagem Java e biblioteca padrao, salvo aprovacao explicita.
+
+Dependencias proibidas:
+
+- `domain` nao deve depender de `api`.
+- `domain` nao deve depender de `infrastructure`.
+- `domain` nao deve depender de Spring ou JPA.
+- `application` nao deve depender de `api`.
+- `api` nao deve depender de entidades JPA.
+
+## Configuracoes Administrativas
+
+Configuracoes administrativas sao centralizadas por meio de `com.eai.application.settings` e `com.eai.api.settings`. O modulo agrega dados existentes de empresa, loja, distribuicao, SLA, usuarios, templates, contas de e-mail e preferencias de sistema sem duplicar as regras de negocio subjacentes de cada modulo.
+
+Endpoints de configuracao:
 
 - `GET /api/settings`
 - `GET /api/settings?companyId={companyId}&storeId={storeId}`
@@ -168,11 +181,58 @@ Settings endpoints:
 - `PUT /api/settings/distribution`
 - `PUT /api/settings/sla`
 
-`ADMIN` can access all administrative settings and update company settings. `MANAGER` can access and update store-scoped settings for its permitted store scope. `SELLER` cannot access the administrative settings center.
+`ADMIN` pode acessar todas as configuracoes administrativas e atualizar configuracoes de empresa. `MANAGER` pode acessar e atualizar configuracoes escopadas por loja dentro do escopo permitido. `SELLER` nao pode acessar a central administrativa de configuracoes.
 
-## Frontend
+## Ports and Adapters
 
-The frontend is a Vite React application using TypeScript and Material UI.
+Portas sao interfaces pertencentes a camada de aplicacao.
+
+Exemplos atuais de portas:
+
+- Repositorios usados por casos de uso.
+- Hash de senha.
+- Geracao de tokens.
+- Leitura de e-mail.
+- Parsing de e-mail.
+- Criptografia.
+
+Adapters vivem em infraestrutura e implementam portas.
+
+Exemplos de adapters:
+
+- Adapters de persistencia Spring Data.
+- Provedor de token JWT.
+- Hasher de senha BCrypt.
+- Leitor de e-mail IMAP.
+- Implementacao de criptografia de desenvolvimento.
+
+## Fluxo de Requisicao
+
+Fluxo tipico de comando:
+
+1. A requisicao HTTP chega a um controller da API.
+2. O controller valida o DTO de entrada.
+3. O controller mapeia a entrada para um comando de aplicacao.
+4. O servico de aplicacao carrega objetos de dominio por meio de portas.
+5. O objeto de dominio reforca invariantes locais.
+6. O servico de aplicacao coordena persistencia e efeitos colaterais.
+7. O adapter de infraestrutura persiste estado ou chama servicos externos.
+8. O controller mapeia o resultado para DTO de resposta.
+
+Fluxo tipico de consulta:
+
+1. A requisicao HTTP chega a um controller da API.
+2. O controller extrai query parameters.
+3. O controller delega para o servico de consulta da aplicacao.
+4. O servico de aplicacao aplica autorizacao e escopo de tenant.
+5. A porta de repositorio retorna dados de dominio ou read-model.
+6. O controller mapeia o resultado para DTO de resposta.
+
+## Arquitetura do Frontend
+
+O frontend e uma aplicacao Vite React usando TypeScript e Material UI.
+
+Estrutura atual:
 
 ```text
 frontend/src
@@ -187,22 +247,131 @@ frontend/src
 └── types
 ```
 
-The frontend stores the access token and refresh token in browser storage through `services/tokenStorage`. Axios is configured in `services/api` to attach bearer tokens and refresh expired access tokens. Route protection is centralized in `components/ProtectedRoute`, while authenticated user state is exposed through `hooks/useAuth`.
+Responsabilidades:
 
-The authenticated layout uses a lateral menu with Dashboard, Leads, Pipeline, Agenda, Relatorios, Atrasados, Usuarios, Empresas, Lojas, Templates, E-mails, and Configuracoes. Empresas is visible only to `ADMIN`. Relatorios is visible to `ADMIN`, `MANAGER`, `SELLER`, and `AUDITOR`. Atrasados, Lojas, Usuarios, Templates, E-mails, and Configuracoes are visible to `ADMIN` and `MANAGER`; user creation and tenant linking are available only to `ADMIN`.
+- `app`: bootstrap da aplicacao, router e query client.
+- `pages`: telas de rota.
+- `features`: componentes, hooks, schemas e helpers especificos de feature quando extraidos.
+- `components`: componentes de UI reutilizaveis e compartilhados.
+- `hooks`: hooks React compartilhados.
+- `layouts`: componentes de layout.
+- `services`: clientes de API e modulos de servico HTTP.
+- `theme`: tema do Material UI.
+- `types`: tipos TypeScript compartilhados.
 
-The Leads screen is available at `/leads`. It provides CRM-style status and SLA cards, filters, a paginated table, lead creation, lead detail drawer, status chips, source chips, quick assignment, automatic assignment, pending distribution, follow-up creation/completion, notes, tags, and history timeline. The Kanban pipeline is available at `/pipeline`, the follow-up agenda at `/follow-ups`, the overdue queue at `/leads/overdue`, and the administrative settings center at `/settings`.
+Navegacao autenticada:
 
-The settings screen has tabs for Empresa, Loja, Usuarios, Distribuicao, SLA, Templates, E-mail, and Sistema. Editable forms use client-side validation and call the aggregated settings endpoints for company, store, distribution, and SLA changes.
+- O layout autenticado usa menu lateral com Dashboard, Leads, Pipeline, Agenda, Relatorios, Atrasados, Usuarios, Empresas, Lojas, Templates, E-mails e Configuracoes.
+- Empresas e visivel apenas para `ADMIN`.
+- Relatorios e visivel para `ADMIN`, `MANAGER`, `SELLER` e `AUDITOR`.
+- Atrasados, Lojas, Usuarios, Templates, E-mails e Configuracoes sao visiveis para `ADMIN` e `MANAGER`.
+- Criacao de usuarios e vinculo de tenant ficam disponiveis apenas para `ADMIN`.
 
-## Database
+Telas principais:
 
-PostgreSQL is the primary database. Flyway manages all schema migrations.
+- A tela de Leads fica disponivel em `/leads`.
+- A tela de Leads oferece cards de status e SLA em estilo CRM, filtros, tabela paginada, criacao de lead, drawer de detalhe do lead, chips de status, chips de origem, atribuicao rapida, atribuicao automatica, distribuicao de pendentes, criacao/conclusao de follow-up, notas, tags e timeline de historico.
+- O Kanban do pipeline fica em `/pipeline`.
+- A agenda de follow-ups fica em `/follow-ups`.
+- A fila de atrasados fica em `/leads/overdue`.
+- A central administrativa de configuracoes fica em `/settings`.
 
-## Profiles
+Configuracoes no frontend:
 
-- `dev`: local development with Docker Compose PostgreSQL.
-- `test`: test execution.
-- `prod`: production deployment configuration through environment variables.
+- A tela de configuracoes possui abas para Empresa, Loja, Usuarios, Distribuicao, SLA, Templates, E-mail e Sistema.
+- Formularios editaveis usam validacao client-side e chamam endpoints agregados de configuracao para mudancas de empresa, loja, distribuicao e SLA.
 
-Production requires `JWT_SECRET` for access token signing.
+Regras:
+
+- Usar TypeScript.
+- Usar Material UI para primitivas de UI e consistencia de tema.
+- Usar React Router para navegacao.
+- Usar React Query para estado de servidor.
+- Usar Axios por meio de modulos em `services`.
+- Usar React Hook Form e Zod quando formularios forem introduzidos ou modificados.
+- Evitar chamadas diretas de API em page components quando pratico.
+
+Divida tecnica atual:
+
+- `frontend/src/pages/LeadsPage.tsx` e grande e deve ser dividido em modulos de feature antes de mudancas relevantes no workflow de leads.
+- `frontend/src/hooks/useAuth.tsx` gera warning de lint do React Fast Refresh porque exporta provider e hook no mesmo arquivo.
+
+## Arquitetura de Infraestrutura
+
+Infraestrutura local atual:
+
+- Docker Compose inicia PostgreSQL.
+- Backend e frontend podem rodar localmente com Java/Node instalados.
+- Em ambientes sem Java/Node, backend e frontend podem ser executados manualmente via Docker.
+
+Divida tecnica atual:
+
+- `docker-compose.yml` nao define servicos de backend ou frontend.
+- `docker/` e `scripts/` possuem apenas placeholders.
+
+Status:
+PENDENTE DE DEFINIÇÃO
+
+Perguntas para o Software Architect:
+
+- Docker Compose deve ser dono da stack local completa, incluindo backend e frontend?
+- Deploy de producao deve usar imagens Docker construidas a partir de Dockerfiles do repositorio?
+- Scripts devem ser adicionados para comandos comuns de desenvolvimento?
+
+## Arquitetura de Seguranca
+
+Estado atual:
+
+- Spring Security protege rotas do backend.
+- Access tokens JWT sao usados para autenticacao da API.
+- Refresh tokens sao persistidos.
+- Frontend armazena tokens no browser storage por meio de `tokenStorage`.
+- Producao exige `JWT_SECRET`.
+
+Riscos conhecidos:
+
+- Armazenamento de tokens em `localStorage` e conveniente, mas aumenta exposicao a roubo de tokens por XSS.
+- A criptografia de senha de e-mail atualmente usa uma implementacao Base64 de desenvolvimento e nao e adequada para producao.
+
+Status:
+PENDENTE DE DEFINIÇÃO
+
+Perguntas para o Software Architect:
+
+- Refresh tokens devem migrar para cookies HttpOnly?
+- Qual e a estrategia de criptografia de producao para credenciais IMAP?
+- Qual e a politica de CORS para producao?
+
+## Arquitetura de Testes
+
+Estado atual:
+
+- Testes de backend usam JUnit e suporte de testes do Spring Boot.
+- H2 e usado no profile de teste em modo de compatibilidade com PostgreSQL.
+- Frontend possui checks de build e lint, mas nenhum test runner configurado.
+
+Regras:
+
+- Adicionar testes quando comportamento de negocio ou logica compartilhada mudar.
+- Preferir testes unitarios focados para dominio e aplicacao.
+- Usar testes de integracao quando o comportamento depender de Spring, persistencia ou fronteiras HTTP.
+- Nao pular testes falhando sem documentar o motivo.
+
+Status:
+PENDENTE DE DEFINIÇÃO
+
+Perguntas para o Software Architect:
+
+- Testes de persistencia/API do backend devem usar Testcontainers com PostgreSQL?
+- Qual stack de testes frontend deve ser adotada?
+
+## Decisoes Arquiteturais
+
+ADRs iniciais:
+
+- `docs/adr/0001-use-hexagonal-architecture.md`
+- `docs/adr/0002-flyway-owns-database-schema.md`
+- `docs/adr/0003-separate-api-domain-and-persistence-models.md`
+- `docs/adr/0004-use-jwt-access-tokens-and-persisted-refresh-tokens.md`
+
+Decisoes arquiteturais futuras devem ser registradas como ADRs.

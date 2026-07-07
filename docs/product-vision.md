@@ -1,34 +1,13 @@
-# Product Vision
+# Visao do Produto
 
-EAI is a SaaS platform for automotive stores and dealerships that centralizes lead intake, seller assignment, WhatsApp communication, sales funnel tracking, customer service, and management reporting.
+Este documento foi substituido por `docs/vision.md`.
 
-## Target Users
+O conteudo original de visao do produto foi consolidado na documentacao da Sprint 0:
 
-- Dealership owners
-- Sales managers
-- Sellers
-- Customer service teams
-- Business development representatives
+- `docs/vision.md`
+- `docs/business-rules.md`
+- `docs/domain.md`
+- `docs/use-cases.md`
+- `docs/roadmap.md`
 
-## Value Proposition
-
-EAI helps dealerships respond faster, lose fewer leads, standardize follow-up routines, and understand seller and funnel performance through reliable operational data.
-
-The platform is multi-company from the foundation: each customer company can operate one or more stores, and commercial users are scoped to their assigned company and store.
-
-## Product Principles
-
-- Fast lead visibility
-- Clear seller accountability
-- Simple funnel management
-- Conversation-centered customer history
-- Reliable reporting for managers
-- Practical workflows over complex configuration
-
-## Core Lead Workflow
-
-The primary CRM workflow starts with lead intake by manual entry or automatic source. Leads move through availability, assignment, first contact, negotiation, visit scheduling, proposal, sale, loss, or duplication. Sellers work from their own store scope, managers monitor their store, and admins can inspect all companies and stores.
-
-Each lead keeps customer contact data, vehicle interest, origin, seller assignment, notes, tags, and status history so managers can audit response and follow-up activity.
-
-Lead distribution supports manual seller ownership and manager assignment, plus automatic strategies for round robin and least busy seller. SLA indicators highlight unassigned leads and assigned leads that have not received first contact inside the configured store policy.
+Use `docs/vision.md` como fonte oficial da visao do produto daqui em diante.

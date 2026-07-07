@@ -1,10 +1,10 @@
-# Email Lead Importer
+# Importador De Leads Por E-Mail
 
-EAI supports a first foundation for automatic lead intake through IMAP e-mail accounts.
+O EAI possui uma primeira base para entrada automatica de leads por contas de e-mail IMAP.
 
-## Configuration
+## Configuracao
 
-E-mail accounts are managed in the frontend at `E-mails` and through the backend endpoints:
+As contas de e-mail sao gerenciadas no frontend em `E-mails` e pelos endpoints do backend:
 
 - `GET /api/email-accounts`
 - `GET /api/email-accounts/{id}`
@@ -14,29 +14,29 @@ E-mail accounts are managed in the frontend at `E-mails` and through the backend
 - `POST /api/email-accounts/{id}/test`
 - `POST /api/email-accounts/{id}/sync`
 
-Each account is scoped to a company and store and stores:
+Cada conta pertence ao escopo de uma empresa e loja e armazena:
 
-- name
+- nome
 - host
-- port
-- username
-- encrypted password
-- protocol `IMAP`
-- SSL flag
-- active flag
+- porta
+- usuario
+- senha criptografada
+- protocolo `IMAP`
+- flag de SSL
+- flag ativo
 
-Common IMAP settings:
+Configuracoes IMAP comuns:
 
-- Gmail: `imap.gmail.com`, port `993`, SSL enabled, app password required.
-- Outlook/Microsoft 365: `outlook.office365.com`, port `993`, SSL enabled.
-- Custom providers: use the host, port, username, and password supplied by the provider.
+- Gmail: `imap.gmail.com`, porta `993`, SSL habilitado, senha de aplicativo obrigatoria.
+- Outlook/Microsoft 365: `outlook.office365.com`, porta `993`, SSL habilitado.
+- Provedores customizados: use host, porta, usuario e senha fornecidos pelo provedor.
 
-Use `POST /api/email-accounts/{id}/test` after creating the account to validate credentials and connectivity.
-Use `POST /api/email-accounts/{id}/sync` to manually import unread messages.
+Use `POST /api/email-accounts/{id}/test` depois de criar a conta para validar credenciais e conectividade.
+Use `POST /api/email-accounts/{id}/sync` para importar manualmente mensagens nao lidas.
 
 ## Scheduler
 
-The automatic job is disabled by default:
+O job automatico fica desabilitado por padrao:
 
 ```yaml
 eai:
@@ -46,49 +46,49 @@ eai:
       fixed-delay: 60000
 ```
 
-Production can enable it with:
+Producao pode habilita-lo com:
 
 ```text
 EAI_EMAIL_IMPORTER_ENABLED=true
 EAI_EMAIL_IMPORTER_FIXED_DELAY=60000
 ```
 
-When enabled, the scheduler imports active accounts every configured fixed delay.
+Quando habilitado, o scheduler importa contas ativas a cada intervalo configurado.
 
 ## Parsing
 
-The current parser is generic. It tries to extract:
+O parser atual e generico. Ele tenta extrair:
 
-- customer name
-- phone
+- nome do cliente
+- telefone
 - e-mail
-- vehicle of interest
-- original message
-- origin
+- veiculo de interesse
+- mensagem original
+- origem
 
-It recognizes common labels such as `Nome`, `Telefone`, `E-mail`, `Veiculo`, `Origem`, and also falls back to regex extraction for phone and e-mail.
+Ele reconhece rotulos comuns como `Nome`, `Telefone`, `E-mail`, `Veiculo` e `Origem`, e tambem usa regex como fallback para extrair telefone e e-mail.
 
-The application layer uses the `EmailParser` interface and a generic parser implementation. Specific parsers by provider or marketplace can be added later by implementing `EmailParser` and giving the implementation a higher priority.
+A camada de aplicacao usa a interface `EmailParser` e uma implementacao generica. Parsers especificos por provedor ou marketplace podem ser adicionados depois implementando `EmailParser` e dando prioridade maior a implementacao.
 
-## Duplicate Rule
+## Regra De Duplicidade
 
-During import, if a lead with the same normalized phone and same vehicle already exists in the same store in the previous 7 days, the imported lead is created with status `DUPLICATED`.
+Durante a importacao, se existir um lead com o mesmo telefone normalizado e o mesmo veiculo na mesma loja nos ultimos 7 dias, o lead importado e criado com status `DUPLICATED`.
 
-If no duplicate is found, the imported lead is created with source `EMAIL` and status `NEW`.
+Se nenhuma duplicidade for encontrada, o lead importado e criado com origem `EMAIL` e status `NEW`.
 
-Both paths keep the original e-mail body in `originalMessage` and register lead history. Scheduler-created history entries use a system history record with no user.
+Ambos os caminhos preservam o corpo original do e-mail em `originalMessage` e registram historico do lead. Entradas de historico criadas pelo scheduler usam um registro de sistema sem usuario.
 
-## Password Security
+## Seguranca De Senhas
 
-Passwords are never returned by the API and are not stored as plain text.
+Senhas nunca sao retornadas pela API e nao sao armazenadas como texto puro.
 
-The current implementation uses the `EncryptionService` interface with a development implementation based on Base64. This is only an obfuscation placeholder for local development and must be replaced in production with real encryption backed by a managed key, such as KMS, Vault, or an application secret stored outside the database.
+A implementacao atual usa a interface `EncryptionService` com uma implementacao de desenvolvimento baseada em Base64. Isso e apenas uma obfuscacao temporaria para desenvolvimento local e deve ser substituido em producao por criptografia real baseada em chave gerenciada, como KMS, Vault ou segredo de aplicacao armazenado fora do banco.
 
-## Limitations
+## Limitacoes
 
-- Only IMAP is supported.
-- The generic parser can miss nonstandard templates.
-- Messages are read from `INBOX`.
-- The current reader searches unread messages and messages received after `lastReadAt`, but does not mark messages as read.
-- Attachments are ignored.
-- HTML-only e-mails may have limited extraction until an HTML-to-text parser is added.
+- Apenas IMAP e suportado.
+- O parser generico pode nao reconhecer templates fora do padrao.
+- Mensagens sao lidas de `INBOX`.
+- O leitor atual busca mensagens nao lidas e mensagens recebidas depois de `lastReadAt`, mas nao marca mensagens como lidas.
+- Anexos sao ignorados.
+- E-mails somente em HTML podem ter extracao limitada ate que um parser HTML-para-texto seja adicionado.

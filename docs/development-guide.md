@@ -1,10 +1,10 @@
-# Development Guide
+# Guia De Desenvolvimento
 
-## Local Setup
+## Configuracao Local
 
-The backend requires Java 21 JDK. Do not build or run it with Java 17 or any other Java version. Confirm `java -version`, `mvn -version`, and `JAVA_HOME` point to Java 21 before starting.
+O backend exige JDK Java 21. Nao compile nem execute com Java 17 ou qualquer outra versao. Antes de iniciar, confirme que `java -version`, `mvn -version` e `JAVA_HOME` apontam para Java 21.
 
-On Windows development machines, set the user defaults to Java 21:
+Em maquinas Windows de desenvolvimento, configure os padroes do usuario para Java 21:
 
 ```powershell
 $jdk21 = 'C:\Program Files\Microsoft\jdk-21.0.11.10-hotspot'
@@ -12,22 +12,22 @@ $jdk21 = 'C:\Program Files\Microsoft\jdk-21.0.11.10-hotspot'
 [Environment]::SetEnvironmentVariable('Path', "$jdk21\bin;" + [Environment]::GetEnvironmentVariable('Path', 'User'), 'User')
 ```
 
-Open a new terminal after changing user environment variables.
+Abra um novo terminal depois de alterar variaveis de ambiente do usuario.
 
-Start PostgreSQL:
+Subir o PostgreSQL:
 
 ```bash
 docker compose up -d postgres
 ```
 
-Run the backend:
+Executar o backend:
 
 ```bash
 cd backend
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-Run the frontend:
+Executar o frontend:
 
 ```bash
 cd frontend
@@ -35,46 +35,46 @@ npm install
 npm run dev
 ```
 
-Seed admin credentials:
+Credenciais do admin seed:
 
-- Email: `admin@eai.com`
-- Password: `admin123`
+- E-mail: `admin@eai.com`
+- Senha: `admin123`
 
-The frontend expects the backend API at `http://localhost:8080/api`. Set `VITE_API_BASE_URL` when using a different backend URL.
+O frontend espera a API do backend em `http://localhost:8080/api`. Defina `VITE_API_BASE_URL` ao usar uma URL diferente para o backend.
 
-## Backend Build
+## Build Do Backend
 
 ```bash
 cd backend
 mvn clean package
 ```
 
-The backend requires Java 21. Maven Enforcer fails the build when Maven is not running on Java 21. If Maven reports a Java version error, fix `JAVA_HOME` and the Java on `PATH`.
+O backend exige Java 21. O Maven Enforcer falha o build quando o Maven nao esta rodando com Java 21. Se o Maven reportar erro de versao Java, ajuste `JAVA_HOME` e o Java no `PATH`.
 
-## Frontend Build
+## Build Do Frontend
 
 ```bash
 cd frontend
 npm run build
 ```
 
-## Database Migrations
+## Migrations Do Banco
 
-Flyway migrations live in:
+As migrations do Flyway ficam em:
 
 ```text
 backend/src/main/resources/db/migration
 ```
 
-Create new migrations with the naming pattern:
+Crie novas migrations com o padrao de nome:
 
 ```text
-V{number}__description.sql
+V{numero}__descricao.sql
 ```
 
-Do not edit migrations already applied outside local experimentation. Authentication uses `V2__create_users_and_refresh_tokens.sql` for users, user roles, refresh tokens, and the BCrypt-hashed admin seed. Tenant setup uses `V3__add_companies_stores_and_user_tenant_links.sql` for companies, stores, user tenant columns, the default company seed, the default store seed, and the admin tenant link.
+Nao edite migrations ja aplicadas fora de experimentacao local. A autenticacao usa `V2__create_users_and_refresh_tokens.sql` para usuarios, perfis de usuario, refresh tokens e seed do admin com hash BCrypt. A base de tenant usa `V3__add_companies_stores_and_user_tenant_links.sql` para empresas, lojas, colunas de tenant em usuarios, seed da empresa padrao, seed da loja padrao e vinculo de tenant do admin.
 
-## Authentication Smoke Test
+## Smoke Test De Autenticacao
 
 Login:
 
@@ -82,33 +82,33 @@ Login:
 curl -X POST http://localhost:8080/api/auth/login -H "Content-Type: application/json" -d "{\"email\":\"admin@eai.com\",\"password\":\"admin123\"}"
 ```
 
-Protected endpoint without token:
+Endpoint protegido sem token:
 
 ```bash
 curl -i http://localhost:8080/api/users
 ```
 
-Expected result is `401 Unauthorized`.
+O resultado esperado e `401 Unauthorized`.
 
-## Tenant Smoke Test
+## Smoke Test De Tenant
 
-Use the seed admin login to obtain an access token, then call:
+Use o login do admin seed para obter um token de acesso e chame:
 
 ```bash
 curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/companies
 curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/stores
 ```
 
-The default company and default store should be returned.
+A empresa padrao e a loja padrao devem ser retornadas.
 
-## Lead Smoke Test
+## Smoke Test De Lead
 
-Use the seed admin login to obtain an access token. The default tenant ids are:
+Use o login do admin seed para obter um token de acesso. Os ids padrao de tenant sao:
 
-- Company: `00000000-0000-0000-0000-000000000101`
-- Store: `00000000-0000-0000-0000-000000000201`
+- Empresa: `00000000-0000-0000-0000-000000000101`
+- Loja: `00000000-0000-0000-0000-000000000201`
 
-Create a manual lead:
+Criar um lead manual:
 
 ```bash
 curl -X POST http://localhost:8080/api/leads \
@@ -117,9 +117,9 @@ curl -X POST http://localhost:8080/api/leads \
   -d "{\"companyId\":\"00000000-0000-0000-0000-000000000101\",\"storeId\":\"00000000-0000-0000-0000-000000000201\",\"customerName\":\"Cliente Teste\",\"customerPhone\":\"11999990000\",\"vehicleInterest\":\"Honda Civic\",\"source\":\"MANUAL\"}"
 ```
 
-Expected status is `AVAILABLE`.
+O status esperado e `AVAILABLE`.
 
-List, assign, change status, add a note, and inspect history:
+Listar, atribuir, alterar status, adicionar observacao e consultar historico:
 
 ```bash
 curl -H "Authorization: Bearer <access-token>" "http://localhost:8080/api/leads?page=0&size=20"
@@ -129,13 +129,13 @@ curl -X POST http://localhost:8080/api/leads/<lead-id>/notes -H "Authorization: 
 curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/<lead-id>/history
 ```
 
-Inspect the pipeline grouped by status:
+Consultar o pipeline agrupado por status:
 
 ```bash
 curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/pipeline
 ```
 
-Create and complete a follow-up:
+Criar e concluir um follow-up:
 
 ```bash
 curl -X POST http://localhost:8080/api/leads/<lead-id>/follow-ups \
@@ -146,7 +146,7 @@ curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/follow-
 curl -X PATCH -H "Authorization: Bearer <access-token>" http://localhost:8080/api/follow-ups/<follow-up-id>/complete
 ```
 
-Configure distribution and SLA for the default store:
+Configurar distribuicao e SLA para a loja padrao:
 
 ```bash
 curl -X PUT http://localhost:8080/api/distribution/config \
@@ -155,7 +155,7 @@ curl -X PUT http://localhost:8080/api/distribution/config \
   -d "{\"companyId\":\"00000000-0000-0000-0000-000000000101\",\"storeId\":\"00000000-0000-0000-0000-000000000201\",\"mode\":\"ROUND_ROBIN\",\"active\":true,\"minutesToAssign\":15,\"minutesToFirstContact\":30,\"slaActive\":true}"
 ```
 
-Automatic distribution commands:
+Comandos de distribuicao automatica:
 
 ```bash
 curl -X POST -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/<lead-id>/assign-automatically
@@ -164,9 +164,9 @@ curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/s
 curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/dashboard/leads
 ```
 
-`ROUND_ROBIN` assigns the next active seller after the latest assignment in the store. `LEAST_BUSY` assigns to the active seller with the fewest open leads.
+`ROUND_ROBIN` atribui ao proximo vendedor ativo depois da ultima atribuicao na loja. `LEAST_BUSY` atribui ao vendedor ativo com menos leads abertos.
 
-Generate a WhatsApp link using the seeded first-contact template and inspect the communication history:
+Gerar um link do WhatsApp usando o template seed de primeiro contato e consultar o historico de comunicacao:
 
 ```bash
 curl -X POST http://localhost:8080/api/leads/<lead-id>/whatsapp-link \
@@ -176,16 +176,16 @@ curl -X POST http://localhost:8080/api/leads/<lead-id>/whatsapp-link \
 curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/<lead-id>/communications
 ```
 
-## Email Importer Smoke Test
+## Smoke Test Do Importador De E-Mail
 
-The IMAP scheduler is disabled by default in development:
+O scheduler IMAP fica desabilitado por padrao em desenvolvimento:
 
 ```yaml
 eai.email.importer.enabled=false
 eai.email.importer.fixed-delay=60000
 ```
 
-Create an e-mail account:
+Criar uma conta de e-mail:
 
 ```bash
 curl -X POST http://localhost:8080/api/email-accounts \
@@ -194,15 +194,26 @@ curl -X POST http://localhost:8080/api/email-accounts \
   -d "{\"companyId\":\"00000000-0000-0000-0000-000000000101\",\"storeId\":\"00000000-0000-0000-0000-000000000201\",\"name\":\"Leads IMAP\",\"host\":\"imap.example.com\",\"port\":993,\"username\":\"leads@example.com\",\"password\":\"secret\",\"protocol\":\"IMAP\",\"useSsl\":true,\"active\":true}"
 ```
 
-Test and manually sync:
+Testar e sincronizar manualmente:
 
 ```bash
 curl -X POST -H "Authorization: Bearer <access-token>" http://localhost:8080/api/email-accounts/<account-id>/test
 curl -X POST -H "Authorization: Bearer <access-token>" http://localhost:8080/api/email-accounts/<account-id>/sync
 ```
 
-See [Email Lead Importer](email-importer.md) for IMAP setup, limitations, duplicate rules, and password security notes.
+Veja [Importador de leads por e-mail](email-importer.md) para configuracao IMAP, limitacoes, regras de duplicidade e observacoes de seguranca de senha.
 
-## Documentation
+## Documentacao
 
-Update `README.md` and `docs/` whenever setup, architecture, environment variables, or development workflows change.
+Pontos de entrada da documentacao oficial:
+
+- [Visao](vision.md)
+- [Regras de negocio](business-rules.md)
+- [Modelo de dominio](domain.md)
+- [Casos de uso](use-cases.md)
+- [Arquitetura](architecture.md)
+- [Diretrizes de API](api.md)
+- [Banco de dados](database.md)
+- [Roadmap](roadmap.md)
+- [Importador de leads por e-mail](email-importer.md)
+- [ADRs](adr/)

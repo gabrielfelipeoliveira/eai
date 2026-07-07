@@ -1,43 +1,43 @@
 # EAI
 
-EAI is a SaaS foundation for vehicle stores and dealerships to manage leads, sales teams, WhatsApp conversations, commercial pipeline, customer service, and reports.
+EAI e uma base SaaS para lojas de veiculos e concessionarias gerenciarem leads, equipes comerciais, conversas de WhatsApp, pipeline comercial, atendimento e relatorios.
 
 ## Stack
 
 - Backend: Java 21, Spring Boot 3, Maven, Spring Web, Spring Security, Spring Data JPA, PostgreSQL, Flyway, Validation, Lombok, MapStruct, OpenAPI/Swagger
 - Frontend: React, Vite, TypeScript, Material UI, React Router, React Query, Axios, React Hook Form, Zod
-- Infra: Docker Compose and PostgreSQL
+- Infra: Docker Compose e PostgreSQL
 
-## Requirements
+## Requisitos
 
-- Java 21 JDK. The backend is pinned to Java 21 and Maven fails fast when run with another Java version.
+- JDK Java 21. O backend esta fixado em Java 21 e o Maven falha cedo quando executado com outra versao.
 - Maven 3.9+
 - Node.js 20+
 - npm 10+
-- Docker and Docker Compose
+- Docker e Docker Compose
 
-## Run Database
+## Subir Banco De Dados
 
 ```bash
 docker compose up -d postgres
 ```
 
-PostgreSQL is exposed on `localhost:5432`.
+O PostgreSQL fica exposto em `localhost:5432`.
 
-Default development credentials:
+Credenciais padrao de desenvolvimento:
 
-- Database: `eai`
-- User: `eai`
-- Password: `eai`
+- Banco: `eai`
+- Usuario: `eai`
+- Senha: `eai`
 
-## Run Backend
+## Subir Backend
 
 ```bash
 cd backend
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-Backend runs on `http://localhost:8080`.
+O backend roda em `http://localhost:8080`.
 
 Swagger UI:
 
@@ -51,32 +51,32 @@ Health endpoint:
 http://localhost:8080/actuator/health
 ```
 
-### Backend Security
+### Seguranca Do Backend
 
-Development authentication uses JWT access tokens and persisted refresh tokens.
+A autenticacao de desenvolvimento usa tokens de acesso JWT e refresh tokens persistidos.
 
-Required production environment variable:
+Variavel de ambiente obrigatoria em producao:
 
-- `JWT_SECRET`: HMAC secret used to sign access tokens.
+- `JWT_SECRET`: segredo HMAC usado para assinar tokens de acesso.
 
-Optional token TTL settings:
+Configuracoes opcionais de TTL dos tokens:
 
-- `eai.security.access-token-ttl-minutes`: default `15`
-- `eai.security.refresh-token-ttl-hours`: default `168`
+- `eai.security.access-token-ttl-minutes`: padrao `15`
+- `eai.security.refresh-token-ttl-hours`: padrao `168`
 
-Seed admin user:
+Usuario admin seed:
 
-- Email: `admin@eai.com`
-- Password: `admin123`
+- E-mail: `admin@eai.com`
+- Senha: `admin123`
 
-Authentication endpoints:
+Endpoints de autenticacao:
 
 - `POST /api/auth/login`
 - `POST /api/auth/refresh`
 - `GET /api/auth/me`
 - `POST /api/auth/logout`
 
-User management endpoints:
+Endpoints de gestao de usuarios:
 
 - `GET /api/users`
 - `GET /api/users/{id}`
@@ -86,7 +86,7 @@ User management endpoints:
 - `PATCH /api/users/{id}/activate`
 - `PATCH /api/users/{id}/deactivate`
 
-Tenant management endpoints:
+Endpoints de gestao de tenants:
 
 - `GET /api/companies`
 - `GET /api/companies/{id}`
@@ -98,7 +98,7 @@ Tenant management endpoints:
 - `POST /api/stores`
 - `PUT /api/stores/{id}`
 
-Lead management endpoints:
+Endpoints de gestao de leads:
 
 - `POST /api/leads`
 - `GET /api/leads`
@@ -114,9 +114,9 @@ Lead management endpoints:
 - `GET /api/leads/{id}/tags`
 - `DELETE /api/leads/{id}/tags/{tagId}`
 
-Lead listing is paginated and supports status, source, seller, store, period, free text, vehicle, and phone filters.
+A listagem de leads e paginada e suporta filtros por status, origem, vendedor, loja, periodo, texto livre, veiculo e telefone.
 
-Email lead importer endpoints:
+Endpoints do importador de leads por e-mail:
 
 - `GET /api/email-accounts`
 - `GET /api/email-accounts/{id}`
@@ -126,14 +126,14 @@ Email lead importer endpoints:
 - `POST /api/email-accounts/{id}/test`
 - `POST /api/email-accounts/{id}/sync`
 
-The IMAP importer job is disabled by default with `eai.email.importer.enabled=false` and uses `eai.email.importer.fixed-delay=60000`. In production, use `EAI_EMAIL_IMPORTER_ENABLED` and `EAI_EMAIL_IMPORTER_FIXED_DELAY`. See [Email Lead Importer](docs/email-importer.md) for IMAP setup, limitations, duplicate rules, and password security.
+O job importador IMAP fica desabilitado por padrao com `eai.email.importer.enabled=false` e usa `eai.email.importer.fixed-delay=60000`. Em producao, use `EAI_EMAIL_IMPORTER_ENABLED` e `EAI_EMAIL_IMPORTER_FIXED_DELAY`. Veja [Importador de leads por e-mail](docs/email-importer.md) para setup IMAP, limitacoes, regras de duplicidade e seguranca de senha.
 
-Roles are `ADMIN`, `MANAGER`, `SELLER`, `RECEPTIONIST`, and `AUDITOR`.
-`ADMIN` can manage companies, stores, users, user tenant links, and all leads. `MANAGER` can view users and manage stores in its company scope, and lead access is limited to its own store. `SELLER` is scoped to its own store.
+Os perfis sao `ADMIN`, `MANAGER`, `SELLER`, `RECEPTIONIST` e `AUDITOR`.
+`ADMIN` pode gerenciar empresas, lojas, usuarios, vinculos de tenant e todos os leads. `MANAGER` pode visualizar usuarios e gerenciar lojas no escopo de sua empresa, e o acesso a leads e limitado a propria loja. `SELLER` fica limitado a propria loja.
 
-The development seed creates a default company and store and links the seed admin user to both.
+O seed de desenvolvimento cria uma empresa padrao, uma loja padrao e vincula o usuario admin seed a ambas.
 
-## Run Frontend
+## Subir Frontend
 
 ```bash
 cd frontend
@@ -141,9 +141,9 @@ npm install
 npm run dev
 ```
 
-Frontend runs on `http://localhost:5173`.
+O frontend roda em `http://localhost:5173`.
 
-The frontend calls `http://localhost:8080/api` by default. Override it with `VITE_API_BASE_URL`.
+Por padrao, o frontend chama `http://localhost:8080/api`. Sobrescreva com `VITE_API_BASE_URL`.
 
 ## Build
 
@@ -154,14 +154,14 @@ cd backend
 mvn clean package
 ```
 
-Check the Java version used by Maven before building:
+Confira a versao do Java usada pelo Maven antes do build:
 
 ```bash
 java -version
 mvn -version
 ```
 
-Both commands must report Java 21.
+Ambos os comandos devem reportar Java 21.
 
 Frontend:
 
@@ -171,7 +171,7 @@ npm install
 npm run build
 ```
 
-## Project Structure
+## Estrutura Do Projeto
 
 ```text
 /
@@ -186,10 +186,21 @@ npm run build
 └── .gitignore
 ```
 
-## Documentation
+## Documentacao
 
-- [Product vision](docs/product-vision.md)
-- [Architecture](docs/architecture.md)
+- [Visao](docs/vision.md)
+- [Regras de negocio](docs/business-rules.md)
+- [Modelo de dominio](docs/domain.md)
+- [Casos de uso](docs/use-cases.md)
+- [Arquitetura](docs/architecture.md)
+- [Diretrizes de API](docs/api.md)
+- [Banco de dados](docs/database.md)
 - [Roadmap](docs/roadmap.md)
-- [Development guide](docs/development-guide.md)
-- [Email lead importer](docs/email-importer.md)
+- [Guia de desenvolvimento](docs/development-guide.md)
+- [Importador de leads por e-mail](docs/email-importer.md)
+- [ADRs](docs/adr)
+- [Onboarding de agentes de IA](.agents/AGENTS.md)
+
+## Baseline De Documentacao Da Sprint 0
+
+A Sprint 0 estabeleceu o conjunto de documentos usado como fonte oficial para desenvolvedores, Product Owner, Software Architect e agentes de IA. Trabalhos futuros de funcionalidade devem consultar os documentos relevantes antes da implementacao. Regras de negocio ausentes devem ser registradas como pendencias para o Product Owner em vez de serem assumidas.
