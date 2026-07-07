@@ -157,6 +157,19 @@ Email account endpoints:
 - `POST /api/email-accounts/{id}/test`
 - `POST /api/email-accounts/{id}/sync`
 
+Administration settings are centralized through `com.eai.application.settings` and `com.eai.api.settings`. The module aggregates existing company, store, distribution, SLA, users, templates, e-mail accounts, and system preference data without duplicating the underlying business rules from each module.
+
+Settings endpoints:
+
+- `GET /api/settings`
+- `GET /api/settings?companyId={companyId}&storeId={storeId}`
+- `PUT /api/settings/company`
+- `PUT /api/settings/store`
+- `PUT /api/settings/distribution`
+- `PUT /api/settings/sla`
+
+`ADMIN` can access all administrative settings and update company settings. `MANAGER` can access and update store-scoped settings for its permitted store scope. `SELLER` cannot access the administrative settings center.
+
 ## Frontend
 
 The frontend is a Vite React application using TypeScript and Material UI.
@@ -178,7 +191,9 @@ The frontend stores the access token and refresh token in browser storage throug
 
 The authenticated layout uses a lateral menu with Dashboard, Leads, Pipeline, Agenda, Relatorios, Atrasados, Usuarios, Empresas, Lojas, Templates, E-mails, and Configuracoes. Empresas is visible only to `ADMIN`. Relatorios is visible to `ADMIN`, `MANAGER`, `SELLER`, and `AUDITOR`. Atrasados, Lojas, Usuarios, Templates, E-mails, and Configuracoes are visible to `ADMIN` and `MANAGER`; user creation and tenant linking are available only to `ADMIN`.
 
-The Leads screen is available at `/leads`. It provides CRM-style status and SLA cards, filters, a paginated table, lead creation, lead detail drawer, status chips, source chips, quick assignment, automatic assignment, pending distribution, follow-up creation/completion, notes, tags, and history timeline. The Kanban pipeline is available at `/pipeline`, the follow-up agenda at `/follow-ups`, the overdue queue at `/leads/overdue`, and distribution/SLA configuration at `/settings`.
+The Leads screen is available at `/leads`. It provides CRM-style status and SLA cards, filters, a paginated table, lead creation, lead detail drawer, status chips, source chips, quick assignment, automatic assignment, pending distribution, follow-up creation/completion, notes, tags, and history timeline. The Kanban pipeline is available at `/pipeline`, the follow-up agenda at `/follow-ups`, the overdue queue at `/leads/overdue`, and the administrative settings center at `/settings`.
+
+The settings screen has tabs for Empresa, Loja, Usuarios, Distribuicao, SLA, Templates, E-mail, and Sistema. Editable forms use client-side validation and call the aggregated settings endpoints for company, store, distribution, and SLA changes.
 
 ## Database
 

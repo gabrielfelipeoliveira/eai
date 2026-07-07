@@ -9,7 +9,7 @@ import { CompaniesPage } from '../pages/CompaniesPage';
 import { StoresPage } from '../pages/StoresPage';
 import { TemplatesPage } from '../pages/TemplatesPage';
 import { EmailAccountsPage } from '../pages/EmailAccountsPage';
-import { DistributionSettingsPage } from '../pages/DistributionSettingsPage';
+import { SettingsPage } from '../pages/SettingsPage';
 import { OverdueLeadsPage } from '../pages/OverdueLeadsPage';
 import { PipelinePage } from '../pages/PipelinePage';
 import { FollowUpsPage } from '../pages/FollowUpsPage';
@@ -119,7 +119,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <DistributionSettingsPage />,
+                element: <SettingsPage />,
               },
             ],
           },
