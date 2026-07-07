@@ -1,0 +1,81 @@
+package com.eai.infrastructure.persistence.user;
+
+import com.eai.application.user.UserRepository;
+import com.eai.domain.user.User;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@Component
+public class UserPersistenceAdapter implements UserRepository {
+
+    private final SpringDataUserRepository repository;
+
+    public UserPersistenceAdapter(SpringDataUserRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public List<User> findAll() {
+        return repository.findAll().stream()
+                .map(this::toDomain)
+                .toList();
+    }
+
+    @Override
+    public Optional<User> findById(UUID id) {
+        return repository.findById(id).map(this::toDomain);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return repository.findByEmail(email).map(this::toDomain);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return repository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByEmailAndIdNot(String email, UUID id) {
+        return repository.existsByEmailAndIdNot(email, id);
+    }
+
+    @Override
+    public User save(User user) {
+        return toDomain(repository.save(toEntity(user)));
+    }
+
+    private User toDomain(UserJpaEntity entity) {
+        return new User(
+                entity.getId(),
+                entity.getName(),
+                entity.getEmail(),
+                entity.getPasswordHash(),
+                entity.getPhone(),
+                entity.getJobTitle(),
+                entity.getStatus(),
+                entity.getRoles(),
+                entity.getCreatedAt(),
+                entity.getUpdatedAt()
+        );
+    }
+
+    private UserJpaEntity toEntity(User user) {
+        UserJpaEntity entity = new UserJpaEntity();
+        entity.setId(user.getId());
+        entity.setName(user.getName());
+        entity.setEmail(user.getEmail());
+        entity.setPasswordHash(user.getPasswordHash());
+        entity.setPhone(user.getPhone());
+        entity.setJobTitle(user.getJobTitle());
+        entity.setStatus(user.getStatus());
+        entity.setRoles(user.getRoles());
+        entity.setCreatedAt(user.getCreatedAt());
+        entity.setUpdatedAt(user.getUpdatedAt());
+        return entity;
+    }
+}

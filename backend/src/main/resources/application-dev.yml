@@ -10,3 +10,7 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
+
+eai:
+  security:
+    jwt-secret: ${JWT_SECRET:eai-local-development-secret-change-me}
