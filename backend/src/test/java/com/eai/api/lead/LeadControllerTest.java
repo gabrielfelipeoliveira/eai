@@ -135,10 +135,19 @@ class LeadControllerTest {
                 .andExpect(jsonPath("$[0].templateId").value(FIRST_CONTACT_TEMPLATE_ID.toString()))
                 .andExpect(jsonPath("$[0].message", containsString("Cliente Teste Lead")));
 
+        String availableLeadId = createManualLead(token, "Cliente Pipeline Novo", "11999990001");
+        String assignedLeadId = createManualLead(token, "Cliente Pipeline Atribuido", "11999990002");
+        mockMvc.perform(patch("/api/leads/{id}/assign-to-me", assignedLeadId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("ASSIGNED"));
+
         mockMvc.perform(get("/api/pipeline")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.FIRST_CONTACT[0].id", not(blankOrNullString())));
+                .andExpect(jsonPath("$.FIRST_CONTACT[0].id", not(blankOrNullString())))
+                .andExpect(jsonPath("$.AVAILABLE[0].id").value(availableLeadId))
+                .andExpect(jsonPath("$.ASSIGNED[0].id").value(assignedLeadId));
 
         String followUpId = createFollowUp(token, leadId);
 
@@ -182,6 +191,10 @@ class LeadControllerTest {
     }
 
     private String createManualLead(String token) throws Exception {
+        return createManualLead(token, "Cliente Teste Lead", "11999990000");
+    }
+
+    private String createManualLead(String token, String customerName, String customerPhone) throws Exception {
         String response = mockMvc.perform(post("/api/leads")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -189,15 +202,15 @@ class LeadControllerTest {
                                 {
                                   "companyId": "%s",
                                   "storeId": "%s",
-                                  "customerName": "Cliente Teste Lead",
-                                  "customerPhone": "11999990000",
+                                  "customerName": "%s",
+                                  "customerPhone": "%s",
                                   "customerEmail": "lead.teste@eai.com",
                                   "customerCity": "Sao Paulo",
                                   "vehicleInterest": "Honda Civic",
                                   "source": "MANUAL",
                                   "originalMessage": "Lead criado pelo teste"
                                 }
-                                """.formatted(DEFAULT_COMPANY_ID, DEFAULT_STORE_ID)))
+                                """.formatted(DEFAULT_COMPANY_ID, DEFAULT_STORE_ID, customerName, customerPhone)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("AVAILABLE"))
                 .andReturn()

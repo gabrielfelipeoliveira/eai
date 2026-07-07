@@ -1,16 +1,18 @@
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import {
+  Alert,
   Box,
   Chip,
+  LinearProgress,
   Paper,
   Stack,
   Typography,
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
-import { changeLeadStatus, getPipeline } from '../services/leadService';
-import type { Lead, LeadStatus } from '../types/lead';
+import { useMemo, useState } from 'react';
+import { changeLeadStatus, getPipeline, listLeads } from '../services/leadService';
+import type { Lead, LeadStatus, PipelineResponse } from '../types/lead';
 
 const statuses: LeadStatus[] = [
   'NEW',
@@ -48,6 +50,11 @@ export function PipelinePage() {
     queryFn: getPipeline,
   });
 
+  const fallbackLeadsQuery = useQuery({
+    queryKey: ['pipeline-leads-fallback'],
+    queryFn: () => listLeads({ page: 0, size: 100 }),
+  });
+
   const changeStatusMutation = useMutation({
     mutationFn: ({ leadId, status }: { leadId: string; status: LeadStatus }) => changeLeadStatus(leadId, status, 'Alteracao feita no Kanban'),
     onSuccess: async () => {
@@ -70,6 +77,14 @@ export function PipelinePage() {
     setDragOverStatus(null);
   }
 
+  const groupedLeads = useMemo(() => {
+    const grouped = emptyPipeline();
+    const pipelineLeads = statuses.flatMap((status) => pipelineQuery.data?.[status] ?? []);
+    const sourceLeads = pipelineLeads.length > 0 ? pipelineLeads : fallbackLeadsQuery.data?.content ?? [];
+    sourceLeads.forEach((lead) => grouped[lead.status].push(lead));
+    return grouped;
+  }, [fallbackLeadsQuery.data?.content, pipelineQuery.data]);
+
   return (
     <Box sx={{ display: 'grid', gap: 3 }}>
       <Box>
@@ -79,9 +94,16 @@ export function PipelinePage() {
         <Typography color="text.secondary">Kanban operacional por etapa do funil.</Typography>
       </Box>
 
+      {(pipelineQuery.isLoading || fallbackLeadsQuery.isLoading) && <LinearProgress />}
+      {pipelineQuery.isError && (
+        <Alert severity="warning">
+          Nao foi possivel carregar o endpoint de pipeline. Exibindo leads pela listagem operacional.
+        </Alert>
+      )}
+
       <Box sx={{ display: 'flex', gap: 2, overflowX: 'auto', pb: 1 }}>
         {statuses.map((status) => {
-          const leads = pipelineQuery.data?.[status] ?? [];
+          const leads = groupedLeads[status];
           const isOver = dragOverStatus === status;
           return (
             <Paper
@@ -140,7 +162,7 @@ export function PipelinePage() {
                     </Stack>
                   </Paper>
                 ))}
-                {!pipelineQuery.isLoading && leads.length === 0 && (
+                {!pipelineQuery.isLoading && !fallbackLeadsQuery.isLoading && leads.length === 0 && (
                   <Typography color="text.secondary" variant="body2">
                     Sem leads nesta etapa.
                   </Typography>
@@ -152,4 +174,11 @@ export function PipelinePage() {
       </Box>
     </Box>
   );
+}
+
+function emptyPipeline(): PipelineResponse {
+  return statuses.reduce((result, status) => {
+    result[status] = [];
+    return result;
+  }, {} as PipelineResponse);
 }
