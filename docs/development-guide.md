@@ -127,6 +127,33 @@ curl -X POST http://localhost:8080/api/leads/<lead-id>/whatsapp-link \
 curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/<lead-id>/communications
 ```
 
+## Email Importer Smoke Test
+
+The IMAP scheduler is disabled by default in development:
+
+```yaml
+eai.email.importer.enabled=false
+eai.email.importer.fixed-delay=60000
+```
+
+Create an e-mail account:
+
+```bash
+curl -X POST http://localhost:8080/api/email-accounts \
+  -H "Authorization: Bearer <access-token>" \
+  -H "Content-Type: application/json" \
+  -d "{\"companyId\":\"00000000-0000-0000-0000-000000000101\",\"storeId\":\"00000000-0000-0000-0000-000000000201\",\"name\":\"Leads IMAP\",\"host\":\"imap.example.com\",\"port\":993,\"username\":\"leads@example.com\",\"password\":\"secret\",\"protocol\":\"IMAP\",\"useSsl\":true,\"active\":true}"
+```
+
+Test and manually sync:
+
+```bash
+curl -X POST -H "Authorization: Bearer <access-token>" http://localhost:8080/api/email-accounts/<account-id>/test
+curl -X POST -H "Authorization: Bearer <access-token>" http://localhost:8080/api/email-accounts/<account-id>/sync
+```
+
+See [Email Lead Importer](email-importer.md) for IMAP setup, limitations, duplicate rules, and password security notes.
+
 ## Documentation
 
 Update `README.md` and `docs/` whenever setup, architecture, environment variables, or development workflows change.

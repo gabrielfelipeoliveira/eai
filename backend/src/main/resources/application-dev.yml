@@ -14,3 +14,7 @@ spring:
 eai:
   security:
     jwt-secret: ${JWT_SECRET:eai-local-development-secret-change-me}
+  email:
+    importer:
+      enabled: false
+      fixed-delay: 60000

@@ -8,6 +8,7 @@ import { UsersPage } from '../pages/UsersPage';
 import { CompaniesPage } from '../pages/CompaniesPage';
 import { StoresPage } from '../pages/StoresPage';
 import { TemplatesPage } from '../pages/TemplatesPage';
+import { EmailAccountsPage } from '../pages/EmailAccountsPage';
 
 export const router = createBrowserRouter([
   {
@@ -66,6 +67,16 @@ export const router = createBrowserRouter([
               {
                 index: true,
                 element: <TemplatesPage />,
+              },
+            ],
+          },
+          {
+            path: 'email-accounts',
+            element: <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']} />,
+            children: [
+              {
+                index: true,
+                element: <EmailAccountsPage />,
               },
             ],
           },

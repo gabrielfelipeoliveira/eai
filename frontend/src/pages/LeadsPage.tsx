@@ -803,7 +803,7 @@ export function LeadsPage() {
                         {history.description ?? 'Sem descricao'}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {userName(history.userId)} - {new Date(history.createdAt).toLocaleString('pt-BR')}
+                        {history.userId ? userName(history.userId) : 'Sistema'} - {new Date(history.createdAt).toLocaleString('pt-BR')}
                       </Typography>
                     </Paper>
                   ))}

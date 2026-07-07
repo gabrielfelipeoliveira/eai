@@ -108,6 +108,18 @@ Template endpoints:
 
 `GET /api/leads` is always paginated and supports filters for status, source, assigned seller, store, creation period, free text, vehicle, and phone.
 
+Email lead import is implemented in `com.eai.domain.email`, `com.eai.application.email`, `com.eai.infrastructure.persistence.email`, `com.eai.infrastructure.email`, and `com.eai.api.email`. E-mail accounts are store-scoped, use IMAP, and store encrypted passwords through the `EncryptionService` port. Import logic stays in application services: `EmailReader`, `EmailParser`, `LeadExtractor`, `DuplicateLeadChecker`, and `EmailLeadImporter`. Imported leads use source `EMAIL`; possible duplicates are marked with status `DUPLICATED`.
+
+Email account endpoints:
+
+- `GET /api/email-accounts`
+- `GET /api/email-accounts/{id}`
+- `POST /api/email-accounts`
+- `PUT /api/email-accounts/{id}`
+- `DELETE /api/email-accounts/{id}`
+- `POST /api/email-accounts/{id}/test`
+- `POST /api/email-accounts/{id}/sync`
+
 ## Frontend
 
 The frontend is a Vite React application using TypeScript and Material UI.
@@ -127,7 +139,7 @@ frontend/src
 
 The frontend stores the access token and refresh token in browser storage through `services/tokenStorage`. Axios is configured in `services/api` to attach bearer tokens and refresh expired access tokens. Route protection is centralized in `components/ProtectedRoute`, while authenticated user state is exposed through `hooks/useAuth`.
 
-The authenticated layout uses a lateral menu with Dashboard, Leads, Usuarios, Empresas, Lojas, and Configuracoes. Empresas is visible only to `ADMIN`. Lojas and Usuarios are visible to `ADMIN` and `MANAGER`; user creation and tenant linking are available only to `ADMIN`.
+The authenticated layout uses a lateral menu with Dashboard, Leads, Usuarios, Empresas, Lojas, Templates, E-mails, and Configuracoes. Empresas is visible only to `ADMIN`. Lojas, Usuarios, Templates, and E-mails are visible to `ADMIN` and `MANAGER`; user creation and tenant linking are available only to `ADMIN`.
 
 The Leads screen is available at `/leads`. It provides CRM-style status cards, filters, a paginated table, lead creation, lead detail drawer, status chips, source chips, quick assignment, notes, tags, and history timeline.
 

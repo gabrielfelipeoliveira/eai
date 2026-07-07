@@ -45,7 +45,7 @@ export interface Lead {
 export interface LeadHistory {
   id: string;
   leadId: string;
-  userId: string;
+  userId: string | null;
   previousStatus: LeadStatus | null;
   newStatus: LeadStatus;
   description: string | null;

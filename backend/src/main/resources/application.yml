@@ -25,3 +25,7 @@ eai:
   security:
     access-token-ttl-minutes: 15
     refresh-token-ttl-hours: 168
+  email:
+    importer:
+      enabled: false
+      fixed-delay: 60000

@@ -14,3 +14,7 @@ server:
 eai:
   security:
     jwt-secret: ${JWT_SECRET}
+  email:
+    importer:
+      enabled: ${EAI_EMAIL_IMPORTER_ENABLED:false}
+      fixed-delay: ${EAI_EMAIL_IMPORTER_FIXED_DELAY:60000}

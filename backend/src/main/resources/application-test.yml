@@ -13,3 +13,7 @@ spring:
 eai:
   security:
     jwt-secret: eai-test-secret-change-me
+  email:
+    importer:
+      enabled: false
+      fixed-delay: 60000

@@ -116,6 +116,18 @@ Lead management endpoints:
 
 Lead listing is paginated and supports status, source, seller, store, period, free text, vehicle, and phone filters.
 
+Email lead importer endpoints:
+
+- `GET /api/email-accounts`
+- `GET /api/email-accounts/{id}`
+- `POST /api/email-accounts`
+- `PUT /api/email-accounts/{id}`
+- `DELETE /api/email-accounts/{id}`
+- `POST /api/email-accounts/{id}/test`
+- `POST /api/email-accounts/{id}/sync`
+
+The IMAP importer job is disabled by default with `eai.email.importer.enabled=false` and uses `eai.email.importer.fixed-delay=60000`. In production, use `EAI_EMAIL_IMPORTER_ENABLED` and `EAI_EMAIL_IMPORTER_FIXED_DELAY`. See [Email Lead Importer](docs/email-importer.md) for IMAP setup, limitations, duplicate rules, and password security.
+
 Roles are `ADMIN`, `MANAGER`, `SELLER`, `RECEPTIONIST`, and `AUDITOR`.
 `ADMIN` can manage companies, stores, users, user tenant links, and all leads. `MANAGER` can view users and manage stores in its company scope, and lead access is limited to its own store. `SELLER` is scoped to its own store.
 
@@ -171,3 +183,4 @@ npm run build
 - [Architecture](docs/architecture.md)
 - [Roadmap](docs/roadmap.md)
 - [Development guide](docs/development-guide.md)
+- [Email lead importer](docs/email-importer.md)

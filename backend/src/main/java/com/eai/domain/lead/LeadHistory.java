@@ -17,7 +17,7 @@ public class LeadHistory {
     public LeadHistory(UUID id, UUID leadId, UUID userId, LeadStatus previousStatus, LeadStatus newStatus, String description, Instant createdAt) {
         this.id = Objects.requireNonNull(id);
         this.leadId = Objects.requireNonNull(leadId);
-        this.userId = Objects.requireNonNull(userId);
+        this.userId = userId;
         this.previousStatus = previousStatus;
         this.newStatus = Objects.requireNonNull(newStatus);
         this.description = description == null || description.isBlank() ? null : description.trim();

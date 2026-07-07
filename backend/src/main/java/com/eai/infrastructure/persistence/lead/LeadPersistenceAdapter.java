@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Optional;
@@ -45,6 +46,11 @@ public class LeadPersistenceAdapter implements LeadRepository {
     @Override
     public Lead save(Lead lead) {
         return toDomain(repository.save(toEntity(lead)));
+    }
+
+    @Override
+    public boolean existsByStoreIdAndPhoneAndVehicleSince(UUID storeId, String phone, String vehicleInterest, Instant since) {
+        return repository.existsDuplicate(storeId, phone, vehicleInterest.toLowerCase(Locale.ROOT), since);
     }
 
     private Specification<LeadJpaEntity> toSpecification(LeadSearchCriteria criteria) {
