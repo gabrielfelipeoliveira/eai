@@ -10,6 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { useMemo, useState } from 'react';
 import { changeLeadStatus, getPipeline, listLeads } from '../services/leadService';
 import type { Lead, LeadStatus, PipelineResponse } from '../types/lead';
@@ -97,7 +98,7 @@ export function PipelinePage() {
       {(pipelineQuery.isLoading || fallbackLeadsQuery.isLoading) && <LinearProgress />}
       {pipelineQuery.isError && (
         <Alert severity="warning">
-          Nao foi possivel carregar o endpoint de pipeline. Exibindo leads pela listagem operacional.
+          {pipelineErrorMessage(pipelineQuery.error)} Exibindo leads pela listagem operacional.
         </Alert>
       )}
 
@@ -181,4 +182,24 @@ function emptyPipeline(): PipelineResponse {
     result[status] = [];
     return result;
   }, {} as PipelineResponse);
+}
+
+function pipelineErrorMessage(error: unknown) {
+  if (isAxiosError(error)) {
+    const status = error.response?.status;
+    if (status === 404) {
+      return 'Endpoint /api/pipeline nao encontrado. Reinicie o backend com a versao atual.';
+    }
+    if (status === 401) {
+      return 'Endpoint /api/pipeline recusou o token de acesso.';
+    }
+    if (status === 403) {
+      return 'Usuario sem permissao para acessar /api/pipeline.';
+    }
+    if (status) {
+      return `Endpoint /api/pipeline retornou erro ${status}.`;
+    }
+    return 'Nao foi possivel conectar ao endpoint /api/pipeline.';
+  }
+  return 'Nao foi possivel carregar o endpoint /api/pipeline.';
 }
