@@ -14,6 +14,8 @@ public class User {
     private String passwordHash;
     private String phone;
     private String jobTitle;
+    private UUID companyId;
+    private UUID storeId;
     private UserStatus status;
     private final Set<UserRole> roles;
     private final Instant createdAt;
@@ -26,6 +28,8 @@ public class User {
             String passwordHash,
             String phone,
             String jobTitle,
+            UUID companyId,
+            UUID storeId,
             UserStatus status,
             Set<UserRole> roles,
             Instant createdAt,
@@ -37,6 +41,8 @@ public class User {
         this.passwordHash = requireText(passwordHash, "passwordHash");
         this.phone = phone;
         this.jobTitle = jobTitle;
+        this.companyId = companyId;
+        this.storeId = storeId;
         this.status = Objects.requireNonNull(status);
         this.roles = roles.isEmpty() ? EnumSet.noneOf(UserRole.class) : EnumSet.copyOf(roles);
         this.createdAt = Objects.requireNonNull(createdAt);
@@ -52,22 +58,32 @@ public class User {
             String passwordHash,
             String phone,
             String jobTitle,
+            UUID companyId,
+            UUID storeId,
             Set<UserRole> roles
     ) {
         Instant now = Instant.now();
-        return new User(UUID.randomUUID(), name, email, passwordHash, phone, jobTitle, UserStatus.ACTIVE, roles, now, now);
+        return new User(UUID.randomUUID(), name, email, passwordHash, phone, jobTitle, companyId, storeId, UserStatus.ACTIVE, roles, now, now);
     }
 
-    public void updateProfile(String name, String email, String phone, String jobTitle, Set<UserRole> roles) {
+    public void updateProfile(String name, String email, String phone, String jobTitle, UUID companyId, UUID storeId, Set<UserRole> roles) {
         this.name = requireText(name, "name");
         this.email = requireText(email, "email").toLowerCase();
         this.phone = phone;
         this.jobTitle = jobTitle;
+        this.companyId = companyId;
+        this.storeId = storeId;
         if (roles.isEmpty()) {
             throw new IllegalArgumentException("User must have at least one role");
         }
         this.roles.clear();
         this.roles.addAll(roles);
+        this.updatedAt = Instant.now();
+    }
+
+    public void updateTenant(UUID companyId, UUID storeId) {
+        this.companyId = companyId;
+        this.storeId = storeId;
         this.updatedAt = Instant.now();
     }
 
@@ -112,6 +128,14 @@ public class User {
 
     public String getJobTitle() {
         return jobTitle;
+    }
+
+    public UUID getCompanyId() {
+        return companyId;
+    }
+
+    public UUID getStoreId() {
+        return storeId;
     }
 
     public UserStatus getStatus() {

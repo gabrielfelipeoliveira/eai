@@ -60,7 +60,7 @@ Create new migrations with the naming pattern:
 V{number}__description.sql
 ```
 
-Do not edit migrations already applied outside local experimentation. Authentication uses `V2__create_users_and_refresh_tokens.sql` for users, user roles, refresh tokens, and the BCrypt-hashed admin seed.
+Do not edit migrations already applied outside local experimentation. Authentication uses `V2__create_users_and_refresh_tokens.sql` for users, user roles, refresh tokens, and the BCrypt-hashed admin seed. Tenant setup uses `V3__add_companies_stores_and_user_tenant_links.sql` for companies, stores, user tenant columns, the default company seed, the default store seed, and the admin tenant link.
 
 ## Authentication Smoke Test
 
@@ -77,6 +77,17 @@ curl -i http://localhost:8080/api/users
 ```
 
 Expected result is `401 Unauthorized`.
+
+## Tenant Smoke Test
+
+Use the seed admin login to obtain an access token, then call:
+
+```bash
+curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/companies
+curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/stores
+```
+
+The default company and default store should be returned.
 
 ## Documentation
 

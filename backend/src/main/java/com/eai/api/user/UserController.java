@@ -1,10 +1,13 @@
 package com.eai.api.user;
 
 import com.eai.application.user.CreateUserCommand;
+import com.eai.application.security.AuthenticatedUser;
+import com.eai.application.user.AssignUserTenantCommand;
 import com.eai.application.user.UpdateUserCommand;
 import com.eai.application.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,16 +32,16 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public List<UserResponse> listUsers() {
-        return userService.listUsers().stream()
+    public List<UserResponse> listUsers(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+        return userService.listUsers(authenticatedUser).stream()
                 .map(UserResponse::fromDomain)
                 .toList();
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public UserResponse getUser(@PathVariable UUID id) {
-        return UserResponse.fromDomain(userService.getUser(id));
+    public UserResponse getUser(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+        return UserResponse.fromDomain(userService.getUser(id, authenticatedUser));
     }
 
     @PostMapping
@@ -50,6 +53,8 @@ public class UserController {
                 request.password(),
                 request.phone(),
                 request.jobTitle(),
+                request.companyId(),
+                request.storeId(),
                 request.roles()
         )));
     }
@@ -63,7 +68,18 @@ public class UserController {
                 request.password(),
                 request.phone(),
                 request.jobTitle(),
+                request.companyId(),
+                request.storeId(),
                 request.roles()
+        )));
+    }
+
+    @PatchMapping("/{id}/tenant")
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserResponse assignTenant(@PathVariable UUID id, @Valid @RequestBody UserTenantRequest request) {
+        return UserResponse.fromDomain(userService.assignTenant(id, new AssignUserTenantCommand(
+                request.companyId(),
+                request.storeId()
         )));
     }
 

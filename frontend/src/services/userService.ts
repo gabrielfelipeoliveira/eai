@@ -7,7 +7,14 @@ export interface CreateUserPayload {
   password: string;
   phone?: string;
   jobTitle?: string;
+  companyId: string;
+  storeId: string;
   roles: UserRole[];
+}
+
+export interface AssignUserTenantPayload {
+  companyId: string;
+  storeId: string;
 }
 
 export async function listUsers() {
@@ -17,5 +24,10 @@ export async function listUsers() {
 
 export async function createUser(payload: CreateUserPayload) {
   const response = await api.post<AuthUser>('/users', payload);
+  return response.data;
+}
+
+export async function assignUserTenant(userId: string, payload: AssignUserTenantPayload) {
+  const response = await api.patch<AuthUser>(`/users/${userId}/tenant`, payload);
   return response.data;
 }

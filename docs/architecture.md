@@ -31,13 +31,15 @@ Authentication is implemented with Spring Security and stateless JWT access toke
 
 User domain rules live in `com.eai.domain.user`. Application use cases and ports live in `com.eai.application`. Persistence adapters, JWT signing, BCrypt hashing, and Spring Security configuration live in `com.eai.infrastructure`. HTTP DTOs and controllers live in `com.eai.api`.
 
+Tenant domain rules live in `com.eai.domain.tenant`. A `Company` represents a SaaS customer organization, and a `Store` belongs to one company. Users must be linked to a `companyId` and `storeId`; sellers are store-scoped.
+
 Mandatory roles are `ADMIN`, `MANAGER`, `SELLER`, `RECEPTIONIST`, and `AUDITOR`.
 
 Permission rules:
 
-- `ADMIN`: can view and manage users.
-- `MANAGER`: can view users.
-- `SELLER`: cannot access user management.
+- `ADMIN`: can view and manage companies, stores, users, and user tenant links.
+- `MANAGER`: can view users and manage stores in its company scope. If linked to a specific store, visibility is limited to that store.
+- `SELLER`: can only access store-scoped data for its own store.
 
 Authentication endpoints:
 
@@ -52,8 +54,24 @@ User endpoints:
 - `GET /api/users/{id}`
 - `POST /api/users`
 - `PUT /api/users/{id}`
+- `PATCH /api/users/{id}/tenant`
 - `PATCH /api/users/{id}/activate`
 - `PATCH /api/users/{id}/deactivate`
+
+Company endpoints:
+
+- `GET /api/companies`
+- `GET /api/companies/{id}`
+- `POST /api/companies`
+- `PUT /api/companies/{id}`
+
+Store endpoints:
+
+- `GET /api/stores`
+- `GET /api/stores?companyId={companyId}`
+- `GET /api/stores/{id}`
+- `POST /api/stores`
+- `PUT /api/stores/{id}`
 
 ## Frontend
 
@@ -74,7 +92,7 @@ frontend/src
 
 The frontend stores the access token and refresh token in browser storage through `services/tokenStorage`. Axios is configured in `services/api` to attach bearer tokens and refresh expired access tokens. Route protection is centralized in `components/ProtectedRoute`, while authenticated user state is exposed through `hooks/useAuth`.
 
-The authenticated layout uses a lateral menu with Dashboard, Leads, Usuarios, and Configuracoes. The users menu item is visible only to `ADMIN` and `MANAGER`; user creation is available only to `ADMIN`.
+The authenticated layout uses a lateral menu with Dashboard, Leads, Usuarios, Empresas, Lojas, and Configuracoes. Empresas is visible only to `ADMIN`. Lojas and Usuarios are visible to `ADMIN` and `MANAGER`; user creation and tenant linking are available only to `ADMIN`.
 
 ## Database
 

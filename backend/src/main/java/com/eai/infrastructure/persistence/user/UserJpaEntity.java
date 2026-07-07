@@ -39,6 +39,12 @@ public class UserJpaEntity {
     @Column(name = "job_title")
     private String jobTitle;
 
+    @Column(name = "company_id")
+    private UUID companyId;
+
+    @Column(name = "store_id")
+    private UUID storeId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status;
@@ -101,6 +107,22 @@ public class UserJpaEntity {
 
     public void setJobTitle(String jobTitle) {
         this.jobTitle = jobTitle;
+    }
+
+    public UUID getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(UUID companyId) {
+        this.companyId = companyId;
+    }
+
+    public UUID getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(UUID storeId) {
+        this.storeId = storeId;
     }
 
     public UserStatus getStatus() {

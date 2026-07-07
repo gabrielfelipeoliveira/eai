@@ -12,7 +12,7 @@
 ## Phase 2: Core CRM
 
 - Authentication and authorization
-- Tenant model
+- Tenant model for companies, stores, and user-store assignment
 - Lead registration
 - Seller management
 - Funnel stages

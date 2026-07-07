@@ -1,9 +1,15 @@
 package com.eai.application.user;
 
 import com.eai.application.common.ConflictException;
+import com.eai.application.common.ForbiddenException;
 import com.eai.application.common.NotFoundException;
+import com.eai.application.security.AuthenticatedUser;
+import com.eai.application.tenant.CompanyService;
+import com.eai.application.tenant.StoreService;
+import com.eai.domain.tenant.Store;
 import com.eai.application.security.PasswordHasher;
 import com.eai.domain.user.User;
+import com.eai.domain.user.UserRole;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,21 +21,45 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
+    private final CompanyService companyService;
+    private final StoreService storeService;
 
-    public UserService(UserRepository userRepository, PasswordHasher passwordHasher) {
+    public UserService(
+            UserRepository userRepository,
+            PasswordHasher passwordHasher,
+            CompanyService companyService,
+            StoreService storeService
+    ) {
         this.userRepository = userRepository;
         this.passwordHasher = passwordHasher;
+        this.companyService = companyService;
+        this.storeService = storeService;
     }
 
     @Transactional(readOnly = true)
-    public List<User> listUsers() {
-        return userRepository.findAll();
+    public List<User> listUsers(AuthenticatedUser authenticatedUser) {
+        if (hasRole(authenticatedUser, UserRole.ADMIN)) {
+            return userRepository.findAll();
+        }
+        if (hasRole(authenticatedUser, UserRole.MANAGER)) {
+            if (authenticatedUser.storeId() != null) {
+                return userRepository.findByStoreId(authenticatedUser.storeId());
+            }
+            return userRepository.findByCompanyId(requireCompany(authenticatedUser));
+        }
+        return userRepository.findByStoreId(requireStore(authenticatedUser));
     }
 
     @Transactional(readOnly = true)
     public User getUser(UUID id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+        return findRequired(id);
+    }
+
+    @Transactional(readOnly = true)
+    public User getUser(UUID id, AuthenticatedUser authenticatedUser) {
+        User user = findRequired(id);
+        assertCanAccessUser(user, authenticatedUser);
+        return user;
     }
 
     @Transactional(readOnly = true)
@@ -50,8 +80,11 @@ public class UserService {
                 passwordHasher.hash(command.password()),
                 command.phone(),
                 command.jobTitle(),
+                command.companyId(),
+                command.storeId(),
                 command.roles()
         );
+        validateTenant(user.getCompanyId(), user.getStoreId());
         return userRepository.save(user);
     }
 
@@ -62,10 +95,19 @@ public class UserService {
         if (userRepository.existsByEmailAndIdNot(email, id)) {
             throw new ConflictException("Email already registered");
         }
-        user.updateProfile(command.name(), email, command.phone(), command.jobTitle(), command.roles());
+        validateTenant(command.companyId(), command.storeId());
+        user.updateProfile(command.name(), email, command.phone(), command.jobTitle(), command.companyId(), command.storeId(), command.roles());
         if (command.password() != null && !command.password().isBlank()) {
             user.updatePasswordHash(passwordHasher.hash(command.password()));
         }
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public User assignTenant(UUID id, AssignUserTenantCommand command) {
+        User user = findRequired(id);
+        validateTenant(command.companyId(), command.storeId());
+        user.updateTenant(command.companyId(), command.storeId());
         return userRepository.save(user);
     }
 
@@ -88,5 +130,54 @@ public class UserService {
             throw new IllegalArgumentException("email is required");
         }
         return email.trim().toLowerCase();
+    }
+
+    private User findRequired(UUID id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+    }
+
+    private void validateTenant(UUID companyId, UUID storeId) {
+        if (companyId == null || storeId == null) {
+            throw new IllegalArgumentException("companyId and storeId are required");
+        }
+        companyService.findRequired(companyId);
+        Store store = storeService.findRequired(storeId);
+        if (!store.getCompanyId().equals(companyId)) {
+            throw new IllegalArgumentException("store does not belong to company");
+        }
+    }
+
+    private void assertCanAccessUser(User user, AuthenticatedUser authenticatedUser) {
+        if (hasRole(authenticatedUser, UserRole.ADMIN)) {
+            return;
+        }
+        if (hasRole(authenticatedUser, UserRole.MANAGER) && user.getCompanyId() != null && user.getCompanyId().equals(requireCompany(authenticatedUser))) {
+            if (authenticatedUser.storeId() == null || authenticatedUser.storeId().equals(user.getStoreId())) {
+                return;
+            }
+        }
+        if (user.getStoreId() != null && user.getStoreId().equals(requireStore(authenticatedUser))) {
+            return;
+        }
+        throw new ForbiddenException("Access denied for user");
+    }
+
+    private UUID requireCompany(AuthenticatedUser authenticatedUser) {
+        if (authenticatedUser.companyId() == null) {
+            throw new ForbiddenException("User is not linked to a company");
+        }
+        return authenticatedUser.companyId();
+    }
+
+    private UUID requireStore(AuthenticatedUser authenticatedUser) {
+        if (authenticatedUser.storeId() == null) {
+            throw new ForbiddenException("User is not linked to a store");
+        }
+        return authenticatedUser.storeId();
+    }
+
+    private boolean hasRole(AuthenticatedUser authenticatedUser, UserRole role) {
+        return authenticatedUser.roles().contains(role);
     }
 }

@@ -4,6 +4,8 @@ import { MainLayout } from '../layouts/MainLayout';
 import { LoginPage } from '../pages/LoginPage';
 import { HomePage } from '../pages/HomePage';
 import { UsersPage } from '../pages/UsersPage';
+import { CompaniesPage } from '../pages/CompaniesPage';
+import { StoresPage } from '../pages/StoresPage';
 
 export const router = createBrowserRouter([
   {
@@ -32,6 +34,26 @@ export const router = createBrowserRouter([
               {
                 index: true,
                 element: <UsersPage />,
+              },
+            ],
+          },
+          {
+            path: 'companies',
+            element: <ProtectedRoute allowedRoles={['ADMIN']} />,
+            children: [
+              {
+                index: true,
+                element: <CompaniesPage />,
+              },
+            ],
+          },
+          {
+            path: 'stores',
+            element: <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']} />,
+            children: [
+              {
+                index: true,
+                element: <StoresPage />,
               },
             ],
           },

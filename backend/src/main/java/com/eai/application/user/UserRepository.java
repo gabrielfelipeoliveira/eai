@@ -10,6 +10,10 @@ public interface UserRepository {
 
     List<User> findAll();
 
+    List<User> findByCompanyId(UUID companyId);
+
+    List<User> findByStoreId(UUID storeId);
+
     Optional<User> findById(UUID id);
 
     Optional<User> findByEmail(String email);

@@ -25,6 +25,20 @@ public class UserPersistenceAdapter implements UserRepository {
     }
 
     @Override
+    public List<User> findByCompanyId(UUID companyId) {
+        return repository.findByCompanyId(companyId).stream()
+                .map(this::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<User> findByStoreId(UUID storeId) {
+        return repository.findByStoreId(storeId).stream()
+                .map(this::toDomain)
+                .toList();
+    }
+
+    @Override
     public Optional<User> findById(UUID id) {
         return repository.findById(id).map(this::toDomain);
     }
@@ -57,6 +71,8 @@ public class UserPersistenceAdapter implements UserRepository {
                 entity.getPasswordHash(),
                 entity.getPhone(),
                 entity.getJobTitle(),
+                entity.getCompanyId(),
+                entity.getStoreId(),
                 entity.getStatus(),
                 entity.getRoles(),
                 entity.getCreatedAt(),
@@ -72,6 +88,8 @@ public class UserPersistenceAdapter implements UserRepository {
         entity.setPasswordHash(user.getPasswordHash());
         entity.setPhone(user.getPhone());
         entity.setJobTitle(user.getJobTitle());
+        entity.setCompanyId(user.getCompanyId());
+        entity.setStoreId(user.getStoreId());
         entity.setStatus(user.getStatus());
         entity.setRoles(user.getRoles());
         entity.setCreatedAt(user.getCreatedAt());

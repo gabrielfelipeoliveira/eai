@@ -82,11 +82,26 @@ User management endpoints:
 - `GET /api/users/{id}`
 - `POST /api/users`
 - `PUT /api/users/{id}`
+- `PATCH /api/users/{id}/tenant`
 - `PATCH /api/users/{id}/activate`
 - `PATCH /api/users/{id}/deactivate`
 
+Tenant management endpoints:
+
+- `GET /api/companies`
+- `GET /api/companies/{id}`
+- `POST /api/companies`
+- `PUT /api/companies/{id}`
+- `GET /api/stores`
+- `GET /api/stores?companyId={companyId}`
+- `GET /api/stores/{id}`
+- `POST /api/stores`
+- `PUT /api/stores/{id}`
+
 Roles are `ADMIN`, `MANAGER`, `SELLER`, `RECEPTIONIST`, and `AUDITOR`.
-`ADMIN` can manage users, `MANAGER` can view users, and `SELLER` cannot access user management.
+`ADMIN` can manage companies, stores, users, and user tenant links. `MANAGER` can view users and manage stores in its company scope. `SELLER` is scoped to its own store.
+
+The development seed creates a default company and store and links the seed admin user to both.
 
 ## Run Frontend
 

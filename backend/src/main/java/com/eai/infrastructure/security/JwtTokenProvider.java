@@ -47,6 +47,8 @@ public class JwtTokenProvider implements TokenProvider {
             String payload = encodeJson(Map.of(
                     "sub", user.getId().toString(),
                     "email", user.getEmail(),
+                    "companyId", user.getCompanyId().toString(),
+                    "storeId", user.getStoreId().toString(),
                     "roles", user.getRoles().stream().map(Enum::name).sorted().toList(),
                     "exp", Instant.now().plusSeconds(accessTokenTtlMinutes * 60).getEpochSecond()
             ));
@@ -81,6 +83,8 @@ public class JwtTokenProvider implements TokenProvider {
             return new AuthenticatedUser(
                     UUID.fromString((String) payload.get("sub")),
                     (String) payload.get("email"),
+                    parseOptionalUuid(payload.get("companyId")),
+                    parseOptionalUuid(payload.get("storeId")),
                     parsedRoles
             );
         } catch (UnauthorizedException exception) {
@@ -102,5 +106,9 @@ public class JwtTokenProvider implements TokenProvider {
         return Base64.getUrlEncoder()
                 .withoutPadding()
                 .encodeToString(mac.doFinal(value.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    private UUID parseOptionalUuid(Object value) {
+        return value == null ? null : UUID.fromString((String) value);
     }
 }

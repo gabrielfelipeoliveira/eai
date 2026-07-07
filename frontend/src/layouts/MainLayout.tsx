@@ -1,8 +1,10 @@
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import BusinessIcon from '@mui/icons-material/Business';
 import GroupsIcon from '@mui/icons-material/Groups';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import ViewKanbanIcon from '@mui/icons-material/ViewKanban';
 import {
   AppBar,
@@ -33,6 +35,8 @@ export function MainLayout() {
     ...(hasAnyRole(['ADMIN', 'MANAGER'])
       ? [{ label: 'Usuarios', path: '/users', icon: <GroupsIcon /> }]
       : []),
+    ...(hasAnyRole(['ADMIN']) ? [{ label: 'Empresas', path: '/companies', icon: <BusinessIcon /> }] : []),
+    ...(hasAnyRole(['ADMIN', 'MANAGER']) ? [{ label: 'Lojas', path: '/stores', icon: <StorefrontIcon /> }] : []),
     { label: 'Configuracoes', path: '/settings', icon: <SettingsIcon /> },
   ];
 
