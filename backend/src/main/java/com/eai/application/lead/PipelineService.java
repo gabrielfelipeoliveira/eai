@@ -24,7 +24,7 @@ public class PipelineService {
     @Transactional(readOnly = true)
     public Map<LeadStatus, List<Lead>> getPipeline(AuthenticatedUser authenticatedUser) {
         LeadSearchCriteria criteria = pipelineScope(authenticatedUser);
-        List<Lead> leads = leadRepository.findAll(criteria);
+        List<Lead> leads = applySellerOwnership(leadRepository.findAll(criteria), authenticatedUser);
         Map<LeadStatus, List<Lead>> grouped = new EnumMap<>(LeadStatus.class);
         for (LeadStatus status : LeadStatus.values()) {
             grouped.put(status, leads.stream()
@@ -34,18 +34,23 @@ public class PipelineService {
         return grouped;
     }
 
+    private List<Lead> applySellerOwnership(List<Lead> leads, AuthenticatedUser authenticatedUser) {
+        if (!hasRole(authenticatedUser, UserRole.SELLER) || hasRole(authenticatedUser, UserRole.MANAGER) || hasRole(authenticatedUser, UserRole.ADMIN)) {
+            return leads;
+        }
+        return leads.stream()
+                .filter(lead -> lead.getAssignedToUserId() == null || lead.getAssignedToUserId().equals(authenticatedUser.id()))
+                .toList();
+    }
+
     private LeadSearchCriteria pipelineScope(AuthenticatedUser authenticatedUser) {
         UUID scopeCompanyId = null;
         UUID scopeStoreId = null;
-        UUID assignedToUserId = null;
         if (!hasRole(authenticatedUser, UserRole.ADMIN)) {
             scopeCompanyId = authenticatedUser.companyId();
             scopeStoreId = authenticatedUser.storeId();
         }
-        if (hasRole(authenticatedUser, UserRole.SELLER) && !hasRole(authenticatedUser, UserRole.MANAGER) && !hasRole(authenticatedUser, UserRole.ADMIN)) {
-            assignedToUserId = authenticatedUser.id();
-        }
-        return new LeadSearchCriteria(null, null, assignedToUserId, null, null, null, null, null, null, scopeCompanyId, scopeStoreId);
+        return new LeadSearchCriteria(null, null, null, null, null, null, null, null, null, scopeCompanyId, scopeStoreId);
     }
 
     private boolean hasRole(AuthenticatedUser authenticatedUser, UserRole role) {
