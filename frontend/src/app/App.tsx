@@ -3,6 +3,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router-dom';
 import { queryClient } from './queryClient';
 import { router } from './router';
+import { AuthProvider } from '../hooks/useAuth';
 import { theme } from '../theme/theme';
 
 export function App() {
@@ -10,7 +11,9 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <RouterProvider router={router} />
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
