@@ -13,6 +13,7 @@ import { DistributionSettingsPage } from '../pages/DistributionSettingsPage';
 import { OverdueLeadsPage } from '../pages/OverdueLeadsPage';
 import { PipelinePage } from '../pages/PipelinePage';
 import { FollowUpsPage } from '../pages/FollowUpsPage';
+import { ReportsPage } from '../pages/ReportsPage';
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +42,16 @@ export const router = createBrowserRouter([
           {
             path: 'follow-ups',
             element: <FollowUpsPage />,
+          },
+          {
+            path: 'reports',
+            element: <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SELLER', 'AUDITOR']} />,
+            children: [
+              {
+                index: true,
+                element: <ReportsPage />,
+              },
+            ],
           },
           {
             path: 'leads/overdue',

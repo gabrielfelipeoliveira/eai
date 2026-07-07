@@ -9,6 +9,7 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import ViewKanbanIcon from '@mui/icons-material/ViewKanban';
 import EmailIcon from '@mui/icons-material/Email';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import {
   AppBar,
@@ -38,6 +39,7 @@ export function MainLayout() {
     { label: 'Leads', path: '/leads', icon: <ViewKanbanIcon /> },
     { label: 'Pipeline', path: '/pipeline', icon: <ViewKanbanIcon /> },
     { label: 'Agenda', path: '/follow-ups', icon: <EventIcon /> },
+    ...(hasAnyRole(['ADMIN', 'MANAGER', 'SELLER', 'AUDITOR']) ? [{ label: 'Relatorios', path: '/reports', icon: <AssessmentIcon /> }] : []),
     ...(hasAnyRole(['ADMIN', 'MANAGER']) ? [{ label: 'Atrasados', path: '/leads/overdue', icon: <WarningAmberIcon /> }] : []),
     ...(hasAnyRole(['ADMIN', 'MANAGER'])
       ? [{ label: 'Usuarios', path: '/users', icon: <GroupsIcon /> }]

@@ -41,7 +41,7 @@ public class UserService {
         if (hasRole(authenticatedUser, UserRole.ADMIN)) {
             return userRepository.findAll();
         }
-        if (hasRole(authenticatedUser, UserRole.MANAGER)) {
+        if (hasRole(authenticatedUser, UserRole.MANAGER) || hasRole(authenticatedUser, UserRole.AUDITOR)) {
             if (authenticatedUser.storeId() != null) {
                 return userRepository.findByStoreId(authenticatedUser.storeId());
             }
@@ -152,7 +152,9 @@ public class UserService {
         if (hasRole(authenticatedUser, UserRole.ADMIN)) {
             return;
         }
-        if (hasRole(authenticatedUser, UserRole.MANAGER) && user.getCompanyId() != null && user.getCompanyId().equals(requireCompany(authenticatedUser))) {
+        if ((hasRole(authenticatedUser, UserRole.MANAGER) || hasRole(authenticatedUser, UserRole.AUDITOR))
+                && user.getCompanyId() != null
+                && user.getCompanyId().equals(requireCompany(authenticatedUser))) {
             if (authenticatedUser.storeId() == null || authenticatedUser.storeId().equals(user.getStoreId())) {
                 return;
             }

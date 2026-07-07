@@ -130,6 +130,21 @@ Template endpoints:
 
 `GET /api/leads` is always paginated and supports filters for status, source, assigned seller, store, creation period, free text, vehicle, and phone.
 
+Management reports are implemented in `com.eai.application.report`, with HTTP DTOs and controllers in `com.eai.api.report` and export adapters in infrastructure. Reports reuse the lead repository filtering port instead of introducing separate lead queries for each view. CSV is the initial export format through a `ReportExporter` port, so XLSX and PDF exporters can be added later without changing report use cases.
+
+Report endpoints:
+
+- `GET /api/reports/leads`
+- `GET /api/reports/sellers`
+- `GET /api/reports/sources`
+- `GET /api/reports/lost`
+- `GET /api/reports/sales`
+- `GET /api/reports/sla`
+- `GET /api/reports/leads/export.csv`
+- `GET /api/reports/sellers/export.csv`
+
+Report filters support creation period, store, seller, source, and company for admins. `ADMIN`, `MANAGER`, `SELLER`, and `AUDITOR` can view reports; sellers are scoped to their own leads, while managers and auditors follow company/store visibility.
+
 Email lead import is implemented in `com.eai.domain.email`, `com.eai.application.email`, `com.eai.infrastructure.persistence.email`, `com.eai.infrastructure.email`, and `com.eai.api.email`. E-mail accounts are store-scoped, use IMAP, and store encrypted passwords through the `EncryptionService` port. Import logic stays in application services: `EmailReader`, `EmailParser`, `LeadExtractor`, `DuplicateLeadChecker`, and `EmailLeadImporter`. Imported leads use source `EMAIL`; possible duplicates are marked with status `DUPLICATED`.
 
 Email account endpoints:
@@ -161,7 +176,7 @@ frontend/src
 
 The frontend stores the access token and refresh token in browser storage through `services/tokenStorage`. Axios is configured in `services/api` to attach bearer tokens and refresh expired access tokens. Route protection is centralized in `components/ProtectedRoute`, while authenticated user state is exposed through `hooks/useAuth`.
 
-The authenticated layout uses a lateral menu with Dashboard, Leads, Atrasados, Usuarios, Empresas, Lojas, Templates, E-mails, and Configuracoes. Empresas is visible only to `ADMIN`. Atrasados, Lojas, Usuarios, Templates, E-mails, and Configuracoes are visible to `ADMIN` and `MANAGER`; user creation and tenant linking are available only to `ADMIN`.
+The authenticated layout uses a lateral menu with Dashboard, Leads, Pipeline, Agenda, Relatorios, Atrasados, Usuarios, Empresas, Lojas, Templates, E-mails, and Configuracoes. Empresas is visible only to `ADMIN`. Relatorios is visible to `ADMIN`, `MANAGER`, `SELLER`, and `AUDITOR`. Atrasados, Lojas, Usuarios, Templates, E-mails, and Configuracoes are visible to `ADMIN` and `MANAGER`; user creation and tenant linking are available only to `ADMIN`.
 
 The Leads screen is available at `/leads`. It provides CRM-style status and SLA cards, filters, a paginated table, lead creation, lead detail drawer, status chips, source chips, quick assignment, automatic assignment, pending distribution, follow-up creation/completion, notes, tags, and history timeline. The Kanban pipeline is available at `/pipeline`, the follow-up agenda at `/follow-ups`, the overdue queue at `/leads/overdue`, and distribution/SLA configuration at `/settings`.
 

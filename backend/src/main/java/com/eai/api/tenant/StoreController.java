@@ -21,7 +21,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/stores")
-@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SELLER')")
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SELLER', 'AUDITOR')")
 public class StoreController {
 
     private final StoreService storeService;
