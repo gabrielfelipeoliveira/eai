@@ -51,6 +51,43 @@ Health endpoint:
 http://localhost:8080/actuator/health
 ```
 
+### Backend Security
+
+Development authentication uses JWT access tokens and persisted refresh tokens.
+
+Required production environment variable:
+
+- `JWT_SECRET`: HMAC secret used to sign access tokens.
+
+Optional token TTL settings:
+
+- `eai.security.access-token-ttl-minutes`: default `15`
+- `eai.security.refresh-token-ttl-hours`: default `168`
+
+Seed admin user:
+
+- Email: `admin@eai.com`
+- Password: `admin123`
+
+Authentication endpoints:
+
+- `POST /api/auth/login`
+- `POST /api/auth/refresh`
+- `GET /api/auth/me`
+- `POST /api/auth/logout`
+
+User management endpoints:
+
+- `GET /api/users`
+- `GET /api/users/{id}`
+- `POST /api/users`
+- `PUT /api/users/{id}`
+- `PATCH /api/users/{id}/activate`
+- `PATCH /api/users/{id}/deactivate`
+
+Roles are `ADMIN`, `MANAGER`, `SELLER`, `RECEPTIONIST`, and `AUDITOR`.
+`ADMIN` can manage users, `MANAGER` can view users, and `SELLER` cannot access user management.
+
 ## Run Frontend
 
 ```bash
@@ -60,6 +97,8 @@ npm run dev
 ```
 
 Frontend runs on `http://localhost:5173`.
+
+The frontend calls `http://localhost:8080/api` by default. Override it with `VITE_API_BASE_URL`.
 
 ## Build
 
