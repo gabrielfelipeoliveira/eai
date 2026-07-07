@@ -89,6 +89,34 @@ curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/stores
 
 The default company and default store should be returned.
 
+## Lead Smoke Test
+
+Use the seed admin login to obtain an access token. The default tenant ids are:
+
+- Company: `00000000-0000-0000-0000-000000000101`
+- Store: `00000000-0000-0000-0000-000000000201`
+
+Create a manual lead:
+
+```bash
+curl -X POST http://localhost:8080/api/leads \
+  -H "Authorization: Bearer <access-token>" \
+  -H "Content-Type: application/json" \
+  -d "{\"companyId\":\"00000000-0000-0000-0000-000000000101\",\"storeId\":\"00000000-0000-0000-0000-000000000201\",\"customerName\":\"Cliente Teste\",\"customerPhone\":\"11999990000\",\"vehicleInterest\":\"Honda Civic\",\"source\":\"MANUAL\"}"
+```
+
+Expected status is `AVAILABLE`.
+
+List, assign, change status, add a note, and inspect history:
+
+```bash
+curl -H "Authorization: Bearer <access-token>" "http://localhost:8080/api/leads?page=0&size=20"
+curl -X PATCH -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/<lead-id>/assign-to-me
+curl -X PATCH http://localhost:8080/api/leads/<lead-id>/status -H "Authorization: Bearer <access-token>" -H "Content-Type: application/json" -d "{\"status\":\"FIRST_CONTACT\",\"description\":\"Primeiro contato realizado\"}"
+curl -X POST http://localhost:8080/api/leads/<lead-id>/notes -H "Authorization: Bearer <access-token>" -H "Content-Type: application/json" -d "{\"note\":\"Cliente pediu proposta por WhatsApp\"}"
+curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/<lead-id>/history
+```
+
 ## Documentation
 
 Update `README.md` and `docs/` whenever setup, architecture, environment variables, or development workflows change.

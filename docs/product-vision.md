@@ -24,3 +24,9 @@ The platform is multi-company from the foundation: each customer company can ope
 - Conversation-centered customer history
 - Reliable reporting for managers
 - Practical workflows over complex configuration
+
+## Core Lead Workflow
+
+The primary CRM workflow starts with lead intake by manual entry or automatic source. Leads move through availability, assignment, first contact, negotiation, visit scheduling, proposal, sale, loss, or duplication. Sellers work from their own store scope, managers monitor their store, and admins can inspect all companies and stores.
+
+Each lead keeps customer contact data, vehicle interest, origin, seller assignment, notes, tags, and status history so managers can audit response and follow-up activity.

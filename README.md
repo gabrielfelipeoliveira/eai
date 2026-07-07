@@ -98,8 +98,26 @@ Tenant management endpoints:
 - `POST /api/stores`
 - `PUT /api/stores/{id}`
 
+Lead management endpoints:
+
+- `POST /api/leads`
+- `GET /api/leads`
+- `GET /api/leads/{id}`
+- `PUT /api/leads/{id}`
+- `PATCH /api/leads/{id}/status`
+- `PATCH /api/leads/{id}/assign-to-me`
+- `PATCH /api/leads/{id}/assign/{userId}`
+- `POST /api/leads/{id}/notes`
+- `GET /api/leads/{id}/history`
+- `GET /api/leads/{id}/notes`
+- `POST /api/leads/{id}/tags`
+- `GET /api/leads/{id}/tags`
+- `DELETE /api/leads/{id}/tags/{tagId}`
+
+Lead listing is paginated and supports status, source, seller, store, period, free text, vehicle, and phone filters.
+
 Roles are `ADMIN`, `MANAGER`, `SELLER`, `RECEPTIONIST`, and `AUDITOR`.
-`ADMIN` can manage companies, stores, users, and user tenant links. `MANAGER` can view users and manage stores in its company scope. `SELLER` is scoped to its own store.
+`ADMIN` can manage companies, stores, users, user tenant links, and all leads. `MANAGER` can view users and manage stores in its company scope, and lead access is limited to its own store. `SELLER` is scoped to its own store.
 
 The development seed creates a default company and store and links the seed admin user to both.
 

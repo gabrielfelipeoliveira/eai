@@ -73,6 +73,28 @@ Store endpoints:
 - `POST /api/stores`
 - `PUT /api/stores/{id}`
 
+Lead management is implemented as the first Core CRM module. Lead domain objects live in `com.eai.domain.lead`; use cases and repository ports live in `com.eai.application.lead`; JPA entities, Spring Data repositories, and persistence adapters live in `com.eai.infrastructure.persistence.lead`; HTTP DTOs and controllers live in `com.eai.api.lead`.
+
+Lead visibility is store-scoped for `SELLER` and `MANAGER`. `ADMIN` can access all leads. Manual leads start as `AVAILABLE`; automatic sources start as `NEW`. Status changes and assignments create lead history records.
+
+Lead endpoints:
+
+- `POST /api/leads`
+- `GET /api/leads`
+- `GET /api/leads/{id}`
+- `PUT /api/leads/{id}`
+- `PATCH /api/leads/{id}/status`
+- `PATCH /api/leads/{id}/assign-to-me`
+- `PATCH /api/leads/{id}/assign/{userId}`
+- `POST /api/leads/{id}/notes`
+- `GET /api/leads/{id}/history`
+- `GET /api/leads/{id}/notes`
+- `POST /api/leads/{id}/tags`
+- `GET /api/leads/{id}/tags`
+- `DELETE /api/leads/{id}/tags/{tagId}`
+
+`GET /api/leads` is always paginated and supports filters for status, source, assigned seller, store, creation period, free text, vehicle, and phone.
+
 ## Frontend
 
 The frontend is a Vite React application using TypeScript and Material UI.
@@ -93,6 +115,8 @@ frontend/src
 The frontend stores the access token and refresh token in browser storage through `services/tokenStorage`. Axios is configured in `services/api` to attach bearer tokens and refresh expired access tokens. Route protection is centralized in `components/ProtectedRoute`, while authenticated user state is exposed through `hooks/useAuth`.
 
 The authenticated layout uses a lateral menu with Dashboard, Leads, Usuarios, Empresas, Lojas, and Configuracoes. Empresas is visible only to `ADMIN`. Lojas and Usuarios are visible to `ADMIN` and `MANAGER`; user creation and tenant linking are available only to `ADMIN`.
+
+The Leads screen is available at `/leads`. It provides CRM-style status cards, filters, a paginated table, lead creation, lead detail drawer, status chips, source chips, quick assignment, notes, tags, and history timeline.
 
 ## Database
 

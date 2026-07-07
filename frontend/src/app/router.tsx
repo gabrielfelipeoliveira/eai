@@ -3,6 +3,7 @@ import { ProtectedRoute } from '../components/ProtectedRoute';
 import { MainLayout } from '../layouts/MainLayout';
 import { LoginPage } from '../pages/LoginPage';
 import { HomePage } from '../pages/HomePage';
+import { LeadsPage } from '../pages/LeadsPage';
 import { UsersPage } from '../pages/UsersPage';
 import { CompaniesPage } from '../pages/CompaniesPage';
 import { StoresPage } from '../pages/StoresPage';
@@ -25,7 +26,7 @@ export const router = createBrowserRouter([
           },
           {
             path: 'leads',
-            element: <HomePage title="Leads" />,
+            element: <LeadsPage />,
           },
           {
             path: 'users',

@@ -17,6 +17,7 @@
 - Seller management
 - Funnel stages
 - Lead assignment
+- Lead notes, tags, and status history
 
 ## Phase 3: Communication
 
