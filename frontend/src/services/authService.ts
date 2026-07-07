@@ -1,9 +1,10 @@
-import { api } from './api';
+import { api, publicApi } from './api';
 import { clearTokens, saveTokens } from './tokenStorage';
 import type { AuthTokens, AuthUser } from '../types/auth';
 
 export async function login(email: string, password: string) {
-  const response = await api.post<AuthTokens>('/auth/login', { email, password });
+  clearTokens();
+  const response = await publicApi.post<AuthTokens>('/auth/login', { email, password });
   saveTokens(response.data);
   return response.data;
 }
