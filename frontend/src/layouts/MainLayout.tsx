@@ -1,5 +1,6 @@
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import BusinessIcon from '@mui/icons-material/Business';
+import EventIcon from '@mui/icons-material/Event';
 import GroupsIcon from '@mui/icons-material/Groups';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
@@ -35,6 +36,8 @@ export function MainLayout() {
   const menuItems = [
     { label: 'Dashboard', path: '/', icon: <DashboardIcon /> },
     { label: 'Leads', path: '/leads', icon: <ViewKanbanIcon /> },
+    { label: 'Pipeline', path: '/pipeline', icon: <ViewKanbanIcon /> },
+    { label: 'Agenda', path: '/follow-ups', icon: <EventIcon /> },
     ...(hasAnyRole(['ADMIN', 'MANAGER']) ? [{ label: 'Atrasados', path: '/leads/overdue', icon: <WarningAmberIcon /> }] : []),
     ...(hasAnyRole(['ADMIN', 'MANAGER'])
       ? [{ label: 'Usuarios', path: '/users', icon: <GroupsIcon /> }]

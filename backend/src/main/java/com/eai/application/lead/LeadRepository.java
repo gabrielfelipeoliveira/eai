@@ -11,6 +11,8 @@ public interface LeadRepository {
 
     PageResult<Lead> search(LeadSearchCriteria criteria, int page, int size);
 
+    List<Lead> findAll(LeadSearchCriteria criteria);
+
     Optional<Lead> findById(UUID id);
 
     Lead save(Lead lead);

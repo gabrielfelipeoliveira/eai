@@ -4,6 +4,16 @@
 
 The backend requires Java 21 JDK. Do not build or run it with Java 17 or any other Java version. Confirm `java -version`, `mvn -version`, and `JAVA_HOME` point to Java 21 before starting.
 
+On Windows development machines, set the user defaults to Java 21:
+
+```powershell
+$jdk21 = 'C:\Program Files\Microsoft\jdk-21.0.11.10-hotspot'
+[Environment]::SetEnvironmentVariable('JAVA_HOME', $jdk21, 'User')
+[Environment]::SetEnvironmentVariable('Path', "$jdk21\bin;" + [Environment]::GetEnvironmentVariable('Path', 'User'), 'User')
+```
+
+Open a new terminal after changing user environment variables.
+
 Start PostgreSQL:
 
 ```bash
@@ -117,6 +127,23 @@ curl -X PATCH -H "Authorization: Bearer <access-token>" http://localhost:8080/ap
 curl -X PATCH http://localhost:8080/api/leads/<lead-id>/status -H "Authorization: Bearer <access-token>" -H "Content-Type: application/json" -d "{\"status\":\"FIRST_CONTACT\",\"description\":\"Primeiro contato realizado\"}"
 curl -X POST http://localhost:8080/api/leads/<lead-id>/notes -H "Authorization: Bearer <access-token>" -H "Content-Type: application/json" -d "{\"note\":\"Cliente pediu proposta por WhatsApp\"}"
 curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/<lead-id>/history
+```
+
+Inspect the pipeline grouped by status:
+
+```bash
+curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/pipeline
+```
+
+Create and complete a follow-up:
+
+```bash
+curl -X POST http://localhost:8080/api/leads/<lead-id>/follow-ups \
+  -H "Authorization: Bearer <access-token>" \
+  -H "Content-Type: application/json" \
+  -d "{\"title\":\"Retornar proposta\",\"description\":\"Enviar simulacao atualizada\",\"dueAt\":\"2026-07-08T13:00:00Z\"}"
+curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/follow-ups/my
+curl -X PATCH -H "Authorization: Bearer <access-token>" http://localhost:8080/api/follow-ups/<follow-up-id>/complete
 ```
 
 Configure distribution and SLA for the default store:

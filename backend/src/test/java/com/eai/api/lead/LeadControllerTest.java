@@ -11,6 +11,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -132,6 +134,35 @@ class LeadControllerTest {
                 .andExpect(jsonPath("$[0].channel").value("WHATSAPP_LINK"))
                 .andExpect(jsonPath("$[0].templateId").value(FIRST_CONTACT_TEMPLATE_ID.toString()))
                 .andExpect(jsonPath("$[0].message", containsString("Cliente Teste Lead")));
+
+        mockMvc.perform(get("/api/pipeline")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.FIRST_CONTACT[0].id", not(blankOrNullString())));
+
+        String followUpId = createFollowUp(token, leadId);
+
+        mockMvc.perform(get("/api/leads/{id}/follow-ups", leadId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("Retornar proposta"))
+                .andExpect(jsonPath("$[0].status").value("PENDING"));
+
+        mockMvc.perform(get("/api/follow-ups/my")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", not(blankOrNullString())));
+
+        mockMvc.perform(patch("/api/follow-ups/{id}/complete", followUpId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("DONE"))
+                .andExpect(jsonPath("$.completedAt", not(blankOrNullString())));
+
+        mockMvc.perform(get("/api/leads/{id}/history", leadId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].description").value("Follow-up completed: Retornar proposta"));
     }
 
     private String login() throws Exception {
@@ -174,5 +205,26 @@ class LeadControllerTest {
                 .getContentAsString();
         JsonNode node = objectMapper.readTree(response);
         return node.get("id").asText();
+    }
+
+    private String createFollowUp(String token, String leadId) throws Exception {
+        String dueAt = Instant.now().plus(1, ChronoUnit.DAYS).toString();
+        String response = mockMvc.perform(post("/api/leads/{id}/follow-ups", leadId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "title": "Retornar proposta",
+                                  "description": "Enviar simulacao atualizada",
+                                  "dueAt": "%s"
+                                }
+                                """.formatted(dueAt)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Retornar proposta"))
+                .andExpect(jsonPath("$.status").value("PENDING"))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        return objectMapper.readTree(response).get("id").asText();
     }
 }

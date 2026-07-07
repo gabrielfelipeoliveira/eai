@@ -82,10 +82,17 @@ Lead endpoints:
 - `POST /api/leads`
 - `GET /api/leads`
 - `GET /api/leads/{id}`
+- `GET /api/pipeline`
 - `PUT /api/leads/{id}`
 - `PATCH /api/leads/{id}/status`
 - `PATCH /api/leads/{id}/assign-to-me`
 - `PATCH /api/leads/{id}/assign/{userId}`
+- `POST /api/leads/{id}/follow-ups`
+- `GET /api/leads/{id}/follow-ups`
+- `GET /api/follow-ups`
+- `GET /api/follow-ups/my`
+- `PATCH /api/follow-ups/{id}/complete`
+- `PATCH /api/follow-ups/{id}/cancel`
 - `POST /api/leads/{id}/assign-automatically`
 - `POST /api/leads/distribute-pending`
 - `GET /api/leads/sla/overdue`
@@ -99,6 +106,8 @@ Lead endpoints:
 - `GET /api/leads/{id}/communications`
 
 Lead distribution is implemented in `com.eai.domain.distribution`, `com.eai.application.distribution`, `com.eai.infrastructure.persistence.distribution`, and `com.eai.api.distribution`. Stores can run in `MANUAL`, `ROUND_ROBIN`, or `LEAST_BUSY` mode. Manual assignment remains available through seller self-assignment and manager assignment. Automatic assignment uses `LeadAssignmentStrategy` implementations and only considers active users with the `SELLER` role in the lead store.
+
+Pipeline and follow-up agenda extend the CRM workflow. `GET /api/pipeline` returns leads grouped by existing `LeadStatus` values. Sellers see their own assigned pipeline, managers see their store scope, and admins see all leads. Follow-up tasks are stored in `follow_up_tasks`, are linked to a lead and responsible user, and expose effective `OVERDUE` status when a pending task is past `dueAt`. Creating, completing, and canceling follow-ups records lead history.
 
 Distribution and SLA endpoints:
 
@@ -154,7 +163,7 @@ The frontend stores the access token and refresh token in browser storage throug
 
 The authenticated layout uses a lateral menu with Dashboard, Leads, Atrasados, Usuarios, Empresas, Lojas, Templates, E-mails, and Configuracoes. Empresas is visible only to `ADMIN`. Atrasados, Lojas, Usuarios, Templates, E-mails, and Configuracoes are visible to `ADMIN` and `MANAGER`; user creation and tenant linking are available only to `ADMIN`.
 
-The Leads screen is available at `/leads`. It provides CRM-style status and SLA cards, filters, a paginated table, lead creation, lead detail drawer, status chips, source chips, quick assignment, automatic assignment, pending distribution, notes, tags, and history timeline. The overdue queue is available at `/leads/overdue`, and distribution/SLA configuration is available at `/settings`.
+The Leads screen is available at `/leads`. It provides CRM-style status and SLA cards, filters, a paginated table, lead creation, lead detail drawer, status chips, source chips, quick assignment, automatic assignment, pending distribution, follow-up creation/completion, notes, tags, and history timeline. The Kanban pipeline is available at `/pipeline`, the follow-up agenda at `/follow-ups`, the overdue queue at `/leads/overdue`, and distribution/SLA configuration at `/settings`.
 
 ## Database
 

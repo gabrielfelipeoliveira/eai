@@ -59,6 +59,13 @@ public class LeadPersistenceAdapter implements LeadRepository {
     }
 
     @Override
+    public List<Lead> findAll(LeadSearchCriteria criteria) {
+        return repository.findAll(toSpecification(criteria), Sort.by(Sort.Direction.ASC, "updatedAt")).stream()
+                .map(this::toDomain)
+                .toList();
+    }
+
+    @Override
     public Optional<Lead> findById(UUID id) {
         return repository.findById(id).map(this::toDomain);
     }

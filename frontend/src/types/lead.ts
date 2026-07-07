@@ -21,6 +21,8 @@ export type LeadSource =
   | 'OLX'
   | 'API';
 
+export type FollowUpTaskStatus = 'PENDING' | 'DONE' | 'CANCELED' | 'OVERDUE';
+
 export interface Lead {
   id: string;
   companyId: string;
@@ -44,6 +46,21 @@ export interface Lead {
   overdueToAssign: boolean;
   overdueToFirstContact: boolean;
 }
+
+export interface FollowUpTask {
+  id: string;
+  leadId: string;
+  userId: string;
+  title: string;
+  description: string | null;
+  dueAt: string;
+  completedAt: string | null;
+  status: FollowUpTaskStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type PipelineResponse = Record<LeadStatus, Lead[]>;
 
 export interface LeadHistory {
   id: string;

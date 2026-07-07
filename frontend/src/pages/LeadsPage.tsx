@@ -2,7 +2,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import AddIcon from '@mui/icons-material/Add';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AutoModeIcon from '@mui/icons-material/AutoMode';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/Close';
+import EventIcon from '@mui/icons-material/Event';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import NotesIcon from '@mui/icons-material/Notes';
 import SearchIcon from '@mui/icons-material/Search';
@@ -42,9 +44,12 @@ import {
   assignLeadAutomatically,
   assignLeadToMe,
   changeLeadStatus,
+  completeFollowUpTask,
+  createFollowUpTask,
   createLead,
   deleteLeadTag,
   distributePendingLeads,
+  listLeadFollowUps,
   listLeadHistory,
   listLeadNotes,
   listLeads,
@@ -99,6 +104,14 @@ const leadSchema = z.object({
 });
 
 type LeadFormValues = z.infer<typeof leadSchema>;
+
+const followUpSchema = z.object({
+  title: z.string().min(1, 'Informe o titulo').max(160),
+  description: z.string().max(1000),
+  dueAt: z.string().min(1, 'Informe o vencimento'),
+});
+
+type FollowUpFormValues = z.infer<typeof followUpSchema>;
 
 const defaultFilters: LeadFilters = { page: 0, size: 10 };
 
@@ -172,6 +185,12 @@ export function LeadsPage() {
     enabled: Boolean(selectedLead?.id && drawerMode === 'detail'),
   });
 
+  const followUpsQuery = useQuery({
+    queryKey: ['lead-follow-ups', selectedLead?.id],
+    queryFn: () => listLeadFollowUps(selectedLead!.id),
+    enabled: Boolean(selectedLead?.id && drawerMode === 'detail'),
+  });
+
   const activeTemplatesQuery = useQuery({
     queryKey: ['active-templates'],
     queryFn: listActiveTemplates,
@@ -193,6 +212,16 @@ export function LeadsPage() {
   } = useForm<LeadFormValues>({
     resolver: zodResolver(leadSchema),
     defaultValues: emptyLeadValues,
+  });
+
+  const {
+    formState: { errors: followUpErrors },
+    handleSubmit: handleFollowUpSubmit,
+    register: registerFollowUp,
+    reset: resetFollowUp,
+  } = useForm<FollowUpFormValues>({
+    resolver: zodResolver(followUpSchema),
+    defaultValues: { title: '', description: '', dueAt: '' },
   });
 
   useEffect(() => {
@@ -286,6 +315,34 @@ export function LeadsPage() {
     },
   });
 
+  const createFollowUpMutation = useMutation({
+    mutationFn: ({ leadId, values }: { leadId: string; values: FollowUpFormValues }) =>
+      createFollowUpTask(leadId, {
+        title: values.title,
+        description: values.description || undefined,
+        dueAt: new Date(values.dueAt).toISOString(),
+      }),
+    onSuccess: async (_, variables) => {
+      resetFollowUp({ title: '', description: '', dueAt: '' });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['lead-follow-ups', variables.leadId] }),
+        queryClient.invalidateQueries({ queryKey: ['follow-ups'] }),
+        queryClient.invalidateQueries({ queryKey: ['lead-history', variables.leadId] }),
+      ]);
+    },
+  });
+
+  const completeFollowUpMutation = useMutation({
+    mutationFn: ({ taskId }: { taskId: string; leadId: string }) => completeFollowUpTask(taskId),
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['lead-follow-ups', variables.leadId] }),
+        queryClient.invalidateQueries({ queryKey: ['follow-ups'] }),
+        queryClient.invalidateQueries({ queryKey: ['lead-history', variables.leadId] }),
+      ]);
+    },
+  });
+
   const whatsappLinkMutation = useMutation({
     mutationFn: ({ leadId, templateId }: { leadId: string; templateId: string }) => generateWhatsappLink(leadId, templateId),
     onSuccess: async (result) => {
@@ -297,6 +354,7 @@ export function LeadsPage() {
   async function invalidateLeadData(leadId: string) {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ['leads'] }),
+      queryClient.invalidateQueries({ queryKey: ['pipeline'] }),
       queryClient.invalidateQueries({ queryKey: ['lead-history', leadId] }),
       queryClient.invalidateQueries({ queryKey: ['lead-dashboard'] }),
     ]);
@@ -366,6 +424,13 @@ export function LeadsPage() {
 
   function onSubmit(values: LeadFormValues) {
     createLeadMutation.mutate(values);
+  }
+
+  function onFollowUpSubmit(values: FollowUpFormValues) {
+    if (!selectedLead) {
+      return;
+    }
+    createFollowUpMutation.mutate({ leadId: selectedLead.id, values });
   }
 
   const statusCounts = useMemo(() => {
@@ -794,6 +859,82 @@ export function LeadsPage() {
                   >
                     Abrir WhatsApp
                   </Button>
+                </Stack>
+              </Box>
+
+              <Divider />
+
+              <Box>
+                <Typography variant="subtitle1" fontWeight={800} sx={{ mb: 1 }}>
+                  Follow-ups
+                </Typography>
+                <Box component="form" onSubmit={handleFollowUpSubmit(onFollowUpSubmit)} sx={{ display: 'grid', gap: 1.25, mb: 1.5 }}>
+                  <TextField
+                    label="Titulo"
+                    size="small"
+                    error={Boolean(followUpErrors.title)}
+                    helperText={followUpErrors.title?.message}
+                    {...registerFollowUp('title')}
+                  />
+                  <TextField
+                    label="Descricao"
+                    minRows={2}
+                    multiline
+                    size="small"
+                    error={Boolean(followUpErrors.description)}
+                    helperText={followUpErrors.description?.message}
+                    {...registerFollowUp('description')}
+                  />
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+                    <TextField
+                      fullWidth
+                      label="Vencimento"
+                      size="small"
+                      slotProps={{ inputLabel: { shrink: true } }}
+                      type="datetime-local"
+                      error={Boolean(followUpErrors.dueAt)}
+                      helperText={followUpErrors.dueAt?.message}
+                      {...registerFollowUp('dueAt')}
+                    />
+                    <Button disabled={createFollowUpMutation.isPending} startIcon={<EventIcon />} type="submit" variant="outlined">
+                      Criar
+                    </Button>
+                  </Stack>
+                </Box>
+                <Stack spacing={1}>
+                  {followUpsQuery.data?.map((task) => (
+                    <Paper key={task.id} variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
+                      <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={1}>
+                        <Box>
+                          <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mb: 0.5 }}>
+                            <Typography variant="body2" fontWeight={800}>
+                              {task.title}
+                            </Typography>
+                            <Chip color={task.status === 'DONE' ? 'success' : task.status === 'OVERDUE' ? 'error' : 'warning'} label={task.status} size="small" />
+                          </Stack>
+                          <Typography variant="body2" color="text.secondary">
+                            {task.description ?? 'Sem descricao'}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {new Date(task.dueAt).toLocaleString('pt-BR')}
+                          </Typography>
+                        </Box>
+                        <Button
+                          disabled={task.status === 'DONE' || task.status === 'CANCELED' || completeFollowUpMutation.isPending}
+                          onClick={() => completeFollowUpMutation.mutate({ taskId: task.id, leadId: selectedLead.id })}
+                          startIcon={<CheckCircleIcon />}
+                          variant="outlined"
+                        >
+                          Concluir
+                        </Button>
+                      </Stack>
+                    </Paper>
+                  ))}
+                  {!followUpsQuery.isLoading && followUpsQuery.data?.length === 0 && (
+                    <Typography color="text.secondary" variant="body2">
+                      Nenhum follow-up cadastrado.
+                    </Typography>
+                  )}
                 </Stack>
               </Box>
 

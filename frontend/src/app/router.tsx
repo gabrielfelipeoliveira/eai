@@ -11,6 +11,8 @@ import { TemplatesPage } from '../pages/TemplatesPage';
 import { EmailAccountsPage } from '../pages/EmailAccountsPage';
 import { DistributionSettingsPage } from '../pages/DistributionSettingsPage';
 import { OverdueLeadsPage } from '../pages/OverdueLeadsPage';
+import { PipelinePage } from '../pages/PipelinePage';
+import { FollowUpsPage } from '../pages/FollowUpsPage';
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +33,14 @@ export const router = createBrowserRouter([
           {
             path: 'leads',
             element: <LeadsPage />,
+          },
+          {
+            path: 'pipeline',
+            element: <PipelinePage />,
+          },
+          {
+            path: 'follow-ups',
+            element: <FollowUpsPage />,
           },
           {
             path: 'leads/overdue',

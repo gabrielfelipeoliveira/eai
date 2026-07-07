@@ -1,5 +1,5 @@
 import { api } from './api';
-import type { Lead, LeadHistory, LeadNote, LeadSource, LeadStatus, LeadTag, PageResponse } from '../types/lead';
+import type { FollowUpTask, Lead, LeadHistory, LeadNote, LeadSource, LeadStatus, LeadTag, PageResponse, PipelineResponse } from '../types/lead';
 
 export interface LeadPayload {
   companyId: string;
@@ -31,6 +31,13 @@ export interface LeadFilters {
   phone?: string;
   page?: number;
   size?: number;
+}
+
+export interface FollowUpTaskPayload {
+  userId?: string;
+  title: string;
+  description?: string;
+  dueAt: string;
 }
 
 function cleanParams(filters: LeadFilters) {
@@ -84,6 +91,41 @@ export async function distributePendingLeads() {
 
 export async function listOverdueLeads() {
   const response = await api.get<Lead[]>('/leads/sla/overdue');
+  return response.data;
+}
+
+export async function getPipeline() {
+  const response = await api.get<PipelineResponse>('/pipeline');
+  return response.data;
+}
+
+export async function createFollowUpTask(leadId: string, payload: FollowUpTaskPayload) {
+  const response = await api.post<FollowUpTask>(`/leads/${leadId}/follow-ups`, payload);
+  return response.data;
+}
+
+export async function listFollowUps() {
+  const response = await api.get<FollowUpTask[]>('/follow-ups');
+  return response.data;
+}
+
+export async function listMyFollowUps() {
+  const response = await api.get<FollowUpTask[]>('/follow-ups/my');
+  return response.data;
+}
+
+export async function listLeadFollowUps(leadId: string) {
+  const response = await api.get<FollowUpTask[]>(`/leads/${leadId}/follow-ups`);
+  return response.data;
+}
+
+export async function completeFollowUpTask(id: string) {
+  const response = await api.patch<FollowUpTask>(`/follow-ups/${id}/complete`);
+  return response.data;
+}
+
+export async function cancelFollowUpTask(id: string) {
+  const response = await api.patch<FollowUpTask>(`/follow-ups/${id}/cancel`);
   return response.data;
 }
 
