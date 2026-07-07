@@ -2,6 +2,8 @@
 
 ## Local Setup
 
+The backend requires Java 21 JDK. Do not build or run it with Java 17 or any other Java version. Confirm `java -version`, `mvn -version`, and `JAVA_HOME` point to Java 21 before starting.
+
 Start PostgreSQL:
 
 ```bash
@@ -37,7 +39,7 @@ cd backend
 mvn clean package
 ```
 
-The backend requires Java 21. If Maven reports `release version 21 not supported`, check `java -version`, `mvn -version`, and `JAVA_HOME`.
+The backend requires Java 21. Maven Enforcer fails the build when Maven is not running on Java 21. If Maven reports a Java version error, fix `JAVA_HOME` and the Java on `PATH`.
 
 ## Frontend Build
 

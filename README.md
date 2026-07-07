@@ -10,7 +10,7 @@ EAI is a SaaS foundation for vehicle stores and dealerships to manage leads, sal
 
 ## Requirements
 
-- Java 21
+- Java 21 JDK. The backend is pinned to Java 21 and Maven fails fast when run with another Java version.
 - Maven 3.9+
 - Node.js 20+
 - npm 10+
@@ -153,6 +153,15 @@ Backend:
 cd backend
 mvn clean package
 ```
+
+Check the Java version used by Maven before building:
+
+```bash
+java -version
+mvn -version
+```
+
+Both commands must report Java 21.
 
 Frontend:
 
