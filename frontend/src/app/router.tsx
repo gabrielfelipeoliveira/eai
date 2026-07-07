@@ -7,6 +7,7 @@ import { LeadsPage } from '../pages/LeadsPage';
 import { UsersPage } from '../pages/UsersPage';
 import { CompaniesPage } from '../pages/CompaniesPage';
 import { StoresPage } from '../pages/StoresPage';
+import { TemplatesPage } from '../pages/TemplatesPage';
 
 export const router = createBrowserRouter([
   {
@@ -55,6 +56,16 @@ export const router = createBrowserRouter([
               {
                 index: true,
                 element: <StoresPage />,
+              },
+            ],
+          },
+          {
+            path: 'templates',
+            element: <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']} />,
+            children: [
+              {
+                index: true,
+                element: <TemplatesPage />,
               },
             ],
           },

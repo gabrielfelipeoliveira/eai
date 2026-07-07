@@ -117,6 +117,16 @@ curl -X POST http://localhost:8080/api/leads/<lead-id>/notes -H "Authorization: 
 curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/<lead-id>/history
 ```
 
+Generate a WhatsApp link using the seeded first-contact template and inspect the communication history:
+
+```bash
+curl -X POST http://localhost:8080/api/leads/<lead-id>/whatsapp-link \
+  -H "Authorization: Bearer <access-token>" \
+  -H "Content-Type: application/json" \
+  -d "{\"templateId\":\"00000000-0000-0000-0000-000000000301\"}"
+curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/<lead-id>/communications
+```
+
 ## Documentation
 
 Update `README.md` and `docs/` whenever setup, architecture, environment variables, or development workflows change.

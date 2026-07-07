@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.blankOrNullString;
@@ -29,6 +30,7 @@ class LeadControllerTest {
     private static final UUID DEFAULT_COMPANY_ID = UUID.fromString("00000000-0000-0000-0000-000000000101");
     private static final UUID DEFAULT_STORE_ID = UUID.fromString("00000000-0000-0000-0000-000000000201");
     private static final UUID DEFAULT_ADMIN_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private static final UUID FIRST_CONTACT_TEMPLATE_ID = UUID.fromString("00000000-0000-0000-0000-000000000301");
 
     @Autowired
     private MockMvc mockMvc;
@@ -87,6 +89,32 @@ class LeadControllerTest {
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].newStatus").value("FIRST_CONTACT"));
+
+        mockMvc.perform(get("/api/templates/active")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Primeiro contato"));
+
+        mockMvc.perform(post("/api/leads/{id}/whatsapp-link", leadId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "templateId": "%s"
+                                }
+                                """.formatted(FIRST_CONTACT_TEMPLATE_ID)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.url", containsString("https://wa.me/5511999990000?text=")))
+                .andExpect(jsonPath("$.message", containsString("Cliente Teste Lead")))
+                .andExpect(jsonPath("$.message", containsString("Honda Civic")))
+                .andExpect(jsonPath("$.communicationId", not(blankOrNullString())));
+
+        mockMvc.perform(get("/api/leads/{id}/communications", leadId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].channel").value("WHATSAPP_LINK"))
+                .andExpect(jsonPath("$[0].templateId").value(FIRST_CONTACT_TEMPLATE_ID.toString()))
+                .andExpect(jsonPath("$[0].message", containsString("Cliente Teste Lead")));
     }
 
     private String login() throws Exception {

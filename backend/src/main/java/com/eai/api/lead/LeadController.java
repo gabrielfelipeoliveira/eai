@@ -4,7 +4,11 @@ import com.eai.application.lead.CreateLeadCommand;
 import com.eai.application.lead.LeadSearchCriteria;
 import com.eai.application.lead.LeadService;
 import com.eai.application.lead.UpdateLeadCommand;
+import com.eai.application.message.MessageTemplateService;
 import com.eai.application.security.AuthenticatedUser;
+import com.eai.api.message.LeadCommunicationResponse;
+import com.eai.api.message.WhatsappLinkRequest;
+import com.eai.api.message.WhatsappLinkResponse;
 import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
 import jakarta.validation.Valid;
@@ -32,9 +36,11 @@ import java.util.UUID;
 public class LeadController {
 
     private final LeadService leadService;
+    private final MessageTemplateService templateService;
 
-    public LeadController(LeadService leadService) {
+    public LeadController(LeadService leadService, MessageTemplateService templateService) {
         this.leadService = leadService;
+        this.templateService = templateService;
     }
 
     @PostMapping
@@ -135,6 +141,22 @@ public class LeadController {
     public List<LeadHistoryResponse> listHistory(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
         return leadService.listHistory(id, authenticatedUser).stream()
                 .map(LeadHistoryResponse::fromDomain)
+                .toList();
+    }
+
+    @PostMapping("/{id}/whatsapp-link")
+    public WhatsappLinkResponse generateWhatsappLink(
+            @PathVariable UUID id,
+            @Valid @RequestBody WhatsappLinkRequest request,
+            @AuthenticationPrincipal AuthenticatedUser authenticatedUser
+    ) {
+        return WhatsappLinkResponse.fromResult(templateService.generateWhatsappLink(id, request.templateId(), authenticatedUser));
+    }
+
+    @GetMapping("/{id}/communications")
+    public List<LeadCommunicationResponse> listCommunications(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+        return templateService.listLeadCommunications(id, authenticatedUser).stream()
+                .map(LeadCommunicationResponse::fromDomain)
                 .toList();
     }
 

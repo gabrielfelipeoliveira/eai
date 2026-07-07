@@ -5,6 +5,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
 import StorefrontIcon from '@mui/icons-material/Storefront';
+import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import ViewKanbanIcon from '@mui/icons-material/ViewKanban';
 import {
   AppBar,
@@ -37,6 +38,7 @@ export function MainLayout() {
       : []),
     ...(hasAnyRole(['ADMIN']) ? [{ label: 'Empresas', path: '/companies', icon: <BusinessIcon /> }] : []),
     ...(hasAnyRole(['ADMIN', 'MANAGER']) ? [{ label: 'Lojas', path: '/stores', icon: <StorefrontIcon /> }] : []),
+    ...(hasAnyRole(['ADMIN', 'MANAGER']) ? [{ label: 'Templates', path: '/templates', icon: <TextSnippetIcon /> }] : []),
     { label: 'Configuracoes', path: '/settings', icon: <SettingsIcon /> },
   ];
 

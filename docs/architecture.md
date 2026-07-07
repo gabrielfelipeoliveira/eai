@@ -92,6 +92,19 @@ Lead endpoints:
 - `POST /api/leads/{id}/tags`
 - `GET /api/leads/{id}/tags`
 - `DELETE /api/leads/{id}/tags/{tagId}`
+- `POST /api/leads/{id}/whatsapp-link`
+- `GET /api/leads/{id}/communications`
+
+Communication templates are implemented in `com.eai.domain.message`, `com.eai.application.message`, `com.eai.infrastructure.persistence.message`, and `com.eai.api.message`. Templates are store-scoped and support placeholders for customer, phone, vehicle, seller, store, and city. WhatsApp link generation renders the selected active template, creates a `wa.me` URL, and records a lead communication entry.
+
+Template endpoints:
+
+- `GET /api/templates`
+- `GET /api/templates/{id}`
+- `GET /api/templates/active`
+- `POST /api/templates`
+- `PUT /api/templates/{id}`
+- `DELETE /api/templates/{id}`
 
 `GET /api/leads` is always paginated and supports filters for status, source, assigned seller, store, creation period, free text, vehicle, and phone.
 

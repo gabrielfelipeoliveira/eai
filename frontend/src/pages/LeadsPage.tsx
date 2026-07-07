@@ -5,6 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import NotesIcon from '@mui/icons-material/Notes';
 import SearchIcon from '@mui/icons-material/Search';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import {
   Alert,
   Box,
@@ -46,8 +47,10 @@ import {
 } from '../services/leadService';
 import type { LeadFilters } from '../services/leadService';
 import { listStores } from '../services/storeService';
+import { generateWhatsappLink, listActiveTemplates, listLeadCommunications } from '../services/templateService';
 import { listUsers } from '../services/userService';
 import type { Lead, LeadSource, LeadStatus } from '../types/lead';
+import type { MessageTemplate } from '../types/message';
 
 const statuses: LeadStatus[] = [
   'NEW',
@@ -103,6 +106,7 @@ export function LeadsPage() {
   const [drawerMode, setDrawerMode] = useState<'create' | 'detail' | null>(null);
   const [noteText, setNoteText] = useState('');
   const [tagText, setTagText] = useState('');
+  const [selectedTemplateId, setSelectedTemplateId] = useState('');
   const canListUsers = hasAnyRole(['ADMIN', 'MANAGER']);
   const isAdmin = hasAnyRole(['ADMIN']);
 
@@ -162,6 +166,18 @@ export function LeadsPage() {
     enabled: Boolean(selectedLead?.id && drawerMode === 'detail'),
   });
 
+  const activeTemplatesQuery = useQuery({
+    queryKey: ['active-templates'],
+    queryFn: listActiveTemplates,
+    enabled: drawerMode === 'detail',
+  });
+
+  const communicationsQuery = useQuery({
+    queryKey: ['lead-communications', selectedLead?.id],
+    queryFn: () => listLeadCommunications(selectedLead!.id),
+    enabled: Boolean(selectedLead?.id && drawerMode === 'detail'),
+  });
+
   const {
     formState: { errors },
     handleSubmit,
@@ -182,6 +198,12 @@ export function LeadsPage() {
       setValue('storeId', storesQuery.data[0].id);
     }
   }, [emptyLeadValues.storeId, setValue, storesQuery.data]);
+
+  useEffect(() => {
+    if (drawerMode === 'detail' && !selectedTemplateId && activeTemplatesQuery.data?.length) {
+      setSelectedTemplateId(activeTemplatesQuery.data[0].id);
+    }
+  }, [activeTemplatesQuery.data, drawerMode, selectedTemplateId]);
 
   const createLeadMutation = useMutation({
     mutationFn: (values: LeadFormValues) =>
@@ -240,6 +262,14 @@ export function LeadsPage() {
     },
   });
 
+  const whatsappLinkMutation = useMutation({
+    mutationFn: ({ leadId, templateId }: { leadId: string; templateId: string }) => generateWhatsappLink(leadId, templateId),
+    onSuccess: async (result) => {
+      window.open(result.url, '_blank', 'noopener,noreferrer');
+      await queryClient.invalidateQueries({ queryKey: ['lead-communications', result.leadId] });
+    },
+  });
+
   async function invalidateLeadData(leadId: string) {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ['leads'] }),
@@ -265,6 +295,27 @@ export function LeadsPage() {
     return usersQuery.data?.find((item) => item.id === userId)?.name ?? userId;
   }
 
+  function whatsappSellerName(lead: Lead) {
+    if (!lead.assignedToUserId || lead.assignedToUserId === user?.id) {
+      return user?.name ?? '';
+    }
+    return usersQuery.data?.find((item) => item.id === lead.assignedToUserId)?.name ?? userName(lead.assignedToUserId);
+  }
+
+  function renderTemplate(template: MessageTemplate | undefined, lead: Lead) {
+    if (!template) {
+      return '';
+    }
+    return [
+      ['{cliente}', lead.customerName ?? ''],
+      ['{telefone}', lead.customerPhone ?? ''],
+      ['{veiculo}', lead.vehicleInterest ?? ''],
+      ['{vendedor}', whatsappSellerName(lead)],
+      ['{loja}', storeName(lead.storeId)],
+      ['{cidade}', lead.customerCity ?? ''],
+    ].reduce((message, [placeholder, value]) => message.split(placeholder).join(value), template.content);
+  }
+
   function openCreateDrawer() {
     reset(emptyLeadValues);
     setSelectedLead(null);
@@ -273,6 +324,7 @@ export function LeadsPage() {
 
   function openDetailDrawer(lead: Lead) {
     setSelectedLead(lead);
+    setSelectedTemplateId('');
     setDrawerMode('detail');
   }
 
@@ -296,6 +348,9 @@ export function LeadsPage() {
     leadsQuery.data?.content.forEach((lead) => counts.set(lead.status, (counts.get(lead.status) ?? 0) + 1));
     return counts;
   }, [leadsQuery.data?.content]);
+
+  const selectedTemplate = activeTemplatesQuery.data?.find((template) => template.id === selectedTemplateId);
+  const whatsappPreview = selectedLead ? renderTemplate(selectedTemplate, selectedLead) : '';
 
   return (
     <Box sx={{ display: 'grid', gap: 3 }}>
@@ -631,6 +686,40 @@ export function LeadsPage() {
 
               <Box>
                 <Typography variant="subtitle1" fontWeight={800} sx={{ mb: 1 }}>
+                  Enviar WhatsApp
+                </Typography>
+                <Stack spacing={1.5}>
+                  <TextField
+                    disabled={!activeTemplatesQuery.data?.length}
+                    label="Template"
+                    onChange={(event) => setSelectedTemplateId(event.target.value)}
+                    select
+                    size="small"
+                    value={selectedTemplateId}
+                  >
+                    {activeTemplatesQuery.data?.map((template) => (
+                      <MenuItem key={template.id} value={template.id}>
+                        {template.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                  <TextField label="Pre-visualizacao" minRows={4} multiline slotProps={{ input: { readOnly: true } }} value={whatsappPreview} />
+                  {whatsappLinkMutation.isError && <Alert severity="error">Nao foi possivel gerar o link do WhatsApp.</Alert>}
+                  <Button
+                    disabled={!selectedTemplateId || !selectedLead.customerPhone || whatsappLinkMutation.isPending}
+                    onClick={() => whatsappLinkMutation.mutate({ leadId: selectedLead.id, templateId: selectedTemplateId })}
+                    startIcon={<WhatsAppIcon />}
+                    variant="contained"
+                  >
+                    Abrir WhatsApp
+                  </Button>
+                </Stack>
+              </Box>
+
+              <Divider />
+
+              <Box>
+                <Typography variant="subtitle1" fontWeight={800} sx={{ mb: 1 }}>
                   Tags
                 </Typography>
                 <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 1.5 }}>
@@ -671,6 +760,32 @@ export function LeadsPage() {
                       </Typography>
                     </Paper>
                   ))}
+                </Stack>
+              </Box>
+
+              <Box>
+                <Typography variant="subtitle1" fontWeight={800} sx={{ mb: 1 }}>
+                  Comunicacoes
+                </Typography>
+                <Stack spacing={1}>
+                  {communicationsQuery.data?.map((communication) => (
+                    <Paper key={communication.id} variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
+                      <Typography variant="body2" fontWeight={700}>
+                        {communication.channel}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {communication.message}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {userName(communication.userId)} - {new Date(communication.createdAt).toLocaleString('pt-BR')}
+                      </Typography>
+                    </Paper>
+                  ))}
+                  {!communicationsQuery.isLoading && communicationsQuery.data?.length === 0 && (
+                    <Typography color="text.secondary" variant="body2">
+                      Nenhuma comunicacao registrada.
+                    </Typography>
+                  )}
                 </Stack>
               </Box>
 
