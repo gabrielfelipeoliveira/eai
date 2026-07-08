@@ -38,7 +38,7 @@ Padrao conhecido:
 - Refresh tokens sao persistidos.
 - Requisicoes protegidas usam `Authorization: Bearer <token>`.
 - Login e refresh sao publicos.
-- Health check e OpenAPI sao publicos.
+- Health check, OpenAPI e metadados de apresentacao sao publicos.
 
 Status:
 PENDENTE DE DEFINIÇÃO
@@ -48,6 +48,57 @@ Perguntas para o Software Architect:
 - Refresh tokens devem continuar no corpo da resposta ou migrar para cookies HttpOnly?
 - O TTL dos tokens deve variar por ambiente ou papel?
 - O Swagger UI deve continuar publico em producao?
+
+## Metadados De Apresentacao
+
+Endpoint atual:
+
+- `GET /api/metadata`
+
+Objetivo:
+
+- Fornecer catalogos de apresentacao para codigos tecnicos usados por dominio, API e banco.
+- Evitar que frontend web, app mobile ou outros clientes exibam enums crus como `FIRST_CONTACT`, `ROUND_ROBIN`, `SUCCESS` ou `NEW` para usuarios finais.
+
+Contrato:
+
+- O endpoint e publico e nao exige token.
+- O cliente pode enviar `Accept-Language`.
+- A localizacao suportada atualmente e `pt-BR`.
+- Cada item retorna `code`, `labelKey`, `label`, `order` e `color`.
+- `code` e o valor tecnico usado nas APIs de negocio.
+- `labelKey` e a chave estavel para futura internacionalizacao.
+- `label` e o texto ja localizado para apresentacao.
+- `order` orienta ordenacao visual.
+- `color` orienta componentes visuais como chips e badges.
+
+Convencoes:
+
+- APIs de funcionalidades continuam aceitando e retornando codigos tecnicos.
+- Clientes nao devem renderizar `code` diretamente para usuarios finais.
+- Clientes devem mapear `code` para `label` usando o catalogo de metadados.
+- Mudancas em labels nao devem alterar codigos tecnicos nem migrations.
+- Novos enums visiveis para usuarios devem ser adicionados ao catalogo de metadados.
+- Regras de negocio nao devem ser colocadas no endpoint de metadados; ele e apenas apresentacao.
+
+Cache recomendado:
+
+- O catalogo muda pouco e pode ser cacheado por cliente.
+- O frontend web usa React Query com `staleTime` de 24 horas e cache por locale.
+- Aplicativos mobile devem carregar no inicio da sessao ou no primeiro uso e persistir cache local quando fizer sentido.
+
+Status:
+PENDENTE DE DEFINIÇÃO
+
+Perguntas para o Product Owner:
+
+- Quais idiomas devem ser suportados na primeira versao do app?
+- As labels oficiais devem usar acentos em todos os textos visiveis ao usuario?
+
+Perguntas para o Software Architect:
+
+- O catalogo deve evoluir para arquivos de mensagens do Spring, tabela no banco ou servico dedicado de internacionalizacao?
+- Deve existir versao/ETag para invalidacao de cache de metadados?
 
 ## Autorizacao
 

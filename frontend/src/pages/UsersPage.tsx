@@ -25,6 +25,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useEffect, useMemo } from 'react';
 import { z } from 'zod';
 import { useAuth } from '../hooks/useAuth';
+import { useMetadata } from '../hooks/useMetadata';
 import { listCompanies } from '../services/companyService';
 import { listStores } from '../services/storeService';
 import { assignUserTenant, createUser, listUsers } from '../services/userService';
@@ -55,6 +56,7 @@ type TenantFormValues = z.infer<typeof tenantSchema>;
 export function UsersPage() {
   const { hasAnyRole } = useAuth();
   const queryClient = useQueryClient();
+  const metadata = useMetadata();
   const canManageUsers = hasAnyRole(['ADMIN']);
 
   const usersQuery = useQuery({
@@ -232,12 +234,12 @@ export function UsersPage() {
                     <TableCell>{companyName(user.companyId)}</TableCell>
                     <TableCell>{storeName(user.storeId)}</TableCell>
                     <TableCell>
-                      <Chip color={user.status === 'ACTIVE' ? 'success' : 'default'} label={user.status} size="small" />
+                      <Chip color={metadata.color('userStatuses', user.status)} label={metadata.label('userStatuses', user.status)} size="small" />
                     </TableCell>
                     <TableCell>
                       <Stack direction="row" flexWrap="wrap" gap={0.75}>
                         {user.roles.map((role) => (
-                          <Chip key={role} label={role} size="small" variant="outlined" />
+                          <Chip key={role} label={metadata.label('userRoles', role)} size="small" variant="outlined" />
                         ))}
                       </Stack>
                     </TableCell>
@@ -336,7 +338,7 @@ export function UsersPage() {
                             }}
                           />
                         }
-                        label={role}
+                        label={metadata.label('userRoles', role)}
                       />
                     ))}
                     {errors.roles && (

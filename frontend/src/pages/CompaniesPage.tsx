@@ -22,6 +22,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useMetadata } from '../hooks/useMetadata';
 import { createCompany, listCompanies, updateCompany } from '../services/companyService';
 import type { Company } from '../types/tenant';
 
@@ -46,6 +47,7 @@ const emptyValues: CompanyFormValues = {
 export function CompaniesPage() {
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
   const queryClient = useQueryClient();
+  const metadata = useMetadata();
 
   const companiesQuery = useQuery({
     queryKey: ['companies'],
@@ -125,7 +127,7 @@ export function CompaniesPage() {
                     <TableCell>{company.document}</TableCell>
                     <TableCell>{company.email ?? '-'}</TableCell>
                     <TableCell>
-                      <Chip color={company.status === 'ACTIVE' ? 'success' : 'default'} label={company.status} size="small" />
+                      <Chip color={metadata.color('tenantStatuses', company.status)} label={metadata.label('tenantStatuses', company.status)} size="small" />
                     </TableCell>
                     <TableCell align="right">
                       <IconButton aria-label="Editar empresa" onClick={() => setEditingCompany(company)}>
@@ -160,8 +162,11 @@ export function CompaniesPage() {
             <TextField label="E-mail" type="email" error={Boolean(errors.email)} helperText={errors.email?.message} {...register('email')} />
             <TextField label="Telefone" error={Boolean(errors.phone)} helperText={errors.phone?.message} {...register('phone')} />
             <TextField select label="Status" error={Boolean(errors.status)} helperText={errors.status?.message} {...register('status')}>
-              <MenuItem value="ACTIVE">ACTIVE</MenuItem>
-              <MenuItem value="INACTIVE">INACTIVE</MenuItem>
+              {metadata.options('tenantStatuses').map((status) => (
+                <MenuItem key={status.code} value={status.code}>
+                  {status.label}
+                </MenuItem>
+              ))}
             </TextField>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Button disabled={saveCompanyMutation.isPending} type="submit" variant="contained">

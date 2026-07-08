@@ -58,6 +58,8 @@ O codigo backend fica abaixo de `com.eai`:
 - Controllers mapeiam resultados da aplicacao para DTOs de response.
 - Controllers nao devem conter regras de negocio.
 - Controllers nao devem vazar entidades de persistencia.
+- Enums tecnicos podem fazer parte dos contratos, mas labels para usuario devem passar pelo catalogo `GET /api/metadata`.
+- Ao introduzir novo enum visivel no frontend ou app, atualize o catalogo de metadados e os tipos do cliente.
 
 ## Regras De Banco
 

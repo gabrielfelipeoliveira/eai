@@ -40,6 +40,7 @@ import {
 } from '../services/dashboardService';
 import { listStores } from '../services/storeService';
 import { useAuth } from '../hooks/useAuth';
+import { useMetadata } from '../hooks/useMetadata';
 import type { DashboardFilters } from '../types/dashboard';
 
 interface HomePageProps {
@@ -47,31 +48,6 @@ interface HomePageProps {
 }
 
 const chartColors = ['#1976d2', '#2e7d32', '#ed6c02', '#9c27b0', '#00838f', '#d32f2f', '#455a64', '#7b1fa2'];
-
-const statusLabels: Record<string, string> = {
-  NEW: 'Novo',
-  AVAILABLE: 'Disponivel',
-  ASSIGNED: 'Atribuido',
-  FIRST_CONTACT: 'Primeiro contato',
-  IN_NEGOTIATION: 'Negociacao',
-  VISIT_SCHEDULED: 'Visita',
-  PROPOSAL_SENT: 'Proposta',
-  SOLD: 'Vendido',
-  LOST: 'Perdido',
-  DUPLICATED: 'Duplicado',
-};
-
-const sourceLabels: Record<string, string> = {
-  MANUAL: 'Manual',
-  EMAIL: 'E-mail',
-  WEBSITE: 'Site',
-  FACEBOOK: 'Facebook',
-  INSTAGRAM: 'Instagram',
-  WEBMOTORS: 'Webmotors',
-  ICARROS: 'iCarros',
-  OLX: 'OLX',
-  API: 'API',
-};
 
 function today() {
   return new Date().toISOString().slice(0, 10);
@@ -92,6 +68,7 @@ function formatMinutes(value: number) {
 
 export function HomePage({ title = 'Dashboard' }: HomePageProps) {
   const { hasAnyRole, user } = useAuth();
+  const metadata = useMetadata();
   const canFilterTenant = hasAnyRole(['ADMIN', 'MANAGER']);
   const isAdmin = hasAnyRole(['ADMIN']);
   const [filters, setFilters] = useState<DashboardFilters>({
@@ -144,8 +121,8 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
     summaryQuery.isLoading || sourceQuery.isLoading || statusQuery.isLoading || sellerQuery.isLoading || salesQuery.isLoading;
 
   const summary = summaryQuery.data;
-  const sourceData = (sourceQuery.data ?? []).map((item) => ({ ...item, label: sourceLabels[item.label] ?? item.label }));
-  const statusData = (statusQuery.data ?? []).map((item) => ({ ...item, label: statusLabels[item.label] ?? item.label }));
+  const sourceData = (sourceQuery.data ?? []).map((item) => ({ ...item, label: metadata.label('leadSources', item.label) }));
+  const statusData = (statusQuery.data ?? []).map((item) => ({ ...item, label: metadata.label('leadStatuses', item.label) }));
   const salesData = salesQuery.data ?? [];
   const sellerData = sellerQuery.data ?? [];
 

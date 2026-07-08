@@ -34,6 +34,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useAuth } from '../hooks/useAuth';
+import { useMetadata } from '../hooks/useMetadata';
 import { listCompanies } from '../services/companyService';
 import {
   createEmailAccount,
@@ -64,6 +65,7 @@ type FormValues = z.infer<typeof schema>;
 export function EmailAccountsPage() {
   const { hasAnyRole, user } = useAuth();
   const queryClient = useQueryClient();
+  const metadata = useMetadata();
   const isAdmin = hasAnyRole(['ADMIN']);
   const [editingAccount, setEditingAccount] = useState<EmailAccount | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -209,7 +211,11 @@ export function EmailAccountsPage() {
                 </TableCell>
                 <TableCell>
                   <Stack spacing={0.5}>
-                    <Chip color={account.lastSyncStatus === 'FAILED' ? 'error' : account.lastSyncStatus === 'SUCCESS' ? 'success' : 'default'} label={account.lastSyncStatus} size="small" />
+                    <Chip
+                      color={metadata.color('emailAccountStatuses', account.lastSyncStatus)}
+                      label={metadata.label('emailAccountStatuses', account.lastSyncStatus)}
+                      size="small"
+                    />
                     <Typography variant="caption" color="text.secondary">{account.lastSyncMessage ?? 'Sem sincronizacao'}</Typography>
                   </Stack>
                 </TableCell>
@@ -260,7 +266,9 @@ export function EmailAccountsPage() {
               </Grid2>
               <Grid2 size={{ xs: 12, md: 3 }}>
                 <TextField fullWidth label="Protocolo" select {...register('protocol')}>
-                  <MenuItem value="IMAP">IMAP</MenuItem>
+                  {metadata.options('emailProtocols').map((protocol) => (
+                    <MenuItem key={protocol.code} value={protocol.code}>{protocol.label}</MenuItem>
+                  ))}
                 </TextField>
               </Grid2>
               <Grid2 size={{ xs: 12, md: 6 }}>

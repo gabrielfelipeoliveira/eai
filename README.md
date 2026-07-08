@@ -80,6 +80,12 @@ Endpoints de autenticacao:
 - `GET /api/auth/me`
 - `POST /api/auth/logout`
 
+Endpoint publico de metadados de apresentacao:
+
+- `GET /api/metadata`
+
+O catalogo de metadados fornece labels em `pt-BR`, chaves de internacionalizacao, ordem e cor para codigos tecnicos como status de lead, origem, papeis, status de tenant, tipos de template, modos de distribuicao e status de sincronizacao de e-mail. Clientes web/app devem usar esse catalogo para apresentacao e continuar enviando os codigos tecnicos nas APIs de negocio.
+
 Endpoints de gestao de usuarios:
 
 - `GET /api/users`

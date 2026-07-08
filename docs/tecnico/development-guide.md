@@ -94,6 +94,18 @@ curl -i http://localhost:8080/api/users
 
 O resultado esperado e `401 Unauthorized`.
 
+## Smoke Test De Metadados
+
+O catalogo de metadados e publico e deve retornar labels de apresentacao para codigos tecnicos:
+
+```bash
+curl -H "Accept-Language: pt-BR" http://localhost:8080/api/metadata
+```
+
+O resultado esperado inclui `locale`, `leadStatuses`, `leadSources`, `userRoles`, `tenantStatuses`, `messageTemplateTypes`, `leadDistributionModes`, `emailAccountStatuses` e `emailProtocols`.
+
+Clientes devem usar este catalogo para exibir labels em vez de mostrar enums crus ao usuario.
+
 ## Smoke Test De Tenant
 
 Use o login do admin seed para obter um token de acesso e chame:

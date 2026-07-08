@@ -37,6 +37,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useAuth } from '../hooks/useAuth';
+import { useMetadata } from '../hooks/useMetadata';
 import { listCompanies } from '../services/companyService';
 import {
   addLeadNote,
@@ -77,19 +78,6 @@ const statuses: LeadStatus[] = [
 
 const sources: LeadSource[] = ['MANUAL', 'EMAIL', 'WEBSITE', 'FACEBOOK', 'INSTAGRAM', 'WEBMOTORS', 'ICARROS', 'OLX', 'API'];
 
-const statusColors: Record<LeadStatus, 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info'> = {
-  NEW: 'info',
-  AVAILABLE: 'primary',
-  ASSIGNED: 'secondary',
-  FIRST_CONTACT: 'warning',
-  IN_NEGOTIATION: 'warning',
-  VISIT_SCHEDULED: 'info',
-  PROPOSAL_SENT: 'secondary',
-  SOLD: 'success',
-  LOST: 'error',
-  DUPLICATED: 'default',
-};
-
 const leadSchema = z.object({
   companyId: z.string().min(1, 'Selecione a empresa'),
   storeId: z.string().min(1, 'Selecione a loja'),
@@ -117,6 +105,7 @@ const defaultFilters: LeadFilters = { page: 0, size: 10 };
 
 export function LeadsPage() {
   const { hasAnyRole, user } = useAuth();
+  const metadata = useMetadata();
   const queryClient = useQueryClient();
   const [filters, setFilters] = useState<LeadFilters>(defaultFilters);
   const [draftFilters, setDraftFilters] = useState<LeadFilters>(defaultFilters);
@@ -501,7 +490,7 @@ export function LeadsPage() {
           <Grid2 key={status} size={{ xs: 6, md: 2.4 }}>
             <Paper variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
               <Typography variant="caption" color="text.secondary">
-                {status}
+                {metadata.label('leadStatuses', status)}
               </Typography>
               <Typography variant="h5" fontWeight={800}>
                 {statusCounts.get(status) ?? 0}
@@ -552,7 +541,7 @@ export function LeadsPage() {
               <MenuItem value="">Todos</MenuItem>
               {statuses.map((status) => (
                 <MenuItem key={status} value={status}>
-                  {status}
+                  {metadata.label('leadStatuses', status)}
                 </MenuItem>
               ))}
             </TextField>
@@ -569,7 +558,7 @@ export function LeadsPage() {
               <MenuItem value="">Todas</MenuItem>
               {sources.map((source) => (
                 <MenuItem key={source} value={source}>
-                  {source}
+                  {metadata.label('leadSources', source)}
                 </MenuItem>
               ))}
             </TextField>
@@ -673,13 +662,13 @@ export function LeadsPage() {
                 <TableCell>{lead.vehicleInterest ?? '-'}</TableCell>
                 <TableCell>
                   <Stack direction="row" flexWrap="wrap" gap={0.75}>
-                    <Chip color={statusColors[lead.status]} label={lead.status} size="small" />
+                    <Chip color={metadata.color('leadStatuses', lead.status)} label={metadata.label('leadStatuses', lead.status)} size="small" />
                     {lead.overdueToAssign && <Chip color="error" icon={<WarningAmberIcon />} label="Atribuicao" size="small" variant="outlined" />}
                     {lead.overdueToFirstContact && <Chip color="error" icon={<WarningAmberIcon />} label="Contato" size="small" variant="outlined" />}
                   </Stack>
                 </TableCell>
                 <TableCell>
-                  <Chip label={lead.source} size="small" variant="outlined" />
+                  <Chip label={metadata.label('leadSources', lead.source)} size="small" variant="outlined" />
                 </TableCell>
                 <TableCell>{userName(lead.assignedToUserId)}</TableCell>
                 <TableCell>{storeName(lead.storeId)}</TableCell>
@@ -743,7 +732,7 @@ export function LeadsPage() {
               <TextField select label="Origem" error={Boolean(errors.source)} helperText={errors.source?.message} {...register('source')}>
                 {sources.map((source) => (
                   <MenuItem key={source} value={source}>
-                    {source}
+                    {metadata.label('leadSources', source)}
                   </MenuItem>
                 ))}
               </TextField>
@@ -775,8 +764,8 @@ export function LeadsPage() {
           {drawerMode === 'detail' && selectedLead && (
             <Stack spacing={2.5}>
               <Stack direction="row" flexWrap="wrap" gap={1}>
-                <Chip color={statusColors[selectedLead.status]} label={selectedLead.status} />
-                <Chip label={selectedLead.source} variant="outlined" />
+                <Chip color={metadata.color('leadStatuses', selectedLead.status)} label={metadata.label('leadStatuses', selectedLead.status)} />
+                <Chip label={metadata.label('leadSources', selectedLead.source)} variant="outlined" />
                 {selectedLead.overdueToAssign && <Chip color="error" icon={<WarningAmberIcon />} label="Atrasado para atribuir" variant="outlined" />}
                 {selectedLead.overdueToFirstContact && <Chip color="error" icon={<WarningAmberIcon />} label="Atrasado para contato" variant="outlined" />}
                 <Chip label={storeName(selectedLead.storeId)} variant="outlined" />
@@ -822,7 +811,7 @@ export function LeadsPage() {
                 >
                   {statuses.map((status) => (
                     <MenuItem key={status} value={status}>
-                      {status}
+                      {metadata.label('leadStatuses', status)}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -910,7 +899,7 @@ export function LeadsPage() {
                             <Typography variant="body2" fontWeight={800}>
                               {task.title}
                             </Typography>
-                            <Chip color={task.status === 'DONE' ? 'success' : task.status === 'OVERDUE' ? 'error' : 'warning'} label={task.status} size="small" />
+                            <Chip color={metadata.color('followUpStatuses', task.status)} label={metadata.label('followUpStatuses', task.status)} size="small" />
                           </Stack>
                           <Typography variant="body2" color="text.secondary">
                             {task.description ?? 'Sem descricao'}
@@ -1019,7 +1008,8 @@ export function LeadsPage() {
                   {historyQuery.data?.map((history) => (
                     <Paper key={history.id} variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
                       <Typography variant="body2" fontWeight={700}>
-                        {history.previousStatus ?? 'CRIADO'} {'>'} {history.newStatus}
+                        {history.previousStatus ? metadata.label('leadStatuses', history.previousStatus) : 'Criado'} {'>'}{' '}
+                        {metadata.label('leadStatuses', history.newStatus)}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         {history.description ?? 'Sem descricao'}

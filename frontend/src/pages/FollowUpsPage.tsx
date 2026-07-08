@@ -14,18 +14,13 @@ import {
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
+import { useMetadata } from '../hooks/useMetadata';
 import { completeFollowUpTask, listFollowUps, listMyFollowUps } from '../services/leadService';
-import type { FollowUpTask, FollowUpTaskStatus } from '../types/lead';
-
-const statusColors: Record<FollowUpTaskStatus, 'default' | 'success' | 'warning' | 'error'> = {
-  PENDING: 'warning',
-  DONE: 'success',
-  CANCELED: 'default',
-  OVERDUE: 'error',
-};
+import type { FollowUpTask } from '../types/lead';
 
 export function FollowUpsPage() {
   const queryClient = useQueryClient();
+  const metadata = useMetadata();
   const [tab, setTab] = useState<'my' | 'overdue' | 'all'>('my');
 
   const myQuery = useQuery({
@@ -76,7 +71,7 @@ export function FollowUpsPage() {
           <Box>
             <Stack direction="row" alignItems="center" flexWrap="wrap" gap={1} sx={{ mb: 0.75 }}>
               <Typography fontWeight={800}>{task.title}</Typography>
-              <Chip color={statusColors[task.status]} label={task.status} size="small" />
+              <Chip color={metadata.color('followUpStatuses', task.status)} label={metadata.label('followUpStatuses', task.status)} size="small" />
             </Stack>
             <Typography color="text.secondary" variant="body2">
               {task.description ?? 'Sem descricao'}

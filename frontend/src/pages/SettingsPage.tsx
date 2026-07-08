@@ -28,6 +28,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useAuth } from '../hooks/useAuth';
+import { useMetadata } from '../hooks/useMetadata';
 import {
   getSettings,
   updateSettingsCompany,
@@ -93,6 +94,7 @@ function clean<T extends Record<string, unknown>>(values: T): T {
 export function SettingsPage() {
   const { hasAnyRole, user } = useAuth();
   const queryClient = useQueryClient();
+  const metadata = useMetadata();
   const isAdmin = hasAnyRole(['ADMIN']);
   const [tab, setTab] = useState(0);
   const [selectedCompanyId, setSelectedCompanyId] = useState(user?.companyId);
@@ -278,8 +280,11 @@ export function SettingsPage() {
                   </Grid2>
                   <Grid2 size={{ xs: 12, md: 4 }}>
                     <TextField disabled={!isAdmin} fullWidth label="Status" select {...companyForm.register('status')}>
-                      <MenuItem value="ACTIVE">Ativa</MenuItem>
-                      <MenuItem value="INACTIVE">Inativa</MenuItem>
+                      {metadata.options('tenantStatuses').map((status) => (
+                        <MenuItem key={status.code} value={status.code}>
+                          {status.label}
+                        </MenuItem>
+                      ))}
                     </TextField>
                   </Grid2>
                 </Grid2>
@@ -307,8 +312,11 @@ export function SettingsPage() {
                   </Grid2>
                   <Grid2 size={{ xs: 12, md: 4 }}>
                     <TextField fullWidth label="Status" select {...storeForm.register('status')}>
-                      <MenuItem value="ACTIVE">Ativa</MenuItem>
-                      <MenuItem value="INACTIVE">Inativa</MenuItem>
+                      {metadata.options('tenantStatuses').map((status) => (
+                        <MenuItem key={status.code} value={status.code}>
+                          {status.label}
+                        </MenuItem>
+                      ))}
                     </TextField>
                   </Grid2>
                   <Grid2 size={{ xs: 12, md: 5 }}>
@@ -349,7 +357,7 @@ export function SettingsPage() {
                     <TextField fullWidth label="Modo" select {...distributionForm.register('mode')}>
                       {distributionModes.map((mode) => (
                         <MenuItem key={mode} value={mode}>
-                          {mode}
+                          {metadata.label('leadDistributionModes', mode)}
                         </MenuItem>
                       ))}
                     </TextField>

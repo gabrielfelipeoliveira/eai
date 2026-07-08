@@ -104,6 +104,7 @@ Responsabilidades:
 - DTOs de resposta.
 - Tratamento de erros da API.
 - Validacao especifica de HTTP.
+- Metadados de apresentacao para codigos tecnicos visiveis em clientes.
 
 Regras:
 
@@ -111,6 +112,7 @@ Regras:
 - Controllers delegam comportamento de negocio para servicos de aplicacao.
 - Controllers nao devem conter regras de negocio.
 - Controllers nao devem expor entidades de persistencia.
+- Codigos tecnicos de enums podem sair pela API, mas labels para usuario devem vir de catalogos de apresentacao.
 
 Divida tecnica atual:
 
@@ -142,6 +144,32 @@ Endpoints de relatorio:
 - `GET /api/reports/sellers/export.csv`
 
 Os filtros de relatorio suportam periodo de criacao, loja, vendedor, origem e empresa para admins. `ADMIN`, `MANAGER`, `SELLER` e `AUDITOR` podem visualizar relatorios; vendedores ficam limitados aos proprios leads, enquanto gerentes e auditores seguem a visibilidade de empresa/loja.
+
+## Metadados E Internacionalizacao
+
+O backend expoe `GET /api/metadata` para catalogos de apresentacao de enums e outros codigos tecnicos.
+
+Decisao atual:
+
+- Banco, dominio e APIs de negocio continuam usando codigos tecnicos estaveis, como `FIRST_CONTACT`, `ROUND_ROBIN` e `SUCCESS`.
+- Clientes apresentam labels localizadas vindas do catalogo de metadados.
+- A primeira localizacao suportada e `pt-BR`.
+- O catalogo retorna tambem `labelKey`, preparando evolucao para multi-idioma sem trocar contratos de negocio.
+- O endpoint fica na camada `api`, pois trata de apresentacao e nao altera regras de dominio.
+- O dominio continua independente de Spring e nao conhece labels de interface.
+
+No frontend web:
+
+- `useMetadata` carrega o catalogo via React Query.
+- A chave de cache e composta por locale.
+- O tempo de freshness atual e 24 horas.
+- Componentes devem usar `metadata.label(...)`, `metadata.color(...)` e `metadata.options(...)` em vez de renderizar enums diretamente.
+
+Para app mobile futuro:
+
+- Carregar metadados na inicializacao da sessao ou no primeiro uso.
+- Cachear por locale.
+- Revalidar por janela de tempo, versao ou ETag quando essa politica for definida.
 
 ## Importacao De Leads Por E-Mail
 

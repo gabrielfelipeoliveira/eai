@@ -31,6 +31,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useAuth } from '../hooks/useAuth';
+import { useMetadata } from '../hooks/useMetadata';
 import { listCompanies } from '../services/companyService';
 import { listStores } from '../services/storeService';
 import { createTemplate, deleteTemplate, listTemplates, updateTemplate } from '../services/templateService';
@@ -52,6 +53,7 @@ type TemplateFormValues = z.infer<typeof templateSchema>;
 export function TemplatesPage() {
   const { hasAnyRole, user } = useAuth();
   const queryClient = useQueryClient();
+  const metadata = useMetadata();
   const [editingTemplate, setEditingTemplate] = useState<MessageTemplate | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const isAdmin = hasAnyRole(['ADMIN']);
@@ -172,7 +174,7 @@ export function TemplatesPage() {
                 <TableCell>
                   <Typography fontWeight={700}>{template.name}</Typography>
                 </TableCell>
-                <TableCell>{template.type}</TableCell>
+                <TableCell>{metadata.label('messageTemplateTypes', template.type)}</TableCell>
                 <TableCell>{storeName(template.storeId)}</TableCell>
                 <TableCell>{template.active ? 'Ativo' : 'Inativo'}</TableCell>
                 <TableCell sx={{ maxWidth: 420 }}>
@@ -219,7 +221,7 @@ export function TemplatesPage() {
                   <TextField fullWidth select label="Tipo" error={Boolean(errors.type)} helperText={errors.type?.message} {...register('type')}>
                     {templateTypes.map((type) => (
                       <MenuItem key={type} value={type}>
-                        {type}
+                        {metadata.label('messageTemplateTypes', type)}
                       </MenuItem>
                     ))}
                   </TextField>

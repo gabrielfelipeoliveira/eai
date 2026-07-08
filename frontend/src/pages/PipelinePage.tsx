@@ -12,6 +12,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { useMemo, useState } from 'react';
+import { useMetadata } from '../hooks/useMetadata';
 import { changeLeadStatus, getPipeline, listLeads } from '../services/leadService';
 import type { Lead, LeadStatus, PipelineResponse } from '../types/lead';
 
@@ -28,21 +29,9 @@ const statuses: LeadStatus[] = [
   'DUPLICATED',
 ];
 
-const statusColors: Record<LeadStatus, 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info'> = {
-  NEW: 'info',
-  AVAILABLE: 'primary',
-  ASSIGNED: 'secondary',
-  FIRST_CONTACT: 'warning',
-  IN_NEGOTIATION: 'warning',
-  VISIT_SCHEDULED: 'info',
-  PROPOSAL_SENT: 'secondary',
-  SOLD: 'success',
-  LOST: 'error',
-  DUPLICATED: 'default',
-};
-
 export function PipelinePage() {
   const queryClient = useQueryClient();
+  const metadata = useMetadata();
   const [draggedLead, setDraggedLead] = useState<Lead | null>(null);
   const [dragOverStatus, setDragOverStatus] = useState<LeadStatus | null>(null);
 
@@ -127,7 +116,7 @@ export function PipelinePage() {
               }}
             >
               <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Chip color={statusColors[status]} label={status} size="small" />
+                <Chip color={metadata.color('leadStatuses', status)} label={metadata.label('leadStatuses', status)} size="small" />
                 <Typography variant="caption" color="text.secondary">
                   {leads.length}
                 </Typography>

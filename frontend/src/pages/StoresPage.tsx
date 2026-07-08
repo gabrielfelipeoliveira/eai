@@ -24,6 +24,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useAuth } from '../hooks/useAuth';
+import { useMetadata } from '../hooks/useMetadata';
 import { listCompanies } from '../services/companyService';
 import { createStore, listStores, updateStore } from '../services/storeService';
 import type { Store } from '../types/tenant';
@@ -46,6 +47,7 @@ export function StoresPage() {
   const { hasAnyRole, user } = useAuth();
   const [editingStore, setEditingStore] = useState<Store | null>(null);
   const queryClient = useQueryClient();
+  const metadata = useMetadata();
   const isAdmin = hasAnyRole(['ADMIN']);
 
   const emptyValues = useMemo<StoreFormValues>(
@@ -163,7 +165,7 @@ export function StoresPage() {
                     {isAdmin && <TableCell>{companyName(store.companyId)}</TableCell>}
                     <TableCell>{[store.city, store.state].filter(Boolean).join(' / ') || '-'}</TableCell>
                     <TableCell>
-                      <Chip color={store.status === 'ACTIVE' ? 'success' : 'default'} label={store.status} size="small" />
+                      <Chip color={metadata.color('tenantStatuses', store.status)} label={metadata.label('tenantStatuses', store.status)} size="small" />
                     </TableCell>
                     <TableCell align="right">
                       <IconButton aria-label="Editar loja" onClick={() => setEditingStore(store)}>
@@ -212,8 +214,11 @@ export function StoresPage() {
             <TextField label="UF" error={Boolean(errors.state)} helperText={errors.state?.message} {...register('state')} />
             <TextField label="Endereco" error={Boolean(errors.address)} helperText={errors.address?.message} {...register('address')} />
             <TextField select label="Status" error={Boolean(errors.status)} helperText={errors.status?.message} {...register('status')}>
-              <MenuItem value="ACTIVE">ACTIVE</MenuItem>
-              <MenuItem value="INACTIVE">INACTIVE</MenuItem>
+              {metadata.options('tenantStatuses').map((status) => (
+                <MenuItem key={status.code} value={status.code}>
+                  {status.label}
+                </MenuItem>
+              ))}
             </TextField>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Button disabled={saveStoreMutation.isPending} type="submit" variant="contained">

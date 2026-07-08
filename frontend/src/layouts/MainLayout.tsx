@@ -27,11 +27,13 @@ import {
 } from '@mui/material';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useMetadata } from '../hooks/useMetadata';
 
 const drawerWidth = 248;
 
 export function MainLayout() {
   const { hasAnyRole, logout, user } = useAuth();
+  const metadata = useMetadata();
   const navigate = useNavigate();
 
   const menuItems = [
@@ -80,7 +82,7 @@ export function MainLayout() {
                 {user?.name}
               </Typography>
               <Typography variant="caption" color="text.secondary" noWrap>
-                {user?.roles.join(', ')}
+                {user?.roles.map((role) => metadata.label('userRoles', role)).join(', ')}
               </Typography>
             </Box>
             <Tooltip title="Sair">

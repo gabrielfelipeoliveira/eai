@@ -20,6 +20,7 @@ import { useQuery } from '@tanstack/react-query';
 import type React from 'react';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { useMetadata } from '../hooks/useMetadata';
 import { listCompanies } from '../services/companyService';
 import {
   downloadReportCsv,
@@ -61,6 +62,7 @@ function date(value: string | null | undefined) {
 
 export function ReportsPage() {
   const { hasAnyRole, user } = useAuth();
+  const metadata = useMetadata();
   const isAdmin = hasAnyRole(['ADMIN']);
   const canFilterTenant = hasAnyRole(['ADMIN', 'MANAGER', 'AUDITOR']);
   const canFilterSellers = hasAnyRole(['ADMIN', 'MANAGER', 'AUDITOR']);
@@ -164,7 +166,7 @@ export function ReportsPage() {
               <MenuItem value="">Todas</MenuItem>
               {sources.map((source) => (
                 <MenuItem key={source} value={source}>
-                  {source}
+                  {metadata.label('leadSources', source)}
                 </MenuItem>
               ))}
             </TextField>
@@ -266,7 +268,7 @@ export function ReportsPage() {
             <TableBody>
               {(sourcesQuery.data ?? []).map((item) => (
                 <TableRow key={item.source}>
-                  <TableCell>{item.source}</TableCell>
+                  <TableCell>{metadata.label('leadSources', item.source)}</TableCell>
                   <TableCell align="right">{item.leadCount}</TableCell>
                   <TableCell align="right">{item.soldLeads}</TableCell>
                   <TableCell align="right">{item.conversionRate.toFixed(1)}%</TableCell>
@@ -320,7 +322,7 @@ export function ReportsPage() {
               <TableCell>{item.customerName}</TableCell>
               <TableCell>{item.vehicleInterest ?? '-'}</TableCell>
               <TableCell>{item.sellerName}</TableCell>
-              <TableCell>{item.source}</TableCell>
+              <TableCell>{metadata.label('leadSources', item.source)}</TableCell>
               <TableCell align="right">{money(item.saleValue)}</TableCell>
               <TableCell>{date(item.soldAt)}</TableCell>
             </TableRow>
@@ -345,7 +347,7 @@ export function ReportsPage() {
               <TableCell>{item.customerName}</TableCell>
               <TableCell>{item.vehicleInterest ?? '-'}</TableCell>
               <TableCell>{item.sellerName}</TableCell>
-              <TableCell>{item.source}</TableCell>
+              <TableCell>{metadata.label('leadSources', item.source)}</TableCell>
               <TableCell>{item.lostReason ?? '-'}</TableCell>
               <TableCell>{date(item.lostAt)}</TableCell>
             </TableRow>

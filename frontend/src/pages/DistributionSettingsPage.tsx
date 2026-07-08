@@ -2,6 +2,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import { Alert, Box, Button, Grid2, LinearProgress, MenuItem, Paper, Stack, Switch, TextField, Typography } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { useMetadata } from '../hooks/useMetadata';
 import { getDistributionConfig, updateDistributionConfig } from '../services/distributionService';
 import type { LeadDistributionMode } from '../types/distribution';
 
@@ -9,6 +10,7 @@ const modes: LeadDistributionMode[] = ['MANUAL', 'ROUND_ROBIN', 'LEAST_BUSY'];
 
 export function DistributionSettingsPage() {
   const queryClient = useQueryClient();
+  const metadata = useMetadata();
   const [mode, setMode] = useState<LeadDistributionMode>('MANUAL');
   const [active, setActive] = useState(false);
   const [minutesToAssign, setMinutesToAssign] = useState(15);
@@ -74,7 +76,7 @@ export function DistributionSettingsPage() {
               <TextField label="Modo" onChange={(event) => setMode(event.target.value as LeadDistributionMode)} select value={mode}>
                 {modes.map((item) => (
                   <MenuItem key={item} value={item}>
-                    {item}
+                    {metadata.label('leadDistributionModes', item)}
                   </MenuItem>
                 ))}
               </TextField>
