@@ -64,9 +64,13 @@ Configuracoes opcionais de TTL dos tokens:
 - `eai.security.access-token-ttl-minutes`: padrao `15`
 - `eai.security.refresh-token-ttl-hours`: padrao `168`
 
-Usuario admin seed:
+Usuarios seed de desenvolvimento:
 
-- E-mail: `admin@eai.com`
+- Admin: `admin@eai.com`
+- Gerente: `gerente@eai.com`
+- Vendedores: `ana@eai.com`, `bruno@eai.com`, `carla@eai.com`
+- Recepcao: `recepcao@eai.com`
+- Auditoria: `auditor@eai.com`
 - Senha: `admin123`
 
 Endpoints de autenticacao:
@@ -131,7 +135,7 @@ O job importador IMAP fica desabilitado por padrao com `eai.email.importer.enabl
 Os perfis sao `ADMIN`, `MANAGER`, `SELLER`, `RECEPTIONIST` e `AUDITOR`.
 `ADMIN` pode gerenciar empresas, lojas, usuarios, vinculos de tenant e todos os leads. `MANAGER` pode visualizar usuarios e gerenciar lojas no escopo de sua empresa, e o acesso a leads e limitado a propria loja. `SELLER` fica limitado a propria loja.
 
-O seed de desenvolvimento cria uma empresa padrao, uma loja padrao e vincula o usuario admin seed a ambas.
+O seed de desenvolvimento cria uma empresa padrao, uma loja padrao, usuarios por perfil, templates de mensagem, configuracoes de distribuicao/SLA, conta IMAP de exemplo inativa, leads em diferentes etapas do funil, historico, notas, tags, comunicacoes e follow-ups.
 
 ## Subir Frontend
 

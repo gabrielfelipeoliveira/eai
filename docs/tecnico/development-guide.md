@@ -35,9 +35,13 @@ npm install
 npm run dev
 ```
 
-Credenciais do admin seed:
+Credenciais seed de desenvolvimento:
 
-- E-mail: `admin@eai.com`
+- Admin: `admin@eai.com`
+- Gerente: `gerente@eai.com`
+- Vendedores: `ana@eai.com`, `bruno@eai.com`, `carla@eai.com`
+- Recepcao: `recepcao@eai.com`
+- Auditoria: `auditor@eai.com`
 - Senha: `admin123`
 
 O frontend espera a API do backend em `http://localhost:8080/api`. Defina `VITE_API_BASE_URL` ao usar uma URL diferente para o backend.
@@ -72,7 +76,7 @@ Crie novas migrations com o padrao de nome:
 V{numero}__descricao.sql
 ```
 
-Nao edite migrations ja aplicadas fora de experimentacao local. A autenticacao usa `V2__create_users_and_refresh_tokens.sql` para usuarios, perfis de usuario, refresh tokens e seed do admin com hash BCrypt. A base de tenant usa `V3__add_companies_stores_and_user_tenant_links.sql` para empresas, lojas, colunas de tenant em usuarios, seed da empresa padrao, seed da loja padrao e vinculo de tenant do admin.
+Nao edite migrations ja aplicadas fora de experimentacao local. Como a base ainda e descartavel, o schema inicial esta consolidado em `V1__initial_schema.sql` com dados de demonstracao para exercitar autenticacao, tenants, usuarios, leads, pipeline, templates, comunicacoes, SLA, distribuicao, relatorios e follow-ups.
 
 ## Smoke Test De Autenticacao
 

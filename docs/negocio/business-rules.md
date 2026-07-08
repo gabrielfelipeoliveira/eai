@@ -177,11 +177,6 @@ Regras conhecidas:
 - Historicos armazenam status anterior, novo status, descricao, usuario e data de criacao.
 - Registros de historico criados por scheduler podem ser registros de sistema sem usuario, conforme documentacao do importador de e-mail.
 
-Conflito aberto:
-
-- A migration atual `V4__create_leads.sql` define `lead_history.user_id` como `NOT NULL`.
-- A documentacao do importador de e-mail afirma que entradas de historico criadas por scheduler usam um registro de sistema sem usuario.
-
 Status:
 PENDENTE DE DEFINIÇÃO
 

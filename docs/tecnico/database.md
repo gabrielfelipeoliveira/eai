@@ -21,14 +21,11 @@ Regras:
 ## Migrations Atuais
 
 - `V1__initial_schema.sql`
-- `V2__create_users_and_refresh_tokens.sql`
-- `V3__add_companies_stores_and_user_tenant_links.sql`
-- `V4__create_leads.sql`
-- `V5__create_message_templates_and_lead_communications.sql`
-- `V6__ensure_default_message_template.sql`
-- `V7__create_email_accounts.sql`
-- `V8__add_lead_distribution_and_sla.sql`
-- `V9__create_follow_up_tasks.sql`
+
+Observacao:
+
+- A base ainda e descartavel em ambiente local. Por decisao de desenvolvimento, as migrations iniciais foram consolidadas em uma unica `V1` com schema completo e dados de demonstracao.
+- Depois que a base deixar de ser descartavel, migrations ja aplicadas nao devem ser modificadas; novas alteracoes devem ser criadas em novas versoes.
 
 ## Tabelas Conceituais
 
@@ -92,10 +89,16 @@ Indices conhecidos:
 
 Dados de seed conhecidos:
 
-- Usuario admin de desenvolvimento.
-- Empresa padrao de desenvolvimento.
-- Loja padrao de desenvolvimento.
-- Template de mensagem padrao.
+- Empresa padrao de desenvolvimento: `EAI Motors`.
+- Loja padrao de desenvolvimento: `EAI Motors Centro`.
+- Usuarios de desenvolvimento com perfis `ADMIN`, `MANAGER`, `SELLER`, `RECEPTIONIST` e `AUDITOR`.
+- Todos os usuarios seed usam a senha local `admin123`.
+- Templates de mensagem para primeiro contato, follow-up, convite para visita e proposta.
+- Configuracao de distribuicao `MANUAL`.
+- Politica de SLA local com 15 minutos para atribuicao e 30 minutos para primeiro contato.
+- Conta IMAP de exemplo inativa.
+- Leads de demonstracao cobrindo os status principais do funil.
+- Historico, notas, tags, comunicacoes por WhatsApp e tarefas de follow-up para exercitar os fluxos existentes.
 
 Status:
 PENDENTE DE DEFINIÇÃO
@@ -108,20 +111,11 @@ Perguntas para o Product Owner:
 
 ## Conflitos Conhecidos
 
-### Ator de Historico do Sistema
+Nenhum conflito tecnico conhecido nesta base consolidada.
 
-A documentacao atual afirma que historicos criados pelo scheduler usam um registro de sistema sem usuario.
+Nota:
 
-A migration `V4__create_leads.sql` define `lead_history.user_id` como `NOT NULL`.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Software Architect:
-
-- Historico de sistema deve usar um usuario tecnico dedicado?
-- `lead_history.user_id` deve se tornar nullable em uma migration futura?
-- O ator do historico deve ser modelado explicitamente como usuario ou sistema?
+- `lead_history.user_id` permite valor nulo para suportar registros de sistema, como importacoes automatizadas.
 
 ## Decisoes Futuras de Banco
 
