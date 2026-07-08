@@ -2,10 +2,10 @@
 
 ## Documentos Oficiais De Arquitetura
 
-- `docs/architecture.md`
-- `docs/api.md`
-- `docs/database.md`
-- `docs/adr/`
+- `docs/tecnico/architecture.md`
+- `docs/tecnico/api.md`
+- `docs/tecnico/database.md`
+- `docs/tecnico/adr/`
 
 ## Principios Centrais
 

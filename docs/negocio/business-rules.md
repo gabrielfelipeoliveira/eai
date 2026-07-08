@@ -7,9 +7,9 @@ Este documento e a fonte oficial para regras de negocio. Ele nao deve inventar c
 As regras conhecidas foram extraidas da documentacao e da implementacao atuais:
 
 - `README.md`
-- `docs/architecture.md`
-- `docs/development-guide.md`
-- `docs/email-importer.md`
+- `docs/tecnico/architecture.md`
+- `docs/tecnico/development-guide.md`
+- `docs/tecnico/email-importer.md`
 - Codigo atual de dominio e aplicacao do backend
 - Migrations atuais do banco
 

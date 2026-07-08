@@ -7,16 +7,17 @@ Este diretorio e o guia de onboarding para agentes de IA trabalhando no EAI.
 Leia os documentos nesta ordem antes de implementar qualquer mudanca:
 
 1. `.agents/AGENTS.md`
-2. `docs/vision.md`
-3. `docs/business-rules.md`
-4. `docs/domain.md`
-5. `docs/use-cases.md`
-6. `docs/architecture.md`
-7. `docs/api.md`
-8. `docs/database.md`
-9. `docs/roadmap.md`
-10. ADRs relevantes em `docs/adr/`
-11. Arquivo especifico do papel em `.agents/`
+2. `docs/README.md`
+3. `docs/negocio/vision.md`
+4. `docs/negocio/business-rules.md`
+5. `docs/negocio/domain.md`
+6. `docs/negocio/use-cases.md`
+7. `docs/negocio/roadmap.md`
+8. `docs/tecnico/architecture.md`
+9. `docs/tecnico/api.md`
+10. `docs/tecnico/database.md`
+11. ADRs relevantes em `docs/tecnico/adr/`
+12. Arquivo especifico do papel em `.agents/`
 
 Quando documentacao e codigo entrarem em conflito, nao escolha um lado silenciosamente. Registre o conflito no resumo do trabalho ou na documentacao apropriada.
 

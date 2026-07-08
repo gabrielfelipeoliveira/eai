@@ -15,7 +15,7 @@ Use este checklist para revisoes de codigo.
 
 ## Regras De Negocio
 
-- O comportamento esta documentado em `docs/business-rules.md` ou `docs/use-cases.md`?
+- O comportamento esta documentado em `docs/negocio/business-rules.md` ou `docs/negocio/use-cases.md`?
 - Se o comportamento estava incerto, ele foi registrado como pendente em vez de assumido?
 - Decisoes do Product Owner estao refletidas na documentacao?
 - Conflitos entre codigo e documentacao foram destacados?

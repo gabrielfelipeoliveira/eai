@@ -7,15 +7,16 @@ O onboarding oficial de agentes fica em `.agents/`.
 Leia primeiro:
 
 1. `.agents/AGENTS.md`
-2. `docs/vision.md`
-3. `docs/business-rules.md`
-4. `docs/domain.md`
-5. `docs/use-cases.md`
-6. `docs/architecture.md`
-7. `docs/api.md`
-8. `docs/database.md`
-9. `docs/roadmap.md`
-10. Arquivos relevantes em `.agents/` conforme o papel executado
+2. `docs/README.md`
+3. `docs/negocio/vision.md`
+4. `docs/negocio/business-rules.md`
+5. `docs/negocio/domain.md`
+6. `docs/negocio/use-cases.md`
+7. `docs/negocio/roadmap.md`
+8. `docs/tecnico/architecture.md`
+9. `docs/tecnico/api.md`
+10. `docs/tecnico/database.md`
+11. Arquivos relevantes em `.agents/` conforme o papel executado
 
 Regras importantes:
 

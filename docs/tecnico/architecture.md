@@ -1,6 +1,6 @@
 # Arquitetura
 
-Este documento e a referencia oficial de arquitetura do EAI. Decisoes de negocio ficam em `docs/business-rules.md`; casos de uso ficam em `docs/use-cases.md`; convencoes de API ficam em `docs/api.md`; convencoes de banco ficam em `docs/database.md`.
+Este documento e a referencia oficial de arquitetura do EAI. Decisoes de negocio ficam em `docs/negocio/business-rules.md`; casos de uso ficam em `docs/negocio/use-cases.md`; convencoes de API ficam em `docs/tecnico/api.md`; convencoes de banco ficam em `docs/tecnico/database.md`.
 
 ## Visao Geral
 
@@ -369,9 +369,9 @@ Perguntas para o Software Architect:
 
 ADRs iniciais:
 
-- `docs/adr/0001-use-hexagonal-architecture.md`
-- `docs/adr/0002-flyway-owns-database-schema.md`
-- `docs/adr/0003-separate-api-domain-and-persistence-models.md`
-- `docs/adr/0004-use-jwt-access-tokens-and-persisted-refresh-tokens.md`
+- `docs/tecnico/adr/0001-use-hexagonal-architecture.md`
+- `docs/tecnico/adr/0002-flyway-owns-database-schema.md`
+- `docs/tecnico/adr/0003-separate-api-domain-and-persistence-models.md`
+- `docs/tecnico/adr/0004-use-jwt-access-tokens-and-persisted-refresh-tokens.md`
 
 Decisoes arquiteturais futuras devem ser registradas como ADRs.

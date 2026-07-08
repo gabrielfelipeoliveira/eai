@@ -207,13 +207,13 @@ Veja [Importador de leads por e-mail](email-importer.md) para configuracao IMAP,
 
 Pontos de entrada da documentacao oficial:
 
-- [Visao](vision.md)
-- [Regras de negocio](business-rules.md)
-- [Modelo de dominio](domain.md)
-- [Casos de uso](use-cases.md)
+- [Visao](../negocio/vision.md)
+- [Regras de negocio](../negocio/business-rules.md)
+- [Modelo de dominio](../negocio/domain.md)
+- [Casos de uso](../negocio/use-cases.md)
 - [Arquitetura](architecture.md)
 - [Diretrizes de API](api.md)
 - [Banco de dados](database.md)
-- [Roadmap](roadmap.md)
+- [Roadmap](../negocio/roadmap.md)
 - [Importador de leads por e-mail](email-importer.md)
 - [ADRs](adr/)

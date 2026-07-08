@@ -10,11 +10,11 @@ Aumentar a conversao de leads, reduzir tempo de resposta, organizar performance 
 
 ## Documentos Oficiais De Produto
 
-- `docs/vision.md`
-- `docs/business-rules.md`
-- `docs/domain.md`
-- `docs/use-cases.md`
-- `docs/roadmap.md`
+- `docs/negocio/vision.md`
+- `docs/negocio/business-rules.md`
+- `docs/negocio/domain.md`
+- `docs/negocio/use-cases.md`
+- `docs/negocio/roadmap.md`
 
 ## Glossario
 
@@ -46,20 +46,20 @@ Aumentar a conversao de leads, reduzir tempo de resposta, organizar performance 
 
 ## Regras Conhecidas Hoje
 
-As regras sao mantidas em `docs/business-rules.md`. Agentes nao devem adicionar comportamento nao documentado durante implementacao.
+As regras sao mantidas em `docs/negocio/business-rules.md`. Agentes nao devem adicionar comportamento nao documentado durante implementacao.
 
 ## Pendencias De Produto
 
 Antes de implementar comportamento de produto, revise todas as secoes `Status: PENDENTE DE DEFINIÇÃO` em:
 
-- `docs/business-rules.md`
-- `docs/use-cases.md`
-- `docs/domain.md`
-- `docs/roadmap.md`
+- `docs/negocio/business-rules.md`
+- `docs/negocio/use-cases.md`
+- `docs/negocio/domain.md`
+- `docs/negocio/roadmap.md`
 
 ## Regras Do Agente De Produto
 
 - Nao invente comportamento ausente.
 - Converta ambiguidades em perguntas para o Product Owner.
-- Mantenha o vocabulario de negocio consistente com `docs/domain.md`.
-- Quando uma regra for aprovada, atualize `docs/business-rules.md` e os casos de uso afetados antes da implementacao.
+- Mantenha o vocabulario de negocio consistente com `docs/negocio/domain.md`.
+- Quando uma regra for aprovada, atualize `docs/negocio/business-rules.md` e os casos de uso afetados antes da implementacao.

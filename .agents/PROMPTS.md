@@ -5,7 +5,7 @@ Estes prompts ajudam agentes futuros a trabalhar de forma consistente.
 ## Prompt De Implementacao
 
 ```text
-Leia `.agents/AGENTS.md` e os arquivos relevantes em `docs/`.
+Leia `.agents/AGENTS.md`, `docs/README.md` e os arquivos relevantes em `docs/`.
 Analise o codigo afetado antes de editar.
 Implemente apenas o comportamento aprovado.
 Nao invente regras de negocio.
@@ -17,7 +17,7 @@ Reporte arquivos alterados e validacoes executadas.
 ## Prompt De Esclarecimento De Regra De Negocio
 
 ```text
-Revise `docs/business-rules.md` e `docs/use-cases.md` para o comportamento solicitado.
+Revise `docs/negocio/business-rules.md` e `docs/negocio/use-cases.md` para o comportamento solicitado.
 Identifique regras conhecidas, conflitos e decisoes ausentes.
 Nao implemente codigo.
 Retorne perguntas para o Product Owner usando o formato documentado de pendencia.
@@ -26,7 +26,7 @@ Retorne perguntas para o Product Owner usando o formato documentado de pendencia
 ## Prompt De Revisao De Arquitetura
 
 ```text
-Revise a mudanca proposta contra `docs/architecture.md` e `docs/adr/`.
+Revise a mudanca proposta contra `docs/tecnico/architecture.md` e `docs/tecnico/adr/`.
 Verifique direcao de dependencias, responsabilidades de camadas, ports/adapters, limites de DTO, vazamento de persistencia e responsabilidades de controllers.
 Liste achados por severidade com referencias de arquivo.
 Sugira ADRs se novas decisoes arquiteturais forem necessarias.

@@ -126,7 +126,7 @@ Endpoints do importador de leads por e-mail:
 - `POST /api/email-accounts/{id}/test`
 - `POST /api/email-accounts/{id}/sync`
 
-O job importador IMAP fica desabilitado por padrao com `eai.email.importer.enabled=false` e usa `eai.email.importer.fixed-delay=60000`. Em producao, use `EAI_EMAIL_IMPORTER_ENABLED` e `EAI_EMAIL_IMPORTER_FIXED_DELAY`. Veja [Importador de leads por e-mail](docs/email-importer.md) para setup IMAP, limitacoes, regras de duplicidade e seguranca de senha.
+O job importador IMAP fica desabilitado por padrao com `eai.email.importer.enabled=false` e usa `eai.email.importer.fixed-delay=60000`. Em producao, use `EAI_EMAIL_IMPORTER_ENABLED` e `EAI_EMAIL_IMPORTER_FIXED_DELAY`. Veja [Importador de leads por e-mail](docs/tecnico/email-importer.md) para setup IMAP, limitacoes, regras de duplicidade e seguranca de senha.
 
 Os perfis sao `ADMIN`, `MANAGER`, `SELLER`, `RECEPTIONIST` e `AUDITOR`.
 `ADMIN` pode gerenciar empresas, lojas, usuarios, vinculos de tenant e todos os leads. `MANAGER` pode visualizar usuarios e gerenciar lojas no escopo de sua empresa, e o acesso a leads e limitado a propria loja. `SELLER` fica limitado a propria loja.
@@ -188,17 +188,18 @@ npm run build
 
 ## Documentacao
 
-- [Visao](docs/vision.md)
-- [Regras de negocio](docs/business-rules.md)
-- [Modelo de dominio](docs/domain.md)
-- [Casos de uso](docs/use-cases.md)
-- [Arquitetura](docs/architecture.md)
-- [Diretrizes de API](docs/api.md)
-- [Banco de dados](docs/database.md)
-- [Roadmap](docs/roadmap.md)
-- [Guia de desenvolvimento](docs/development-guide.md)
-- [Importador de leads por e-mail](docs/email-importer.md)
-- [ADRs](docs/adr)
+- [Indice da documentacao](docs/README.md)
+- [Visao](docs/negocio/vision.md)
+- [Regras de negocio](docs/negocio/business-rules.md)
+- [Modelo de dominio](docs/negocio/domain.md)
+- [Casos de uso](docs/negocio/use-cases.md)
+- [Roadmap](docs/negocio/roadmap.md)
+- [Arquitetura](docs/tecnico/architecture.md)
+- [Diretrizes de API](docs/tecnico/api.md)
+- [Banco de dados](docs/tecnico/database.md)
+- [Guia de desenvolvimento](docs/tecnico/development-guide.md)
+- [Importador de leads por e-mail](docs/tecnico/email-importer.md)
+- [ADRs](docs/tecnico/adr)
 - [Onboarding de agentes de IA](.agents/AGENTS.md)
 
 ## Baseline De Documentacao Da Sprint 0
