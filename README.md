@@ -4,7 +4,7 @@ EAI e uma base SaaS para lojas de veiculos e concessionarias gerenciarem leads, 
 
 ## Stack
 
-- Backend: Java 21, Spring Boot 3, Maven, Spring Web, Spring Security, Spring Data JPA, PostgreSQL, Flyway, Validation, Lombok, MapStruct, OpenAPI/Swagger
+- Backend: Java 21, Spring Boot 4, Maven, Spring Web, Spring Security, Spring Data JPA, PostgreSQL, Flyway, Validation, Lombok, MapStruct, OpenAPI/Swagger
 - Frontend: React, Vite, TypeScript, Material UI, React Router, React Query, Axios, React Hook Form, Zod
 - Infra: Docker Compose e PostgreSQL
 
