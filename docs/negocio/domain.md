@@ -1,6 +1,6 @@
 # Modelo de Dominio
 
-Este documento descreve o dominio conceitual. Ele evita detalhes tecnicos de framework de proposito.
+Este documento descreve o dominio conceitual definido. Ele evita detalhes tecnicos de framework de proposito. Duvidas de modelagem e regras ainda nao decididas ficam em [Pendencias de produto](pendencias.md).
 
 ## Contextos de Dominio
 
@@ -16,14 +16,6 @@ O sistema atual pode ser entendido pelas seguintes areas de dominio:
 - Dashboard e relatorios.
 
 Os limites exatos dos contextos podem evoluir conforme o produto amadurecer.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Importacao por e-mail deve ser considerada parte da captacao de leads ou um contexto separado de integracao?
-- Atendimento ao cliente deve ser um contexto separado da gestao do funil comercial?
 
 ## Entidades Principais
 
@@ -234,15 +226,6 @@ Candidatos atuais a agregados:
 - Configuracao de distribuicao e politica de SLA como configuracoes operacionais da loja.
 - Conta de e-mail como configuracao de integracao de captacao de leads.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Notas, tags, comunicacoes e follow-ups fazem parte das invariantes do agregado Lead ou sao registros operacionais independentes?
-- Deve existir uma entidade Cliente independente de Lead?
-- Veiculo deve ser modelado futuramente como entidade estruturada?
-
 ## Candidatos a Value Objects
 
 Conceitos atuais que podem se tornar value objects:
@@ -256,15 +239,6 @@ Conceitos atuais que podem se tornar value objects:
 - Telefone de WhatsApp.
 - Origem do lead.
 - Status do lead.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quais campos exigem validacao especifica por pais?
-- Normalizacao de telefone deve seguir apenas numeros brasileiros?
-- Valor de venda deve suportar moedas alem de BRL?
 
 ## Candidatos a Eventos de Dominio
 
@@ -283,15 +257,6 @@ Eventos potenciais:
 - LinkDeWhatsAppGerado.
 - LeadImportadoPorEmail.
 - SlaViolado.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quais eventos de dominio devem criar notificacoes?
-- Quais eventos devem ser auditaveis por compliance?
-- Quais eventos devem alimentar relatorios?
 
 ## Glossario
 

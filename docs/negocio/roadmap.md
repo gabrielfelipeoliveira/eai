@@ -1,6 +1,6 @@
 # Roadmap
 
-Este roadmap organiza a evolucao do projeto. Ele nao e um compromisso de implementar comportamento de negocio sem aprovacao do Product Owner.
+Este roadmap organiza a evolucao conhecida do projeto. Ele nao e um compromisso de implementar comportamento de negocio sem aprovacao do Product Owner. Duvidas de priorizacao e escopo ficam centralizadas em [Pendencias de produto](pendencias.md).
 
 ## Sprint 0: Base de Engenharia
 
@@ -50,16 +50,6 @@ Escopo candidato com base na implementacao e documentacao atuais:
 - Base do importador de leads por e-mail.
 - Dashboard basico.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quais modulos candidatos sao obrigatorios no MVP?
-- Qual e a menor entrega que gera valor para uma concessionaria?
-- Quais papeis de usuario devem existir no primeiro dia?
-- Quais relatorios operacionais sao obrigatorios no MVP?
-
 ## Versao 1
 
 Temas candidatos:
@@ -71,14 +61,6 @@ Temas candidatos:
 - Melhorar parsers de importacao por e-mail.
 - Melhorar modularidade e usabilidade do frontend.
 - Adicionar seguranca e observabilidade de producao.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quais workflows precisam estar completos antes de um piloto pago?
-- Quais integracoes sao obrigatorias para as lojas na primeira versao?
 
 ## Versao 2
 
@@ -92,14 +74,6 @@ Temas candidatos:
 - Novas origens de lead e parsers.
 - Automacao de deploy em producao.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quais workflows avancados tem prioridade comercial?
-- Quais sistemas externos precisam ser integrados?
-
 ## Ideias Futuras
 
 Ideias ainda nao aprovadas para implementacao:
@@ -112,11 +86,3 @@ Ideias ainda nao aprovadas para implementacao:
 - Qualificacao de leads assistida por IA.
 - Coaching automatico para vendedores.
 - Billing de assinatura.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quais ideias futuras sao apostas estrategicas?
-- Quais ideias devem ser explicitamente excluidas?

@@ -8,6 +8,7 @@ Use `docs/negocio/` para decisoes e contexto de produto. Esta pasta deve ser a r
 
 - [Visao do produto](negocio/vision.md)
 - [Regras de negocio](negocio/business-rules.md)
+- [Pendencias de produto](negocio/pendencias.md)
 - [Modelo de dominio](negocio/domain.md)
 - [Casos de uso](negocio/use-cases.md)
 - [Roadmap](negocio/roadmap.md)

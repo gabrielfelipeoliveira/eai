@@ -54,6 +54,9 @@ Use este checklist para revisoes de codigo.
 - Segredos ficaram fora de codigo e exemplos de documentacao?
 - Tokens e credenciais sao tratados com cuidado?
 - Campos sensiveis sao excluidos das respostas?
+- Vulnerabilidades reportadas por build, `npm audit`, Maven, Mend/SCA ou alertas de CVE foram corrigidas ou registradas?
+- CVEs de Java, imagem base, Spring Boot e bibliotecas criticas foram avaliadas quando apareceram nas validacoes?
+- Quando uma vulnerabilidade nao foi corrigida, a justificativa, severidade e proximo passo ficaram claros?
 
 ## Performance
 
@@ -67,6 +70,7 @@ Use este checklist para revisoes de codigo.
 - Testes relevantes foram adicionados ou atualizados?
 - Testes backend rodaram?
 - Build/lint frontend rodou quando o frontend mudou?
+- Auditorias ou warnings de vulnerabilidade emitidos durante build foram citados no resultado?
 - Testes ausentes foram documentados?
 
 ## Documentacao

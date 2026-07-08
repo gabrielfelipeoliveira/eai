@@ -201,6 +201,7 @@ npm run build
 - [Indice da documentacao](docs/README.md)
 - [Visao](docs/negocio/vision.md)
 - [Regras de negocio](docs/negocio/business-rules.md)
+- [Pendencias de produto](docs/negocio/pendencias.md)
 - [Modelo de dominio](docs/negocio/domain.md)
 - [Casos de uso](docs/negocio/use-cases.md)
 - [Roadmap](docs/negocio/roadmap.md)

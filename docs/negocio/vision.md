@@ -1,5 +1,7 @@
 # Visao do Produto
 
+Este documento registra a visao e o escopo conhecidos do produto. Duvidas de escopo e prioridade ficam centralizadas em [Pendencias de produto](pendencias.md).
+
 ## Objetivo
 
 O EAI e uma plataforma SaaS para lojas automotivas e concessionarias. Ela centraliza captacao de leads, atribuicao de vendedores, comunicacao por WhatsApp, acompanhamento do funil comercial, atividades de atendimento e relatorios comerciais em um unico espaco operacional.
@@ -70,12 +72,3 @@ Os itens abaixo nao estao definidos como escopo atual:
 - Aplicativos mobile nativos.
 - Parsers especificos por marketplace alem do parser generico de e-mail.
 - Detalhes de implementacao de criptografia e gestao de segredos em producao.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quais itens acima devem ser considerados escopo futuro explicito e quais devem ficar fora do produto?
-- Qual e o limite esperado do MVP para uma liberacao ao cliente?
-- Quais papeis de usuario sao obrigatorios no MVP alem dos papeis ja modelados no sistema?

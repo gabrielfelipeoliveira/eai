@@ -10,14 +10,15 @@ Leia os documentos nesta ordem antes de implementar qualquer mudanca:
 2. `docs/README.md`
 3. `docs/negocio/vision.md`
 4. `docs/negocio/business-rules.md`
-5. `docs/negocio/domain.md`
-6. `docs/negocio/use-cases.md`
-7. `docs/negocio/roadmap.md`
-8. `docs/tecnico/architecture.md`
-9. `docs/tecnico/api.md`
-10. `docs/tecnico/database.md`
-11. ADRs relevantes em `docs/tecnico/adr/`
-12. Arquivo especifico do papel em `.agents/`
+5. `docs/negocio/pendencias.md`
+6. `docs/negocio/domain.md`
+7. `docs/negocio/use-cases.md`
+8. `docs/negocio/roadmap.md`
+9. `docs/tecnico/architecture.md`
+10. `docs/tecnico/api.md`
+11. `docs/tecnico/database.md`
+12. ADRs relevantes em `docs/tecnico/adr/`
+13. Arquivo especifico do papel em `.agents/`
 
 Quando documentacao e codigo entrarem em conflito, nao escolha um lado silenciosamente. Registre o conflito no resumo do trabalho ou na documentacao apropriada.
 
@@ -29,11 +30,13 @@ Quando documentacao e codigo entrarem em conflito, nao escolha um lado silencios
 - Nao implemente comportamento de negocio sem aprovacao documentada do Product Owner.
 - Nao invente regras para preencher lacunas.
 - Registre informacoes funcionais ausentes como pendencia para o Product Owner.
+- Centralize duvidas de produto em `docs/negocio/pendencias.md`.
 - Respeite a arquitetura hexagonal.
 - Mantenha controllers livres de regras de negocio.
 - Nao exponha entidades de persistencia em respostas da API.
 - Nao modifique migrations Flyway existentes depois que forem aplicadas fora de experimentacao local.
 - Sempre reporte as validacoes executadas.
+- Sempre reporte vulnerabilidades apontadas por build, auditoria de dependencias, Mend/SCA ou alertas de CVE do Java.
 
 ## Fluxo De Desenvolvimento
 
@@ -45,7 +48,7 @@ Quando documentacao e codigo entrarem em conflito, nao escolha um lado silencios
 6. Adicione ou atualize testes quando comportamento ou logica compartilhada mudar.
 7. Atualize documentacao quando arquitetura, API, setup, workflow ou regras de produto mudarem.
 8. Execute validacoes relevantes.
-9. Resuma mudancas, validacoes, riscos e pendencias.
+9. Resuma mudancas, validacoes, vulnerabilidades, riscos e pendencias.
 
 ## Padrao De Commit
 
@@ -64,6 +67,7 @@ Uma tarefa so esta concluida quando:
 
 - O codigo compila quando codigo e alterado.
 - Testes relevantes passam ou testes ausentes sao documentados explicitamente.
+- Vulnerabilidades conhecidas do build, dependencias, imagens e runtime Java foram corrigidas ou registradas com severidade, origem e proximo passo.
 - Novo comportamento e documentado quando necessario.
 - Limites de arquitetura sao respeitados.
 - Nenhuma regra de negocio fica em controllers.

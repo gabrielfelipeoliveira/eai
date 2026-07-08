@@ -86,6 +86,13 @@ Quando Java/Maven local nao estiver disponivel, Docker pode ser usado:
 docker run --rm -v "$PWD/backend:/workspace" -v eai-maven-cache:/root/.m2 -w /workspace maven:3.9-eclipse-temurin-21 mvn test
 ```
 
+## Vulnerabilidades E CVEs
+
+- Quando o build, `npm audit`, Maven, Mend/SCA, Dependabot ou outra ferramenta apontar vulnerabilidade, corrija quando estiver dentro do escopo e for seguro.
+- Se a correcao exigir upgrade grande, mudanca de arquitetura ou risco funcional, registre no resumo com severidade, pacote/imagem/runtime afetado, CVE quando existir e proximo passo recomendado.
+- Alertas de CVE relacionados ao Java, imagem base, JDK/JRE ou Spring Boot devem ser tratados como item de engenharia, mesmo quando os testes passam.
+- Nao oculte warnings de vulnerabilidade em respostas finais; diferencie warning conhecido, falso positivo documentado e problema pendente.
+
 ## Checklist Do Agente Backend
 
 - Leu a documentacao relevante primeiro?
@@ -95,3 +102,4 @@ docker run --rm -v "$PWD/backend:/workspace" -v eai-maven-cache:/root/.m2 -w /wo
 - Evitou expor entidades de persistencia?
 - Adicionou/atualizou testes quando necessario?
 - Evitou modificar migrations existentes?
+- Corrigiu ou reportou vulnerabilidades e CVEs observadas durante build/validacao?

@@ -12,6 +12,7 @@ Aumentar a conversao de leads, reduzir tempo de resposta, organizar performance 
 
 - `docs/negocio/vision.md`
 - `docs/negocio/business-rules.md`
+- `docs/negocio/pendencias.md`
 - `docs/negocio/domain.md`
 - `docs/negocio/use-cases.md`
 - `docs/negocio/roadmap.md`
@@ -28,10 +29,10 @@ Aumentar a conversao de leads, reduzir tempo de resposta, organizar performance 
 - Atribuicao: vinculo de responsabilidade entre lead e vendedor.
 - SLA: tempo esperado para atribuicao ou primeiro contato.
 - Follow-up: acao futura agendada relacionada a um lead.
+- Tag: etiqueta associada a um lead.
 - Template: mensagem reutilizavel para cliente.
 - Comunicacao: artefato de contato registrado.
 - Duplicidade: lead potencialmente repetido.
--tags :?
 
 ## Fluxos Conhecidos
 
@@ -50,12 +51,9 @@ As regras sao mantidas em `docs/negocio/business-rules.md`. Agentes nao devem ad
 
 ## Pendencias De Produto
 
-Antes de implementar comportamento de produto, revise todas as secoes `Status: PENDENTE DE DEFINIÇÃO` em:
+Antes de implementar comportamento de produto, revise `docs/negocio/pendencias.md`.
 
-- `docs/negocio/business-rules.md`
-- `docs/negocio/use-cases.md`
-- `docs/negocio/domain.md`
-- `docs/negocio/roadmap.md`
+Os demais documentos de negocio devem conter principalmente informacoes definidas. Quando uma regra for aprovada, mova a decisao para o documento oficial adequado e remova ou marque a pendencia como resolvida.
 
 ## Regras Do Agente De Produto
 

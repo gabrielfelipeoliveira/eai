@@ -1,6 +1,6 @@
 # Casos De Uso
 
-Este documento lista os casos de uso conhecidos sem inventar comportamentos ausentes.
+Este documento lista os casos de uso conhecidos sem inventar comportamentos ausentes. Duvidas sobre entradas, atores, regras e excecoes ficam centralizadas em [Pendencias de produto](pendencias.md).
 
 ## Autenticacao
 
@@ -31,14 +31,6 @@ Pos-condicoes:
 
 - Refresh token e persistido.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Usuarios inativos devem ver uma mensagem especifica ou uma mensagem generica de credenciais invalidas?
-- Login em multiplas sessoes deve ser permitido?
-
 ### Renovar Sessao
 
 Ator:
@@ -62,14 +54,6 @@ Pos-condicoes:
 
 - Continuidade da sessao e mantida.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- A rotacao de refresh token deve revogar imediatamente o refresh token anterior?
-- Qual deve ser a duracao da sessao por perfil?
-
 ### Logout
 
 Ator:
@@ -91,13 +75,6 @@ Pre-condicoes:
 Pos-condicoes:
 
 - Refresh tokens ativos do usuario sao revogados conforme a implementacao atual.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- O logout deve revogar todas as sessoes ou apenas a sessao do dispositivo atual?
 
 ## Gestao De Tenants
 
@@ -123,15 +100,6 @@ Pos-condicoes:
 
 - Empresa e criada ou atualizada.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quais campos de empresa sao obrigatorios em producao?
-- O documento da empresa deve ser unico globalmente?
-- Empresas podem ser desativadas com lojas ou usuarios ativos?
-
 ### Gerenciar Lojas
 
 Ator:
@@ -155,14 +123,6 @@ Pre-condicoes:
 Pos-condicoes:
 
 - Loja e criada ou atualizada.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Um gerente pode criar lojas?
-- Lojas podem ser desativadas enquanto existem leads ativos?
 
 ## Gestao De Usuarios
 
@@ -196,15 +156,6 @@ Pos-condicoes:
 
 - Usuario e criado ativo conforme comportamento atual do dominio.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Gerentes podem criar vendedores da propria loja?
-- Multiplos perfis por usuario devem ser permitidos em producao?
-- Empresa e loja sao obrigatorias para todos os perfis?
-
 ### Atualizar Usuario
 
 Ator:
@@ -227,14 +178,6 @@ Pos-condicoes:
 
 - Dados do usuario e, opcionalmente, senha sao atualizados.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Usuarios podem editar o proprio perfil?
-- Quem pode redefinir senhas?
-
 ### Ativar Ou Desativar Usuario
 
 Ator:
@@ -256,14 +199,6 @@ Pre-condicoes:
 Pos-condicoes:
 
 - Status do usuario e alterado.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- O que acontece com leads atribuidos quando um vendedor e desativado?
-- A desativacao deve revogar sessoes ativas?
 
 ## Gestao De Leads
 
@@ -302,14 +237,6 @@ Pos-condicoes:
 - Lead e criado.
 - Historico e registrado.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quais campos de lead sao obrigatorios por origem?
-- Um vendedor pode criar um lead ja atribuido a outro vendedor?
-
 ### Listar E Pesquisar Leads
 
 Ator:
@@ -334,14 +261,6 @@ Pre-condicoes:
 Pos-condicoes:
 
 - Nenhum dado e alterado.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Vendedores devem ver apenas seus leads ou todos os leads da loja?
-- Qual ordenacao padrao e esperada pelos usuarios de negocio?
 
 ### Atualizar Lead
 
@@ -371,14 +290,6 @@ Pos-condicoes:
 - Lead e atualizado.
 - Historico e registrado se o status mudar.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quais campos podem ser editados depois do primeiro contato?
-- Vendedores podem editar valor de venda ou motivo de perda?
-
 ### Alterar Status Do Lead
 
 Ator:
@@ -406,14 +317,6 @@ Pos-condicoes:
 
 - Status do lead e alterado.
 - Historico e registrado.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quais transicoes de status sao permitidas?
-- Quais status exigem campos adicionais?
 
 ### Atribuir Lead
 
@@ -444,14 +347,6 @@ Pos-condicoes:
 - Status do lead passa para atribuido.
 - Historico e registrado.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Um vendedor pode autoatribuir um lead que ja esta atribuido a outra pessoa?
-- Gerentes podem reatribuir leads depois que a negociacao comecou?
-
 ### Adicionar Observacao
 
 Ator:
@@ -476,14 +371,6 @@ Pos-condicoes:
 
 - Observacao e armazenada.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Observacoes podem ser editadas ou excluidas?
-- Observacoes devem criar entradas no historico?
-
 ### Gerenciar Tags
 
 Ator:
@@ -507,14 +394,6 @@ Pre-condicoes:
 Pos-condicoes:
 
 - Tag e adicionada ou removida.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Tags sao texto livre?
-- Nomes duplicados de tag devem ser permitidos no mesmo lead?
 
 ## Pipeline
 
@@ -541,14 +420,6 @@ Pre-condicoes:
 Pos-condicoes:
 
 - Nenhum dado e alterado.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quais status devem aparecer como colunas do pipeline?
-- O pipeline deve permitir alteracao de status por arrastar e soltar?
 
 ## Follow-Ups
 
@@ -579,14 +450,6 @@ Pos-condicoes:
 - Follow-up e criado.
 - Historico do lead e registrado.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quem fica responsavel pelo follow-up criado?
-- Gerentes podem criar follow-ups atribuidos a vendedores?
-
 ### Concluir Ou Cancelar Follow-Up
 
 Ator:
@@ -610,14 +473,6 @@ Pos-condicoes:
 
 - Status do follow-up e alterado.
 - Historico do lead e registrado.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Um gerente pode concluir follow-up de um vendedor?
-- Tarefas concluidas podem ser reabertas?
 
 ## Distribuicao E SLA
 
@@ -650,14 +505,6 @@ Pos-condicoes:
 
 - Configuracoes de distribuicao da loja sao atualizadas.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Gerentes podem configurar distribuicao e SLA?
-- Padroes de SLA devem ser globais, por empresa ou por loja?
-
 ### Atribuir Leads Automaticamente
 
 Ator:
@@ -684,14 +531,6 @@ Pos-condicoes:
 - Leads sao atribuidos conforme estrategia configurada.
 - Historico e registrado.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quem pode executar distribuicao de pendentes?
-- A distribuicao automatica deve ocorrer na criacao do lead?
-
 ## Templates De Comunicacao
 
 ### Gerenciar Templates
@@ -717,14 +556,6 @@ Pre-condicoes:
 Pos-condicoes:
 
 - Template e criado, atualizado ou excluido.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Templates podem ser excluidos depois de usados?
-- Templates sao apenas por loja ou podem ser compartilhados no nivel da empresa?
 
 ### Gerar Link Do WhatsApp
 
@@ -754,14 +585,6 @@ Pos-condicoes:
 
 - Registro de comunicacao e armazenado.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Gerar um link deve contar como primeiro contato?
-- Links gerados devem expirar ou permanecer imutaveis?
-
 ## Importacao De Leads Por E-Mail
 
 ### Gerenciar Contas De E-Mail
@@ -788,14 +611,6 @@ Pos-condicoes:
 
 - Conta de e-mail e criada, atualizada ou excluida.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quem pode gerenciar contas de e-mail?
-- Excluir uma conta deve preservar o historico de importacao?
-
 ### Testar Conexao De E-Mail
 
 Ator:
@@ -818,13 +633,6 @@ Pre-condicoes:
 Pos-condicoes:
 
 - Nenhum lead e criado.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Testes com falha devem notificar administradores?
 
 ### Sincronizar Leads Por E-Mail
 
@@ -850,14 +658,6 @@ Pos-condicoes:
 - Leads podem ser criados.
 - Data de ultima leitura da conta pode ser atualizada.
 
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Mensagens importadas devem ser marcadas como lidas?
-- Importacoes com falha devem ser tentadas novamente?
-
 ## Dashboard
 
 ### Visualizar Dashboard
@@ -882,11 +682,3 @@ Pre-condicoes:
 Pos-condicoes:
 
 - Nenhum dado e alterado.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quais KPIs sao oficiais para o MVP?
-- Quais atores podem visualizar valores financeiros?
