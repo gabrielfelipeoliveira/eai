@@ -46,6 +46,7 @@ public class SecurityConfig {
                                 "/api/auth/refresh",
                                 "/api/metadata",
                                 "/api/metadata/**",
+                                "/api/webhooks/whatsapp",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"

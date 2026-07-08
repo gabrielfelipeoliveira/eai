@@ -86,6 +86,19 @@ Endpoint publico de metadados de apresentacao:
 
 O catalogo de metadados fornece labels em `pt-BR`, chaves de internacionalizacao, ordem e cor para codigos tecnicos como status de lead, origem, papeis, status de tenant, tipos de template, modos de distribuicao e status de sincronizacao de e-mail. Clientes web/app devem usar esse catalogo para apresentacao e continuar enviando os codigos tecnicos nas APIs de negocio.
 
+Webhook publico do WhatsApp Cloud API:
+
+- `GET /api/webhooks/whatsapp`: validacao do webhook da Meta usando `hub.mode`, `hub.verify_token` e `hub.challenge`.
+- `POST /api/webhooks/whatsapp`: recebimento inicial de eventos, com registro do payload em log.
+
+Credenciais e configuracoes do WhatsApp Cloud API devem vir de variaveis de ambiente, sem segredos versionados:
+
+- `META_WHATSAPP_PHONE_NUMBER_ID`
+- `META_WHATSAPP_BUSINESS_ACCOUNT_ID`
+- `META_WHATSAPP_ACCESS_TOKEN`
+- `META_WHATSAPP_APP_SECRET`
+- `META_WHATSAPP_VERIFY_TOKEN`
+
 Endpoints de gestao de usuarios:
 
 - `GET /api/users`

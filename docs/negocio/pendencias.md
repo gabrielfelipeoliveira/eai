@@ -167,6 +167,9 @@ PENDENTE DE DEFINIÇÃO
 
 Perguntas para o Product Owner:
 
+- A Sprint 1 aprovou a base tecnica do WhatsApp Cloud API, mas a visao/roadmap ainda registram integracao nativa com WhatsApp Business API como fora de escopo ou ideia futura. Essa documentacao deve ser atualizada para refletir o novo escopo aprovado?
+- Eventos recebidos pelo webhook do WhatsApp devem criar leads, atualizar comunicacoes existentes, alimentar uma caixa de entrada ou apenas ficar registrados ate nova decisao?
+- Qual tenant, empresa ou loja deve ser associado a cada numero do WhatsApp Cloud API?
 - Gerar um link deve contar como primeiro contato?
 - Links gerados devem expirar ou permanecer imutaveis?
 - O historico de comunicacao deve guardar apenas links gerados ou conversas reais futuramente?
