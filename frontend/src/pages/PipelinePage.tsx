@@ -12,6 +12,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { useMemo, useState } from 'react';
+import { LeadDetailDrawer } from '../features/leads/LeadDetailDrawer';
 import { useMetadata } from '../hooks/useMetadata';
 import { changeLeadStatus, getPipeline, listLeads } from '../services/leadService';
 import type { Lead, LeadStatus, PipelineResponse } from '../types/lead';
@@ -34,6 +35,7 @@ export function PipelinePage() {
   const metadata = useMetadata();
   const [draggedLead, setDraggedLead] = useState<Lead | null>(null);
   const [dragOverStatus, setDragOverStatus] = useState<LeadStatus | null>(null);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
   const pipelineQuery = useQuery({
     queryKey: ['pipeline'],
@@ -65,6 +67,10 @@ export function PipelinePage() {
     changeStatusMutation.mutate({ leadId: draggedLead.id, status });
     setDraggedLead(null);
     setDragOverStatus(null);
+  }
+
+  function openLeadDetail(lead: Lead) {
+    setSelectedLead(lead);
   }
 
   const groupedLeads = useMemo(() => {
@@ -127,13 +133,22 @@ export function PipelinePage() {
                   <Paper
                     draggable
                     key={lead.id}
+                    onClick={() => openLeadDetail(lead)}
                     onDragEnd={() => {
                       setDraggedLead(null);
                       setDragOverStatus(null);
                     }}
                     onDragStart={() => setDraggedLead(lead)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        openLeadDetail(lead);
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
                     variant="outlined"
-                    sx={{ borderRadius: 1, cursor: 'grab', p: 1.25 }}
+                    sx={{ borderRadius: 1, cursor: 'pointer', p: 1.25 }}
                   >
                     <Typography variant="body2" fontWeight={800}>
                       {lead.customerName}
@@ -162,6 +177,12 @@ export function PipelinePage() {
           );
         })}
       </Box>
+      <LeadDetailDrawer
+        lead={selectedLead}
+        onClose={() => setSelectedLead(null)}
+        onLeadChanged={setSelectedLead}
+        open={Boolean(selectedLead)}
+      />
     </Box>
   );
 }
