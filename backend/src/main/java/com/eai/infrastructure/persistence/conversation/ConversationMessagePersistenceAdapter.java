@@ -2,6 +2,8 @@ package com.eai.infrastructure.persistence.conversation;
 
 import com.eai.application.conversation.ConversationMessageRepository;
 import com.eai.domain.conversation.ConversationMessage;
+import com.eai.domain.conversation.ConversationMessageDirection;
+import com.eai.domain.conversation.ConversationMessageStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -30,6 +32,16 @@ public class ConversationMessagePersistenceAdapter implements ConversationMessag
     @Override
     public List<ConversationMessage> findByConversationId(UUID conversationId) {
         return repository.findByConversationIdOrderByCreatedAtAsc(conversationId).stream().map(this::toDomain).toList();
+    }
+
+    @Override
+    public Optional<ConversationMessage> findLatestByConversationId(UUID conversationId) {
+        return repository.findFirstByConversationIdOrderByCreatedAtDesc(conversationId).map(this::toDomain);
+    }
+
+    @Override
+    public long countByConversationIdAndDirectionAndStatus(UUID conversationId, ConversationMessageDirection direction, ConversationMessageStatus status) {
+        return repository.countByConversationIdAndDirectionAndStatus(conversationId, direction, status);
     }
 
     @Override

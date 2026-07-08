@@ -21,6 +21,8 @@ Regras:
 ## Migrations Atuais
 
 - `V1__initial_schema.sql`
+- `V2__whatsapp_conversations.sql`
+- `V3__lead_communication_whatsapp_template_channel.sql`
 
 Observacao:
 

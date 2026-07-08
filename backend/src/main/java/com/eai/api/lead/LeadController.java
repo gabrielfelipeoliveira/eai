@@ -8,8 +8,12 @@ import com.eai.application.lead.LeadService;
 import com.eai.application.lead.UpdateLeadCommand;
 import com.eai.application.message.MessageTemplateService;
 import com.eai.application.security.AuthenticatedUser;
+import com.eai.application.whatsapp.SendWhatsAppTemplateCommand;
+import com.eai.application.whatsapp.WhatsAppTemplateSenderService;
 import com.eai.api.conversation.ConversationMessageResponse;
 import com.eai.api.message.LeadCommunicationResponse;
+import com.eai.api.message.WhatsAppTemplateSendRequest;
+import com.eai.api.message.WhatsAppTemplateSendResponse;
 import com.eai.api.message.WhatsappLinkRequest;
 import com.eai.api.message.WhatsappLinkResponse;
 import com.eai.domain.distribution.LeadSlaPolicy;
@@ -42,12 +46,20 @@ public class LeadController {
 
     private final LeadService leadService;
     private final MessageTemplateService templateService;
+    private final WhatsAppTemplateSenderService whatsAppTemplateSenderService;
     private final LeadDistributionService distributionService;
     private final ConversationService conversationService;
 
-    public LeadController(LeadService leadService, MessageTemplateService templateService, LeadDistributionService distributionService, ConversationService conversationService) {
+    public LeadController(
+            LeadService leadService,
+            MessageTemplateService templateService,
+            WhatsAppTemplateSenderService whatsAppTemplateSenderService,
+            LeadDistributionService distributionService,
+            ConversationService conversationService
+    ) {
         this.leadService = leadService;
         this.templateService = templateService;
+        this.whatsAppTemplateSenderService = whatsAppTemplateSenderService;
         this.distributionService = distributionService;
         this.conversationService = conversationService;
     }
@@ -180,6 +192,19 @@ public class LeadController {
             @AuthenticationPrincipal AuthenticatedUser authenticatedUser
     ) {
         return WhatsappLinkResponse.fromResult(templateService.generateWhatsappLink(id, request.templateId(), authenticatedUser));
+    }
+
+    @PostMapping("/{id}/whatsapp-template")
+    public WhatsAppTemplateSendResponse sendWhatsAppTemplate(
+            @PathVariable UUID id,
+            @Valid @RequestBody WhatsAppTemplateSendRequest request,
+            @AuthenticationPrincipal AuthenticatedUser authenticatedUser
+    ) {
+        return WhatsAppTemplateSendResponse.fromResult(whatsAppTemplateSenderService.sendTemplate(
+                id,
+                new SendWhatsAppTemplateCommand(request.templateId(), request.languageCode()),
+                authenticatedUser
+        ));
     }
 
     @GetMapping("/{id}/communications")

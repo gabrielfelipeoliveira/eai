@@ -20,5 +20,7 @@ public interface ConversationRepository {
 
     List<Conversation> findByStoreId(UUID storeId);
 
+    List<Conversation> findByResponsibleUserId(UUID responsibleUserId);
+
     Conversation save(Conversation conversation);
 }

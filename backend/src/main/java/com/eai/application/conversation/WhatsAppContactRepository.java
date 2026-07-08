@@ -7,6 +7,8 @@ import java.util.UUID;
 
 public interface WhatsAppContactRepository {
 
+    Optional<WhatsAppContact> findById(UUID id);
+
     Optional<WhatsAppContact> findByStoreIdAndPhone(UUID storeId, String phone);
 
     WhatsAppContact save(WhatsAppContact contact);

@@ -586,7 +586,80 @@ Pos-condicoes:
 - Registro de comunicacao e armazenado.
 - Mensagem de conversa de saida e registrada no historico basico da conversa.
 
+### Enviar Template Pelo WhatsApp
+
+Ator:
+
+- Usuario com acesso ao lead
+
+Entradas:
+
+- Identidade do lead
+- Identidade do template
+- Codigo de idioma opcional
+
+Saidas:
+
+- Mensagem renderizada
+- Identidade do registro de comunicacao
+- Identidade da mensagem de conversa
+- Status inicial da mensagem enviada
+- Identidade externa da mensagem quando retornada pela WhatsApp Cloud API
+- Retorno bruto da WhatsApp Cloud API
+
+Pre-condicoes:
+
+- Lead existe.
+- Template esta ativo.
+- Template pertence a mesma loja do lead.
+- Lead possui telefone valido para envio ao WhatsApp.
+- Configuracao de envio da WhatsApp Cloud API esta disponivel.
+
+Pos-condicoes:
+
+- Template e enviado para a WhatsApp Cloud API.
+- Registro de comunicacao e armazenado.
+- Mensagem de conversa de saida e registrada com status `SENT` quando a API aceita o envio.
+- Falha de envio e registrada com status `FAILED` quando a API rejeita ou a chamada falha.
+- Retorno da API fica vinculado a mensagem de conversa.
+
 ## Conversas De WhatsApp
+
+### Listar Conversas
+
+Ator:
+
+- Admin
+- Gerente
+- Vendedor
+
+Entradas:
+
+- Contexto do usuario autenticado
+
+Saidas:
+
+- Conversas visiveis ao usuario.
+- Dados principais do lead ou contato.
+- Telefone.
+- Ultima mensagem.
+- Data e hora da ultima interacao.
+- Quantidade de mensagens nao lidas.
+
+Pre-condicoes:
+
+- Ator esta autenticado.
+- Ator possui acesso ao tenant da conversa.
+
+Pos-condicoes:
+
+- Nenhum dado e alterado.
+
+Regras conhecidas:
+
+- Vendedores visualizam apenas conversas sob sua responsabilidade.
+- Conversas sao ordenadas pela ultima interacao registrada.
+- Mensagens recebidas com status `RECEIVED` contam como nao lidas na listagem.
 
 ### Receber Mensagem Pelo Webhook
 

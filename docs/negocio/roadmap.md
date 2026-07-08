@@ -72,6 +72,47 @@ Pendencias:
 - Tratamento de eventos de status da Meta.
 - Armazenamento/download de midias.
 
+## Sprint 3: Envio De Template WhatsApp
+
+Objetivo:
+
+- Permitir envio de templates aprovados pela WhatsApp Cloud API para iniciar ou retomar conversas com leads.
+
+Escopo entregue:
+
+- Servico de envio de template pela WhatsApp Cloud API.
+- Endpoint autenticado para disparar template para um lead.
+- Validacao basica de telefone do lead antes do envio.
+- Registro da mensagem enviada no historico da conversa.
+- Registro de falhas de envio como mensagem `FAILED`.
+- Vinculo do retorno bruto da API do WhatsApp a mensagem enviada.
+- Atualizacao do status inicial da mensagem para `SENT` ou `FAILED`.
+
+Pendencias:
+
+- Regras oficiais de idioma padrao por loja/template.
+- Mapeamento oficial entre placeholders do EAI e variaveis aprovadas no template da Meta.
+- Suporte a componentes de header, botoes e midia em templates.
+
+## Sprint 4: Listagem De Conversas
+
+Objetivo:
+
+- Permitir que o vendedor visualize suas conversas do WhatsApp dentro da plataforma EAI.
+
+Escopo entregue:
+
+- Endpoint autenticado de listagem de conversas.
+- Filtro para vendedor visualizar apenas conversas sob sua responsabilidade.
+- Ordenacao pela ultima interacao registrada.
+- Resumo de lead ou contato, telefone, ultima mensagem, horario da ultima interacao e quantidade de mensagens nao lidas.
+- Tela inicial de listagem de chats no frontend.
+
+Pendencias:
+
+- Fluxo oficial para marcar mensagens como lidas.
+- Regras oficiais para usuarios visualizarem conversas sem vendedor responsavel.
+
 ## Versao 1
 
 Temas candidatos:

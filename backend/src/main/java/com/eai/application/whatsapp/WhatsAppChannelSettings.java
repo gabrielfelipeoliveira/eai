@@ -2,6 +2,12 @@ package com.eai.application.whatsapp;
 
 public interface WhatsAppChannelSettings {
 
+    String phoneNumberId();
+
+    String accessToken();
+
+    String graphApiVersion();
+
     String verifyToken();
 
     String companyId();
@@ -11,4 +17,6 @@ public interface WhatsAppChannelSettings {
     boolean webhookConfigured();
 
     boolean inboundPersistenceConfigured();
+
+    boolean templateSendingConfigured();
 }

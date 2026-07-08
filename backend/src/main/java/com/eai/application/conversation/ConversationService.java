@@ -7,6 +7,7 @@ import com.eai.application.lead.LeadSearchCriteria;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.domain.conversation.Conversation;
 import com.eai.domain.conversation.ConversationMessage;
+import com.eai.domain.conversation.ConversationMessageDirection;
 import com.eai.domain.conversation.ConversationMessageStatus;
 import com.eai.domain.conversation.ConversationMessageType;
 import com.eai.domain.conversation.WhatsAppContact;
@@ -81,7 +82,18 @@ public class ConversationService {
         if (hasRole(authenticatedUser, UserRole.MANAGER) && authenticatedUser.storeId() == null) {
             return conversationRepository.findByCompanyId(requireCompany(authenticatedUser));
         }
+        if (hasRole(authenticatedUser, UserRole.SELLER)) {
+            return conversationRepository.findByResponsibleUserId(authenticatedUser.id());
+        }
         return conversationRepository.findByStoreId(requireStore(authenticatedUser));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ConversationSummary> listConversationSummaries(AuthenticatedUser authenticatedUser) {
+        return listConversations(authenticatedUser).stream()
+                .map(this::toSummary)
+                .sorted(Comparator.comparing(ConversationSummary::lastInteractionAt, Comparator.nullsLast(Comparator.naturalOrder())).reversed())
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -104,6 +116,40 @@ public class ConversationService {
                 .orElseThrow(() -> new NotFoundException("Conversation not found"));
         assertCanAccess(conversation, authenticatedUser);
         return messageRepository.findByConversationId(conversation.getId());
+    }
+
+    private ConversationSummary toSummary(Conversation conversation) {
+        WhatsAppContact contact = contactRepository.findById(conversation.getContactId())
+                .orElseThrow(() -> new NotFoundException("WhatsApp contact not found"));
+        Lead lead = conversation.getLeadId() == null
+                ? null
+                : leadRepository.findById(conversation.getLeadId()).orElse(null);
+        ConversationMessage lastMessage = messageRepository.findLatestByConversationId(conversation.getId()).orElse(null);
+        long unreadCount = messageRepository.countByConversationIdAndDirectionAndStatus(
+                conversation.getId(),
+                ConversationMessageDirection.INBOUND,
+                ConversationMessageStatus.RECEIVED
+        );
+        return new ConversationSummary(
+                conversation.getId(),
+                conversation.getCompanyId(),
+                conversation.getStoreId(),
+                conversation.getContactId(),
+                conversation.getLeadId(),
+                conversation.getResponsibleUserId(),
+                lead == null ? null : lead.getCustomerName(),
+                lead != null && lead.getCustomerPhone() != null ? lead.getCustomerPhone() : contact.getPhone(),
+                contact.getDisplayName(),
+                lastMessage == null ? null : lastMessage.getId(),
+                lastMessage == null ? null : lastMessage.getDirection(),
+                lastMessage == null ? null : lastMessage.getType(),
+                lastMessage == null ? null : lastMessage.getStatus(),
+                lastMessage == null ? null : lastMessage.getContent(),
+                lastMessage == null ? conversation.getUpdatedAt() : lastMessage.getCreatedAt(),
+                unreadCount,
+                conversation.getCreatedAt(),
+                conversation.getUpdatedAt()
+        );
     }
 
     private Conversation findOrCreateConversation(UUID companyId, UUID storeId, String phone, String contactName) {
@@ -167,6 +213,12 @@ public class ConversationService {
         if (conversation.getCompanyId().equals(requireCompany(authenticatedUser))) {
             if (hasRole(authenticatedUser, UserRole.MANAGER) && authenticatedUser.storeId() == null) {
                 return;
+            }
+            if (hasRole(authenticatedUser, UserRole.SELLER)) {
+                if (authenticatedUser.id().equals(conversation.getResponsibleUserId())) {
+                    return;
+                }
+                throw new ForbiddenException("Access denied for conversation");
             }
             if (conversation.getStoreId().equals(requireStore(authenticatedUser))) {
                 return;

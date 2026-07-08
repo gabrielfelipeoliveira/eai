@@ -48,6 +48,11 @@ public class ConversationPersistenceAdapter implements ConversationRepository {
     }
 
     @Override
+    public List<Conversation> findByResponsibleUserId(UUID responsibleUserId) {
+        return repository.findByResponsibleUserIdOrderByUpdatedAtDesc(responsibleUserId).stream().map(this::toDomain).toList();
+    }
+
+    @Override
     public Conversation save(Conversation conversation) {
         return toDomain(repository.save(toEntity(conversation)));
     }

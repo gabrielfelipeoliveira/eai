@@ -24,9 +24,9 @@ public class ConversationController {
     }
 
     @GetMapping
-    public List<ConversationResponse> listConversations(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
-        return conversationService.listConversations(authenticatedUser).stream()
-                .map(ConversationResponse::fromDomain)
+    public List<ConversationSummaryResponse> listConversations(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+        return conversationService.listConversationSummaries(authenticatedUser).stream()
+                .map(ConversationSummaryResponse::fromApplication)
                 .toList();
     }
 

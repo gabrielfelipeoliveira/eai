@@ -97,6 +97,15 @@ Regras conhecidas:
 - Uma tarefa pendente vencida expoe status efetivo de atraso.
 - Criar, concluir e cancelar follow-ups registra historico no lead.
 
+## Conversas De WhatsApp
+
+Regras conhecidas:
+
+- Vendedores visualizam apenas conversas sob sua responsabilidade.
+- Conversas sao ordenadas pela ultima interacao registrada.
+- A listagem de conversas exibe dados principais do lead ou contato, telefone, ultima mensagem, data e hora da ultima interacao e quantidade de mensagens nao lidas.
+- Mensagens recebidas com status `RECEIVED` contam como nao lidas na listagem enquanto nao existir fluxo oficial de marcacao de leitura.
+
 ## Notas, Tags e Historico
 
 Regras conhecidas:
@@ -116,6 +125,10 @@ Regras conhecidas:
 - Templates suportam placeholders para cliente, telefone, veiculo, vendedor, loja e cidade.
 - Geracao de link de WhatsApp renderiza um template ativo da loja do lead.
 - Geracao de link de WhatsApp registra uma comunicacao do lead.
+- Envio de template pela WhatsApp Cloud API exige template ativo da mesma loja do lead.
+- Envio de template pela WhatsApp Cloud API exige telefone do lead valido para envio ao WhatsApp.
+- Envio de template pela WhatsApp Cloud API registra comunicacao do lead e mensagem de conversa de saida.
+- Falhas retornadas pela WhatsApp Cloud API sao registradas como mensagem de conversa com status `FAILED`.
 
 ## Importador de Leads por E-mail
 

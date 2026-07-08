@@ -183,6 +183,10 @@ Perguntas para o Product Owner:
 - Templates sao apenas por loja ou podem ser compartilhados no nivel da empresa?
 - Quem pode criar, editar, desativar ou apagar templates?
 - Templates podem ser excluidos depois de usados?
+- Qual idioma padrao deve ser usado no envio de templates quando o usuario nao informar `languageCode`?
+- O nome do template cadastrado no EAI deve sempre ser exatamente o nome aprovado na Meta?
+- Como mapear placeholders do EAI para variaveis numericas e componentes aprovados na Meta quando houver header, botoes ou midia?
+- A validacao de telefone deve seguir apenas numeros brasileiros ou qualquer E.164 aceito pelo WhatsApp?
 
 ## Importador De Leads Por E-Mail
 

@@ -10,6 +10,7 @@ public record WhatsAppCloudApiProperties(
         String accessToken,
         String appSecret,
         String verifyToken,
+        String graphApiVersion,
         String companyId,
         String storeId
 ) implements WhatsAppChannelSettings {
@@ -22,5 +23,11 @@ public record WhatsAppCloudApiProperties(
     @Override
     public boolean inboundPersistenceConfigured() {
         return companyId != null && !companyId.isBlank() && storeId != null && !storeId.isBlank();
+    }
+
+    @Override
+    public boolean templateSendingConfigured() {
+        return phoneNumberId != null && !phoneNumberId.isBlank()
+                && accessToken != null && !accessToken.isBlank();
     }
 }

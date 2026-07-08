@@ -16,5 +16,7 @@ public interface SpringDataConversationRepository extends JpaRepository<Conversa
 
     List<ConversationJpaEntity> findByStoreIdOrderByUpdatedAtDesc(UUID storeId);
 
+    List<ConversationJpaEntity> findByResponsibleUserIdOrderByUpdatedAtDesc(UUID responsibleUserId);
+
     List<ConversationJpaEntity> findAllByOrderByUpdatedAtDesc();
 }

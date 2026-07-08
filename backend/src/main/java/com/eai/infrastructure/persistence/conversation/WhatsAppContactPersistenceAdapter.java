@@ -17,6 +17,11 @@ public class WhatsAppContactPersistenceAdapter implements WhatsAppContactReposit
     }
 
     @Override
+    public Optional<WhatsAppContact> findById(UUID id) {
+        return repository.findById(id).map(this::toDomain);
+    }
+
+    @Override
     public Optional<WhatsAppContact> findByStoreIdAndPhone(UUID storeId, String phone) {
         return repository.findByStoreIdAndPhone(storeId, phone).map(this::toDomain);
     }
