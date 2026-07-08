@@ -210,7 +210,7 @@ npm run build
 - [Banco de dados](docs/tecnico/database.md)
 - [Guia de desenvolvimento](docs/tecnico/development-guide.md)
 - [Importador de leads por e-mail](docs/tecnico/email-importer.md)
-- [ADRs](docs/tecnico/adr)
+- [ADRs - Architecture Decision Records](docs/tecnico/adr)
 - [Onboarding de agentes de IA](.agents/AGENTS.md)
 
 ## Baseline De Documentacao Da Sprint 0
