@@ -9,11 +9,18 @@ public record WhatsAppCloudApiProperties(
         String businessAccountId,
         String accessToken,
         String appSecret,
-        String verifyToken
+        String verifyToken,
+        String companyId,
+        String storeId
 ) implements WhatsAppChannelSettings {
 
     @Override
     public boolean webhookConfigured() {
         return verifyToken != null && !verifyToken.isBlank();
+    }
+
+    @Override
+    public boolean inboundPersistenceConfigured() {
+        return companyId != null && !companyId.isBlank() && storeId != null && !storeId.isBlank();
     }
 }

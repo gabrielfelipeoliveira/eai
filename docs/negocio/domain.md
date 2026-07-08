@@ -196,6 +196,51 @@ Atributos conhecidos:
 - Mensagem.
 - Data de criacao.
 
+### Contato de WhatsApp
+
+Representa um telefone de cliente identificado em eventos do WhatsApp e vinculado ao escopo de uma loja.
+
+Atributos conhecidos:
+
+- Identidade.
+- Identidade da empresa.
+- Identidade da loja.
+- Identidade do lead quando encontrado.
+- Telefone.
+- Nome de exibicao.
+- Datas de criacao e atualizacao.
+
+### Conversa
+
+Representa o agrupamento de mensagens de WhatsApp para um contato e, quando houver, um lead.
+
+Atributos conhecidos:
+
+- Identidade.
+- Identidade da empresa.
+- Identidade da loja.
+- Identidade do contato de WhatsApp.
+- Identidade do lead quando encontrado.
+- Identidade do vendedor responsavel quando o lead tiver responsavel.
+- Datas de criacao e atualizacao.
+
+### Mensagem de Conversa
+
+Representa uma mensagem recebida pelo webhook do WhatsApp ou registrada como saida pela plataforma.
+
+Atributos conhecidos:
+
+- Identidade.
+- Identidade da conversa.
+- Direcao: entrada ou saida.
+- Tipo: texto, template, imagem, audio ou documento.
+- Status.
+- Identidade externa da mensagem quando informada pelo provedor.
+- Conteudo textual ou legenda.
+- Metadados de midia quando informados.
+- Payload bruto do evento quando aplicavel.
+- Datas de criacao e atualizacao.
+
 ### Conta de E-mail
 
 Representa uma conta de e-mail usada para importar leads.
@@ -223,6 +268,7 @@ Candidatos atuais a agregados:
 - Empresa com lojas como estrutura de tenant.
 - Usuario como perfil de identidade e autorizacao.
 - Lead como agregado comercial principal, com historico, notas, tags, comunicacoes e follow-ups como registros relacionados.
+- Conversa como agregado de atendimento do WhatsApp, com contato e mensagens relacionadas.
 - Configuracao de distribuicao e politica de SLA como configuracoes operacionais da loja.
 - Conta de e-mail como configuracao de integracao de captacao de leads.
 

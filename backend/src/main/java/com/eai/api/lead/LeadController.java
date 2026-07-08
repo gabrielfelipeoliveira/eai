@@ -1,12 +1,14 @@
 package com.eai.api.lead;
 
 import com.eai.application.distribution.LeadDistributionService;
+import com.eai.application.conversation.ConversationService;
 import com.eai.application.lead.CreateLeadCommand;
 import com.eai.application.lead.LeadSearchCriteria;
 import com.eai.application.lead.LeadService;
 import com.eai.application.lead.UpdateLeadCommand;
 import com.eai.application.message.MessageTemplateService;
 import com.eai.application.security.AuthenticatedUser;
+import com.eai.api.conversation.ConversationMessageResponse;
 import com.eai.api.message.LeadCommunicationResponse;
 import com.eai.api.message.WhatsappLinkRequest;
 import com.eai.api.message.WhatsappLinkResponse;
@@ -41,11 +43,13 @@ public class LeadController {
     private final LeadService leadService;
     private final MessageTemplateService templateService;
     private final LeadDistributionService distributionService;
+    private final ConversationService conversationService;
 
-    public LeadController(LeadService leadService, MessageTemplateService templateService, LeadDistributionService distributionService) {
+    public LeadController(LeadService leadService, MessageTemplateService templateService, LeadDistributionService distributionService, ConversationService conversationService) {
         this.leadService = leadService;
         this.templateService = templateService;
         this.distributionService = distributionService;
+        this.conversationService = conversationService;
     }
 
     @PostMapping
@@ -182,6 +186,13 @@ public class LeadController {
     public List<LeadCommunicationResponse> listCommunications(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
         return templateService.listLeadCommunications(id, authenticatedUser).stream()
                 .map(LeadCommunicationResponse::fromDomain)
+                .toList();
+    }
+
+    @GetMapping("/{id}/conversation-messages")
+    public List<ConversationMessageResponse> listConversationMessages(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+        return conversationService.listLeadMessages(id, authenticatedUser).stream()
+                .map(ConversationMessageResponse::fromDomain)
                 .toList();
     }
 

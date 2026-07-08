@@ -35,6 +35,7 @@ Grupos atuais:
 - Tenancy: `companies`, `stores`.
 - Leads: `leads`, `lead_history`, `lead_notes`, `lead_tags`.
 - Mensageria: `message_templates`, `lead_communications`.
+- Conversas de WhatsApp: `whatsapp_contacts`, `conversations`, `conversation_messages`.
 - Importacao por e-mail: `email_accounts`.
 - Distribuicao e SLA: `lead_distribution_config`, `lead_sla_policy`.
 - Follow-ups: `follow_up_tasks`.
@@ -53,6 +54,9 @@ Grupos atuais:
 - Um lead tem muitas tags.
 - Um lead tem muitas comunicacoes.
 - Um lead tem muitas tarefas de follow-up.
+- Um contato de WhatsApp pertence a uma empresa e loja.
+- Uma conversa pertence a um contato de WhatsApp e pode estar vinculada a um lead.
+- Uma conversa tem muitas mensagens.
 - Um template de mensagem pertence a uma empresa e loja.
 - Uma comunicacao de lead pode referenciar um template.
 - Uma conta de e-mail pertence a uma empresa e loja.
@@ -68,6 +72,8 @@ Constraints conhecidas:
 - Valor de venda deve ser nulo ou nao negativo.
 - Configuracao de distribuicao e unica por empresa e loja.
 - Politica de SLA e unica por empresa e loja.
+- Contatos de WhatsApp sao unicos por loja e telefone.
+- Conversas sao unicas por contato e por lead quando houver lead vinculado.
 - Minutos de SLA devem ser positivos.
 - Chaves estrangeiras reforcam relacionamentos entre tabelas.
 
@@ -75,6 +81,8 @@ Indices conhecidos:
 
 - Leads possuem indices por empresa, loja, status, origem, usuario responsavel, data de criacao, veiculo e telefone.
 - Historico, notas e tags possuem indices orientados ao lead.
+- Conversas de WhatsApp possuem indices por empresa, loja, lead, vendedor responsavel e data de atualizacao.
+- Mensagens de conversa possuem indices por conversa, data de criacao, status e identidade externa da mensagem.
 - Tabelas de distribuicao e SLA possuem indices orientados a loja.
 - Tarefas de follow-up possuem indices por lead, usuario/status/vencimento e vencimento.
 

@@ -173,6 +173,12 @@ Perguntas para o Product Owner:
 - Gerar um link deve contar como primeiro contato?
 - Links gerados devem expirar ou permanecer imutaveis?
 - O historico de comunicacao deve guardar apenas links gerados ou conversas reais futuramente?
+- Como uma conta/numero do WhatsApp deve ser vinculada oficialmente a empresa e loja em producao?
+- Quando uma mensagem recebida por WhatsApp nao encontrar lead pelo telefone, o sistema deve criar lead automaticamente ou apenas contato/conversa?
+- Qual regra deve escolher o lead correto quando houver mais de um lead com o mesmo telefone?
+- Quais transicoes oficiais de status de mensagem devem ser aplicadas a partir dos eventos de status da Meta?
+- Quais usuarios podem visualizar conversas sem vendedor responsavel?
+- Mensagens de imagem, audio e documento devem armazenar apenas metadados ou tambem baixar e guardar o arquivo?
 - Templates podem ser da empresa inteira ou somente da loja?
 - Templates sao apenas por loja ou podem ser compartilhados no nivel da empresa?
 - Quem pode criar, editar, desativar ou apagar templates?

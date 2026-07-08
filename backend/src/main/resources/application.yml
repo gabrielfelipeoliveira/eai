@@ -36,3 +36,5 @@ eai:
       access-token: ${META_WHATSAPP_ACCESS_TOKEN:}
       app-secret: ${META_WHATSAPP_APP_SECRET:}
       verify-token: ${META_WHATSAPP_VERIFY_TOKEN:}
+      company-id: ${META_WHATSAPP_COMPANY_ID:}
+      store-id: ${META_WHATSAPP_STORE_ID:}

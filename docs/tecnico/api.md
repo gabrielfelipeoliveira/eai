@@ -71,6 +71,7 @@ Contrato:
 - `label` e o texto ja localizado para apresentacao.
 - `order` orienta ordenacao visual.
 - `color` orienta componentes visuais como chips e badges.
+- O catalogo inclui codigos de mensagens de conversa: direcao, tipo e status.
 
 Convencoes:
 
@@ -208,6 +209,32 @@ Perguntas para o Software Architect:
 - OpenAPI/Swagger faz parte da stack do backend.
 - A documentacao de API deve ser atualizada quando contratos mudarem.
 - Exemplos publicos de API nao devem usar segredos reais ou dados pessoais.
+
+Status:
+PENDENTE DE DEFINIÃ‡ÃƒO
+
+Perguntas para o Software Architect:
+
+- O OpenAPI deve ser gerado somente a partir dos controllers ou enriquecido com anotacoes explicitas?
+- Exemplos de API devem ser mantidos manualmente?
+
+## Conversas De WhatsApp
+
+Endpoints atuais:
+
+- `GET /api/conversations`
+- `GET /api/conversations/{id}`
+- `GET /api/conversations/{id}/messages`
+- `GET /api/leads/{id}/conversation-messages`
+- `GET /api/webhooks/whatsapp`
+- `POST /api/webhooks/whatsapp`
+
+Convencoes:
+
+- O webhook de WhatsApp e publico para validacao e recebimento da Meta.
+- Consultas de conversas exigem autenticacao e seguem escopo de tenant.
+- DTOs de conversa e mensagem nao expoem entidades de persistencia.
+- Direcao, tipo e status usam codigos tecnicos expostos tambem por `GET /api/metadata`.
 
 Status:
 PENDENTE DE DEFINIÇÃO

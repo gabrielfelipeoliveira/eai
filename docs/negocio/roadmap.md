@@ -50,6 +50,28 @@ Escopo candidato com base na implementacao e documentacao atuais:
 - Base do importador de leads por e-mail.
 - Dashboard basico.
 
+## Sprint 2: Persistencia De Conversas E Mensagens
+
+Objetivo:
+
+- Criar a estrutura de dados para armazenar conversas e mensagens do WhatsApp dentro da plataforma.
+
+Escopo entregue:
+
+- Contatos de WhatsApp por telefone e loja.
+- Conversas vinculadas a contato, lead e vendedor responsavel quando houver lead correspondente.
+- Mensagens de conversa com direcao, tipo, status, conteudo e metadados basicos.
+- Persistencia de mensagens recebidas pelo webhook da Meta.
+- Registro de mensagem de saida no fluxo existente de geracao de link do WhatsApp.
+- Consulta autenticada de conversas e mensagens pelo backend.
+
+Pendencias:
+
+- Regras oficiais de roteamento multi-conta WhatsApp por empresa/loja.
+- Criacao automatica de lead para mensagem sem lead correspondente.
+- Tratamento de eventos de status da Meta.
+- Armazenamento/download de midias.
+
 ## Versao 1
 
 Temas candidatos:

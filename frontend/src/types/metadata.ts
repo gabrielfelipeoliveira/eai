@@ -8,7 +8,10 @@ export type MetadataCollection =
   | 'messageTemplateTypes'
   | 'leadDistributionModes'
   | 'emailAccountStatuses'
-  | 'emailProtocols';
+  | 'emailProtocols'
+  | 'conversationMessageDirections'
+  | 'conversationMessageTypes'
+  | 'conversationMessageStatuses';
 
 export interface MetadataOption {
   code: string;

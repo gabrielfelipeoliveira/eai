@@ -2,10 +2,13 @@ package com.eai.application.message;
 
 import com.eai.application.common.ForbiddenException;
 import com.eai.application.common.NotFoundException;
+import com.eai.application.conversation.ConversationService;
 import com.eai.application.lead.LeadService;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.application.tenant.StoreService;
 import com.eai.application.user.UserRepository;
+import com.eai.domain.conversation.ConversationMessageStatus;
+import com.eai.domain.conversation.ConversationMessageType;
 import com.eai.domain.lead.Lead;
 import com.eai.domain.message.LeadCommunication;
 import com.eai.domain.message.LeadCommunicationChannel;
@@ -30,19 +33,22 @@ public class MessageTemplateService {
     private final LeadService leadService;
     private final StoreService storeService;
     private final UserRepository userRepository;
+    private final ConversationService conversationService;
 
     public MessageTemplateService(
             MessageTemplateRepository templateRepository,
             LeadCommunicationRepository communicationRepository,
             LeadService leadService,
             StoreService storeService,
-            UserRepository userRepository
+            UserRepository userRepository,
+            ConversationService conversationService
     ) {
         this.templateRepository = templateRepository;
         this.communicationRepository = communicationRepository;
         this.leadService = leadService;
         this.storeService = storeService;
         this.userRepository = userRepository;
+        this.conversationService = conversationService;
     }
 
     @Transactional(readOnly = true)
@@ -134,6 +140,7 @@ public class MessageTemplateService {
                 template.getId(),
                 message
         ));
+        conversationService.recordOutboundMessage(lead, ConversationMessageType.TEMPLATE, ConversationMessageStatus.SENT, null, message, null);
         return new WhatsappLinkResult(lead.getId(), template.getId(), communication.getId(), message, url);
     }
 
