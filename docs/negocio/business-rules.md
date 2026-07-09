@@ -104,7 +104,8 @@ Regras conhecidas:
 - Vendedores visualizam apenas conversas sob sua responsabilidade.
 - Conversas sao ordenadas pela ultima interacao registrada.
 - A listagem de conversas exibe dados principais do lead ou contato, telefone, ultima mensagem, data e hora da ultima interacao e quantidade de mensagens nao lidas.
-- Mensagens recebidas com status `RECEIVED` contam como nao lidas na listagem enquanto nao existir fluxo oficial de marcacao de leitura.
+- Mensagens recebidas com status `RECEIVED` contam como nao lidas na listagem.
+- Abrir o historico de mensagens de uma conversa marca mensagens recebidas com status `RECEIVED` como `READ`.
 
 ## Notas, Tags e Historico
 

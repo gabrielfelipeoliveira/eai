@@ -118,9 +118,14 @@ class WhatsAppWebhookControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].direction").value("INBOUND"))
                 .andExpect(jsonPath("$[0].type").value("TEXT"))
-                .andExpect(jsonPath("$[0].status").value("RECEIVED"))
+                .andExpect(jsonPath("$[0].status").value("READ"))
                 .andExpect(jsonPath("$[0].externalMessageId").value("wamid.test-inbound-001"))
                 .andExpect(jsonPath("$[0].content").value("Tenho interesse no Civic"));
+
+        mockMvc.perform(get("/api/conversations")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].unreadCount").value(0));
     }
 
     private String login() throws Exception {

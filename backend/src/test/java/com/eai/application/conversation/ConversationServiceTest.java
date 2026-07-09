@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ConversationServiceTest {
@@ -64,6 +65,21 @@ class ConversationServiceTest {
         ));
 
         assertThat(service.listConversations(seller())).isEmpty();
+    }
+
+    @Test
+    void marksInboundReceivedMessagesAsReadWhenListingMessages() {
+        Conversation conversation = conversation("00000000-0000-0000-0000-000000000404", "00000000-0000-0000-0000-000000000504", "00000000-0000-0000-0000-000000000604", SELLER_ID);
+        ConversationMessage older = message(conversation.getId(), ConversationMessageDirection.INBOUND, ConversationMessageStatus.READ, "Ola", "2026-07-08T11:00:00Z");
+        ConversationMessage newer = message(conversation.getId(), ConversationMessageDirection.OUTBOUND, ConversationMessageStatus.SENT, "Bom dia", "2026-07-08T11:02:00Z");
+
+        when(conversationRepository.findById(conversation.getId())).thenReturn(Optional.of(conversation));
+        when(messageRepository.findByConversationId(conversation.getId())).thenReturn(List.of(older, newer));
+
+        List<ConversationMessage> messages = service.listMessages(conversation.getId(), seller());
+
+        verify(messageRepository).markInboundReceivedAsRead(conversation.getId());
+        assertThat(messages).containsExactly(older, newer);
     }
 
     private void arrangeSummaryData(Conversation conversation, String leadName, String phone, String content, String messageAt, long unreadCount) {
@@ -120,6 +136,23 @@ class ConversationServiceTest {
                 sellerId,
                 Instant.parse("2026-07-08T10:00:00Z"),
                 Instant.parse("2026-07-08T10:00:00Z")
+        );
+    }
+
+    private ConversationMessage message(UUID conversationId, ConversationMessageDirection direction, ConversationMessageStatus status, String content, String createdAt) {
+        return new ConversationMessage(
+                UUID.randomUUID(),
+                conversationId,
+                direction,
+                ConversationMessageType.TEXT,
+                status,
+                null,
+                content,
+                null,
+                null,
+                null,
+                Instant.parse(createdAt),
+                Instant.parse(createdAt)
         );
     }
 

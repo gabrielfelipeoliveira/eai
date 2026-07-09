@@ -711,7 +711,7 @@ Pre-condicoes:
 
 Pos-condicoes:
 
-- Nenhum dado e alterado.
+- Mensagens recebidas da conversa com status `RECEIVED` sao marcadas como `READ`.
 
 ## Importacao De Leads Por E-Mail
 

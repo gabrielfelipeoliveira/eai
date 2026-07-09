@@ -235,6 +235,7 @@ Convencoes:
 - O webhook de WhatsApp e publico para validacao e recebimento da Meta.
 - Consultas de conversas exigem autenticacao e seguem escopo de tenant.
 - `GET /api/conversations` retorna um resumo operacional com ids da conversa, lead/contato, vendedor responsavel, nome do lead ou contato, telefone, ultima mensagem, data/hora da ultima interacao e quantidade de mensagens nao lidas.
+- `GET /api/conversations/{id}/messages` e `GET /api/leads/{id}/conversation-messages` retornam mensagens em ordem cronologica e marcam mensagens recebidas pendentes como lidas.
 - O disparo de template exige autenticacao e acesso ao lead.
 - O disparo de template usa o template ativo da mesma loja do lead, envia o nome do template para a WhatsApp Cloud API e registra a resposta bruta do provedor na mensagem da conversa.
 - DTOs de conversa e mensagem nao expoem entidades de persistencia.

@@ -20,5 +20,7 @@ public interface ConversationMessageRepository {
 
     long countByConversationIdAndDirectionAndStatus(UUID conversationId, ConversationMessageDirection direction, ConversationMessageStatus status);
 
+    void markInboundReceivedAsRead(UUID conversationId);
+
     ConversationMessage save(ConversationMessage message);
 }

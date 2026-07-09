@@ -104,17 +104,19 @@ public class ConversationService {
         return conversation;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<ConversationMessage> listMessages(UUID conversationId, AuthenticatedUser authenticatedUser) {
         Conversation conversation = getConversation(conversationId, authenticatedUser);
+        messageRepository.markInboundReceivedAsRead(conversation.getId());
         return messageRepository.findByConversationId(conversation.getId());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<ConversationMessage> listLeadMessages(UUID leadId, AuthenticatedUser authenticatedUser) {
         Conversation conversation = conversationRepository.findByLeadId(leadId)
                 .orElseThrow(() -> new NotFoundException("Conversation not found"));
         assertCanAccess(conversation, authenticatedUser);
+        messageRepository.markInboundReceivedAsRead(conversation.getId());
         return messageRepository.findByConversationId(conversation.getId());
     }
 

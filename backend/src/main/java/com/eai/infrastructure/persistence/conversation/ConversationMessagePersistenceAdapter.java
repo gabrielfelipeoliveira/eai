@@ -6,6 +6,7 @@ import com.eai.domain.conversation.ConversationMessageDirection;
 import com.eai.domain.conversation.ConversationMessageStatus;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,6 +43,17 @@ public class ConversationMessagePersistenceAdapter implements ConversationMessag
     @Override
     public long countByConversationIdAndDirectionAndStatus(UUID conversationId, ConversationMessageDirection direction, ConversationMessageStatus status) {
         return repository.countByConversationIdAndDirectionAndStatus(conversationId, direction, status);
+    }
+
+    @Override
+    public void markInboundReceivedAsRead(UUID conversationId) {
+        repository.markInboundReceivedAsRead(
+                conversationId,
+                ConversationMessageDirection.INBOUND,
+                ConversationMessageStatus.RECEIVED,
+                ConversationMessageStatus.READ,
+                Instant.now()
+        );
     }
 
     @Override
