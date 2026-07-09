@@ -82,6 +82,31 @@ class ConversationServiceTest {
         assertThat(messages).containsExactly(older, newer);
     }
 
+    @Test
+    void updatesOutboundMessageStatusByExternalId() {
+        ConversationMessage message = message(UUID.randomUUID(), ConversationMessageDirection.OUTBOUND, ConversationMessageStatus.SENT, "Bom dia", "2026-07-08T11:02:00Z");
+        when(messageRepository.findByExternalMessageId("wamid.123")).thenReturn(Optional.of(message));
+        when(messageRepository.save(message)).thenReturn(message);
+
+        Optional<ConversationMessage> updated = service.updateMessageStatusByExternalId("wamid.123", ConversationMessageStatus.DELIVERED);
+
+        assertThat(updated).isPresent();
+        assertThat(updated.get().getStatus()).isEqualTo(ConversationMessageStatus.DELIVERED);
+        verify(messageRepository).save(message);
+    }
+
+    @Test
+    void doesNotDowngradeReadStatusWhenDelayedProviderEventArrives() {
+        ConversationMessage message = message(UUID.randomUUID(), ConversationMessageDirection.OUTBOUND, ConversationMessageStatus.READ, "Bom dia", "2026-07-08T11:02:00Z");
+        when(messageRepository.findByExternalMessageId("wamid.123")).thenReturn(Optional.of(message));
+        when(messageRepository.save(message)).thenReturn(message);
+
+        Optional<ConversationMessage> updated = service.updateMessageStatusByExternalId("wamid.123", ConversationMessageStatus.DELIVERED);
+
+        assertThat(updated).isPresent();
+        assertThat(updated.get().getStatus()).isEqualTo(ConversationMessageStatus.READ);
+    }
+
     private void arrangeSummaryData(Conversation conversation, String leadName, String phone, String content, String messageAt, long unreadCount) {
         WhatsAppContact contact = new WhatsAppContact(conversation.getContactId(), COMPANY_ID, STORE_ID, conversation.getLeadId(), phone, leadName, Instant.parse("2026-07-08T10:00:00Z"), Instant.parse("2026-07-08T10:00:00Z"));
         Lead lead = new Lead(

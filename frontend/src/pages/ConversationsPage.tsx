@@ -2,26 +2,33 @@ import CheckIcon from '@mui/icons-material/Check';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import MarkChatUnreadIcon from '@mui/icons-material/MarkChatUnread';
+import SendIcon from '@mui/icons-material/Send';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import {
+  Alert,
   Avatar,
   Badge,
   Box,
+  Button,
   Chip,
+  CircularProgress,
   Divider,
   LinearProgress,
   List,
   ListItemAvatar,
   ListItemButton,
   ListItemText,
+  MenuItem,
   Paper,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { useMetadata } from '../hooks/useMetadata';
-import { listConversationMessages, listConversations } from '../services/conversationService';
+import { listConversationMessages, listConversations, sendConversationTextMessage } from '../services/conversationService';
+import { listActiveTemplates, sendWhatsappTemplate } from '../services/templateService';
 import type { ConversationMessage, ConversationSummary } from '../types/message';
 
 function formatPhone(phone: string) {
@@ -103,10 +110,20 @@ function statusIcon(status: ConversationMessage['status']) {
   return <CheckIcon fontSize="inherit" />;
 }
 
+function apiErrorCode(error: unknown) {
+  return (error as { response?: { data?: { code?: string } } }).response?.data?.code;
+}
+
+function apiErrorMessage(error: unknown) {
+  return (error as { response?: { data?: { message?: string } } }).response?.data?.message;
+}
+
 export function ConversationsPage() {
   const metadata = useMetadata();
   const queryClient = useQueryClient();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const [composerText, setComposerText] = useState('');
+  const [selectedTemplateId, setSelectedTemplateId] = useState('');
 
   const conversationsQuery = useQuery({
     queryKey: ['conversations'],
@@ -130,6 +147,50 @@ export function ConversationsPage() {
 
   const messages = messagesQuery.data ?? [];
 
+  const templatesQuery = useQuery({
+    queryKey: ['activeTemplates'],
+    queryFn: listActiveTemplates,
+    enabled: Boolean(selectedConversation?.leadId),
+  });
+
+  const sendTextMutation = useMutation({
+    mutationFn: ({ conversationId, content }: { conversationId: string; content: string }) => sendConversationTextMessage(conversationId, content),
+    onSuccess: (message) => {
+      queryClient.setQueryData<ConversationMessage[]>(['conversationMessages', message.conversationId], (current) => [...(current ?? []), message]);
+      setComposerText('');
+      void queryClient.invalidateQueries({ queryKey: ['conversations'] });
+    },
+  });
+
+  const sendTemplateMutation = useMutation({
+    mutationFn: ({ leadId, templateId }: { leadId: string; templateId: string }) => sendWhatsappTemplate(leadId, templateId),
+    onSuccess: (response) => {
+      if (selectedConversationId) {
+        const now = new Date().toISOString();
+        const message: ConversationMessage = {
+          id: response.conversationMessageId,
+          conversationId: selectedConversationId,
+          direction: 'OUTBOUND',
+          type: 'TEMPLATE',
+          status: response.status,
+          externalMessageId: response.externalMessageId,
+          content: response.message,
+          mediaId: null,
+          mediaMimeType: null,
+          createdAt: now,
+          updatedAt: now,
+        };
+        queryClient.setQueryData<ConversationMessage[]>(['conversationMessages', selectedConversationId], (current) => [...(current ?? []), message]);
+      }
+      setSelectedTemplateId('');
+      void queryClient.invalidateQueries({ queryKey: ['conversations'] });
+    },
+  });
+
+  const sendTextErrorBelongsToSelectedConversation = sendTextMutation.variables?.conversationId === selectedConversationId;
+  const freeTextWindowExpired = sendTextErrorBelongsToSelectedConversation && apiErrorCode(sendTextMutation.error) === 'WHATSAPP_FREE_TEXT_WINDOW_EXPIRED';
+  const canSendText = Boolean(selectedConversationId && composerText.trim()) && !sendTextMutation.isPending;
+
   useEffect(() => {
     if (!selectedConversationId && conversations.length > 0) {
       setSelectedConversationId(conversations[0].id);
@@ -145,6 +206,25 @@ export function ConversationsPage() {
       void queryClient.invalidateQueries({ queryKey: ['conversations'] });
     }
   }, [messagesQuery.data, queryClient, selectedConversationId]);
+
+  useEffect(() => {
+    setComposerText('');
+    setSelectedTemplateId('');
+  }, [selectedConversationId]);
+
+  function handleSendText() {
+    if (!selectedConversationId || !composerText.trim()) {
+      return;
+    }
+    sendTextMutation.mutate({ conversationId: selectedConversationId, content: composerText });
+  }
+
+  function handleSendTemplate() {
+    if (!selectedConversation?.leadId || !selectedTemplateId) {
+      return;
+    }
+    sendTemplateMutation.mutate({ leadId: selectedConversation.leadId, templateId: selectedTemplateId });
+  }
 
   return (
     <Box sx={{ display: 'grid', gap: 3 }}>
@@ -256,7 +336,7 @@ export function ConversationsPage() {
           </List>
         </Box>
 
-        <Box sx={{ display: 'grid', gridTemplateRows: 'auto minmax(0, 1fr)', minWidth: 0 }}>
+        <Box sx={{ display: 'grid', gridTemplateRows: 'auto minmax(0, 1fr) auto', minWidth: 0 }}>
           {selectedConversation ? (
             <>
               <Stack spacing={0.5} sx={{ borderBottom: 1, borderColor: 'divider', px: 3, py: 2 }}>
@@ -343,6 +423,86 @@ export function ConversationsPage() {
                     <Typography color="text.secondary">Sem mensagens registradas.</Typography>
                   </Box>
                 )}
+              </Box>
+
+              <Box sx={{ borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper', p: { xs: 2, md: 3 } }}>
+                <Stack spacing={1.5}>
+                  {freeTextWindowExpired && (
+                    <Alert severity="warning">
+                      Janela de 24 horas expirada. Use um template aprovado para retomar a conversa.
+                    </Alert>
+                  )}
+                  {sendTextMutation.isError && sendTextErrorBelongsToSelectedConversation && !freeTextWindowExpired && (
+                    <Alert severity="error">{apiErrorMessage(sendTextMutation.error) ?? 'Nao foi possivel enviar a mensagem.'}</Alert>
+                  )}
+                  {sendTemplateMutation.isError && (
+                    <Alert severity="error">{apiErrorMessage(sendTemplateMutation.error) ?? 'Nao foi possivel enviar o template.'}</Alert>
+                  )}
+
+                  {freeTextWindowExpired && selectedConversation.leadId && (
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+                      <TextField
+                        select
+                        fullWidth
+                        label="Template"
+                        size="small"
+                        value={selectedTemplateId}
+                        onChange={(event) => setSelectedTemplateId(event.target.value)}
+                      >
+                        {(templatesQuery.data ?? []).map((template) => (
+                          <MenuItem key={template.id} value={template.id}>
+                            {template.name}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                      <Button
+                        variant="contained"
+                        startIcon={sendTemplateMutation.isPending ? <CircularProgress color="inherit" size={16} /> : <SendIcon />}
+                        disabled={!selectedTemplateId || sendTemplateMutation.isPending}
+                        onClick={handleSendTemplate}
+                        sx={{ minWidth: 160 }}
+                      >
+                        Template
+                      </Button>
+                    </Stack>
+                  )}
+
+                  {freeTextWindowExpired && !selectedConversation.leadId && (
+                    <Alert severity="info">Esta conversa nao possui lead vinculado para envio de template.</Alert>
+                  )}
+
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+                    <TextField
+                      fullWidth
+                      multiline
+                      maxRows={4}
+                      minRows={1}
+                      placeholder="Digite uma mensagem"
+                      value={composerText}
+                      onChange={(event) => {
+                        setComposerText(event.target.value);
+                        if (sendTextMutation.isError) {
+                          sendTextMutation.reset();
+                        }
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' && !event.shiftKey) {
+                          event.preventDefault();
+                          handleSendText();
+                        }
+                      }}
+                    />
+                    <Button
+                      variant="contained"
+                      endIcon={sendTextMutation.isPending ? <CircularProgress color="inherit" size={16} /> : <SendIcon />}
+                      disabled={!canSendText}
+                      onClick={handleSendText}
+                      sx={{ minWidth: 132 }}
+                    >
+                      Enviar
+                    </Button>
+                  </Stack>
+                </Stack>
               </Box>
             </>
           ) : (

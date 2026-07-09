@@ -1,5 +1,6 @@
 package com.eai.api.conversation;
 
+import com.eai.application.whatsapp.WhatsAppTextSendResult;
 import com.eai.domain.conversation.ConversationMessage;
 import com.eai.domain.conversation.ConversationMessageDirection;
 import com.eai.domain.conversation.ConversationMessageStatus;
@@ -35,6 +36,22 @@ public record ConversationMessageResponse(
                 message.getMediaMimeType(),
                 message.getCreatedAt(),
                 message.getUpdatedAt()
+        );
+    }
+
+    public static ConversationMessageResponse fromTextSendResult(WhatsAppTextSendResult result) {
+        return new ConversationMessageResponse(
+                result.conversationMessageId(),
+                result.conversationId(),
+                ConversationMessageDirection.OUTBOUND,
+                ConversationMessageType.TEXT,
+                result.status(),
+                result.externalMessageId(),
+                result.message(),
+                null,
+                null,
+                result.createdAt(),
+                result.updatedAt()
         );
     }
 }

@@ -1,5 +1,5 @@
 import { api } from './api';
-import type { LeadCommunication, MessageTemplate, MessageTemplateType, WhatsappLink } from '../types/message';
+import type { LeadCommunication, MessageTemplate, MessageTemplateType, WhatsAppTemplateSendResponse, WhatsappLink } from '../types/message';
 
 export interface MessageTemplatePayload {
   companyId: string;
@@ -36,6 +36,11 @@ export async function deleteTemplate(id: string) {
 
 export async function generateWhatsappLink(leadId: string, templateId: string) {
   const response = await api.post<WhatsappLink>(`/leads/${leadId}/whatsapp-link`, { templateId });
+  return response.data;
+}
+
+export async function sendWhatsappTemplate(leadId: string, templateId: string) {
+  const response = await api.post<WhatsAppTemplateSendResponse>(`/leads/${leadId}/whatsapp-template`, { templateId });
   return response.data;
 }
 

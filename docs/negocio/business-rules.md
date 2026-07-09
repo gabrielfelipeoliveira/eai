@@ -130,6 +130,10 @@ Regras conhecidas:
 - Envio de template pela WhatsApp Cloud API exige telefone do lead valido para envio ao WhatsApp.
 - Envio de template pela WhatsApp Cloud API registra comunicacao do lead e mensagem de conversa de saida.
 - Falhas retornadas pela WhatsApp Cloud API sao registradas como mensagem de conversa com status `FAILED`.
+- Envio de texto livre pela plataforma so e permitido quando a conversa tem mensagem recebida do cliente nos ultimos 24 horas.
+- Fora da janela de 24 horas, envio de texto livre deve ser bloqueado e o usuario deve ser orientado a usar template aprovado.
+- Envio de texto livre registra mensagem de conversa de saida com status inicial `SENT` quando a WhatsApp Cloud API aceita o envio ou `FAILED` quando rejeita ou a chamada falha.
+- Eventos de status da WhatsApp Cloud API atualizam mensagens de conversa pelo identificador externo da mensagem.
 
 ## Importador de Leads por E-mail
 

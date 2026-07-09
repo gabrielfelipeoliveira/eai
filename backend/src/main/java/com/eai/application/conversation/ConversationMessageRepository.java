@@ -14,9 +14,13 @@ public interface ConversationMessageRepository {
 
     Optional<ConversationMessage> findById(UUID id);
 
+    Optional<ConversationMessage> findByExternalMessageId(String externalMessageId);
+
     List<ConversationMessage> findByConversationId(UUID conversationId);
 
     Optional<ConversationMessage> findLatestByConversationId(UUID conversationId);
+
+    Optional<ConversationMessage> findLatestByConversationIdAndDirection(UUID conversationId, ConversationMessageDirection direction);
 
     long countByConversationIdAndDirectionAndStatus(UUID conversationId, ConversationMessageDirection direction, ConversationMessageStatus status);
 

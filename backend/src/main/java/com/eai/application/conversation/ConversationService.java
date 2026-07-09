@@ -120,6 +120,31 @@ public class ConversationService {
         return messageRepository.findByConversationId(conversation.getId());
     }
 
+    @Transactional
+    public Optional<ConversationMessage> updateMessageStatusByExternalId(String externalMessageId, ConversationMessageStatus status) {
+        return messageRepository.findByExternalMessageId(externalMessageId)
+                .map(message -> {
+                    if (shouldUpdateStatus(message.getStatus(), status)) {
+                        message.updateStatus(status);
+                    }
+                    return messageRepository.save(message);
+                });
+    }
+
+    private boolean shouldUpdateStatus(ConversationMessageStatus currentStatus, ConversationMessageStatus newStatus) {
+        return newStatus == ConversationMessageStatus.FAILED || statusRank(newStatus) >= statusRank(currentStatus);
+    }
+
+    private int statusRank(ConversationMessageStatus status) {
+        return switch (status) {
+            case RECEIVED -> 0;
+            case SENT -> 1;
+            case DELIVERED -> 2;
+            case READ -> 3;
+            case FAILED -> 4;
+        };
+    }
+
     private ConversationSummary toSummary(Conversation conversation) {
         WhatsAppContact contact = contactRepository.findById(conversation.getContactId())
                 .orElseThrow(() -> new NotFoundException("WhatsApp contact not found"));

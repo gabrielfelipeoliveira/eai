@@ -31,6 +31,11 @@ public class ConversationMessagePersistenceAdapter implements ConversationMessag
     }
 
     @Override
+    public Optional<ConversationMessage> findByExternalMessageId(String externalMessageId) {
+        return externalMessageId == null ? Optional.empty() : repository.findByExternalMessageId(externalMessageId).map(this::toDomain);
+    }
+
+    @Override
     public List<ConversationMessage> findByConversationId(UUID conversationId) {
         return repository.findByConversationIdOrderByCreatedAtAsc(conversationId).stream().map(this::toDomain).toList();
     }
@@ -38,6 +43,11 @@ public class ConversationMessagePersistenceAdapter implements ConversationMessag
     @Override
     public Optional<ConversationMessage> findLatestByConversationId(UUID conversationId) {
         return repository.findFirstByConversationIdOrderByCreatedAtDesc(conversationId).map(this::toDomain);
+    }
+
+    @Override
+    public Optional<ConversationMessage> findLatestByConversationIdAndDirection(UUID conversationId, ConversationMessageDirection direction) {
+        return repository.findFirstByConversationIdAndDirectionOrderByCreatedAtDesc(conversationId, direction).map(this::toDomain);
     }
 
     @Override

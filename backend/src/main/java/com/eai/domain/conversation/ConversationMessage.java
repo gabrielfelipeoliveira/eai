@@ -105,6 +105,11 @@ public class ConversationMessage {
         return updatedAt;
     }
 
+    public void updateStatus(ConversationMessageStatus status) {
+        this.status = Objects.requireNonNull(status);
+        this.updatedAt = Instant.now();
+    }
+
     private static String trimToNull(String value) {
         if (value == null || value.isBlank()) {
             return null;

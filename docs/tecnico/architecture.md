@@ -187,7 +187,7 @@ O webhook publico continua em `com.eai.api.whatsapp` e delega para `WhatsAppWebh
 
 Mensagens recebidas sao armazenadas como `INBOUND` com status `RECEIVED`. O fluxo existente de geracao de link de WhatsApp registra uma mensagem `OUTBOUND` do tipo `TEMPLATE` com status `SENT`, alem do registro legado em `lead_communications`.
 
-O envio ativo de templates aprovados pela WhatsApp Cloud API e implementado por `WhatsAppTemplateSenderService` na aplicacao e por `WhatsAppCloudTemplateClient` na infraestrutura. O endpoint `POST /api/leads/{id}/whatsapp-template` valida acesso ao lead, telefone do contato, template ativo da mesma loja, chama a Cloud API e registra uma mensagem `OUTBOUND` do tipo `TEMPLATE` com status inicial `SENT` ou `FAILED`. O retorno bruto do provedor fica em `conversation_messages.raw_payload` e o id externo, quando retornado, fica em `external_message_id`.
+O envio ativo de templates aprovados pela WhatsApp Cloud API e implementado por `WhatsAppTemplateSenderService` na aplicacao e por `WhatsAppCloudTemplateClient` na infraestrutura. O endpoint `POST /api/leads/{id}/whatsapp-template` valida acesso ao lead, telefone do contato, template ativo da mesma loja, chama a Cloud API e registra uma mensagem `OUTBOUND` do tipo `TEMPLATE` com status inicial `SENT` ou `FAILED`. O envio de texto livre e implementado por `WhatsAppTextSenderService` e pelo endpoint `POST /api/conversations/{id}/messages`, limitado a conversas com mensagem recebida do cliente nos ultimos 24 horas. O retorno bruto do provedor fica em `conversation_messages.raw_payload` e o id externo, quando retornado, fica em `external_message_id`. Eventos de status recebidos pelo webhook atualizam a mensagem enviada correspondente pelo id externo.
 
 Configuracoes de envio:
 

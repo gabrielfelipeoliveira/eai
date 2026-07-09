@@ -4,6 +4,7 @@ import com.eai.application.common.ApplicationException;
 import com.eai.application.common.ForbiddenException;
 import com.eai.application.conversation.ConversationService;
 import com.eai.application.conversation.IncomingWhatsAppMessage;
+import com.eai.domain.conversation.ConversationMessageStatus;
 import com.eai.domain.conversation.ConversationMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +44,10 @@ public class WhatsAppWebhookService {
 
     public void receiveEvent(String payload) {
         List<IncomingWhatsAppMessage> messages = parseIncomingMessages(payload);
+        List<WhatsAppMessageStatusEvent> statuses = parseStatusEvents(payload);
+        statuses.forEach(status -> conversationService.updateMessageStatusByExternalId(status.externalMessageId(), status.status()));
         if (messages.isEmpty()) {
-            logger.info("WhatsApp webhook event received without messages");
+            logger.info("WhatsApp webhook event received with {} status update(s) and without messages", statuses.size());
             return;
         }
         if (!settings.inboundPersistenceConfigured()) {
@@ -53,7 +56,7 @@ public class WhatsAppWebhookService {
         UUID companyId = UUID.fromString(settings.companyId());
         UUID storeId = UUID.fromString(settings.storeId());
         messages.forEach(message -> conversationService.recordIncomingMessage(companyId, storeId, message));
-        logger.info("WhatsApp webhook persisted {} incoming message(s)", messages.size());
+        logger.info("WhatsApp webhook persisted {} incoming message(s) and processed {} status update(s)", messages.size(), statuses.size());
     }
 
     private List<IncomingWhatsAppMessage> parseIncomingMessages(String payload) {
@@ -90,6 +93,28 @@ public class WhatsAppWebhookService {
         }
     }
 
+    private List<WhatsAppMessageStatusEvent> parseStatusEvents(String payload) {
+        try {
+            JsonNode root = objectMapper.readTree(payload);
+            List<WhatsAppMessageStatusEvent> result = new ArrayList<>();
+            for (JsonNode entry : iterable(root.path("entry"))) {
+                for (JsonNode change : iterable(entry.path("changes"))) {
+                    JsonNode value = change.path("value");
+                    for (JsonNode status : iterable(value.path("statuses"))) {
+                        String messageId = text(status.path("id"));
+                        ConversationMessageStatus messageStatus = toMessageStatus(text(status.path("status")));
+                        if (messageId != null && messageStatus != null) {
+                            result.add(new WhatsAppMessageStatusEvent(messageId, messageStatus, status.toString()));
+                        }
+                    }
+                }
+            }
+            return result;
+        } catch (Exception exception) {
+            throw new ApplicationException("INVALID_WHATSAPP_WEBHOOK_PAYLOAD", "Invalid WhatsApp webhook payload");
+        }
+    }
+
     private Iterable<JsonNode> iterable(JsonNode node) {
         return node.isArray() ? node : List.of();
     }
@@ -108,6 +133,16 @@ public class WhatsAppWebhookService {
             case "audio", "voice" -> ConversationMessageType.AUDIO;
             case "document" -> ConversationMessageType.DOCUMENT;
             default -> ConversationMessageType.TEXT;
+        };
+    }
+
+    private ConversationMessageStatus toMessageStatus(String status) {
+        return switch (status == null ? "" : status) {
+            case "sent" -> ConversationMessageStatus.SENT;
+            case "delivered" -> ConversationMessageStatus.DELIVERED;
+            case "read" -> ConversationMessageStatus.READ;
+            case "failed" -> ConversationMessageStatus.FAILED;
+            default -> null;
         };
     }
 

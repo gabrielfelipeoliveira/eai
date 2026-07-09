@@ -113,6 +113,21 @@ Pendencias:
 - Fluxo oficial para marcar mensagens como lidas.
 - Regras oficiais para usuarios visualizarem conversas sem vendedor responsavel.
 
+## Sprint 6: Envio De Mensagens Pela Plataforma
+
+Objetivo:
+
+- Permitir que vendedores respondam mensagens diretamente pela plataforma, respeitando a janela de 24 horas do WhatsApp.
+
+Escopo entregue:
+
+- Envio de texto livre pela WhatsApp Cloud API a partir da conversa.
+- Bloqueio de texto livre quando a ultima mensagem recebida do cliente tiver mais de 24 horas.
+- Orientacao para uso de template aprovado quando a janela estiver expirada.
+- Persistencia da mensagem enviada na conversa.
+- Atualizacao de status da mensagem a partir de eventos da WhatsApp Cloud API.
+- Exibicao imediata da mensagem enviada no chat web.
+
 ## Versao 1
 
 Temas candidatos:

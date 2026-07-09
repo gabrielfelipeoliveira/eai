@@ -38,6 +38,17 @@ export interface WhatsappLink {
   url: string;
 }
 
+export interface WhatsAppTemplateSendResponse {
+  leadId: string;
+  templateId: string;
+  communicationId: string;
+  conversationMessageId: string;
+  status: ConversationMessageStatus;
+  externalMessageId: string | null;
+  message: string;
+  providerResponse: string | null;
+}
+
 export interface ConversationSummary {
   id: string;
   companyId: string;

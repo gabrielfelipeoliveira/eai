@@ -10,3 +10,8 @@ export async function listConversationMessages(conversationId: string) {
   const response = await api.get<ConversationMessage[]>(`/conversations/${conversationId}/messages`);
   return response.data;
 }
+
+export async function sendConversationTextMessage(conversationId: string, content: string) {
+  const response = await api.post<ConversationMessage>(`/conversations/${conversationId}/messages`, { content });
+  return response.data;
+}

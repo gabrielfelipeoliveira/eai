@@ -2,6 +2,8 @@ package com.eai.infrastructure.whatsapp;
 
 import com.eai.application.whatsapp.WhatsAppTemplateClient;
 import com.eai.application.whatsapp.WhatsAppTemplateProviderResult;
+import com.eai.application.whatsapp.WhatsAppTextClient;
+import com.eai.application.whatsapp.WhatsAppTextProviderResult;
 import com.eai.infrastructure.config.WhatsAppCloudApiProperties;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
@@ -18,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class WhatsAppCloudTemplateClient implements WhatsAppTemplateClient {
+public class WhatsAppCloudTemplateClient implements WhatsAppTemplateClient, WhatsAppTextClient {
 
     private static final String GRAPH_BASE_URL = "https://graph.facebook.com";
     private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(15);
@@ -38,14 +40,7 @@ public class WhatsAppCloudTemplateClient implements WhatsAppTemplateClient {
     @Override
     public WhatsAppTemplateProviderResult sendTemplate(String phone, String templateName, String languageCode, List<String> bodyParameters) {
         try {
-            String requestBody = objectMapper.writeValueAsString(requestBody(phone, templateName, languageCode, bodyParameters));
-            HttpRequest request = HttpRequest.newBuilder(endpoint())
-                    .timeout(REQUEST_TIMEOUT)
-                    .header("Authorization", "Bearer " + properties.accessToken())
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(requestBody, StandardCharsets.UTF_8))
-                    .build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            HttpResponse<String> response = post(requestBody(phone, templateName, languageCode, bodyParameters));
             boolean successful = response.statusCode() >= 200 && response.statusCode() < 300;
             return new WhatsAppTemplateProviderResult(
                     successful,
@@ -56,6 +51,33 @@ public class WhatsAppCloudTemplateClient implements WhatsAppTemplateClient {
         } catch (Exception exception) {
             return new WhatsAppTemplateProviderResult(false, 0, null, exception.getMessage());
         }
+    }
+
+    @Override
+    public WhatsAppTextProviderResult sendText(String phone, String content) {
+        try {
+            HttpResponse<String> response = post(textRequestBody(phone, content));
+            boolean successful = response.statusCode() >= 200 && response.statusCode() < 300;
+            return new WhatsAppTextProviderResult(
+                    successful,
+                    response.statusCode(),
+                    successful ? externalMessageId(response.body()) : null,
+                    response.body()
+            );
+        } catch (Exception exception) {
+            return new WhatsAppTextProviderResult(false, 0, null, exception.getMessage());
+        }
+    }
+
+    private HttpResponse<String> post(Map<String, Object> body) throws Exception {
+        String requestBody = objectMapper.writeValueAsString(body);
+        HttpRequest request = HttpRequest.newBuilder(endpoint())
+                .timeout(REQUEST_TIMEOUT)
+                .header("Authorization", "Bearer " + properties.accessToken())
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody, StandardCharsets.UTF_8))
+                .build();
+        return httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
     }
 
     private URI endpoint() {
@@ -88,6 +110,16 @@ public class WhatsAppCloudTemplateClient implements WhatsAppTemplateClient {
         body.put("to", phone);
         body.put("type", "template");
         body.put("template", template);
+        return body;
+    }
+
+    private Map<String, Object> textRequestBody(String phone, String content) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("messaging_product", "whatsapp");
+        body.put("recipient_type", "individual");
+        body.put("to", phone);
+        body.put("type", "text");
+        body.put("text", Map.of("preview_url", false, "body", content));
         return body;
     }
 

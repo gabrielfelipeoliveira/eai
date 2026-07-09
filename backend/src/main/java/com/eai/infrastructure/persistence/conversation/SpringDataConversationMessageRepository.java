@@ -16,9 +16,13 @@ public interface SpringDataConversationMessageRepository extends JpaRepository<C
 
     boolean existsByExternalMessageId(String externalMessageId);
 
+    Optional<ConversationMessageJpaEntity> findByExternalMessageId(String externalMessageId);
+
     List<ConversationMessageJpaEntity> findByConversationIdOrderByCreatedAtAsc(UUID conversationId);
 
     Optional<ConversationMessageJpaEntity> findFirstByConversationIdOrderByCreatedAtDesc(UUID conversationId);
+
+    Optional<ConversationMessageJpaEntity> findFirstByConversationIdAndDirectionOrderByCreatedAtDesc(UUID conversationId, ConversationMessageDirection direction);
 
     long countByConversationIdAndDirectionAndStatus(UUID conversationId, ConversationMessageDirection direction, ConversationMessageStatus status);
 

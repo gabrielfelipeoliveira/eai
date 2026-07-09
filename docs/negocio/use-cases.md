@@ -713,6 +713,39 @@ Pos-condicoes:
 
 - Mensagens recebidas da conversa com status `RECEIVED` sao marcadas como `READ`.
 
+### Enviar Texto Livre Na Conversa
+
+Ator:
+
+- Admin
+- Gerente
+- Vendedor
+
+Entradas:
+
+- Identidade da conversa.
+- Conteudo textual.
+
+Saidas:
+
+- Mensagem enviada registrada na conversa.
+- Status inicial da mensagem.
+- Identidade externa da mensagem quando retornada pela WhatsApp Cloud API.
+
+Pre-condicoes:
+
+- Ator esta autenticado.
+- Ator possui acesso ao tenant da conversa.
+- Conversa possui mensagem recebida do cliente nos ultimos 24 horas.
+- Configuracao de envio da WhatsApp Cloud API esta disponivel.
+
+Pos-condicoes:
+
+- Texto livre e enviado para WhatsApp Cloud API.
+- Mensagem de conversa de saida e registrada com status `SENT` quando API aceita o envio.
+- Falha de envio e registrada com status `FAILED` quando API rejeita ou chamada falha.
+- Fora da janela de 24 horas, envio e bloqueado e o usuario deve usar template aprovado.
+
 ## Importacao De Leads Por E-Mail
 
 ### Gerenciar Contas De E-Mail
