@@ -241,6 +241,21 @@ Atributos conhecidos:
 - Payload bruto do evento quando aplicavel.
 - Datas de criacao e atualizacao.
 
+### Evento de Mensagem de Conversa
+
+Representa um evento de status recebido do provedor para uma mensagem de conversa.
+
+Atributos conhecidos:
+
+- Identidade.
+- Identidade da mensagem quando encontrada.
+- Identidade externa da mensagem.
+- Status informado pelo provedor.
+- Motivo de falha quando informado.
+- Payload bruto do evento.
+- Data do evento.
+- Data de criacao.
+
 ### Conta de E-mail
 
 Representa uma conta de e-mail usada para importar leads.
@@ -268,7 +283,7 @@ Candidatos atuais a agregados:
 - Empresa com lojas como estrutura de tenant.
 - Usuario como perfil de identidade e autorizacao.
 - Lead como agregado comercial principal, com historico, notas, tags, comunicacoes e follow-ups como registros relacionados.
-- Conversa como agregado de atendimento do WhatsApp, com contato e mensagens relacionadas.
+- Conversa como agregado de atendimento do WhatsApp, com contato, mensagens e eventos de status relacionados.
 - Configuracao de distribuicao e politica de SLA como configuracoes operacionais da loja.
 - Conta de e-mail como configuracao de integracao de captacao de leads.
 

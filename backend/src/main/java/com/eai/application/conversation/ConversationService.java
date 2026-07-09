@@ -6,6 +6,7 @@ import com.eai.application.lead.LeadRepository;
 import com.eai.application.lead.LeadSearchCriteria;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.domain.conversation.Conversation;
+import com.eai.domain.conversation.ConversationMessageEvent;
 import com.eai.domain.conversation.ConversationMessage;
 import com.eai.domain.conversation.ConversationMessageDirection;
 import com.eai.domain.conversation.ConversationMessageStatus;
@@ -17,6 +18,7 @@ import com.eai.domain.user.UserRole;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -28,17 +30,20 @@ public class ConversationService {
     private final WhatsAppContactRepository contactRepository;
     private final ConversationRepository conversationRepository;
     private final ConversationMessageRepository messageRepository;
+    private final ConversationMessageEventRepository messageEventRepository;
     private final LeadRepository leadRepository;
 
     public ConversationService(
             WhatsAppContactRepository contactRepository,
             ConversationRepository conversationRepository,
             ConversationMessageRepository messageRepository,
+            ConversationMessageEventRepository messageEventRepository,
             LeadRepository leadRepository
     ) {
         this.contactRepository = contactRepository;
         this.conversationRepository = conversationRepository;
         this.messageRepository = messageRepository;
+        this.messageEventRepository = messageEventRepository;
         this.leadRepository = leadRepository;
     }
 
@@ -122,13 +127,26 @@ public class ConversationService {
 
     @Transactional
     public Optional<ConversationMessage> updateMessageStatusByExternalId(String externalMessageId, ConversationMessageStatus status) {
-        return messageRepository.findByExternalMessageId(externalMessageId)
-                .map(message -> {
-                    if (shouldUpdateStatus(message.getStatus(), status)) {
-                        message.updateStatus(status);
-                    }
-                    return messageRepository.save(message);
-                });
+        return recordMessageStatusEvent(externalMessageId, status, null, null, null);
+    }
+
+    @Transactional
+    public Optional<ConversationMessage> recordMessageStatusEvent(String externalMessageId, ConversationMessageStatus status, String failureReason, String rawPayload, Instant occurredAt) {
+        Optional<ConversationMessage> existingMessage = messageRepository.findByExternalMessageId(externalMessageId);
+        messageEventRepository.save(ConversationMessageEvent.statusReceived(
+                existingMessage.map(ConversationMessage::getId).orElse(null),
+                externalMessageId,
+                status,
+                failureReason,
+                rawPayload,
+                occurredAt
+        ));
+        return existingMessage.map(message -> {
+            if (shouldUpdateStatus(message.getStatus(), status)) {
+                message.updateStatus(status);
+            }
+            return messageRepository.save(message);
+        });
     }
 
     private boolean shouldUpdateStatus(ConversationMessageStatus currentStatus, ConversationMessageStatus newStatus) {

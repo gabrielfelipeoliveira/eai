@@ -23,6 +23,7 @@ Regras:
 - `V1__initial_schema.sql`
 - `V2__whatsapp_conversations.sql`
 - `V3__lead_communication_whatsapp_template_channel.sql`
+- `V4__conversation_message_events.sql`
 
 Observacao:
 
@@ -37,7 +38,7 @@ Grupos atuais:
 - Tenancy: `companies`, `stores`.
 - Leads: `leads`, `lead_history`, `lead_notes`, `lead_tags`.
 - Mensageria: `message_templates`, `lead_communications`.
-- Conversas de WhatsApp: `whatsapp_contacts`, `conversations`, `conversation_messages`.
+- Conversas de WhatsApp: `whatsapp_contacts`, `conversations`, `conversation_messages`, `conversation_message_events`.
 - Importacao por e-mail: `email_accounts`.
 - Distribuicao e SLA: `lead_distribution_config`, `lead_sla_policy`.
 - Follow-ups: `follow_up_tasks`.
@@ -59,6 +60,7 @@ Grupos atuais:
 - Um contato de WhatsApp pertence a uma empresa e loja.
 - Uma conversa pertence a um contato de WhatsApp e pode estar vinculada a um lead.
 - Uma conversa tem muitas mensagens.
+- Uma mensagem de conversa pode ter muitos eventos de status recebidos do provedor.
 - Um template de mensagem pertence a uma empresa e loja.
 - Uma comunicacao de lead pode referenciar um template.
 - Uma conta de e-mail pertence a uma empresa e loja.
@@ -85,6 +87,7 @@ Indices conhecidos:
 - Historico, notas e tags possuem indices orientados ao lead.
 - Conversas de WhatsApp possuem indices por empresa, loja, lead, vendedor responsavel e data de atualizacao.
 - Mensagens de conversa possuem indices por conversa, data de criacao, status e identidade externa da mensagem.
+- Eventos de mensagens de conversa possuem indices por mensagem, identidade externa da mensagem, status e data do evento.
 - Tabelas de distribuicao e SLA possuem indices orientados a loja.
 - Tarefas de follow-up possuem indices por lead, usuario/status/vencimento e vencimento.
 

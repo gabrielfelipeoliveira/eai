@@ -35,8 +35,9 @@ class ConversationServiceTest {
     private final WhatsAppContactRepository contactRepository = mock(WhatsAppContactRepository.class);
     private final ConversationRepository conversationRepository = mock(ConversationRepository.class);
     private final ConversationMessageRepository messageRepository = mock(ConversationMessageRepository.class);
+    private final ConversationMessageEventRepository messageEventRepository = mock(ConversationMessageEventRepository.class);
     private final LeadRepository leadRepository = mock(LeadRepository.class);
-    private final ConversationService service = new ConversationService(contactRepository, conversationRepository, messageRepository, leadRepository);
+    private final ConversationService service = new ConversationService(contactRepository, conversationRepository, messageRepository, messageEventRepository, leadRepository);
 
     @Test
     void listsSellerSummariesOrderedByLatestInteractionWithUnreadCount() {
@@ -92,6 +93,11 @@ class ConversationServiceTest {
 
         assertThat(updated).isPresent();
         assertThat(updated.get().getStatus()).isEqualTo(ConversationMessageStatus.DELIVERED);
+        verify(messageEventRepository).save(org.mockito.ArgumentMatchers.argThat(event ->
+                message.getId().equals(event.getMessageId())
+                        && "wamid.123".equals(event.getExternalMessageId())
+                        && event.getStatus() == ConversationMessageStatus.DELIVERED
+        ));
         verify(messageRepository).save(message);
     }
 
@@ -105,6 +111,51 @@ class ConversationServiceTest {
 
         assertThat(updated).isPresent();
         assertThat(updated.get().getStatus()).isEqualTo(ConversationMessageStatus.READ);
+    }
+
+    @Test
+    void recordsFailedStatusEventWithReason() {
+        ConversationMessage message = message(UUID.randomUUID(), ConversationMessageDirection.OUTBOUND, ConversationMessageStatus.SENT, "Bom dia", "2026-07-08T11:02:00Z");
+        when(messageRepository.findByExternalMessageId("wamid.456")).thenReturn(Optional.of(message));
+        when(messageRepository.save(message)).thenReturn(message);
+
+        Optional<ConversationMessage> updated = service.recordMessageStatusEvent(
+                "wamid.456",
+                ConversationMessageStatus.FAILED,
+                "Recipient phone number is invalid",
+                "{\"status\":\"failed\"}",
+                Instant.parse("2026-07-08T11:03:00Z")
+        );
+
+        assertThat(updated).isPresent();
+        assertThat(updated.get().getStatus()).isEqualTo(ConversationMessageStatus.FAILED);
+        verify(messageEventRepository).save(org.mockito.ArgumentMatchers.argThat(event ->
+                message.getId().equals(event.getMessageId())
+                        && event.getStatus() == ConversationMessageStatus.FAILED
+                        && "Recipient phone number is invalid".equals(event.getFailureReason())
+                        && "{\"status\":\"failed\"}".equals(event.getRawPayload())
+                        && Instant.parse("2026-07-08T11:03:00Z").equals(event.getOccurredAt())
+        ));
+    }
+
+    @Test
+    void recordsStatusEventEvenWhenMessageWasNotFound() {
+        when(messageRepository.findByExternalMessageId("wamid.unknown")).thenReturn(Optional.empty());
+
+        Optional<ConversationMessage> updated = service.recordMessageStatusEvent(
+                "wamid.unknown",
+                ConversationMessageStatus.READ,
+                null,
+                "{\"status\":\"read\"}",
+                Instant.parse("2026-07-08T11:04:00Z")
+        );
+
+        assertThat(updated).isEmpty();
+        verify(messageEventRepository).save(org.mockito.ArgumentMatchers.argThat(event ->
+                event.getMessageId() == null
+                        && "wamid.unknown".equals(event.getExternalMessageId())
+                        && event.getStatus() == ConversationMessageStatus.READ
+        ));
     }
 
     private void arrangeSummaryData(Conversation conversation, String leadName, String phone, String content, String messageAt, long unreadCount) {

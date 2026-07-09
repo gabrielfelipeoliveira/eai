@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -45,7 +46,13 @@ public class WhatsAppWebhookService {
     public void receiveEvent(String payload) {
         List<IncomingWhatsAppMessage> messages = parseIncomingMessages(payload);
         List<WhatsAppMessageStatusEvent> statuses = parseStatusEvents(payload);
-        statuses.forEach(status -> conversationService.updateMessageStatusByExternalId(status.externalMessageId(), status.status()));
+        statuses.forEach(status -> conversationService.recordMessageStatusEvent(
+                status.externalMessageId(),
+                status.status(),
+                status.failureReason(),
+                status.rawPayload(),
+                status.occurredAt()
+        ));
         if (messages.isEmpty()) {
             logger.info("WhatsApp webhook event received with {} status update(s) and without messages", statuses.size());
             return;
@@ -104,7 +111,13 @@ public class WhatsAppWebhookService {
                         String messageId = text(status.path("id"));
                         ConversationMessageStatus messageStatus = toMessageStatus(text(status.path("status")));
                         if (messageId != null && messageStatus != null) {
-                            result.add(new WhatsAppMessageStatusEvent(messageId, messageStatus, status.toString()));
+                            result.add(new WhatsAppMessageStatusEvent(
+                                    messageId,
+                                    messageStatus,
+                                    extractFailureReason(status),
+                                    extractTimestamp(status),
+                                    status.toString()
+                            ));
                         }
                     }
                 }
@@ -172,6 +185,40 @@ public class WhatsAppWebhookService {
             case "document" -> text(message.path("document").path("mime_type"));
             default -> null;
         };
+    }
+
+    private Instant extractTimestamp(JsonNode status) {
+        String timestamp = text(status.path("timestamp"));
+        if (timestamp == null) {
+            return null;
+        }
+        try {
+            return Instant.ofEpochSecond(Long.parseLong(timestamp));
+        } catch (NumberFormatException exception) {
+            return null;
+        }
+    }
+
+    private String extractFailureReason(JsonNode status) {
+        JsonNode errors = status.path("errors");
+        if (!errors.isArray() || errors.isEmpty()) {
+            return null;
+        }
+        JsonNode error = errors.get(0);
+        String details = text(error.path("error_data").path("details"));
+        if (details != null) {
+            return details;
+        }
+        String message = text(error.path("message"));
+        if (message != null) {
+            return message;
+        }
+        String title = text(error.path("title"));
+        if (title != null) {
+            return title;
+        }
+        String code = text(error.path("code"));
+        return code == null ? null : "WhatsApp error " + code;
     }
 
     private String text(JsonNode node) {
