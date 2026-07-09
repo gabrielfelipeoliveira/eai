@@ -1,6 +1,7 @@
 import CheckIcon from '@mui/icons-material/Check';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import MarkChatUnreadIcon from '@mui/icons-material/MarkChatUnread';
 import SendIcon from '@mui/icons-material/Send';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
@@ -26,10 +27,12 @@ import {
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
 import { listConversationMessages, listConversations, sendConversationTextMessage } from '../services/conversationService';
 import { listActiveTemplates, sendWhatsappTemplate } from '../services/templateService';
-import type { ConversationMessage, ConversationSummary } from '../types/message';
+import { listUsers } from '../services/userService';
+import type { ConversationMessage, ConversationMessageStatus, ConversationSummary } from '../types/message';
 
 function formatPhone(phone: string) {
   const digits = phone.replace(/\D/g, '');
@@ -118,20 +121,53 @@ function apiErrorMessage(error: unknown) {
   return (error as { response?: { data?: { message?: string } } }).response?.data?.message;
 }
 
+function dayStart(value: string) {
+  return value ? new Date(`${value}T00:00:00`).toISOString() : undefined;
+}
+
+function dayEnd(value: string) {
+  return value ? new Date(`${value}T23:59:59.999`).toISOString() : undefined;
+}
+
 export function ConversationsPage() {
   const metadata = useMetadata();
+  const { hasAnyRole } = useAuth();
   const queryClient = useQueryClient();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [composerText, setComposerText] = useState('');
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
+  const [sellerId, setSellerId] = useState('');
+  const [messageStatus, setMessageStatus] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const canFilterBySeller = hasAnyRole(['ADMIN', 'MANAGER']);
+  const conversationFilters = useMemo(
+    () => ({
+      sellerId: canFilterBySeller && sellerId ? sellerId : undefined,
+      messageStatus: messageStatus ? (messageStatus as ConversationMessageStatus) : undefined,
+      startAt: dayStart(startDate),
+      endAt: dayEnd(endDate),
+    }),
+    [canFilterBySeller, endDate, messageStatus, sellerId, startDate],
+  );
 
   const conversationsQuery = useQuery({
-    queryKey: ['conversations'],
-    queryFn: listConversations,
+    queryKey: ['conversations', conversationFilters],
+    queryFn: () => listConversations(conversationFilters),
     refetchInterval: 5000,
   });
 
+  const usersQuery = useQuery({
+    queryKey: ['conversationSellerFilterUsers'],
+    queryFn: listUsers,
+    enabled: canFilterBySeller,
+  });
+
   const conversations = useMemo(() => conversationsQuery.data ?? [], [conversationsQuery.data]);
+  const sellers = useMemo(
+    () => (usersQuery.data ?? []).filter((user) => user.roles.includes('SELLER') && user.status === 'ACTIVE'),
+    [usersQuery.data],
+  );
   const selectedConversation = useMemo(
     () => conversations.find((conversation) => conversation.id === selectedConversationId) ?? null,
     [conversations, selectedConversationId],
@@ -248,6 +284,72 @@ export function ConversationsPage() {
           />
         </Stack>
       </Stack>
+
+      <Paper variant="outlined" sx={{ borderRadius: 1, p: 2 }}>
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={1.5}>
+          {canFilterBySeller && (
+            <TextField
+              select
+              label="Vendedor"
+              size="small"
+              value={sellerId}
+              onChange={(event) => setSellerId(event.target.value)}
+              sx={{ minWidth: { md: 220 } }}
+            >
+              <MenuItem value="">Todos</MenuItem>
+              {sellers.map((seller) => (
+                <MenuItem key={seller.id} value={seller.id}>
+                  {seller.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+          <TextField
+            select
+            label="Status"
+            size="small"
+            value={messageStatus}
+            onChange={(event) => setMessageStatus(event.target.value)}
+            sx={{ minWidth: { md: 180 } }}
+          >
+            <MenuItem value="">Todos</MenuItem>
+            {metadata.options('conversationMessageStatuses').map((option) => (
+              <MenuItem key={option.code} value={option.code}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            label="Inicio"
+            size="small"
+            type="date"
+            value={startDate}
+            onChange={(event) => setStartDate(event.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+          />
+          <TextField
+            label="Fim"
+            size="small"
+            type="date"
+            value={endDate}
+            onChange={(event) => setEndDate(event.target.value)}
+            slotProps={{ inputLabel: { shrink: true } }}
+          />
+          <Button
+            variant="outlined"
+            startIcon={<FilterAltOffIcon />}
+            onClick={() => {
+              setSellerId('');
+              setMessageStatus('');
+              setStartDate('');
+              setEndDate('');
+            }}
+            sx={{ minWidth: 96 }}
+          >
+            Limpar
+          </Button>
+        </Stack>
+      </Paper>
 
       {(conversationsQuery.isLoading || messagesQuery.isFetching) && <LinearProgress />}
 

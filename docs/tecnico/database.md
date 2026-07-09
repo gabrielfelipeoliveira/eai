@@ -24,6 +24,7 @@ Regras:
 - `V2__whatsapp_conversations.sql`
 - `V3__lead_communication_whatsapp_template_channel.sql`
 - `V4__conversation_message_events.sql`
+- `V5__conversation_access_audits.sql`
 
 Observacao:
 
@@ -78,6 +79,7 @@ Constraints conhecidas:
 - Politica de SLA e unica por empresa e loja.
 - Contatos de WhatsApp sao unicos por loja e telefone.
 - Conversas sao unicas por contato e por lead quando houver lead vinculado.
+- Auditorias de acesso de conversa registram apenas papeis `ADMIN` e `MANAGER`.
 - Minutos de SLA devem ser positivos.
 - Chaves estrangeiras reforcam relacionamentos entre tabelas.
 
@@ -88,6 +90,7 @@ Indices conhecidos:
 - Conversas de WhatsApp possuem indices por empresa, loja, lead, vendedor responsavel e data de atualizacao.
 - Mensagens de conversa possuem indices por conversa, data de criacao, status e identidade externa da mensagem.
 - Eventos de mensagens de conversa possuem indices por mensagem, identidade externa da mensagem, status e data do evento.
+- Auditorias de acesso de conversa possuem indices por conversa, ator, empresa, loja e data de acesso.
 - Tabelas de distribuicao e SLA possuem indices orientados a loja.
 - Tarefas de follow-up possuem indices por lead, usuario/status/vencimento e vencimento.
 

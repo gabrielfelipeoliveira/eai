@@ -1,8 +1,15 @@
 import { api } from './api';
-import type { ConversationMessage, ConversationSummary } from '../types/message';
+import type { ConversationMessage, ConversationMessageStatus, ConversationSummary } from '../types/message';
 
-export async function listConversations() {
-  const response = await api.get<ConversationSummary[]>('/conversations');
+export interface ConversationFilters {
+  sellerId?: string;
+  messageStatus?: ConversationMessageStatus;
+  startAt?: string;
+  endAt?: string;
+}
+
+export async function listConversations(filters: ConversationFilters = {}) {
+  const response = await api.get<ConversationSummary[]>('/conversations', { params: filters });
   return response.data;
 }
 

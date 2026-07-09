@@ -636,6 +636,9 @@ Ator:
 Entradas:
 
 - Contexto do usuario autenticado
+- Filtro opcional por vendedor
+- Filtro opcional por status da ultima mensagem
+- Filtro opcional por periodo da ultima interacao
 
 Saidas:
 
@@ -658,6 +661,8 @@ Pos-condicoes:
 Regras conhecidas:
 
 - Vendedores visualizam apenas conversas sob sua responsabilidade.
+- Gerentes visualizam conversas dentro do seu escopo de tenant.
+- Admins visualizam todas as conversas.
 - Conversas sao ordenadas pela ultima interacao registrada.
 - Mensagens recebidas com status `RECEIVED` contam como nao lidas na listagem.
 
@@ -712,6 +717,7 @@ Pre-condicoes:
 Pos-condicoes:
 
 - Mensagens recebidas da conversa com status `RECEIVED` sao marcadas como `READ`.
+- Acesso de gerente ou admin e registrado para auditoria.
 
 ### Enviar Texto Livre Na Conversa
 

@@ -183,6 +183,8 @@ Leads importados usam origem `EMAIL`; possiveis duplicidades sao marcadas com st
 
 A persistencia de conversas de WhatsApp e implementada em `com.eai.domain.conversation`, `com.eai.application.conversation`, `com.eai.infrastructure.persistence.conversation` e `com.eai.api.conversation`.
 
+A auditoria de acesso de gestores e admins a conversas fica no mesmo contexto de conversas, com entidade de dominio `ConversationAccessAudit`, porta de aplicacao `ConversationAccessAuditRepository` e adapter JPA em infraestrutura.
+
 O webhook publico continua em `com.eai.api.whatsapp` e delega para `WhatsAppWebhookService`, que extrai mensagens do payload da Meta e chama `ConversationService`. A resolucao de tenant do webhook usa as propriedades `eai.whatsapp.cloud-api.company-id` e `eai.whatsapp.cloud-api.store-id` enquanto a regra oficial de mapeamento por numero/conta nao estiver definida.
 
 Mensagens recebidas sao armazenadas como `INBOUND` com status `RECEIVED`. O fluxo existente de geracao de link de WhatsApp registra uma mensagem `OUTBOUND` do tipo `TEMPLATE` com status `SENT`, alem do registro legado em `lead_communications`.

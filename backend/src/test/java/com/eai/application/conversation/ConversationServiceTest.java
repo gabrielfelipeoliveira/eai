@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -36,8 +37,9 @@ class ConversationServiceTest {
     private final ConversationRepository conversationRepository = mock(ConversationRepository.class);
     private final ConversationMessageRepository messageRepository = mock(ConversationMessageRepository.class);
     private final ConversationMessageEventRepository messageEventRepository = mock(ConversationMessageEventRepository.class);
+    private final ConversationAccessAuditRepository accessAuditRepository = mock(ConversationAccessAuditRepository.class);
     private final LeadRepository leadRepository = mock(LeadRepository.class);
-    private final ConversationService service = new ConversationService(contactRepository, conversationRepository, messageRepository, messageEventRepository, leadRepository);
+    private final ConversationService service = new ConversationService(contactRepository, conversationRepository, messageRepository, messageEventRepository, accessAuditRepository, leadRepository);
 
     @Test
     void listsSellerSummariesOrderedByLatestInteractionWithUnreadCount() {
@@ -69,6 +71,42 @@ class ConversationServiceTest {
     }
 
     @Test
+    void filtersSummariesBySellerStatusAndPeriodForManager() {
+        Conversation matching = conversation("00000000-0000-0000-0000-000000000403", "00000000-0000-0000-0000-000000000503", "00000000-0000-0000-0000-000000000603", SELLER_ID);
+        Conversation otherSeller = conversation("00000000-0000-0000-0000-000000000405", "00000000-0000-0000-0000-000000000505", "00000000-0000-0000-0000-000000000605", OTHER_SELLER_ID);
+        Conversation otherStatus = conversation("00000000-0000-0000-0000-000000000406", "00000000-0000-0000-0000-000000000506", "00000000-0000-0000-0000-000000000606", SELLER_ID);
+
+        when(conversationRepository.findByStoreId(STORE_ID)).thenReturn(List.of(matching, otherSeller, otherStatus));
+        arrangeSummaryData(matching, "Mariana Alves", "5511988880001", "Mensagem", "2026-07-08T12:00:00Z", 1, ConversationMessageStatus.RECEIVED);
+        arrangeSummaryData(otherSeller, "Bruno Costa", "5511977770002", "Mensagem", "2026-07-08T12:30:00Z", 0, ConversationMessageStatus.RECEIVED);
+        arrangeSummaryData(otherStatus, "Carla Lima", "5511966660003", "Mensagem", "2026-07-08T13:00:00Z", 0, ConversationMessageStatus.READ);
+
+        ConversationFilters filters = new ConversationFilters(
+                SELLER_ID,
+                ConversationMessageStatus.RECEIVED,
+                Instant.parse("2026-07-08T11:00:00Z"),
+                Instant.parse("2026-07-08T12:15:00Z")
+        );
+
+        List<ConversationSummary> summaries = service.listConversationSummaries(manager(), filters);
+
+        assertThat(summaries).extracting(ConversationSummary::id).containsExactly(matching.getId());
+    }
+
+    @Test
+    void sellerFilterCannotExpandSellerScope() {
+        Conversation own = conversation("00000000-0000-0000-0000-000000000407", "00000000-0000-0000-0000-000000000507", "00000000-0000-0000-0000-000000000607", SELLER_ID);
+        when(conversationRepository.findByResponsibleUserId(SELLER_ID)).thenReturn(List.of(own));
+        arrangeSummaryData(own, "Mariana Alves", "5511988880001", "Mensagem", "2026-07-08T12:00:00Z", 0, ConversationMessageStatus.RECEIVED);
+
+        ConversationFilters filters = new ConversationFilters(OTHER_SELLER_ID, null, null, null);
+
+        List<ConversationSummary> summaries = service.listConversationSummaries(seller(), filters);
+
+        assertThat(summaries).extracting(ConversationSummary::id).containsExactly(own.getId());
+    }
+
+    @Test
     void marksInboundReceivedMessagesAsReadWhenListingMessages() {
         Conversation conversation = conversation("00000000-0000-0000-0000-000000000404", "00000000-0000-0000-0000-000000000504", "00000000-0000-0000-0000-000000000604", SELLER_ID);
         ConversationMessage older = message(conversation.getId(), ConversationMessageDirection.INBOUND, ConversationMessageStatus.READ, "Ola", "2026-07-08T11:00:00Z");
@@ -80,7 +118,24 @@ class ConversationServiceTest {
         List<ConversationMessage> messages = service.listMessages(conversation.getId(), seller());
 
         verify(messageRepository).markInboundReceivedAsRead(conversation.getId());
+        verify(accessAuditRepository, never()).save(org.mockito.ArgumentMatchers.any());
         assertThat(messages).containsExactly(older, newer);
+    }
+
+    @Test
+    void recordsManagerAccessWhenListingMessages() {
+        Conversation conversation = conversation("00000000-0000-0000-0000-000000000408", "00000000-0000-0000-0000-000000000508", "00000000-0000-0000-0000-000000000608", SELLER_ID);
+        when(conversationRepository.findById(conversation.getId())).thenReturn(Optional.of(conversation));
+        when(messageRepository.findByConversationId(conversation.getId())).thenReturn(List.of());
+
+        service.listMessages(conversation.getId(), manager());
+
+        verify(accessAuditRepository).save(org.mockito.ArgumentMatchers.argThat(audit ->
+                conversation.getId().equals(audit.getConversationId())
+                        && audit.getActorUserId().equals(manager().id())
+                        && audit.getActorRole() == UserRole.MANAGER
+                        && "LIST_MESSAGES".equals(audit.getAccessType())
+        ));
     }
 
     @Test
@@ -159,6 +214,10 @@ class ConversationServiceTest {
     }
 
     private void arrangeSummaryData(Conversation conversation, String leadName, String phone, String content, String messageAt, long unreadCount) {
+        arrangeSummaryData(conversation, leadName, phone, content, messageAt, unreadCount, ConversationMessageStatus.RECEIVED);
+    }
+
+    private void arrangeSummaryData(Conversation conversation, String leadName, String phone, String content, String messageAt, long unreadCount, ConversationMessageStatus status) {
         WhatsAppContact contact = new WhatsAppContact(conversation.getContactId(), COMPANY_ID, STORE_ID, conversation.getLeadId(), phone, leadName, Instant.parse("2026-07-08T10:00:00Z"), Instant.parse("2026-07-08T10:00:00Z"));
         Lead lead = new Lead(
                 conversation.getLeadId(),
@@ -186,7 +245,7 @@ class ConversationServiceTest {
                 conversation.getId(),
                 ConversationMessageDirection.INBOUND,
                 ConversationMessageType.TEXT,
-                ConversationMessageStatus.RECEIVED,
+                status,
                 null,
                 content,
                 null,
@@ -234,5 +293,9 @@ class ConversationServiceTest {
 
     private AuthenticatedUser seller() {
         return new AuthenticatedUser(SELLER_ID, "seller@eai.com", COMPANY_ID, STORE_ID, Set.of(UserRole.SELLER));
+    }
+
+    private AuthenticatedUser manager() {
+        return new AuthenticatedUser(UUID.fromString("00000000-0000-0000-0000-000000000701"), "manager@eai.com", COMPANY_ID, STORE_ID, Set.of(UserRole.MANAGER));
     }
 }

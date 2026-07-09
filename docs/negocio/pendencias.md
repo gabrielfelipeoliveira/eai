@@ -187,6 +187,7 @@ Perguntas para o Product Owner:
 - O nome do template cadastrado no EAI deve sempre ser exatamente o nome aprovado na Meta?
 - Como mapear placeholders do EAI para variaveis numericas e componentes aprovados na Meta quando houver header, botoes ou midia?
 - A validacao de telefone deve seguir apenas numeros brasileiros ou qualquer E.164 aceito pelo WhatsApp?
+- Sprint 8 pediu filtro por status da conversa, mas o dominio atual nao possui status proprio de conversa. O filtro deve usar status da ultima mensagem, status do lead vinculado, nao lidas/pendentes, ou deve ser criado um ciclo de vida especifico para conversa?
 
 ## Importador De Leads Por E-Mail
 

@@ -236,7 +236,9 @@ Convencoes:
 - O webhook de WhatsApp e publico para validacao e recebimento da Meta.
 - Consultas de conversas exigem autenticacao e seguem escopo de tenant.
 - `GET /api/conversations` retorna um resumo operacional com ids da conversa, lead/contato, vendedor responsavel, nome do lead ou contato, telefone, ultima mensagem, data/hora da ultima interacao e quantidade de mensagens nao lidas.
+- `GET /api/conversations` aceita filtros opcionais `sellerId`, `messageStatus`, `startAt` e `endAt`. `messageStatus` filtra pelo status da ultima mensagem enquanto o dominio nao possuir status proprio de conversa.
 - `GET /api/conversations/{id}/messages` e `GET /api/leads/{id}/conversation-messages` retornam mensagens em ordem cronologica e marcam mensagens recebidas pendentes como lidas.
+- `GET /api/conversations/{id}`, `GET /api/conversations/{id}/messages` e `GET /api/leads/{id}/conversation-messages` registram acesso de `ADMIN` e `MANAGER` para auditoria.
 - `POST /api/conversations/{id}/messages` envia texto livre pela WhatsApp Cloud API quando a conversa possui mensagem recebida do cliente nos ultimos 24 horas.
 - Fora da janela de 24 horas, `POST /api/conversations/{id}/messages` retorna erro de negocio `WHATSAPP_FREE_TEXT_WINDOW_EXPIRED` e o cliente deve orientar uso de template aprovado.
 - O disparo de template exige autenticacao e acesso ao lead.

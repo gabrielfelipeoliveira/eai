@@ -6,6 +6,7 @@ import com.eai.application.lead.LeadRepository;
 import com.eai.application.lead.LeadSearchCriteria;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.domain.conversation.Conversation;
+import com.eai.domain.conversation.ConversationAccessAudit;
 import com.eai.domain.conversation.ConversationMessageEvent;
 import com.eai.domain.conversation.ConversationMessage;
 import com.eai.domain.conversation.ConversationMessageDirection;
@@ -31,6 +32,7 @@ public class ConversationService {
     private final ConversationRepository conversationRepository;
     private final ConversationMessageRepository messageRepository;
     private final ConversationMessageEventRepository messageEventRepository;
+    private final ConversationAccessAuditRepository accessAuditRepository;
     private final LeadRepository leadRepository;
 
     public ConversationService(
@@ -38,12 +40,14 @@ public class ConversationService {
             ConversationRepository conversationRepository,
             ConversationMessageRepository messageRepository,
             ConversationMessageEventRepository messageEventRepository,
+            ConversationAccessAuditRepository accessAuditRepository,
             LeadRepository leadRepository
     ) {
         this.contactRepository = contactRepository;
         this.conversationRepository = conversationRepository;
         this.messageRepository = messageRepository;
         this.messageEventRepository = messageEventRepository;
+        this.accessAuditRepository = accessAuditRepository;
         this.leadRepository = leadRepository;
     }
 
@@ -95,23 +99,33 @@ public class ConversationService {
 
     @Transactional(readOnly = true)
     public List<ConversationSummary> listConversationSummaries(AuthenticatedUser authenticatedUser) {
+        return listConversationSummaries(authenticatedUser, new ConversationFilters(null, null, null, null));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ConversationSummary> listConversationSummaries(AuthenticatedUser authenticatedUser, ConversationFilters filters) {
         return listConversations(authenticatedUser).stream()
                 .map(this::toSummary)
+                .filter(summary -> matchesFilters(summary, filters, authenticatedUser))
                 .sorted(Comparator.comparing(ConversationSummary::lastInteractionAt, Comparator.nullsLast(Comparator.naturalOrder())).reversed())
                 .toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Conversation getConversation(UUID id, AuthenticatedUser authenticatedUser) {
         Conversation conversation = conversationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Conversation not found"));
         assertCanAccess(conversation, authenticatedUser);
+        recordManagerOrAdminAccess(conversation, authenticatedUser, "VIEW_CONVERSATION");
         return conversation;
     }
 
     @Transactional
     public List<ConversationMessage> listMessages(UUID conversationId, AuthenticatedUser authenticatedUser) {
-        Conversation conversation = getConversation(conversationId, authenticatedUser);
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new NotFoundException("Conversation not found"));
+        assertCanAccess(conversation, authenticatedUser);
+        recordManagerOrAdminAccess(conversation, authenticatedUser, "LIST_MESSAGES");
         messageRepository.markInboundReceivedAsRead(conversation.getId());
         return messageRepository.findByConversationId(conversation.getId());
     }
@@ -121,6 +135,7 @@ public class ConversationService {
         Conversation conversation = conversationRepository.findByLeadId(leadId)
                 .orElseThrow(() -> new NotFoundException("Conversation not found"));
         assertCanAccess(conversation, authenticatedUser);
+        recordManagerOrAdminAccess(conversation, authenticatedUser, "LIST_LEAD_MESSAGES");
         messageRepository.markInboundReceivedAsRead(conversation.getId());
         return messageRepository.findByConversationId(conversation.getId());
     }
@@ -197,6 +212,22 @@ public class ConversationService {
         );
     }
 
+    private boolean matchesFilters(ConversationSummary summary, ConversationFilters filters, AuthenticatedUser authenticatedUser) {
+        if (filters == null) {
+            return true;
+        }
+        if (!hasRole(authenticatedUser, UserRole.SELLER) && filters.sellerId() != null && !filters.sellerId().equals(summary.responsibleUserId())) {
+            return false;
+        }
+        if (filters.messageStatus() != null && filters.messageStatus() != summary.lastMessageStatus()) {
+            return false;
+        }
+        if (filters.startAt() != null && (summary.lastInteractionAt() == null || summary.lastInteractionAt().isBefore(filters.startAt()))) {
+            return false;
+        }
+        return filters.endAt() == null || (summary.lastInteractionAt() != null && !summary.lastInteractionAt().isAfter(filters.endAt()));
+    }
+
     private Conversation findOrCreateConversation(UUID companyId, UUID storeId, String phone, String contactName) {
         String normalizedPhone = normalizePhone(phone);
         Lead matchedLead = findLeadByPhone(storeId, normalizedPhone).orElse(null);
@@ -270,6 +301,24 @@ public class ConversationService {
             }
         }
         throw new ForbiddenException("Access denied for conversation");
+    }
+
+    private void recordManagerOrAdminAccess(Conversation conversation, AuthenticatedUser authenticatedUser, String accessType) {
+        UserRole auditRole = auditRole(authenticatedUser).orElse(null);
+        if (auditRole == null) {
+            return;
+        }
+        accessAuditRepository.save(ConversationAccessAudit.record(conversation, authenticatedUser.id(), auditRole, accessType));
+    }
+
+    private Optional<UserRole> auditRole(AuthenticatedUser authenticatedUser) {
+        if (hasRole(authenticatedUser, UserRole.ADMIN)) {
+            return Optional.of(UserRole.ADMIN);
+        }
+        if (hasRole(authenticatedUser, UserRole.MANAGER)) {
+            return Optional.of(UserRole.MANAGER);
+        }
+        return Optional.empty();
     }
 
     private UUID requireCompany(AuthenticatedUser authenticatedUser) {

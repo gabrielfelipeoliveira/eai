@@ -1,20 +1,25 @@
 package com.eai.api.conversation;
 
+import com.eai.application.conversation.ConversationFilters;
 import com.eai.application.conversation.ConversationService;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.application.whatsapp.WhatsAppTextSenderService;
+import com.eai.domain.conversation.ConversationMessageStatus;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
+import java.time.Instant;
 
 @RestController
 @RequestMapping("/api/conversations")
@@ -30,8 +35,15 @@ public class ConversationController {
     }
 
     @GetMapping
-    public List<ConversationSummaryResponse> listConversations(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
-        return conversationService.listConversationSummaries(authenticatedUser).stream()
+    public List<ConversationSummaryResponse> listConversations(
+            @RequestParam(required = false) UUID sellerId,
+            @RequestParam(required = false) ConversationMessageStatus messageStatus,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startAt,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endAt,
+            @AuthenticationPrincipal AuthenticatedUser authenticatedUser
+    ) {
+        ConversationFilters filters = new ConversationFilters(sellerId, messageStatus, startAt, endAt);
+        return conversationService.listConversationSummaries(authenticatedUser, filters).stream()
                 .map(ConversationSummaryResponse::fromApplication)
                 .toList();
     }
