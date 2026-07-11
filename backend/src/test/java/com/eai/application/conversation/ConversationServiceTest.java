@@ -1,5 +1,6 @@
 package com.eai.application.conversation;
 
+import com.eai.application.lead.LeadHistoryRepository;
 import com.eai.application.lead.LeadRepository;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.domain.conversation.Conversation;
@@ -39,7 +40,8 @@ class ConversationServiceTest {
     private final ConversationMessageEventRepository messageEventRepository = mock(ConversationMessageEventRepository.class);
     private final ConversationAccessAuditRepository accessAuditRepository = mock(ConversationAccessAuditRepository.class);
     private final LeadRepository leadRepository = mock(LeadRepository.class);
-    private final ConversationService service = new ConversationService(contactRepository, conversationRepository, messageRepository, messageEventRepository, accessAuditRepository, leadRepository);
+    private final LeadHistoryRepository leadHistoryRepository = mock(LeadHistoryRepository.class);
+    private final ConversationService service = new ConversationService(contactRepository, conversationRepository, messageRepository, messageEventRepository, accessAuditRepository, leadRepository, leadHistoryRepository);
 
     @Test
     void listsSellerSummariesOrderedByLatestInteractionWithUnreadCount() {

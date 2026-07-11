@@ -9,5 +9,6 @@ public enum LeadSource {
     WEBMOTORS,
     ICARROS,
     OLX,
-    API
+    API,
+    WHATSAPP
 }

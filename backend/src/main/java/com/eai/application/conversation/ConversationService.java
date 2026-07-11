@@ -2,6 +2,7 @@ package com.eai.application.conversation;
 
 import com.eai.application.common.ForbiddenException;
 import com.eai.application.common.NotFoundException;
+import com.eai.application.lead.LeadHistoryRepository;
 import com.eai.application.lead.LeadRepository;
 import com.eai.application.lead.LeadSearchCriteria;
 import com.eai.application.security.AuthenticatedUser;
@@ -14,6 +15,8 @@ import com.eai.domain.conversation.ConversationMessageStatus;
 import com.eai.domain.conversation.ConversationMessageType;
 import com.eai.domain.conversation.WhatsAppContact;
 import com.eai.domain.lead.Lead;
+import com.eai.domain.lead.LeadHistory;
+import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
 import com.eai.domain.user.UserRole;
 import org.springframework.stereotype.Service;
@@ -34,6 +37,7 @@ public class ConversationService {
     private final ConversationMessageEventRepository messageEventRepository;
     private final ConversationAccessAuditRepository accessAuditRepository;
     private final LeadRepository leadRepository;
+    private final LeadHistoryRepository leadHistoryRepository;
 
     public ConversationService(
             WhatsAppContactRepository contactRepository,
@@ -41,7 +45,8 @@ public class ConversationService {
             ConversationMessageRepository messageRepository,
             ConversationMessageEventRepository messageEventRepository,
             ConversationAccessAuditRepository accessAuditRepository,
-            LeadRepository leadRepository
+            LeadRepository leadRepository,
+            LeadHistoryRepository leadHistoryRepository
     ) {
         this.contactRepository = contactRepository;
         this.conversationRepository = conversationRepository;
@@ -49,6 +54,7 @@ public class ConversationService {
         this.messageEventRepository = messageEventRepository;
         this.accessAuditRepository = accessAuditRepository;
         this.leadRepository = leadRepository;
+        this.leadHistoryRepository = leadHistoryRepository;
     }
 
     @Transactional
@@ -230,10 +236,11 @@ public class ConversationService {
 
     private Conversation findOrCreateConversation(UUID companyId, UUID storeId, String phone, String contactName) {
         String normalizedPhone = normalizePhone(phone);
-        Lead matchedLead = findLeadByPhone(storeId, normalizedPhone).orElse(null);
-        UUID leadId = matchedLead == null ? null : matchedLead.getId();
-        UUID responsibleUserId = matchedLead == null ? null : matchedLead.getAssignedToUserId();
-        String displayName = contactName == null && matchedLead != null ? matchedLead.getCustomerName() : contactName;
+        Lead matchedLead = findLeadByPhone(storeId, normalizedPhone)
+                .orElseGet(() -> createLeadFromWhatsApp(companyId, storeId, normalizedPhone, contactName));
+        UUID leadId = matchedLead.getId();
+        UUID responsibleUserId = matchedLead.getAssignedToUserId();
+        String displayName = contactName == null ? matchedLead.getCustomerName() : contactName;
 
         WhatsAppContact contact = contactRepository.findByStoreIdAndPhone(storeId, normalizedPhone)
                 .orElseGet(() -> WhatsAppContact.create(companyId, storeId, leadId, normalizedPhone, displayName));
@@ -245,6 +252,27 @@ public class ConversationService {
                 .orElseGet(() -> Conversation.create(companyId, storeId, savedContact.getId(), savedContact.getLeadId(), responsibleUserId));
         conversation.linkLead(savedContact.getLeadId(), responsibleUserId);
         return conversationRepository.save(conversation);
+    }
+
+    private Lead createLeadFromWhatsApp(UUID companyId, UUID storeId, String normalizedPhone, String contactName) {
+        String customerName = contactName == null || contactName.isBlank() ? normalizedPhone : contactName;
+        Lead lead = Lead.create(
+                companyId,
+                storeId,
+                customerName,
+                normalizedPhone,
+                null,
+                null,
+                null,
+                LeadSource.WHATSAPP,
+                null,
+                null,
+                null,
+                null
+        );
+        Lead savedLead = leadRepository.save(lead);
+        leadHistoryRepository.save(LeadHistory.create(savedLead.getId(), null, null, savedLead.getStatus(), "Lead created automatically from WhatsApp message"));
+        return savedLead;
     }
 
     private Optional<Lead> findLeadByPhone(UUID storeId, String normalizedPhone) {
