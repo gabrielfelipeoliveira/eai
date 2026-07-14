@@ -29,3 +29,13 @@ eai:
     importer:
       enabled: false
       fixed-delay: 60000
+  whatsapp:
+    cloud-api:
+      phone-number-id: ${META_WHATSAPP_PHONE_NUMBER_ID:}
+      business-account-id: ${META_WHATSAPP_BUSINESS_ACCOUNT_ID:}
+      access-token: ${META_WHATSAPP_ACCESS_TOKEN:}
+      app-secret: ${META_WHATSAPP_APP_SECRET:}
+      verify-token: ${META_WHATSAPP_VERIFY_TOKEN:}
+      graph-api-version: ${META_WHATSAPP_GRAPH_API_VERSION:v25.0}
+      company-id: ${META_WHATSAPP_COMPANY_ID:}
+      store-id: ${META_WHATSAPP_STORE_ID:}

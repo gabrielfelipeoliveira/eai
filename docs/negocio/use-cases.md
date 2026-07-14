@@ -584,6 +584,173 @@ Pre-condicoes:
 Pos-condicoes:
 
 - Registro de comunicacao e armazenado.
+- Mensagem de conversa de saida e registrada no historico basico da conversa.
+
+### Enviar Template Pelo WhatsApp
+
+Ator:
+
+- Usuario com acesso ao lead
+
+Entradas:
+
+- Identidade do lead
+- Identidade do template
+- Codigo de idioma opcional
+
+Saidas:
+
+- Mensagem renderizada
+- Identidade do registro de comunicacao
+- Identidade da mensagem de conversa
+- Status inicial da mensagem enviada
+- Identidade externa da mensagem quando retornada pela WhatsApp Cloud API
+- Retorno bruto da WhatsApp Cloud API
+
+Pre-condicoes:
+
+- Lead existe.
+- Template esta ativo.
+- Template pertence a mesma loja do lead.
+- Lead possui telefone valido para envio ao WhatsApp.
+- Configuracao de envio da WhatsApp Cloud API esta disponivel.
+
+Pos-condicoes:
+
+- Template e enviado para a WhatsApp Cloud API.
+- Registro de comunicacao e armazenado.
+- Mensagem de conversa de saida e registrada com status `SENT` quando a API aceita o envio.
+- Falha de envio e registrada com status `FAILED` quando a API rejeita ou a chamada falha.
+- Retorno da API fica vinculado a mensagem de conversa.
+
+## Conversas De WhatsApp
+
+### Listar Conversas
+
+Ator:
+
+- Admin
+- Gerente
+- Vendedor
+
+Entradas:
+
+- Contexto do usuario autenticado
+- Filtro opcional por vendedor
+- Filtro opcional por status da ultima mensagem
+- Filtro opcional por periodo da ultima interacao
+
+Saidas:
+
+- Conversas visiveis ao usuario.
+- Dados principais do lead ou contato.
+- Telefone.
+- Ultima mensagem.
+- Data e hora da ultima interacao.
+- Quantidade de mensagens nao lidas.
+
+Pre-condicoes:
+
+- Ator esta autenticado.
+- Ator possui acesso ao tenant da conversa.
+
+Pos-condicoes:
+
+- Nenhum dado e alterado.
+
+Regras conhecidas:
+
+- Vendedores visualizam apenas conversas sob sua responsabilidade.
+- Gerentes visualizam conversas dentro do seu escopo de tenant.
+- Admins visualizam todas as conversas.
+- Conversas sao ordenadas pela ultima interacao registrada.
+- Mensagens recebidas com status `RECEIVED` contam como nao lidas na listagem.
+
+### Receber Mensagem Pelo Webhook
+
+Ator:
+
+- WhatsApp Cloud API
+
+Entradas:
+
+- Payload do webhook da Meta.
+- Configuracao de empresa e loja do canal WhatsApp.
+
+Saidas:
+
+- Resposta aceita pelo backend.
+
+Pre-condicoes:
+
+- Webhook publico esta configurado.
+- Empresa e loja do canal WhatsApp estao configuradas.
+
+Pos-condicoes:
+
+- Contato de WhatsApp e criado ou atualizado pelo telefone.
+- Conversa e criada automaticamente para o contato.
+- Quando existir lead da loja com telefone correspondente, a conversa fica vinculada ao lead.
+- Mensagem recebida e armazenada com direcao de entrada, tipo e status recebido.
+
+### Consultar Historico Basico Da Conversa
+
+Ator:
+
+- Admin
+- Gerente
+- Vendedor
+
+Entradas:
+
+- Identidade da conversa ou identidade do lead.
+
+Saidas:
+
+- Mensagens vinculadas a conversa.
+
+Pre-condicoes:
+
+- Ator esta autenticado.
+- Ator possui acesso ao tenant da conversa.
+
+Pos-condicoes:
+
+- Mensagens recebidas da conversa com status `RECEIVED` sao marcadas como `READ`.
+- Acesso de gerente ou admin e registrado para auditoria.
+
+### Enviar Texto Livre Na Conversa
+
+Ator:
+
+- Admin
+- Gerente
+- Vendedor
+
+Entradas:
+
+- Identidade da conversa.
+- Conteudo textual.
+
+Saidas:
+
+- Mensagem enviada registrada na conversa.
+- Status inicial da mensagem.
+- Identidade externa da mensagem quando retornada pela WhatsApp Cloud API.
+
+Pre-condicoes:
+
+- Ator esta autenticado.
+- Ator possui acesso ao tenant da conversa.
+- Conversa possui mensagem recebida do cliente nos ultimos 24 horas.
+- Configuracao de envio da WhatsApp Cloud API esta disponivel.
+
+Pos-condicoes:
+
+- Texto livre e enviado para WhatsApp Cloud API.
+- Mensagem de conversa de saida e registrada com status `SENT` quando API aceita o envio.
+- Falha de envio e registrada com status `FAILED` quando API rejeita ou chamada falha.
+- Fora da janela de 24 horas, envio e bloqueado e o usuario deve usar template aprovado.
 
 ## Importacao De Leads Por E-Mail
 

@@ -11,6 +11,7 @@ import ViewKanbanIcon from '@mui/icons-material/ViewKanban';
 import EmailIcon from '@mui/icons-material/Email';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import ChatIcon from '@mui/icons-material/Chat';
 import {
   AppBar,
   Box,
@@ -41,6 +42,7 @@ export function MainLayout() {
     { label: 'Leads', path: '/leads', icon: <ViewKanbanIcon /> },
     { label: 'Pipeline', path: '/pipeline', icon: <ViewKanbanIcon /> },
     { label: 'Agenda', path: '/follow-ups', icon: <EventIcon /> },
+    ...(hasAnyRole(['ADMIN', 'MANAGER', 'SELLER']) ? [{ label: 'Conversas', path: '/conversations', icon: <ChatIcon /> }] : []),
     ...(hasAnyRole(['ADMIN', 'MANAGER', 'SELLER', 'AUDITOR']) ? [{ label: 'Relatorios', path: '/reports', icon: <AssessmentIcon /> }] : []),
     ...(hasAnyRole(['ADMIN', 'MANAGER']) ? [{ label: 'Atrasados', path: '/leads/overdue', icon: <WarningAmberIcon /> }] : []),
     ...(hasAnyRole(['ADMIN', 'MANAGER'])

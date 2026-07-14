@@ -179,6 +179,31 @@ Contas de e-mail pertencem ao escopo de uma loja, usam IMAP e armazenam senhas c
 
 Leads importados usam origem `EMAIL`; possiveis duplicidades sao marcadas com status `DUPLICATED`.
 
+## Conversas De WhatsApp
+
+A persistencia de conversas de WhatsApp e implementada em `com.eai.domain.conversation`, `com.eai.application.conversation`, `com.eai.infrastructure.persistence.conversation` e `com.eai.api.conversation`.
+
+A auditoria de acesso de gestores e admins a conversas fica no mesmo contexto de conversas, com entidade de dominio `ConversationAccessAudit`, porta de aplicacao `ConversationAccessAuditRepository` e adapter JPA em infraestrutura.
+
+O webhook publico continua em `com.eai.api.whatsapp` e delega para `WhatsAppWebhookService`, que extrai mensagens do payload da Meta e chama `ConversationService`. A resolucao de tenant do webhook usa as propriedades `eai.whatsapp.cloud-api.company-id` e `eai.whatsapp.cloud-api.store-id` enquanto a regra oficial de mapeamento por numero/conta nao estiver definida.
+
+Mensagens recebidas sao armazenadas como `INBOUND` com status `RECEIVED`. O fluxo existente de geracao de link de WhatsApp registra uma mensagem `OUTBOUND` do tipo `TEMPLATE` com status `SENT`, alem do registro legado em `lead_communications`.
+
+O envio ativo de templates aprovados pela WhatsApp Cloud API e implementado por `WhatsAppTemplateSenderService` na aplicacao e por `WhatsAppCloudTemplateClient` na infraestrutura. O endpoint `POST /api/leads/{id}/whatsapp-template` valida acesso ao lead, telefone do contato, template ativo da mesma loja, chama a Cloud API e registra uma mensagem `OUTBOUND` do tipo `TEMPLATE` com status inicial `SENT` ou `FAILED`. O envio de texto livre e implementado por `WhatsAppTextSenderService` e pelo endpoint `POST /api/conversations/{id}/messages`, limitado a conversas com mensagem recebida do cliente nos ultimos 24 horas. O retorno bruto do provedor fica em `conversation_messages.raw_payload` e o id externo, quando retornado, fica em `external_message_id`. Eventos de status recebidos pelo webhook atualizam a mensagem enviada correspondente pelo id externo.
+
+Configuracoes de envio:
+
+- `META_WHATSAPP_PHONE_NUMBER_ID`
+- `META_WHATSAPP_ACCESS_TOKEN`
+- `META_WHATSAPP_GRAPH_API_VERSION`, com padrao local `v25.0`
+
+Endpoints de consulta:
+
+- `GET /api/conversations`
+- `GET /api/conversations/{id}`
+- `GET /api/conversations/{id}/messages`
+- `GET /api/leads/{id}/conversation-messages`
+
 ## Regras de Dependencia
 
 Dependencias permitidas:
@@ -289,7 +314,7 @@ Responsabilidades:
 
 Navegacao autenticada:
 
-- O layout autenticado usa menu lateral com Dashboard, Leads, Pipeline, Agenda, Relatorios, Atrasados, Usuarios, Empresas, Lojas, Templates, E-mails e Configuracoes.
+- O layout autenticado usa menu lateral com Dashboard, Leads, Pipeline, Agenda, Conversas, Relatorios, Atrasados, Usuarios, Empresas, Lojas, Templates, E-mails e Configuracoes.
 - Empresas e visivel apenas para `ADMIN`.
 - Relatorios e visivel para `ADMIN`, `MANAGER`, `SELLER` e `AUDITOR`.
 - Atrasados, Lojas, Usuarios, Templates, E-mails e Configuracoes sao visiveis para `ADMIN` e `MANAGER`.
@@ -301,6 +326,7 @@ Telas principais:
 - A tela de Leads oferece cards de status e SLA em estilo CRM, filtros, tabela paginada, criacao de lead, drawer de detalhe do lead, chips de status, chips de origem, atribuicao rapida, atribuicao automatica, distribuicao de pendentes, criacao/conclusao de follow-up, notas, tags e timeline de historico.
 - O Kanban do pipeline fica em `/pipeline`.
 - A agenda de follow-ups fica em `/follow-ups`.
+- A tela inicial de conversas fica em `/conversations`.
 - A fila de atrasados fica em `/leads/overdue`.
 - A central administrativa de configuracoes fica em `/settings`.
 

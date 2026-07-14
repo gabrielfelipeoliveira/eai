@@ -1,0 +1,5 @@
+ALTER TABLE leads DROP CONSTRAINT IF EXISTS leads_source_check;
+
+ALTER TABLE leads
+    ADD CONSTRAINT leads_source_check
+    CHECK (source IN ('MANUAL', 'EMAIL', 'WEBSITE', 'FACEBOOK', 'INSTAGRAM', 'WEBMOTORS', 'ICARROS', 'OLX', 'API', 'WHATSAPP'));

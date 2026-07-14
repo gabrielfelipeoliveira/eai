@@ -33,6 +33,9 @@ class MetadataControllerTest {
                 .andExpect(jsonPath("$.leadSources[1].label").value("E-mail"))
                 .andExpect(jsonPath("$.userRoles[0].label").value("Administrador"))
                 .andExpect(jsonPath("$.emailAccountStatuses[0].code").value("NEVER_SYNCED"))
-                .andExpect(jsonPath("$.emailAccountStatuses[0].label").value("Nunca sincronizada"));
+                .andExpect(jsonPath("$.emailAccountStatuses[0].label").value("Nunca sincronizada"))
+                .andExpect(jsonPath("$.conversationMessageDirections[0].code").value("INBOUND"))
+                .andExpect(jsonPath("$.conversationMessageTypes[1].code").value("TEMPLATE"))
+                .andExpect(jsonPath("$.conversationMessageStatuses[0].code").value("RECEIVED"));
     }
 }

@@ -50,6 +50,84 @@ Escopo candidato com base na implementacao e documentacao atuais:
 - Base do importador de leads por e-mail.
 - Dashboard basico.
 
+## Sprint 2: Persistencia De Conversas E Mensagens
+
+Objetivo:
+
+- Criar a estrutura de dados para armazenar conversas e mensagens do WhatsApp dentro da plataforma.
+
+Escopo entregue:
+
+- Contatos de WhatsApp por telefone e loja.
+- Conversas vinculadas a contato, lead e vendedor responsavel quando houver lead correspondente.
+- Mensagens de conversa com direcao, tipo, status, conteudo e metadados basicos.
+- Persistencia de mensagens recebidas pelo webhook da Meta.
+- Registro de mensagem de saida no fluxo existente de geracao de link do WhatsApp.
+- Consulta autenticada de conversas e mensagens pelo backend.
+
+Pendencias:
+
+- Regras oficiais de roteamento multi-conta WhatsApp por empresa/loja.
+- Criacao automatica de lead para mensagem sem lead correspondente.
+- Tratamento de eventos de status da Meta.
+- Armazenamento/download de midias.
+
+## Sprint 3: Envio De Template WhatsApp
+
+Objetivo:
+
+- Permitir envio de templates aprovados pela WhatsApp Cloud API para iniciar ou retomar conversas com leads.
+
+Escopo entregue:
+
+- Servico de envio de template pela WhatsApp Cloud API.
+- Endpoint autenticado para disparar template para um lead.
+- Validacao basica de telefone do lead antes do envio.
+- Registro da mensagem enviada no historico da conversa.
+- Registro de falhas de envio como mensagem `FAILED`.
+- Vinculo do retorno bruto da API do WhatsApp a mensagem enviada.
+- Atualizacao do status inicial da mensagem para `SENT` ou `FAILED`.
+
+Pendencias:
+
+- Regras oficiais de idioma padrao por loja/template.
+- Mapeamento oficial entre placeholders do EAI e variaveis aprovadas no template da Meta.
+- Suporte a componentes de header, botoes e midia em templates.
+
+## Sprint 4: Listagem De Conversas
+
+Objetivo:
+
+- Permitir que o vendedor visualize suas conversas do WhatsApp dentro da plataforma EAI.
+
+Escopo entregue:
+
+- Endpoint autenticado de listagem de conversas.
+- Filtro para vendedor visualizar apenas conversas sob sua responsabilidade.
+- Ordenacao pela ultima interacao registrada.
+- Resumo de lead ou contato, telefone, ultima mensagem, horario da ultima interacao e quantidade de mensagens nao lidas.
+- Tela inicial de listagem de chats no frontend.
+
+Pendencias:
+
+- Fluxo oficial para marcar mensagens como lidas.
+- Regras oficiais para usuarios visualizarem conversas sem vendedor responsavel.
+
+## Sprint 6: Envio De Mensagens Pela Plataforma
+
+Objetivo:
+
+- Permitir que vendedores respondam mensagens diretamente pela plataforma, respeitando a janela de 24 horas do WhatsApp.
+
+Escopo entregue:
+
+- Envio de texto livre pela WhatsApp Cloud API a partir da conversa.
+- Bloqueio de texto livre quando a ultima mensagem recebida do cliente tiver mais de 24 horas.
+- Orientacao para uso de template aprovado quando a janela estiver expirada.
+- Persistencia da mensagem enviada na conversa.
+- Atualizacao de status da mensagem a partir de eventos da WhatsApp Cloud API.
+- Exibicao imediata da mensagem enviada no chat web.
+
 ## Versao 1
 
 Temas candidatos:

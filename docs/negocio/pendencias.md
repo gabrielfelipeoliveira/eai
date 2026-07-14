@@ -167,13 +167,27 @@ PENDENTE DE DEFINIÇÃO
 
 Perguntas para o Product Owner:
 
+- A Sprint 1 aprovou a base tecnica do WhatsApp Cloud API, mas a visao/roadmap ainda registram integracao nativa com WhatsApp Business API como fora de escopo ou ideia futura. Essa documentacao deve ser atualizada para refletir o novo escopo aprovado?
+- Eventos recebidos pelo webhook do WhatsApp devem criar leads, atualizar comunicacoes existentes, alimentar uma caixa de entrada ou apenas ficar registrados ate nova decisao?
+- Qual tenant, empresa ou loja deve ser associado a cada numero do WhatsApp Cloud API?
 - Gerar um link deve contar como primeiro contato?
 - Links gerados devem expirar ou permanecer imutaveis?
 - O historico de comunicacao deve guardar apenas links gerados ou conversas reais futuramente?
+- Como uma conta/numero do WhatsApp deve ser vinculada oficialmente a empresa e loja em producao?
+- Quando uma mensagem recebida por WhatsApp nao encontrar lead pelo telefone, o sistema deve criar lead automaticamente ou apenas contato/conversa?
+- Qual regra deve escolher o lead correto quando houver mais de um lead com o mesmo telefone?
+- Quais transicoes oficiais de status de mensagem devem ser aplicadas a partir dos eventos de status da Meta?
+- Quais usuarios podem visualizar conversas sem vendedor responsavel?
+- Mensagens de imagem, audio e documento devem armazenar apenas metadados ou tambem baixar e guardar o arquivo?
 - Templates podem ser da empresa inteira ou somente da loja?
 - Templates sao apenas por loja ou podem ser compartilhados no nivel da empresa?
 - Quem pode criar, editar, desativar ou apagar templates?
 - Templates podem ser excluidos depois de usados?
+- Qual idioma padrao deve ser usado no envio de templates quando o usuario nao informar `languageCode`?
+- O nome do template cadastrado no EAI deve sempre ser exatamente o nome aprovado na Meta?
+- Como mapear placeholders do EAI para variaveis numericas e componentes aprovados na Meta quando houver header, botoes ou midia?
+- A validacao de telefone deve seguir apenas numeros brasileiros ou qualquer E.164 aceito pelo WhatsApp?
+- Sprint 8 pediu filtro por status da conversa, mas o dominio atual nao possui status proprio de conversa. O filtro deve usar status da ultima mensagem, status do lead vinculado, nao lidas/pendentes, ou deve ser criado um ciclo de vida especifico para conversa?
 
 ## Importador De Leads Por E-Mail
 

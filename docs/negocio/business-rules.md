@@ -97,6 +97,20 @@ Regras conhecidas:
 - Uma tarefa pendente vencida expoe status efetivo de atraso.
 - Criar, concluir e cancelar follow-ups registra historico no lead.
 
+## Conversas De WhatsApp
+
+Regras conhecidas:
+
+- Vendedores visualizam apenas conversas sob sua responsabilidade.
+- Gerentes visualizam conversas dentro do seu escopo de tenant.
+- Admins visualizam todas as conversas.
+- Conversas sao ordenadas pela ultima interacao registrada.
+- A listagem de conversas exibe dados principais do lead ou contato, telefone, ultima mensagem, data e hora da ultima interacao e quantidade de mensagens nao lidas.
+- A listagem de conversas suporta filtros por vendedor, status da ultima mensagem e periodo da ultima interacao.
+- Mensagens recebidas com status `RECEIVED` contam como nao lidas na listagem.
+- Abrir o historico de mensagens de uma conversa marca mensagens recebidas com status `RECEIVED` como `READ`.
+- Acesso de `MANAGER` e `ADMIN` ao detalhe ou historico de mensagens de uma conversa e registrado para auditoria.
+
 ## Notas, Tags e Historico
 
 Regras conhecidas:
@@ -116,6 +130,14 @@ Regras conhecidas:
 - Templates suportam placeholders para cliente, telefone, veiculo, vendedor, loja e cidade.
 - Geracao de link de WhatsApp renderiza um template ativo da loja do lead.
 - Geracao de link de WhatsApp registra uma comunicacao do lead.
+- Envio de template pela WhatsApp Cloud API exige template ativo da mesma loja do lead.
+- Envio de template pela WhatsApp Cloud API exige telefone do lead valido para envio ao WhatsApp.
+- Envio de template pela WhatsApp Cloud API registra comunicacao do lead e mensagem de conversa de saida.
+- Falhas retornadas pela WhatsApp Cloud API sao registradas como mensagem de conversa com status `FAILED`.
+- Envio de texto livre pela plataforma so e permitido quando a conversa tem mensagem recebida do cliente nos ultimos 24 horas.
+- Fora da janela de 24 horas, envio de texto livre deve ser bloqueado e o usuario deve ser orientado a usar template aprovado.
+- Envio de texto livre registra mensagem de conversa de saida com status inicial `SENT` quando a WhatsApp Cloud API aceita o envio ou `FAILED` quando rejeita ou a chamada falha.
+- Eventos de status da WhatsApp Cloud API atualizam mensagens de conversa pelo identificador externo da mensagem.
 
 ## Importador de Leads por E-mail
 

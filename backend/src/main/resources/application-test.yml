@@ -17,3 +17,7 @@ eai:
     importer:
       enabled: false
       fixed-delay: 60000
+  whatsapp:
+    cloud-api:
+      company-id: 00000000-0000-0000-0000-000000000101
+      store-id: 00000000-0000-0000-0000-000000000201

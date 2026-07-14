@@ -135,6 +135,14 @@ class LeadControllerTest {
                 .andExpect(jsonPath("$[0].templateId").value(FIRST_CONTACT_TEMPLATE_ID.toString()))
                 .andExpect(jsonPath("$[0].message", containsString("Cliente Teste Lead")));
 
+        mockMvc.perform(get("/api/leads/{id}/conversation-messages", leadId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].direction").value("OUTBOUND"))
+                .andExpect(jsonPath("$[0].type").value("TEMPLATE"))
+                .andExpect(jsonPath("$[0].status").value("SENT"))
+                .andExpect(jsonPath("$[0].content", containsString("Cliente Teste Lead")));
+
         String availableLeadId = createManualLead(token, "Cliente Pipeline Novo", "11999990001");
         String assignedLeadId = createManualLead(token, "Cliente Pipeline Atribuido", "11999990002");
         mockMvc.perform(patch("/api/leads/{id}/assign-to-me", assignedLeadId)

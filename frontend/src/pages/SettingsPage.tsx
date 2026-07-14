@@ -2,7 +2,6 @@ import EmailIcon from '@mui/icons-material/Email';
 import GroupsIcon from '@mui/icons-material/Groups';
 import SaveIcon from '@mui/icons-material/Save';
 import SettingsIcon from '@mui/icons-material/Settings';
-import StorefrontIcon from '@mui/icons-material/Storefront';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import {
   Alert,

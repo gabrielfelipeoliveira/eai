@@ -74,6 +74,24 @@ export const fallbackMetadata: MetadataCatalog = {
   emailProtocols: [
     option('IMAP', 'email_account.protocol.imap', 'IMAP', 1, 'default'),
   ],
+  conversationMessageDirections: [
+    option('INBOUND', 'conversation.message.direction.inbound', 'Entrada', 1, 'info'),
+    option('OUTBOUND', 'conversation.message.direction.outbound', 'Saida', 2, 'success'),
+  ],
+  conversationMessageTypes: [
+    option('TEXT', 'conversation.message.type.text', 'Texto', 1, 'default'),
+    option('TEMPLATE', 'conversation.message.type.template', 'Template', 2, 'primary'),
+    option('IMAGE', 'conversation.message.type.image', 'Imagem', 3, 'info'),
+    option('AUDIO', 'conversation.message.type.audio', 'Audio', 4, 'secondary'),
+    option('DOCUMENT', 'conversation.message.type.document', 'Documento', 5, 'warning'),
+  ],
+  conversationMessageStatuses: [
+    option('RECEIVED', 'conversation.message.status.received', 'Recebida', 1, 'info'),
+    option('SENT', 'conversation.message.status.sent', 'Enviada', 2, 'success'),
+    option('DELIVERED', 'conversation.message.status.delivered', 'Entregue', 3, 'success'),
+    option('READ', 'conversation.message.status.read', 'Lida', 4, 'primary'),
+    option('FAILED', 'conversation.message.status.failed', 'Falhou', 5, 'error'),
+  ],
 };
 
 export function useMetadata(locale = 'pt-BR') {

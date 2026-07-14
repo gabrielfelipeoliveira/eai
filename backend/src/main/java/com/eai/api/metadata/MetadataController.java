@@ -1,6 +1,9 @@
 package com.eai.api.metadata;
 
 import com.eai.domain.distribution.LeadDistributionMode;
+import com.eai.domain.conversation.ConversationMessageDirection;
+import com.eai.domain.conversation.ConversationMessageStatus;
+import com.eai.domain.conversation.ConversationMessageType;
 import com.eai.domain.email.EmailAccountStatus;
 import com.eai.domain.email.EmailProtocol;
 import com.eai.domain.lead.FollowUpTaskStatus;
@@ -36,7 +39,10 @@ public class MetadataController {
                 messageTemplateTypes(),
                 leadDistributionModes(),
                 emailAccountStatuses(),
-                emailProtocols()
+                emailProtocols(),
+                conversationMessageDirections(),
+                conversationMessageTypes(),
+                conversationMessageStatuses()
         );
     }
 
@@ -140,6 +146,33 @@ public class MetadataController {
     private List<MetadataOptionResponse> emailProtocols() {
         return List.of(
                 option(EmailProtocol.IMAP, "email_account.protocol.imap", "IMAP", 1, "default")
+        );
+    }
+
+    private List<MetadataOptionResponse> conversationMessageDirections() {
+        return List.of(
+                option(ConversationMessageDirection.INBOUND, "conversation.message.direction.inbound", "Entrada", 1, "info"),
+                option(ConversationMessageDirection.OUTBOUND, "conversation.message.direction.outbound", "Saida", 2, "success")
+        );
+    }
+
+    private List<MetadataOptionResponse> conversationMessageTypes() {
+        return List.of(
+                option(ConversationMessageType.TEXT, "conversation.message.type.text", "Texto", 1, "default"),
+                option(ConversationMessageType.TEMPLATE, "conversation.message.type.template", "Template", 2, "primary"),
+                option(ConversationMessageType.IMAGE, "conversation.message.type.image", "Imagem", 3, "info"),
+                option(ConversationMessageType.AUDIO, "conversation.message.type.audio", "Audio", 4, "secondary"),
+                option(ConversationMessageType.DOCUMENT, "conversation.message.type.document", "Documento", 5, "warning")
+        );
+    }
+
+    private List<MetadataOptionResponse> conversationMessageStatuses() {
+        return List.of(
+                option(ConversationMessageStatus.RECEIVED, "conversation.message.status.received", "Recebida", 1, "info"),
+                option(ConversationMessageStatus.SENT, "conversation.message.status.sent", "Enviada", 2, "success"),
+                option(ConversationMessageStatus.DELIVERED, "conversation.message.status.delivered", "Entregue", 3, "success"),
+                option(ConversationMessageStatus.READ, "conversation.message.status.read", "Lida", 4, "primary"),
+                option(ConversationMessageStatus.FAILED, "conversation.message.status.failed", "Falhou", 5, "error")
         );
     }
 

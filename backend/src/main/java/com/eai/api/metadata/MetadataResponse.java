@@ -13,6 +13,9 @@ public record MetadataResponse(
         List<MetadataOptionResponse> messageTemplateTypes,
         List<MetadataOptionResponse> leadDistributionModes,
         List<MetadataOptionResponse> emailAccountStatuses,
-        List<MetadataOptionResponse> emailProtocols
+        List<MetadataOptionResponse> emailProtocols,
+        List<MetadataOptionResponse> conversationMessageDirections,
+        List<MetadataOptionResponse> conversationMessageTypes,
+        List<MetadataOptionResponse> conversationMessageStatuses
 ) {
 }

@@ -14,6 +14,7 @@ import { OverdueLeadsPage } from '../pages/OverdueLeadsPage';
 import { PipelinePage } from '../pages/PipelinePage';
 import { FollowUpsPage } from '../pages/FollowUpsPage';
 import { ReportsPage } from '../pages/ReportsPage';
+import { ConversationsPage } from '../pages/ConversationsPage';
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +43,16 @@ export const router = createBrowserRouter([
           {
             path: 'follow-ups',
             element: <FollowUpsPage />,
+          },
+          {
+            path: 'conversations',
+            element: <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SELLER']} />,
+            children: [
+              {
+                index: true,
+                element: <ConversationsPage />,
+              },
+            ],
           },
           {
             path: 'reports',
