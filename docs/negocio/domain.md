@@ -1,21 +1,27 @@
-# Modelo de Dominio
+# Modelo De Dominio
 
-Este documento descreve o dominio conceitual definido. Ele evita detalhes tecnicos de framework de proposito. Duvidas de modelagem e regras ainda nao decididas ficam em [Pendencias de produto](pendencias.md).
+Este documento descreve o dominio conceitual definido. Ele evita detalhes tecnicos de framework. Duvidas de modelagem e regras ainda nao decididas ficam em [Pendencias de produto](pendencias.md).
 
-## Contextos de Dominio
+## Contextos De Dominio
 
 O sistema atual pode ser entendido pelas seguintes areas de dominio:
 
 - Identidade e acesso.
 - Tenancy.
 - Gestao de leads.
-- Distribuicao de leads e SLA.
+- Atribuicao manual de leads.
+- Pipeline comercial.
+- Conversas de WhatsApp.
 - Templates de comunicacao.
 - Importacao de leads por e-mail.
-- Agenda de follow-up.
-- Dashboard e relatorios.
+- LGPD, auditoria e retencao.
 
-Os limites exatos dos contextos podem evoluir conforme o produto amadurecer.
+Ficam para segunda fase:
+
+- Distribuicao automatica de leads.
+- SLA, follow-ups e notificacoes.
+- KPIs, dashboards e relatorios gerenciais.
+- Configuracao de etapas do funil por empresa ou loja.
 
 ## Entidades Principais
 
@@ -45,7 +51,12 @@ Atributos conhecidos:
 - Cidade.
 - Estado.
 - Status.
+- Numero de WhatsApp da loja.
 - Datas de criacao e atualizacao.
+
+Regra definida:
+
+- Cada loja deve ter apenas um numero de WhatsApp.
 
 ### Usuario
 
@@ -59,11 +70,27 @@ Atributos conhecidos:
 - Hash da senha.
 - Telefone.
 - Cargo.
-- Identidade da empresa.
-- Identidade da loja.
+- Identidade da empresa quando aplicavel.
+- Identidade da loja quando aplicavel.
 - Status.
-- Papeis.
+- Papel unico.
 - Datas de criacao e atualizacao.
+
+Papeis do MVP:
+
+- `ADMIN`.
+- `MANAGER`.
+- `STORE_MANAGER`.
+- `SELLER`.
+- `PRE_SALES`.
+- `F_AND_I`.
+
+Regras definidas:
+
+- `ADMIN` e global da plataforma.
+- `MANAGER` pertence a uma empresa e pode visualizar todas as lojas dessa empresa.
+- Usuarios operacionais devem operar dentro da loja em que estao alocados.
+- `RECEPTIONIST` e `AUDITOR` ficam fora do MVP.
 
 ### Lead
 
@@ -75,22 +102,49 @@ Atributos conhecidos:
 - Identidade da empresa.
 - Identidade da loja.
 - Nome do cliente.
-- Telefone do cliente.
+- Telefone ou WhatsApp do cliente.
 - E-mail do cliente.
 - Cidade do cliente.
 - Veiculo de interesse.
 - Origem.
 - Mensagem original.
 - Status.
-- Usuario responsavel.
+- Usuario responsavel principal.
+- Relacao com F&I quando aplicavel.
+- Indicacao de duplicidade.
+- Relacao com lead ou conversa anterior quando duplicado.
 - Data de atribuicao.
-- Datas de criacao e atualizacao.
 - Data do primeiro contato.
 - Data do ultimo contato.
 - Motivo de perda.
 - Valor de venda.
+- Datas de criacao e atualizacao.
 
-### Historico do Lead
+Status conhecidos:
+
+- `NEW`
+- `AVAILABLE`
+- `ASSIGNED`
+- `FIRST_CONTACT`
+- `IN_NEGOTIATION`
+- `VISIT_SCHEDULED`
+- `SIMULATING`
+- `PROPOSAL_APPROVED`
+- `PROPOSAL_SENT`
+- `SOLD`
+- `LOST`
+- `DUPLICATED`
+
+Regras definidas:
+
+- `VISIT_SCHEDULED`, `SIMULATING` e `PROPOSAL_APPROVED` sao etapas opcionais.
+- As etapas opcionais devem aparecer visualmente no pipeline do MVP.
+- `SIMULATING` e `PROPOSAL_APPROVED` ficam conceitualmente entre negociacao e proposta enviada, sem ordem obrigatoria.
+- A arquitetura deve estar preparada para status configuraveis em fase futura.
+- Duplicidade e validada por telefone/WhatsApp e loja.
+- Lead duplicado inicia com dados proprios, mas preserva historico da nova chegada e relacao com lead/conversa anterior.
+
+### Historico Do Lead
 
 Representa um evento operacional ou de status relacionado a um lead.
 
@@ -98,13 +152,14 @@ Atributos conhecidos:
 
 - Identidade.
 - Identidade do lead.
-- Identidade do usuario.
+- Identidade do usuario quando aplicavel.
 - Status anterior.
 - Novo status.
 - Descricao.
+- Origem do evento.
 - Data de criacao.
 
-### Nota do Lead
+### Nota Do Lead
 
 Representa uma nota adicionada a um lead por um usuario.
 
@@ -116,7 +171,7 @@ Atributos conhecidos:
 - Texto da nota.
 - Data de criacao.
 
-### Tag do Lead
+### Tag Do Lead
 
 Representa uma etiqueta associada a um lead.
 
@@ -126,48 +181,7 @@ Atributos conhecidos:
 - Identidade do lead.
 - Nome.
 
-### Tarefa de Follow-Up
-
-Representa uma acao futura relacionada a um lead.
-
-Atributos conhecidos:
-
-- Identidade.
-- Identidade do lead.
-- Identidade do usuario.
-- Titulo.
-- Descricao.
-- Data de vencimento.
-- Data de conclusao.
-- Status.
-- Datas de criacao e atualizacao.
-
-### Configuracao de Distribuicao de Leads
-
-Representa como uma loja distribui leads.
-
-Atributos conhecidos:
-
-- Identidade.
-- Identidade da empresa.
-- Identidade da loja.
-- Modo de distribuicao.
-- Indicador de ativo.
-
-### Politica de SLA de Lead
-
-Representa regras de tempo para atribuicao e primeiro contato em uma loja.
-
-Atributos conhecidos:
-
-- Identidade.
-- Identidade da empresa.
-- Identidade da loja.
-- Minutos para atribuir.
-- Minutos para primeiro contato.
-- Indicador de ativo.
-
-### Template de Mensagem
+### Template De Mensagem
 
 Representa uma mensagem reutilizavel para comunicacao com cliente.
 
@@ -175,14 +189,19 @@ Atributos conhecidos:
 
 - Identidade.
 - Identidade da empresa.
-- Identidade da loja.
+- Identidade da loja quando especifico de loja.
 - Nome.
 - Tipo.
 - Conteudo.
 - Indicador de ativo.
 - Datas de criacao e atualizacao.
 
-### Comunicacao do Lead
+Regras definidas:
+
+- Templates da empresa podem ser usados por todas as lojas da empresa.
+- Templates da loja sao especificos daquela loja.
+
+### Comunicacao Do Lead
 
 Representa um artefato de comunicacao gerado pelo sistema para um lead.
 
@@ -196,7 +215,7 @@ Atributos conhecidos:
 - Mensagem.
 - Data de criacao.
 
-### Contato de WhatsApp
+### Contato De WhatsApp
 
 Representa um telefone de cliente identificado em eventos do WhatsApp e vinculado ao escopo de uma loja.
 
@@ -221,10 +240,17 @@ Atributos conhecidos:
 - Identidade da loja.
 - Identidade do contato de WhatsApp.
 - Identidade do lead quando encontrado.
-- Identidade do vendedor responsavel quando o lead tiver responsavel.
+- Identidade do dono responsavel quando houver.
 - Datas de criacao e atualizacao.
 
-### Mensagem de Conversa
+Regras definidas:
+
+- Conversas pertencem a uma loja.
+- Conversas iniciadas pelo lead sem vendedor ficam disponiveis na fila da loja.
+- Pre-venda assumir conversas da fila fica para segunda fase.
+- Gerente responde conversa apenas se assumir o lead; caso contrario, supervisiona.
+
+### Mensagem De Conversa
 
 Representa uma mensagem recebida pelo webhook do WhatsApp ou registrada como saida pela plataforma.
 
@@ -241,7 +267,7 @@ Atributos conhecidos:
 - Payload bruto do evento quando aplicavel.
 - Datas de criacao e atualizacao.
 
-### Evento de Mensagem de Conversa
+### Evento De Mensagem De Conversa
 
 Representa um evento de status recebido do provedor para uma mensagem de conversa.
 
@@ -256,7 +282,7 @@ Atributos conhecidos:
 - Data do evento.
 - Data de criacao.
 
-### Conta de E-mail
+### Conta De E-Mail
 
 Representa uma conta de e-mail usada para importar leads.
 
@@ -276,18 +302,42 @@ Atributos conhecidos:
 - Data da ultima leitura.
 - Datas de criacao e atualizacao.
 
+### Tarefa De Follow-Up
+
+Representa uma acao futura relacionada a um lead.
+
+Observacao:
+
+- SLA, follow-ups e notificacoes ficam para segunda fase. A entidade pode existir no sistema atual, mas nao deve ser regra obrigatoria do MVP.
+
+### Configuracao De Distribuicao De Leads
+
+Representa como uma loja distribui leads.
+
+Observacao:
+
+- Distribuicao automatica fica para segunda fase. No MVP, a atribuicao principal e manual.
+
+### Politica De SLA De Lead
+
+Representa regras de tempo para atribuicao e primeiro contato em uma loja.
+
+Observacao:
+
+- SLA fica para segunda fase. No MVP, nao deve bloquear a operacao.
+
 ## Agregados
 
 Candidatos atuais a agregados:
 
 - Empresa com lojas como estrutura de tenant.
 - Usuario como perfil de identidade e autorizacao.
-- Lead como agregado comercial principal, com historico, notas, tags, comunicacoes e follow-ups como registros relacionados.
+- Lead como agregado comercial principal, com historico, notas, tags, comunicacoes e relacoes de duplicidade.
 - Conversa como agregado de atendimento do WhatsApp, com contato, mensagens e eventos de status relacionados.
-- Configuracao de distribuicao e politica de SLA como configuracoes operacionais da loja.
 - Conta de e-mail como configuracao de integracao de captacao de leads.
+- Configuracao de distribuicao e politica de SLA como configuracoes operacionais futuras da loja.
 
-## Candidatos a Value Objects
+## Candidatos A Value Objects
 
 Conceitos atuais que podem se tornar value objects:
 
@@ -296,12 +346,12 @@ Conceitos atuais que podem se tornar value objects:
 - Documento da empresa.
 - Dinheiro ou valor de venda.
 - Escopo de tenant.
-- Duracao de SLA.
 - Telefone de WhatsApp.
 - Origem do lead.
 - Status do lead.
+- Papel do usuario.
 
-## Candidatos a Eventos de Dominio
+## Candidatos A Eventos De Dominio
 
 A implementacao atual registra historico, mas nao modela eventos de dominio explicitamente.
 
@@ -309,15 +359,17 @@ Eventos potenciais:
 
 - LeadCriado.
 - LeadAtribuido.
+- LeadAssumidoPorVendedor.
 - StatusDoLeadAlterado.
 - PrimeiroContatoDoLeadRegistrado.
 - LeadMarcadoComoDuplicado.
-- FollowUpCriado.
-- FollowUpConcluido.
-- FollowUpCancelado.
+- LeadEncaminhadoParaFAndI.
 - LinkDeWhatsAppGerado.
+- MensagemDeWhatsAppRecebida.
+- ConversaAssumida.
 - LeadImportadoPorEmail.
-- SlaViolado.
+- SolicitacaoLgpdRegistrada.
+- DadosPessoaisAnonimizados.
 
 ## Glossario
 
@@ -326,11 +378,13 @@ Eventos potenciais:
 - Loja: unidade de concessionaria vinculada a uma empresa.
 - Lead: oportunidade comercial de um potencial cliente.
 - Vendedor: usuario responsavel pelo contato comercial e negociacao.
+- Pre-venda: usuario responsavel por gerar o lead, fazer primeiro atendimento e enviar templates iniciais.
+- F&I: usuario que atua em simulacao de banco e proposta aprovada.
 - Gestor: usuario responsavel pela supervisao operacional.
 - Atribuicao: ato de definir um usuario responsavel por um lead.
-- Funil: sequencia de status que representa o progresso comercial.
-- SLA: expectativa de tempo para atribuicao ou primeiro contato.
-- Follow-up: acao agendada relacionada a um lead.
+- Funil: conjunto de status que representa o progresso comercial.
+- SLA: expectativa de tempo para atribuicao ou primeiro contato; fica para segunda fase.
+- Follow-up: acao agendada relacionada a um lead; fica para segunda fase.
 - Template: mensagem reutilizavel usada no contato com clientes.
 - Comunicacao: artefato registrado de contato com cliente.
 - Duplicado: lead considerado uma oportunidade possivelmente repetida.

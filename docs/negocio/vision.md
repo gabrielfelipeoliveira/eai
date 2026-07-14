@@ -1,74 +1,74 @@
-# Visao do Produto
+# Visao Do Produto
 
-Este documento registra a visao e o escopo conhecidos do produto. Duvidas de escopo e prioridade ficam centralizadas em [Pendencias de produto](pendencias.md).
+Este documento registra a visao e o escopo conhecido do produto. Regras detalhadas ficam em [Regras de negocio](business-rules.md), e duvidas ainda abertas ficam em [Pendencias de produto](pendencias.md).
 
 ## Objetivo
 
-O EAI e uma plataforma SaaS para lojas automotivas e concessionarias. Ela centraliza captacao de leads, atribuicao de vendedores, comunicacao por WhatsApp, acompanhamento do funil comercial, atividades de atendimento e relatorios comerciais em um unico espaco operacional.
+O EAI e uma plataforma SaaS para lojas automotivas e concessionarias. Ela centraliza captacao de leads, atribuicao manual de responsaveis, comunicacao por WhatsApp, acompanhamento do funil comercial, historico operacional e organizacao basica da rotina comercial.
 
-O objetivo comercial e aumentar a conversao de leads, reduzir o tempo de resposta, organizar a performance dos vendedores e dar aos gestores visibilidade confiavel sobre o processo de vendas da loja.
+O objetivo comercial e aumentar conversao de leads, reduzir o tempo de resposta, organizar responsabilidades entre pre-venda, vendedores, gerentes e F&I, e dar aos gestores visibilidade operacional confiavel sobre o processo de vendas da loja.
 
 ## Publico-Alvo
 
 - Donos de concessionarias e lojas automotivas.
-- Gestores comerciais.
+- Gerentes gerais.
+- Gerentes de loja.
 - Vendedores.
-- Equipes de atendimento.
-- Equipes de pre-vendas ou BDC.
+- Equipes de pre-venda ou BDC.
+- F&I.
 - Usuarios administrativos responsaveis por empresas, lojas e usuarios.
 
 ## Problema
 
-Times comerciais automotivos frequentemente perdem oportunidades porque captacao de leads, dono responsavel, historico de contato, rotinas de follow-up e relatorios ficam espalhados em ferramentas diferentes ou processos informais.
+Times comerciais automotivos frequentemente perdem oportunidades porque captacao de leads, dono responsavel, historico de contato, conversas de WhatsApp e status do funil ficam espalhados em ferramentas diferentes ou processos informais.
 
-O EAI existe para reduzir essa fragmentacao operacional, deixando visibilidade de leads, responsabilidade do vendedor, status do funil, atividades de follow-up e indicadores de gestao em um unico ambiente.
+O EAI existe para reduzir essa fragmentacao operacional, deixando visibilidade de leads, fila de oportunidades, responsabilidade do vendedor, historico de chegada do lead, conversas e status do funil em um unico ambiente.
 
-## Proposta de Valor
+## Proposta De Valor
 
 O EAI ajuda concessionarias e lojas a:
 
 - Responder mais rapido aos leads recebidos.
 - Reduzir oportunidades perdidas ou duplicadas.
-- Padronizar rotinas de follow-up dos vendedores.
-- Acompanhar status do lead e historico de comunicacao.
-- Dar aos gestores visibilidade operacional e comercial confiavel.
+- Organizar a passagem entre pre-venda, vendedor e F&I.
+- Centralizar conversas de WhatsApp por loja.
+- Registrar historico de origem e duplicidade de leads.
+- Acompanhar status do funil comercial.
+- Dar visibilidade operacional para gerentes.
+- Preparar a plataforma para regras mais avancadas de funil, relatorios, SLA e automacao em fases futuras.
 
-## Principios do Produto
+## Escopo Do MVP
 
-- Visibilidade rapida dos leads.
-- Responsabilidade clara do vendedor.
-- Gestao simples do funil.
-- Historico do cliente centrado nas conversas.
-- Relatorios confiaveis para gestores.
-- Fluxos praticos antes de configuracoes complexas.
-- Suporte multiempresa e multiloja desde a base.
+O MVP confirmado inclui:
 
-## Escopo
+- Tenancy basico: empresa, lojas e usuarios.
+- Papeis e permissoes iniciais: admin, gerente geral, gerente de loja, pre-venda, vendedor e F&I.
+- Captacao de leads por WhatsApp e por e-mail.
+- Gestao de leads com historico de origem, duplicidade por telefone e loja, e funil comercial.
+- Conversas de WhatsApp por loja, com dono responsavel e vinculo com lead.
+- Templates de mensagem globais da empresa e templates especificos da loja.
+- Fluxo operacional entre pre-venda, vendedor e F&I.
+- Pipeline com status atuais e etapas opcionais visiveis no MVP.
+- LGPD basica: processo para exclusao, anonimizacao ou bloqueio de dados pessoais quando aplicavel.
 
-O escopo conhecido do produto inclui:
+## Segunda Fase
 
-- Autenticacao e autorizacao.
-- Gestao de empresas e lojas.
-- Gestao de usuarios e vendedores.
-- Cadastro e listagem de leads.
-- Atribuicao de leads.
-- Etapas do funil comercial.
-- Notas, tags e historico do lead.
-- Tarefas de follow-up.
-- Distribuicao e indicadores de SLA.
-- Templates de mensagens.
-- Geracao de link de WhatsApp.
-- Base do importador de leads por e-mail.
-- Base de dashboard e relatorios operacionais.
+Ficam para segunda fase:
 
-## Fora de Escopo
+- Distribuicao automatica de leads.
+- SLA, follow-ups e notificacoes.
+- KPIs, dashboards e relatorios gerenciais.
+- Parsers dedicados para plataformas especificas.
+- Configuracao de etapas do funil por empresa ou loja.
+- Regras avancadas de auditoria, retencao e compliance.
+
+## Fora De Escopo Atual
 
 Os itens abaixo nao estao definidos como escopo atual:
 
-- Integracao nativa com WhatsApp Business API.
-- Caixa de entrada completa para conversas de mao dupla.
 - Gestao de pagamentos, assinatura e billing.
 - BI avancado ou data warehouse.
 - Aplicativos mobile nativos.
-- Parsers especificos por marketplace alem do parser generico de e-mail.
-- Detalhes de implementacao de criptografia e gestao de segredos em producao.
+- Parsers especificos por marketplace no MVP.
+- Automacoes avancadas de distribuicao, notificacao e SLA no MVP.
+- Politicas automaticas de expurgo de dados no MVP.

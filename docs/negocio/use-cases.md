@@ -1,6 +1,6 @@
 # Casos De Uso
 
-Este documento lista os casos de uso conhecidos sem inventar comportamentos ausentes. Duvidas sobre entradas, atores, regras e excecoes ficam centralizadas em [Pendencias de produto](pendencias.md).
+Este documento lista os casos de uso conhecidos para o MVP confirmado. Duvidas sobre entradas, atores, regras e excecoes ficam centralizadas em [Pendencias de produto](pendencias.md).
 
 ## Autenticacao
 
@@ -8,18 +8,18 @@ Este documento lista os casos de uso conhecidos sem inventar comportamentos ause
 
 Ator:
 
-- Usuario cadastrado
+- Usuario cadastrado.
 
 Entradas:
 
-- E-mail
-- Senha
+- E-mail.
+- Senha.
 
 Saidas:
 
-- Token de acesso
-- Refresh token
-- Tipo do token
+- Token de acesso.
+- Refresh token.
+- Tipo do token.
 
 Pre-condicoes:
 
@@ -27,178 +27,89 @@ Pre-condicoes:
 - Usuario esta ativo.
 - Senha corresponde ao hash armazenado.
 
-Pos-condicoes:
-
-- Refresh token e persistido.
-
 ### Renovar Sessao
 
 Ator:
 
-- Cliente autenticado com refresh token
+- Usuario autenticado com refresh token.
 
 Entradas:
 
-- Refresh token
+- Refresh token.
 
 Saidas:
 
-- Novo token de acesso
-- Novo refresh token
-
-Pre-condicoes:
-
-- Refresh token existe e e valido.
-
-Pos-condicoes:
-
-- Continuidade da sessao e mantida.
+- Novo token de acesso.
+- Novo refresh token.
 
 ### Logout
 
 Ator:
 
-- Usuario autenticado
-
-Entradas:
-
-- Sessao atual do usuario
+- Usuario autenticado.
 
 Saidas:
 
-- Resposta vazia
+- Sessao encerrada conforme politica de autenticacao definida.
 
-Pre-condicoes:
-
-- Usuario esta autenticado.
-
-Pos-condicoes:
-
-- Refresh tokens ativos do usuario sao revogados conforme a implementacao atual.
-
-## Gestao De Tenants
+## Tenancy E Usuarios
 
 ### Gerenciar Empresas
 
 Ator:
 
-- Admin
+- `ADMIN`.
 
 Entradas:
 
-- Dados da empresa
+- Dados da empresa.
 
 Saidas:
 
-- Registros de empresa
-
-Pre-condicoes:
-
-- Ator possui permissao.
-
-Pos-condicoes:
-
-- Empresa e criada ou atualizada.
+- Empresa criada ou atualizada.
 
 ### Gerenciar Lojas
 
 Ator:
 
-- Admin
-- Gerente conforme documentacao e codigo atuais, sujeito ao escopo do tenant
+- `ADMIN`.
+- `MANAGER`, dentro da empresa.
 
 Entradas:
 
-- Dados da loja
+- Dados da loja.
 
 Saidas:
 
-- Registros de loja
+- Loja criada ou atualizada.
 
 Pre-condicoes:
 
 - Empresa existe.
 - Ator possui permissao para a empresa.
 
-Pos-condicoes:
-
-- Loja e criada ou atualizada.
-
-## Gestao De Usuarios
-
-### Criar Usuario
+### Gerenciar Usuarios
 
 Ator:
 
-- Admin conforme regras atuais da API
+- `ADMIN`.
+- Papeis gerenciais conforme regra de permissao ainda pendente.
 
 Entradas:
 
-- Nome
-- E-mail
-- Senha
-- Telefone opcional
-- Cargo opcional
-- Identidade da empresa
-- Identidade da loja
-- Perfis
+- Dados do usuario.
+- Papel unico.
+- Empresa.
+- Loja quando aplicavel.
 
 Saidas:
 
-- Registro do usuario sem senha
+- Usuario criado, atualizado, ativado ou desativado.
 
 Pre-condicoes:
 
-- E-mail e unico.
-- Referencias de tenant sao validas quando informadas.
-
-Pos-condicoes:
-
-- Usuario e criado ativo conforme comportamento atual do dominio.
-
-### Atualizar Usuario
-
-Ator:
-
-- Admin
-
-Entradas:
-
-- Campos editaveis do usuario
-
-Saidas:
-
-- Registro de usuario atualizado
-
-Pre-condicoes:
-
-- Usuario existe.
-
-Pos-condicoes:
-
-- Dados do usuario e, opcionalmente, senha sao atualizados.
-
-### Ativar Ou Desativar Usuario
-
-Ator:
-
-- Admin
-
-Entradas:
-
-- Identidade do usuario
-
-Saidas:
-
-- Registro de usuario atualizado
-
-Pre-condicoes:
-
-- Usuario existe.
-
-Pos-condicoes:
-
-- Status do usuario e alterado.
+- Papel informado pertence ao MVP.
+- Usuario operacional possui loja quando necessario.
 
 ## Gestao De Leads
 
@@ -206,194 +117,144 @@ Pos-condicoes:
 
 Ator:
 
-- Admin
-- Gerente
-- Vendedor
+- `ADMIN`.
+- `MANAGER`.
+- `STORE_MANAGER`.
+- `PRE_SALES`.
+- `SELLER`, quando permitido pelo fluxo operacional.
 
 Entradas:
 
-- Identidade da empresa
-- Identidade da loja
-- Dados do cliente
-- Veiculo de interesse
-- Origem
-- Mensagem original
-- Usuario responsavel opcional
-- Motivo de perda opcional
-- Valor de venda opcional
+- Empresa.
+- Loja.
+- Dados do cliente.
+- Veiculo de interesse.
+- Origem.
+- Mensagem original.
+- Usuario responsavel opcional.
 
 Saidas:
 
-- Lead criado
+- Lead criado.
+- Historico registrado.
 
-Pre-condicoes:
+Regras:
 
-- Referencias de tenant sao validas.
-- Ator pode usar o tenant.
-- Usuario atribuido pertence a loja do lead quando informado.
-
-Pos-condicoes:
-
-- Lead e criado.
-- Historico e registrado.
+- Pre-venda gera o lead; depois disso, o lead aparece como disponivel no pipeline.
+- Leads podem entrar por WhatsApp ou por e-mail.
+- Duplicidade e avaliada por telefone/WhatsApp e loja.
 
 ### Listar E Pesquisar Leads
 
 Ator:
 
-- Admin
-- Gerente
-- Vendedor
+- `ADMIN`.
+- `MANAGER`.
+- `STORE_MANAGER`.
+- `SELLER`.
+- `PRE_SALES`.
+- `F_AND_I`, quando participar das etapas de simulacao ou proposta.
 
 Entradas:
 
-- Parametros de paginacao
-- Filtros opcionais
+- Parametros de paginacao.
+- Filtros opcionais.
 
 Saidas:
 
-- Lista paginada de leads
+- Lista paginada de leads.
 
-Pre-condicoes:
+Regras:
 
-- Ator esta autenticado.
+- `ADMIN` visualiza globalmente.
+- `MANAGER` visualiza a empresa.
+- `STORE_MANAGER` visualiza a loja.
+- `SELLER` visualiza leads disponiveis e leads sob sua responsabilidade.
+- Escopo de `PRE_SALES` e `F_AND_I` deve respeitar loja e etapa operacional.
 
-Pos-condicoes:
-
-- Nenhum dado e alterado.
-
-### Atualizar Lead
+### Assumir Lead Disponivel
 
 Ator:
 
-- Admin
-- Gerente
-- Vendedor conforme acesso atual do endpoint e validacoes do servico
+- `SELLER`.
 
 Entradas:
 
-- Identidade do lead
-- Campos editaveis do lead
+- Identidade do lead disponivel.
 
 Saidas:
 
-- Lead atualizado
+- Lead atribuido ao vendedor.
 
 Pre-condicoes:
 
-- Lead existe.
-- Ator pode acessar o lead.
-- Referencias de tenant sao validas.
+- Lead esta disponivel.
+- Vendedor pertence a loja do lead.
 
-Pos-condicoes:
+### Atribuir Lead Manualmente
 
-- Lead e atualizado.
-- Historico e registrado se o status mudar.
+Ator:
+
+- `MANAGER`.
+- `STORE_MANAGER`.
+
+Entradas:
+
+- Identidade do lead.
+- Identidade do usuario responsavel.
+
+Saidas:
+
+- Lead atribuido.
+- Historico registrado.
+
+Regras:
+
+- `MANAGER` pode atribuir leads dentro da empresa.
+- `STORE_MANAGER` pode atribuir leads dentro da propria loja.
+- Distribuicao automatica fica para segunda fase.
 
 ### Alterar Status Do Lead
 
 Ator:
 
-- Admin
-- Gerente
-- Vendedor
+- Usuario com acesso ao lead.
 
 Entradas:
 
-- Identidade do lead
-- Novo status
-- Descricao opcional
+- Identidade do lead.
+- Novo status.
+- Descricao opcional.
 
 Saidas:
 
-- Lead atualizado
+- Status atualizado.
+- Historico registrado.
 
-Pre-condicoes:
+Regras:
 
-- Lead existe.
-- Ator pode acessar o lead.
+- `VISIT_SCHEDULED`, `SIMULATING` e `PROPOSAL_APPROVED` sao etapas opcionais.
+- `SIMULATING` e `PROPOSAL_APPROVED` ficam conceitualmente entre negociacao e proposta enviada, sem ordem obrigatoria.
+- `F_AND_I` participa das etapas de simulacao e proposta.
 
-Pos-condicoes:
-
-- Status do lead e alterado.
-- Historico e registrado.
-
-### Atribuir Lead
+### Registrar Duplicidade
 
 Ator:
 
-- Admin
-- Gerente
-- Vendedor para autoatribuicao conforme comportamento atual
+- Sistema.
+- Usuario com acesso ao lead, quando revisao manual for necessaria.
 
 Entradas:
 
-- Identidade do lead
-- Identidade do usuario
+- Novo lead recebido.
+- Telefone/WhatsApp.
+- Loja.
 
 Saidas:
 
-- Lead atribuido
-
-Pre-condicoes:
-
-- Lead existe.
-- Usuario atribuido pertence a loja do lead.
-- Ator possui permissao.
-
-Pos-condicoes:
-
-- Lead passa a ter usuario responsavel.
-- Status do lead passa para atribuido.
-- Historico e registrado.
-
-### Adicionar Observacao
-
-Ator:
-
-- Usuario com acesso ao lead
-
-Entradas:
-
-- Identidade do lead
-- Texto da observacao
-
-Saidas:
-
-- Observacao criada
-
-Pre-condicoes:
-
-- Lead existe.
-- Ator pode acessar o lead.
-
-Pos-condicoes:
-
-- Observacao e armazenada.
-
-### Gerenciar Tags
-
-Ator:
-
-- Usuario com acesso ao lead
-
-Entradas:
-
-- Identidade do lead
-- Nome da tag
-
-Saidas:
-
-- Lista de tags ou tag criada
-
-Pre-condicoes:
-
-- Lead existe.
-- Ator pode acessar o lead.
-
-Pos-condicoes:
-
-- Tag e adicionada ou removida.
+- Novo lead marcado como duplicado quando houver correspondencia.
+- Historico da nova chegada registrado.
+- Relacao com lead ou conversa anterior preservada.
 
 ## Pipeline
 
@@ -401,331 +262,110 @@ Pos-condicoes:
 
 Ator:
 
-- Admin
-- Gerente
-- Vendedor
-
-Entradas:
-
-- Contexto do usuario autenticado
+- Usuario com acesso ao escopo.
 
 Saidas:
 
-- Leads agrupados por status
+- Leads agrupados por status.
 
-Pre-condicoes:
+Regras:
 
-- Ator esta autenticado.
+- Etapas opcionais aparecem visualmente no MVP.
+- Nenhum status atual precisa ser ocultado no MVP.
+- Arquitetura deve permitir etapas configuraveis em fase futura.
 
-Pos-condicoes:
+## WhatsApp E Conversas
 
-- Nenhum dado e alterado.
-
-## Follow-Ups
-
-### Criar Follow-Up
+### Receber Mensagem Pelo WhatsApp
 
 Ator:
 
-- Usuario com acesso ao lead
+- WhatsApp Cloud API.
 
 Entradas:
 
-- Identidade do lead
-- Titulo
-- Descricao opcional
-- Data de vencimento
+- Payload do webhook.
+- Numero de WhatsApp da loja.
 
 Saidas:
 
-- Follow-up criado
-
-Pre-condicoes:
-
-- Lead existe.
-- Ator pode acessar o lead.
-
-Pos-condicoes:
-
-- Follow-up e criado.
-- Historico do lead e registrado.
-
-### Concluir Ou Cancelar Follow-Up
-
-Ator:
-
-- Usuario com acesso conforme regras atuais do servico
-
-Entradas:
-
-- Identidade do follow-up
-
-Saidas:
-
-- Follow-up atualizado
-
-Pre-condicoes:
-
-- Follow-up existe.
-- Ator pode acessar o lead ou tarefa relacionada.
-
-Pos-condicoes:
-
-- Status do follow-up e alterado.
-- Historico do lead e registrado.
-
-## Distribuicao E SLA
-
-### Configurar Distribuicao E SLA
-
-Ator:
-
-- Admin
-- Gerente conforme acesso atual do endpoint
-
-Entradas:
-
-- Identidade da empresa
-- Identidade da loja
-- Modo de distribuicao
-- Flag ativo
-- Minutos de SLA
-- Flag de SLA ativo
-
-Saidas:
-
-- Configuracoes de distribuicao e SLA atualizadas
-
-Pre-condicoes:
-
-- Loja pertence a empresa.
-- Ator possui permissao.
-
-Pos-condicoes:
-
-- Configuracoes de distribuicao da loja sao atualizadas.
-
-### Atribuir Leads Automaticamente
-
-Ator:
-
-- Admin
-- Gerente
-- Vendedor para atribuicao automatica de um lead conforme regras atuais de acesso
-
-Entradas:
-
-- Identidade do lead ou fila de leads pendentes
-
-Saidas:
-
-- Leads atribuidos
-
-Pre-condicoes:
-
-- Existem vendedores elegiveis.
-- Configuracao de distribuicao existe ou padroes sao aplicados.
-
-Pos-condicoes:
-
-- Leads sao atribuidos conforme estrategia configurada.
-- Historico e registrado.
-
-## Templates De Comunicacao
-
-### Gerenciar Templates
-
-Ator:
-
-- Admin
-- Gerente conforme regras atuais de acesso
-
-Entradas:
-
-- Dados do template
-
-Saidas:
-
-- Registro de template
-
-Pre-condicoes:
-
-- Loja pertence a empresa.
-- Ator possui permissao.
-
-Pos-condicoes:
-
-- Template e criado, atualizado ou excluido.
-
-### Gerar Link Do WhatsApp
-
-Ator:
-
-- Usuario com acesso ao lead
-
-Entradas:
-
-- Identidade do lead
-- Identidade do template
-
-Saidas:
-
-- Mensagem renderizada
-- URL do WhatsApp
-- Identidade do registro de comunicacao
-
-Pre-condicoes:
-
-- Lead existe.
-- Template esta ativo.
-- Template pertence a mesma loja do lead.
-- Lead possui telefone.
-
-Pos-condicoes:
-
-- Registro de comunicacao e armazenado.
-- Mensagem de conversa de saida e registrada no historico basico da conversa.
-
-### Enviar Template Pelo WhatsApp
-
-Ator:
-
-- Usuario com acesso ao lead
-
-Entradas:
-
-- Identidade do lead
-- Identidade do template
-- Codigo de idioma opcional
-
-Saidas:
-
-- Mensagem renderizada
-- Identidade do registro de comunicacao
-- Identidade da mensagem de conversa
-- Status inicial da mensagem enviada
-- Identidade externa da mensagem quando retornada pela WhatsApp Cloud API
-- Retorno bruto da WhatsApp Cloud API
-
-Pre-condicoes:
-
-- Lead existe.
-- Template esta ativo.
-- Template pertence a mesma loja do lead.
-- Lead possui telefone valido para envio ao WhatsApp.
-- Configuracao de envio da WhatsApp Cloud API esta disponivel.
-
-Pos-condicoes:
-
-- Template e enviado para a WhatsApp Cloud API.
-- Registro de comunicacao e armazenado.
-- Mensagem de conversa de saida e registrada com status `SENT` quando a API aceita o envio.
-- Falha de envio e registrada com status `FAILED` quando a API rejeita ou a chamada falha.
-- Retorno da API fica vinculado a mensagem de conversa.
-
-## Conversas De WhatsApp
+- Contato criado ou atualizado.
+- Conversa criada ou atualizada.
+- Mensagem registrada.
+
+Regras:
+
+- Cada loja deve ter apenas um numero de WhatsApp.
+- Conversa pertence a loja do numero.
+- Quando nao houver vendedor responsavel, a conversa fica na fila da loja.
+- Quando houver lead correspondente, a conversa deve ser vinculada ao lead.
 
 ### Listar Conversas
 
 Ator:
 
-- Admin
-- Gerente
-- Vendedor
-
-Entradas:
-
-- Contexto do usuario autenticado
-- Filtro opcional por vendedor
-- Filtro opcional por status da ultima mensagem
-- Filtro opcional por periodo da ultima interacao
+- `ADMIN`.
+- `MANAGER`.
+- `STORE_MANAGER`.
+- `SELLER`.
 
 Saidas:
 
-- Conversas visiveis ao usuario.
-- Dados principais do lead ou contato.
-- Telefone.
-- Ultima mensagem.
-- Data e hora da ultima interacao.
-- Quantidade de mensagens nao lidas.
+- Lista de conversas do escopo do usuario.
 
-Pre-condicoes:
+Regras:
 
-- Ator esta autenticado.
-- Ator possui acesso ao tenant da conversa.
+- `ADMIN` visualiza globalmente.
+- `MANAGER` visualiza conversas da empresa.
+- `STORE_MANAGER` visualiza conversas da loja.
+- `SELLER` visualiza conversas dos leads sob sua responsabilidade.
+- Conversas sem vendedor ficam disponiveis na fila da loja.
 
-Pos-condicoes:
-
-- Nenhum dado e alterado.
-
-Regras conhecidas:
-
-- Vendedores visualizam apenas conversas sob sua responsabilidade.
-- Gerentes visualizam conversas dentro do seu escopo de tenant.
-- Admins visualizam todas as conversas.
-- Conversas sao ordenadas pela ultima interacao registrada.
-- Mensagens recebidas com status `RECEIVED` contam como nao lidas na listagem.
-
-### Receber Mensagem Pelo Webhook
+### Assumir Conversa Ou Lead Da Fila
 
 Ator:
 
-- WhatsApp Cloud API
-
-Entradas:
-
-- Payload do webhook da Meta.
-- Configuracao de empresa e loja do canal WhatsApp.
+- `SELLER`.
+- `MANAGER`, quando assumir o lead.
+- `STORE_MANAGER`, dentro da loja.
 
 Saidas:
 
-- Resposta aceita pelo backend.
+- Conversa passa a ter dono responsavel.
+- Lead relacionado passa a ter responsavel quando aplicavel.
 
-Pre-condicoes:
+Regras:
 
-- Webhook publico esta configurado.
-- Empresa e loja do canal WhatsApp estao configuradas.
+- Pre-venda assumir conversas da fila fica para segunda fase.
+- Gerente pode responder uma conversa somente se assumir o lead.
+- Enquanto o lead estiver no nome de um vendedor, gerente apenas supervisiona.
 
-Pos-condicoes:
-
-- Contato de WhatsApp e criado ou atualizado pelo telefone.
-- Conversa e criada automaticamente para o contato.
-- Quando existir lead da loja com telefone correspondente, a conversa fica vinculada ao lead.
-- Mensagem recebida e armazenada com direcao de entrada, tipo e status recebido.
-
-### Consultar Historico Basico Da Conversa
+### Enviar Template
 
 Ator:
 
-- Admin
-- Gerente
-- Vendedor
+- Usuario com acesso ao lead ou conversa.
 
 Entradas:
 
-- Identidade da conversa ou identidade do lead.
+- Identidade do lead ou conversa.
+- Identidade do template.
 
 Saidas:
 
-- Mensagens vinculadas a conversa.
+- Mensagem enviada ou falha registrada.
+- Comunicacao registrada.
 
-Pre-condicoes:
+Regras:
 
-- Ator esta autenticado.
-- Ator possui acesso ao tenant da conversa.
+- Templates da empresa podem ser usados por todas as lojas da empresa.
+- Templates da loja sao especificos daquela loja.
 
-Pos-condicoes:
-
-- Mensagens recebidas da conversa com status `RECEIVED` sao marcadas como `READ`.
-- Acesso de gerente ou admin e registrado para auditoria.
-
-### Enviar Texto Livre Na Conversa
+### Enviar Texto Livre
 
 Ator:
 
-- Admin
-- Gerente
-- Vendedor
+- Dono responsavel da conversa.
 
 Entradas:
 
@@ -734,118 +374,73 @@ Entradas:
 
 Saidas:
 
-- Mensagem enviada registrada na conversa.
-- Status inicial da mensagem.
-- Identidade externa da mensagem quando retornada pela WhatsApp Cloud API.
+- Mensagem enviada ou falha registrada.
 
 Pre-condicoes:
 
-- Ator esta autenticado.
-- Ator possui acesso ao tenant da conversa.
-- Conversa possui mensagem recebida do cliente nos ultimos 24 horas.
-- Configuracao de envio da WhatsApp Cloud API esta disponivel.
-
-Pos-condicoes:
-
-- Texto livre e enviado para WhatsApp Cloud API.
-- Mensagem de conversa de saida e registrada com status `SENT` quando API aceita o envio.
-- Falha de envio e registrada com status `FAILED` quando API rejeita ou chamada falha.
-- Fora da janela de 24 horas, envio e bloqueado e o usuario deve usar template aprovado.
+- Janela de 24 horas do WhatsApp permite texto livre.
 
 ## Importacao De Leads Por E-Mail
-
-### Gerenciar Contas De E-Mail
-
-Ator:
-
-- Admin
-- Gerente conforme regras atuais de acesso
-
-Entradas:
-
-- Configuracoes da conta de e-mail
-
-Saidas:
-
-- Registro da conta de e-mail sem senha
-
-Pre-condicoes:
-
-- Loja pertence a empresa.
-- Ator possui permissao.
-
-Pos-condicoes:
-
-- Conta de e-mail e criada, atualizada ou excluida.
-
-### Testar Conexao De E-Mail
-
-Ator:
-
-- Usuario com acesso a conta
-
-Entradas:
-
-- Identidade da conta de e-mail
-
-Saidas:
-
-- Resultado de importacao/teste
-
-Pre-condicoes:
-
-- Conta existe.
-- Credenciais estao disponiveis.
-
-Pos-condicoes:
-
-- Nenhum lead e criado.
 
 ### Sincronizar Leads Por E-Mail
 
 Ator:
 
-- Usuario com acesso a conta ou scheduler
+- Usuario com permissao para a conta de e-mail.
+- Scheduler, quando configurado.
 
 Entradas:
 
-- Identidade da conta de e-mail
+- Conta de e-mail.
+- Mensagens recebidas.
 
 Saidas:
 
-- Resultado da importacao
+- Leads criados.
+- Duplicidades marcadas quando aplicavel.
+- Historico registrado.
 
-Pre-condicoes:
+Regras:
 
-- Conta existe e esta ativa.
-- Conexao IMAP funciona.
+- Plataformas como Webmotors e iCarros devem ser registradas como `LeadSource`.
+- Duplicidade usa telefone/WhatsApp e loja.
+- Entrada duplicada gera novo lead marcado como duplicado e preserva relacao com conversa ou lead anterior.
 
-Pos-condicoes:
+## LGPD
 
-- Leads podem ser criados.
-- Data de ultima leitura da conta pode ser atualizada.
-
-## Dashboard
-
-### Visualizar Dashboard
+### Executar Solicitacao LGPD
 
 Ator:
 
-- Usuario autenticado com acesso a relatorios
+- `ADMIN`.
 
 Entradas:
 
-- Filtros opcionais
+- Identificacao do titular.
+- Tipo de solicitacao.
+- Justificativa ou base operacional.
 
 Saidas:
 
-- Metricas operacionais e comerciais
+- Solicitacao registrada.
+- Dados acessados, corrigidos, bloqueados, anonimizados ou eliminados quando aplicavel.
+- Acao executada registrada para auditoria.
 
-Pre-condicoes:
+Regras:
 
-- Ator esta autenticado.
-- Ator possui escopo de tenant conforme perfil.
+- A exclusao nao deve ser sempre fisica.
+- Sem expurgo automatico no MVP.
+- Solicitacoes devem ser tratadas caso a caso.
+- Automacoes irreversiveis dependem de validacao juridica.
 
-Pos-condicoes:
+## Segunda Fase
 
-- Nenhum dado e alterado.
+Os casos abaixo ficam fora do MVP:
+
+- Distribuir leads automaticamente.
+- Configurar SLA.
+- Criar, concluir e cancelar follow-ups como regra operacional obrigatoria.
+- Enviar notificacoes.
+- Visualizar KPIs e relatorios gerenciais completos.
+- Configurar etapas do funil por empresa ou loja.
+- Executar parsers dedicados por marketplace.

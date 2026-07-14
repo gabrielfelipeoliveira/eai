@@ -1,8 +1,8 @@
 # Roadmap
 
-Este roadmap organiza a evolucao conhecida do projeto. Ele nao e um compromisso de implementar comportamento de negocio sem aprovacao do Product Owner. Duvidas de priorizacao e escopo ficam centralizadas em [Pendencias de produto](pendencias.md).
+Este roadmap organiza a evolucao conhecida do projeto. Regras aprovadas ficam em [Regras de negocio](business-rules.md), e duvidas abertas ficam em [Pendencias de produto](pendencias.md).
 
-## Sprint 0: Base de Engenharia
+## Sprint 0: Base De Engenharia
 
 Objetivo:
 
@@ -19,148 +19,75 @@ Escopo:
 Fora de escopo:
 
 - Novas funcionalidades.
-- Mudancas de regra de negocio.
 - Migrations de banco.
 - Mudancas de API.
 - Grandes refactors.
 
-Definicao de pronto:
+## MVP Confirmado
 
-- Estrutura documental obrigatoria existe.
-- Perguntas pendentes para o Product Owner estao explicitas.
-- Decisoes arquiteturais e decisoes futuras estao documentadas.
-- Instrucoes existentes de setup continuam acessiveis.
-
-## MVP
-
-Escopo candidato com base na implementacao e documentacao atuais:
+Escopo:
 
 - Autenticacao e autorizacao.
-- Gestao de empresas e lojas.
-- Gestao de usuarios e vendedores.
-- Cadastro e listagem de leads.
-- Atribuicao de leads.
-- Gestao de status do funil.
-- Notas, tags e historico de lead.
-- Visao basica de pipeline.
-- Agenda de follow-up.
-- Base de distribuicao e SLA.
-- Templates de mensagem.
-- Geracao de link de WhatsApp.
-- Base do importador de leads por e-mail.
-- Dashboard basico.
+- Tenancy basico: empresas, lojas e usuarios.
+- Papeis iniciais: `ADMIN`, `MANAGER`, `STORE_MANAGER`, `SELLER`, `PRE_SALES` e `F_AND_I`.
+- Captacao de leads por WhatsApp e por e-mail.
+- Cadastro, listagem e atualizacao de leads.
+- Atribuicao manual de leads.
+- Leads disponiveis para vendedores assumirem.
+- Gerente geral atribuindo leads na empresa.
+- Gerente de loja atribuindo leads na propria loja.
+- Pipeline comercial com status atuais e etapas opcionais visiveis.
+- Etapas de F&I: simulacao e proposta aprovada.
+- Historico de origem, duplicidade e movimentacoes do lead.
+- Conversas de WhatsApp por loja.
+- Fila da loja para conversas iniciadas pelo lead sem vendedor.
+- Templates de mensagem globais da empresa e especificos da loja.
+- Importacao de leads por e-mail com origem registrada como `LeadSource`.
+- Duplicidade por telefone/WhatsApp e loja.
+- LGPD basica com fluxo administrativo executado inicialmente por `ADMIN`.
 
-## Sprint 2: Persistencia De Conversas E Mensagens
+Fora do MVP, mas considerado segunda fase:
 
-Objetivo:
-
-- Criar a estrutura de dados para armazenar conversas e mensagens do WhatsApp dentro da plataforma.
-
-Escopo entregue:
-
-- Contatos de WhatsApp por telefone e loja.
-- Conversas vinculadas a contato, lead e vendedor responsavel quando houver lead correspondente.
-- Mensagens de conversa com direcao, tipo, status, conteudo e metadados basicos.
-- Persistencia de mensagens recebidas pelo webhook da Meta.
-- Registro de mensagem de saida no fluxo existente de geracao de link do WhatsApp.
-- Consulta autenticada de conversas e mensagens pelo backend.
-
-Pendencias:
-
-- Regras oficiais de roteamento multi-conta WhatsApp por empresa/loja.
-- Criacao automatica de lead para mensagem sem lead correspondente.
-- Tratamento de eventos de status da Meta.
-- Armazenamento/download de midias.
-
-## Sprint 3: Envio De Template WhatsApp
-
-Objetivo:
-
-- Permitir envio de templates aprovados pela WhatsApp Cloud API para iniciar ou retomar conversas com leads.
-
-Escopo entregue:
-
-- Servico de envio de template pela WhatsApp Cloud API.
-- Endpoint autenticado para disparar template para um lead.
-- Validacao basica de telefone do lead antes do envio.
-- Registro da mensagem enviada no historico da conversa.
-- Registro de falhas de envio como mensagem `FAILED`.
-- Vinculo do retorno bruto da API do WhatsApp a mensagem enviada.
-- Atualizacao do status inicial da mensagem para `SENT` ou `FAILED`.
-
-Pendencias:
-
-- Regras oficiais de idioma padrao por loja/template.
-- Mapeamento oficial entre placeholders do EAI e variaveis aprovadas no template da Meta.
-- Suporte a componentes de header, botoes e midia em templates.
-
-## Sprint 4: Listagem De Conversas
-
-Objetivo:
-
-- Permitir que o vendedor visualize suas conversas do WhatsApp dentro da plataforma EAI.
-
-Escopo entregue:
-
-- Endpoint autenticado de listagem de conversas.
-- Filtro para vendedor visualizar apenas conversas sob sua responsabilidade.
-- Ordenacao pela ultima interacao registrada.
-- Resumo de lead ou contato, telefone, ultima mensagem, horario da ultima interacao e quantidade de mensagens nao lidas.
-- Tela inicial de listagem de chats no frontend.
-
-Pendencias:
-
-- Fluxo oficial para marcar mensagens como lidas.
-- Regras oficiais para usuarios visualizarem conversas sem vendedor responsavel.
-
-## Sprint 6: Envio De Mensagens Pela Plataforma
-
-Objetivo:
-
-- Permitir que vendedores respondam mensagens diretamente pela plataforma, respeitando a janela de 24 horas do WhatsApp.
-
-Escopo entregue:
-
-- Envio de texto livre pela WhatsApp Cloud API a partir da conversa.
-- Bloqueio de texto livre quando a ultima mensagem recebida do cliente tiver mais de 24 horas.
-- Orientacao para uso de template aprovado quando a janela estiver expirada.
-- Persistencia da mensagem enviada na conversa.
-- Atualizacao de status da mensagem a partir de eventos da WhatsApp Cloud API.
-- Exibicao imediata da mensagem enviada no chat web.
+- Distribuicao automatica de leads.
+- SLA, follow-ups e notificacoes.
+- KPIs, dashboards e relatorios gerenciais.
+- Parsers dedicados para plataformas especificas.
+- Configuracao de etapas do funil por empresa ou loja.
+- Regras avancadas de auditoria, retencao e compliance.
 
 ## Versao 1
 
 Temas candidatos:
 
-- Endurecer permissoes e escopo de tenant.
-- Melhorar regras do ciclo de vida do lead.
-- Melhorar workflow de follow-up.
-- Melhorar dashboard e indicadores de performance comercial.
-- Melhorar parsers de importacao por e-mail.
-- Melhorar modularidade e usabilidade do frontend.
-- Adicionar seguranca e observabilidade de producao.
+- Implementar ou ajustar o sistema ao MVP confirmado.
+- Remover papeis fora do MVP ou isola-los de fluxos operacionais.
+- Endurecer permissoes e escopo de tenant conforme papeis definidos.
+- Consolidar o fluxo de pre-venda, vendedor e F&I.
+- Preparar arquitetura de pipeline para etapas configuraveis.
+- Organizar fila de conversas da loja.
+- Fortalecer historico de origem e duplicidade de leads.
+- Implementar fluxo administrativo LGPD basico.
 
 ## Versao 2
 
 Temas candidatos:
 
-- Relatorios avancados.
-- Workflows de notificacao.
-- Trilhas de auditoria.
+- Distribuicao automatica de leads.
+- SLA, follow-ups e notificacoes.
+- Relatorios gerenciais e KPIs.
+- Parsers dedicados para Webmotors, iCarros e outras origens.
+- Configuracao de funil por empresa ou loja.
+- Regras avancadas de auditoria e retencao.
 - Ferramentas de importacao e exportacao.
 - Permissoes avancadas.
-- Novas origens de lead e parsers.
-- Automacao de deploy em producao.
 
 ## Ideias Futuras
 
 Ideias ainda nao aprovadas para implementacao:
 
-- Integracao nativa com WhatsApp Business API.
-- Caixa de entrada de conversas de mao dupla.
-- Adapters de importacao por marketplace.
 - Aplicativo mobile.
 - BI avancado.
 - Qualificacao de leads assistida por IA.
 - Coaching automatico para vendedores.
 - Billing de assinatura.
+- Automacao avancada de operacao comercial.
