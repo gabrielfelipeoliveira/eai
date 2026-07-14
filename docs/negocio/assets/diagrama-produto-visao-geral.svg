@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">EAI - Visao Geral Do Produto</title>
+  <desc id="desc">Visao geral do MVP com atores, capacidades principais e resultados esperados.</desc>
+  <defs>
+    <style>
+      .bg{fill:#f7fafc}.panel{fill:#fff;stroke:#cbd5e1;stroke-width:2}.actor{fill:#e0f2fe;stroke:#0284c7}.core{fill:#ecfdf5;stroke:#059669}.result{fill:#fff7ed;stroke:#ea580c}.phase{fill:#f1f5f9;stroke:#64748b}.title{font:700 26px Arial,sans-serif;fill:#0f172a}.h{font:700 17px Arial,sans-serif;fill:#0f172a}.t{font:600 14px Arial,sans-serif;fill:#0f172a}.s{font:500 13px Arial,sans-serif;fill:#334155}.arrow{stroke:#64748b;stroke-width:2;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1280" height="720"/>
+  <text x="640" y="44" text-anchor="middle" class="title">EAI - Visao Geral Do MVP</text>
+
+  <rect x="55" y="86" width="250" height="560" rx="10" class="panel"/>
+  <text x="180" y="122" text-anchor="middle" class="h">Atores</text>
+  <rect x="88" y="152" width="184" height="42" rx="8" class="actor"/><text x="180" y="178" text-anchor="middle" class="t">Admin global</text>
+  <rect x="88" y="210" width="184" height="42" rx="8" class="actor"/><text x="180" y="236" text-anchor="middle" class="t">Gerente geral</text>
+  <rect x="88" y="268" width="184" height="42" rx="8" class="actor"/><text x="180" y="294" text-anchor="middle" class="t">Gerente de loja</text>
+  <rect x="88" y="326" width="184" height="42" rx="8" class="actor"/><text x="180" y="352" text-anchor="middle" class="t">Pre-venda</text>
+  <rect x="88" y="384" width="184" height="42" rx="8" class="actor"/><text x="180" y="410" text-anchor="middle" class="t">Vendedor</text>
+  <rect x="88" y="442" width="184" height="42" rx="8" class="actor"/><text x="180" y="468" text-anchor="middle" class="t">F&amp;I</text>
+
+  <rect x="365" y="86" width="550" height="560" rx="10" class="panel"/>
+  <text x="640" y="122" text-anchor="middle" class="h">Capacidades Do MVP</text>
+  <rect x="405" y="150" width="210" height="50" rx="8" class="core"/><text x="510" y="172" text-anchor="middle" class="s">Empresas, lojas</text><text x="510" y="190" text-anchor="middle" class="s">e usuarios</text>
+  <rect x="665" y="150" width="210" height="50" rx="8" class="core"/><text x="770" y="172" text-anchor="middle" class="s">Papeis e permissoes</text><text x="770" y="190" text-anchor="middle" class="s">do MVP</text>
+  <rect x="405" y="230" width="210" height="50" rx="8" class="core"/><text x="510" y="252" text-anchor="middle" class="s">Leads e duplicidade</text><text x="510" y="270" text-anchor="middle" class="s">por telefone/loja</text>
+  <rect x="665" y="230" width="210" height="50" rx="8" class="core"/><text x="770" y="252" text-anchor="middle" class="s">Pipeline com etapas</text><text x="770" y="270" text-anchor="middle" class="s">opcionais</text>
+  <rect x="405" y="310" width="210" height="50" rx="8" class="core"/><text x="510" y="332" text-anchor="middle" class="s">Conversas de</text><text x="510" y="350" text-anchor="middle" class="s">WhatsApp por loja</text>
+  <rect x="665" y="310" width="210" height="50" rx="8" class="core"/><text x="770" y="332" text-anchor="middle" class="s">Templates da empresa</text><text x="770" y="350" text-anchor="middle" class="s">e da loja</text>
+  <rect x="405" y="390" width="210" height="50" rx="8" class="core"/><text x="510" y="412" text-anchor="middle" class="s">Importacao por e-mail</text><text x="510" y="430" text-anchor="middle" class="s">e LeadSource</text>
+  <rect x="665" y="390" width="210" height="50" rx="8" class="core"/><text x="770" y="412" text-anchor="middle" class="s">Fluxo LGPD</text><text x="770" y="430" text-anchor="middle" class="s">basico</text>
+  <rect x="405" y="500" width="470" height="58" rx="8" class="phase"/><text x="640" y="524" text-anchor="middle" class="s">Segunda fase: distribuicao automatica, SLA, follow-ups,</text><text x="640" y="542" text-anchor="middle" class="s">notificacoes, KPIs, relatorios e funil configuravel</text>
+
+  <rect x="975" y="86" width="250" height="560" rx="10" class="panel"/>
+  <text x="1100" y="122" text-anchor="middle" class="h">Resultados</text>
+  <rect x="1002" y="170" width="196" height="56" rx="8" class="result"/><text x="1100" y="194" text-anchor="middle" class="s">Resposta mais rapida</text><text x="1100" y="212" text-anchor="middle" class="s">aos leads</text>
+  <rect x="1002" y="260" width="196" height="56" rx="8" class="result"/><text x="1100" y="284" text-anchor="middle" class="s">Responsabilidade clara</text><text x="1100" y="302" text-anchor="middle" class="s">por conversa</text>
+  <rect x="1002" y="350" width="196" height="56" rx="8" class="result"/><text x="1100" y="374" text-anchor="middle" class="s">Historico centralizado</text><text x="1100" y="392" text-anchor="middle" class="s">do lead</text>
+  <rect x="1002" y="440" width="196" height="56" rx="8" class="result"/><text x="1100" y="464" text-anchor="middle" class="s">Visibilidade operacional</text><text x="1100" y="482" text-anchor="middle" class="s">do funil</text>
+
+  <path class="arrow" d="M305 360 H365"/>
+  <path class="arrow" d="M915 360 H975"/>
+</svg>

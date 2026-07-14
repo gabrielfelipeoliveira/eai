@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="980" viewBox="0 0 1000 980" role="img" aria-labelledby="title desc">
+  <title id="title">Jornada Operacional Do Lead</title>
+  <desc id="desc">Fluxo operacional do lead no MVP, da captacao ao historico.</desc>
+  <defs>
+    <style>
+      .bg{fill:#f8fafc}.box{fill:#fff;stroke:#2563eb;stroke-width:2}.opt{fill:#f0fdf4;stroke:#16a34a;stroke-width:2}.hist{fill:#fff7ed;stroke:#ea580c;stroke-width:2}.title{font:700 26px Arial,sans-serif;fill:#0f172a}.label{font:700 16px Arial,sans-serif;fill:#0f172a}.small{font:500 13px Arial,sans-serif;fill:#334155}.arrow{stroke:#64748b;stroke-width:2;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1000" height="980"/>
+  <text x="500" y="44" text-anchor="middle" class="title">Jornada Operacional Do Lead</text>
+
+  <rect x="330" y="82" width="340" height="62" rx="8" class="box"/>
+  <text x="500" y="108" text-anchor="middle" class="label">Lead captado</text>
+  <text x="500" y="128" text-anchor="middle" class="small">WhatsApp, e-mail ou criacao manual</text>
+
+  <path class="arrow" d="M500 144 V184"/>
+  <rect x="330" y="184" width="340" height="62" rx="8" class="box"/>
+  <text x="500" y="210" text-anchor="middle" class="label">Verificacao de duplicidade</text>
+  <text x="500" y="230" text-anchor="middle" class="small">telefone/WhatsApp + loja</text>
+
+  <path class="arrow" d="M500 246 V286"/>
+  <rect x="330" y="286" width="340" height="62" rx="8" class="box"/>
+  <text x="500" y="312" text-anchor="middle" class="label">Lead registrado na loja</text>
+  <text x="500" y="332" text-anchor="middle" class="small">com origem e historico</text>
+
+  <path class="arrow" d="M500 348 V388"/>
+  <rect x="330" y="388" width="340" height="62" rx="8" class="box"/>
+  <text x="500" y="414" text-anchor="middle" class="label">Pipeline disponivel</text>
+  <text x="500" y="434" text-anchor="middle" class="small">vendedor assume ou gerente atribui</text>
+
+  <path class="arrow" d="M500 450 V490"/>
+  <rect x="330" y="490" width="340" height="62" rx="8" class="box"/>
+  <text x="500" y="516" text-anchor="middle" class="label">Atendimento e conversa</text>
+  <text x="500" y="536" text-anchor="middle" class="small">WhatsApp por loja e dono responsavel</text>
+
+  <path class="arrow" d="M500 552 V592"/>
+  <rect x="330" y="592" width="340" height="62" rx="8" class="box"/>
+  <text x="500" y="618" text-anchor="middle" class="label">Evolucao no funil</text>
+  <text x="500" y="638" text-anchor="middle" class="small">status atuais e etapas opcionais</text>
+
+  <path class="arrow" d="M500 654 V694"/>
+  <rect x="120" y="694" width="300" height="72" rx="8" class="opt"/>
+  <text x="270" y="722" text-anchor="middle" class="label">F&amp;I quando aplicavel</text>
+  <text x="270" y="742" text-anchor="middle" class="small">simulacao e proposta aprovada</text>
+
+  <rect x="580" y="694" width="300" height="72" rx="8" class="box"/>
+  <text x="730" y="722" text-anchor="middle" class="label">Desfecho comercial</text>
+  <text x="730" y="742" text-anchor="middle" class="small">venda, perda ou duplicidade</text>
+
+  <path class="arrow" d="M500 654 C500 678 270 670 270 694"/>
+  <path class="arrow" d="M500 654 C500 678 730 670 730 694"/>
+  <path class="arrow" d="M420 730 H580"/>
+
+  <path class="arrow" d="M730 766 C730 820 500 802 500 842"/>
+  <rect x="330" y="842" width="340" height="70" rx="8" class="hist"/>
+  <text x="500" y="870" text-anchor="middle" class="label">Historico operacional</text>
+  <text x="500" y="890" text-anchor="middle" class="small">origem, movimentos, duplicidades e LGPD</text>
+</svg>

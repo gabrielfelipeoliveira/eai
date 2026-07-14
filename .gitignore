@@ -27,5 +27,10 @@ frontend/vite.config.d.ts
 .env.*
 !.env.example
 
+# Local AI tooling
+.claude/
+.tokensave/
+
 # Docker
 docker/postgres/data/
+node_modules/

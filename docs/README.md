@@ -7,7 +7,9 @@ Esta pasta separa a documentacao por contexto para facilitar a responsabilidade 
 Use `docs/negocio/` para decisoes e contexto de produto. Esta pasta deve ser a referencia principal para Product Owner, stakeholders de negocio e agentes que estejam esclarecendo regras antes de implementar.
 
 - [Visao do produto](negocio/vision.md)
+- [Diagrama de produto](negocio/diagrama-produto.md)
 - [Regras de negocio](negocio/business-rules.md)
+- [Perguntas de negocio consolidadas](negocio/perguntas-negocio.md)
 - [Pendencias de produto](negocio/pendencias.md)
 - [Modelo de dominio](negocio/domain.md)
 - [Casos de uso](negocio/use-cases.md)
