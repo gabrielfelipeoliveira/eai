@@ -107,7 +107,7 @@ Dados de seed conhecidos:
 
 - Empresa padrao de desenvolvimento: `EAI Motors`.
 - Loja padrao de desenvolvimento: `EAI Motors Centro`.
-- Usuarios de desenvolvimento com perfis `ADMIN`, `MANAGER`, `SELLER`, `RECEPTIONIST` e `AUDITOR`.
+- Usuarios de desenvolvimento com perfis `ADMIN`, `MANAGER`, `SELLER` e `AUDITOR`.
 - Todos os usuarios seed usam a senha local `admin123`.
 - Templates de mensagem para primeiro contato, follow-up, convite para visita e proposta.
 - Configuracao de distribuicao `MANUAL`.

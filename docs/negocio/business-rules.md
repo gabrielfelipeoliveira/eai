@@ -61,7 +61,7 @@ Regras definidas:
 - `SELLER` pode visualizar leads disponiveis, assumir leads e acessar as conversas dos leads sob sua responsabilidade.
 - `PRE_SALES` gera o lead, faz o primeiro atendimento e envia templates iniciais.
 - `F_AND_I` atua nas etapas de simulacao e proposta, principalmente na simulacao de banco e na proposta aprovada.
-- `RECEPTIONIST` e `AUDITOR` ficam fora do escopo do MVP.
+- `AUDITOR` fica fora do escopo do MVP.
 
 ## Ciclo De Vida Do Lead
 

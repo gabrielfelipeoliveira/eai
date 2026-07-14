@@ -95,9 +95,11 @@ public class MetadataController {
         return List.of(
                 option(UserRole.ADMIN, "user.role.admin", "Administrador", 1, "error"),
                 option(UserRole.MANAGER, "user.role.manager", "Gerente", 2, "primary"),
-                option(UserRole.SELLER, "user.role.seller", "Vendedor", 3, "success"),
-                option(UserRole.RECEPTIONIST, "user.role.receptionist", "Recepcao", 4, "info"),
-                option(UserRole.AUDITOR, "user.role.auditor", "Auditoria", 5, "secondary")
+                option(UserRole.STORE_MANAGER, "user.role.store_manager", "Gerente de loja", 3, "primary"),
+                option(UserRole.SELLER, "user.role.seller", "Vendedor", 4, "success"),
+                option(UserRole.PRE_SALES, "user.role.pre_sales", "Pre-venda", 5, "info"),
+                option(UserRole.F_AND_I, "user.role.f_and_i", "F&I", 6, "secondary"),
+                option(UserRole.AUDITOR, "user.role.auditor", "Auditoria", 7, "secondary")
         );
     }
 

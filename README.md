@@ -69,7 +69,6 @@ Usuarios seed de desenvolvimento:
 - Admin: `admin@eai.com`
 - Gerente: `gerente@eai.com`
 - Vendedores: `ana@eai.com`, `bruno@eai.com`, `carla@eai.com`
-- Recepcao: `recepcao@eai.com`
 - Auditoria: `auditor@eai.com`
 - Senha: `admin123`
 
@@ -151,7 +150,7 @@ Endpoints do importador de leads por e-mail:
 
 O job importador IMAP fica desabilitado por padrao com `eai.email.importer.enabled=false` e usa `eai.email.importer.fixed-delay=60000`. Em producao, use `EAI_EMAIL_IMPORTER_ENABLED` e `EAI_EMAIL_IMPORTER_FIXED_DELAY`. Veja [Importador de leads por e-mail](docs/tecnico/email-importer.md) para setup IMAP, limitacoes, regras de duplicidade e seguranca de senha.
 
-Os perfis sao `ADMIN`, `MANAGER`, `SELLER`, `RECEPTIONIST` e `AUDITOR`.
+Os perfis sao `ADMIN`, `MANAGER`, `STORE_MANAGER`, `SELLER`, `PRE_SALES`, `F_AND_I` e `AUDITOR`.
 `ADMIN` pode gerenciar empresas, lojas, usuarios, vinculos de tenant e todos os leads. `MANAGER` pode visualizar usuarios e gerenciar lojas no escopo de sua empresa, e o acesso a leads e limitado a propria loja. `SELLER` fica limitado a propria loja.
 
 O seed de desenvolvimento cria uma empresa padrao, uma loja padrao, usuarios por perfil, templates de mensagem, configuracoes de distribuicao/SLA, conta IMAP de exemplo inativa, leads em diferentes etapas do funil, historico, notas, tags, comunicacoes e follow-ups.

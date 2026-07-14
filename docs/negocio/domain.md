@@ -90,7 +90,7 @@ Regras definidas:
 - `ADMIN` e global da plataforma.
 - `MANAGER` pertence a uma empresa e pode visualizar todas as lojas dessa empresa.
 - Usuarios operacionais devem operar dentro da loja em que estao alocados.
-- `RECEPTIONIST` e `AUDITOR` ficam fora do MVP.
+- `AUDITOR` fica fora do MVP.
 
 ### Lead
 

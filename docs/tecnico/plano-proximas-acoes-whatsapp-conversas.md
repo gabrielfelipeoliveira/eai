@@ -16,7 +16,6 @@ Prioridade: alta.
 - Definir status oficial de conversa ou confirmar que o filtro deve usar status da ultima mensagem.
 - Definir comportamento de conversas sem vendedor responsavel para `MANAGER` e `ADMIN`.
 - Definir se `AUDITOR` pode visualizar conversas e se o acesso tambem deve ser registrado.
-- Definir se `RECEPTIONIST` participa do atendimento por WhatsApp.
 - Definir escopo de gerente sem loja vinculada: toda empresa ou acesso bloqueado.
 - Definir politica de retencao dos registros de auditoria.
 - Definir se auditoria precisa de tela, exportacao ou apenas persistencia para consulta tecnica.
@@ -113,4 +112,4 @@ Entrega esperada:
 
 ## Proxima Acao Recomendada
 
-Comecar pela Fase 1, porque status de conversa, escopo de gerente e papeis `AUDITOR`/`RECEPTIONIST` afetam diretamente API, tela, testes e auditoria.
+Comecar pela Fase 1, porque status de conversa, escopo de gerente e papel `AUDITOR` afetam diretamente API, tela, testes e auditoria.

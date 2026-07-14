@@ -3,7 +3,9 @@ package com.eai.domain.user;
 public enum UserRole {
     ADMIN,
     MANAGER,
+    STORE_MANAGER,
     SELLER,
-    RECEPTIONIST,
+    PRE_SALES,
+    F_AND_I,
     AUDITOR
 }

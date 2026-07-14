@@ -43,7 +43,7 @@ PARCIALMENTE DEFINIDO
 Regras ja definidas:
 
 - Papeis do MVP: `ADMIN`, `MANAGER`, `STORE_MANAGER`, `SELLER`, `PRE_SALES` e `F_AND_I`.
-- `RECEPTIONIST` e `AUDITOR` ficam fora do MVP.
+- `AUDITOR` fica fora do MVP.
 - Cada usuario tem apenas um papel.
 - `ADMIN` e global.
 

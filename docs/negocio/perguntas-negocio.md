@@ -44,7 +44,7 @@ Decisoes adicionais:
 
 - `MANAGER` e `STORE_MANAGER` sao papeis separados.
 - Cada usuario tem apenas um papel.
-- `RECEPTIONIST` e `AUDITOR` devem ser removidos do escopo do MVP.
+- `AUDITOR` deve ser removido do escopo do MVP.
 
 ## 3. Escopo Por Empresa, Loja E Usuario
 

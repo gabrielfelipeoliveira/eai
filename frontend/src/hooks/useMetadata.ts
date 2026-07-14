@@ -40,9 +40,11 @@ export const fallbackMetadata: MetadataCatalog = {
   userRoles: [
     option('ADMIN', 'user.role.admin', 'Administrador', 1, 'error'),
     option('MANAGER', 'user.role.manager', 'Gerente', 2, 'primary'),
-    option('SELLER', 'user.role.seller', 'Vendedor', 3, 'success'),
-    option('RECEPTIONIST', 'user.role.receptionist', 'Recepcao', 4, 'info'),
-    option('AUDITOR', 'user.role.auditor', 'Auditoria', 5, 'secondary'),
+    option('STORE_MANAGER', 'user.role.store_manager', 'Gerente de loja', 3, 'primary'),
+    option('SELLER', 'user.role.seller', 'Vendedor', 4, 'success'),
+    option('PRE_SALES', 'user.role.pre_sales', 'Pre-venda', 5, 'info'),
+    option('F_AND_I', 'user.role.f_and_i', 'F&I', 6, 'secondary'),
+    option('AUDITOR', 'user.role.auditor', 'Auditoria', 7, 'secondary'),
   ],
   userStatuses: [
     option('ACTIVE', 'user.status.active', 'Ativo', 1, 'success'),

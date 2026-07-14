@@ -40,7 +40,6 @@ Credenciais seed de desenvolvimento:
 - Admin: `admin@eai.com`
 - Gerente: `gerente@eai.com`
 - Vendedores: `ana@eai.com`, `bruno@eai.com`, `carla@eai.com`
-- Recepcao: `recepcao@eai.com`
 - Auditoria: `auditor@eai.com`
 - Senha: `admin123`
 

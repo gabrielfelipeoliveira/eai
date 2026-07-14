@@ -115,3 +115,4 @@ Indicadores operacionais:
 
 - Definir se eventos de auditoria de conversas precisam aparecer em tela ou apenas ficar registrados tecnicamente.
 - Definir tratamento de midias de WhatsApp: apenas metadados ou download e armazenamento.
+- Definir o comportamento de `AUDITOR` no contexto de conversas.
