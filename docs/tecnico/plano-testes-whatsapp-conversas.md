@@ -16,6 +16,8 @@ Este plano cobre o comportamento ja implementado no fluxo de WhatsApp, conversas
 - Envio de texto livre dentro da janela de 24 horas.
 - Registro de falhas de envio.
 - Eventos de status da WhatsApp Cloud API.
+- Persistencia dos dados de status da Meta.
+- Armazenamento de midias WhatsApp em S3 ou bucket equivalente, quando implementado.
 - Auditoria de acesso de gerente/admin a detalhe e historico de conversas.
 
 ## Validacoes Automatizadas Atuais
@@ -57,6 +59,7 @@ Observacao:
 | Envio | Template aprovado | Envia e registra mensagem `OUTBOUND TEMPLATE` | Unitario backend |
 | Webhook | Mensagem recebida nova | Cria/atualiza contato, conversa e mensagem | Unitario/backend API |
 | Webhook | Evento de status | Atualiza mensagem por `externalMessageId` quando encontrada | Unitario backend |
+| Webhook | Mensagem com midia | Armazena arquivo em S3/bucket e persiste metadados/referencia | A cobrir |
 
 ## Casos Manuais Recomendados
 
@@ -154,7 +157,7 @@ Resultado esperado:
 
 - Gerente tentando acessar conversa de outra empresa/loja.
 - Usuario sem empresa ou loja tentando listar conversas quando perfil exige tenant.
-- `AUDITOR` tentando acessar conversas enquanto regra nao estiver definida.
+- `AUDITOR` tentando acessar conversas no MVP, ja que o papel fica fora do escopo atual.
 - Conversa sem vendedor responsavel na listagem de gerente/admin.
 - Conversa sem mensagens ao aplicar filtro de status.
 - Intervalo de datas invalido, como `startAt` maior que `endAt`.

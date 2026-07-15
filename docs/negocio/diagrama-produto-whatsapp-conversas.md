@@ -18,6 +18,7 @@ Objetivo do fluxo:
 - Gerente geral: usuario que acompanha conversas da empresa.
 - Gerente de loja: usuario que acompanha conversas da loja.
 - Admin: usuario global da plataforma.
+- Avaliador: papel formal do produto; permissoes especificas ainda devem ser detalhadas fora deste fluxo.
 - WhatsApp Cloud API: provedor externo de mensagens.
 
 ## Jornada Do Atendimento
@@ -78,6 +79,7 @@ flowchart TD
 | `SELLER` | Sim | Conversas sob sua responsabilidade | Sim, quando for dono responsavel |
 | `PRE_SALES` | Nao no MVP | Segunda fase para assumir fila | Nao no MVP |
 | `F_AND_I` | Apenas quando relacionado ao lead | Etapas de simulacao e proposta | Conforme fluxo do lead |
+| `AVALIADOR` | Conforme permissao especifica futura | Loja | A detalhar |
 
 ## Estados E Indicadores Visiveis
 
@@ -110,9 +112,7 @@ Indicadores operacionais:
 - Gerente pode responder somente quando assumir o lead.
 - Templates da empresa podem ser usados por todas as lojas.
 - Templates da loja sao especificos daquela loja.
-
-## Pendencias De Produto
-
-- Definir se eventos de auditoria de conversas precisam aparecer em tela ou apenas ficar registrados tecnicamente.
-- Definir tratamento de midias de WhatsApp: apenas metadados ou download e armazenamento.
-- Definir o comportamento de `AUDITOR` no contexto de conversas.
+- Eventos de auditoria ficam registrados tecnicamente no MVP.
+- Tela de auditoria fica para fase posterior.
+- Midias de WhatsApp devem ser armazenadas em S3 ou bucket equivalente.
+- `AUDITOR` fica fora do MVP; tela/escopo operacional de auditoria ficam para fase posterior.

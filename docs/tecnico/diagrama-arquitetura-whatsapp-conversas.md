@@ -14,13 +14,14 @@ Fora de escopo deste diagrama:
 
 - Regras oficiais de multi-conta WhatsApp por empresa/loja ainda pendentes.
 - Ciclo de vida proprio de status de conversa, ainda pendente de decisao de produto.
-- Download e armazenamento de midias.
+- Tela de auditoria e escopo operacional de `AUDITOR`, que ficam para fase posterior.
 
 ## Visao De Componentes
 
 ```mermaid
 flowchart LR
     Meta[WhatsApp Cloud API] -->|Webhook GET/POST| Webhook[WhatsAppWebhookController]
+    Bucket[(S3 ou bucket equivalente)] 
     WebApp[Frontend React/Vite] -->|REST autenticado| ConversationApi[ConversationController]
     WebApp -->|REST autenticado| LeadApi[Lead/Message Controllers]
 
@@ -61,6 +62,7 @@ flowchart LR
     LeadAdapter --> DB
     MetaTemplateClient --> Meta
     MetaTextClient --> Meta
+    MessageAdapter --> Bucket
 ```
 
 ## Fluxo De Mensagem Recebida
@@ -151,6 +153,9 @@ sequenceDiagram
 - `messageStatus` filtra o status da ultima mensagem, pois o dominio ainda nao possui status proprio de conversa.
 - Abertura de detalhe ou mensagens por `ADMIN` e `MANAGER` gera registro em `conversation_access_audits`.
 - A leitura de mensagens marca mensagens recebidas com status `RECEIVED` como `READ`.
+- Dados de status recebidos da Meta devem ser preservados para rastreio tecnico.
+- Midias de WhatsApp devem ser armazenadas em S3 ou bucket equivalente, com metadados e referencia persistidos no banco.
+- Tela de auditoria fica para fase posterior.
 
 ## Tabelas Envolvidas
 

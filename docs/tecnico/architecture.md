@@ -143,7 +143,7 @@ Endpoints de relatorio:
 - `GET /api/reports/leads/export.csv`
 - `GET /api/reports/sellers/export.csv`
 
-Os filtros de relatorio suportam periodo de criacao, loja, vendedor, origem e empresa para admins. `ADMIN`, `MANAGER`, `SELLER` e `AUDITOR` podem visualizar relatorios; vendedores ficam limitados aos proprios leads, enquanto gerentes e auditores seguem a visibilidade de empresa/loja.
+Os filtros de relatorio suportam periodo de criacao, loja, vendedor, origem e empresa para admins. Relatorios gerenciais completos ficam para segunda fase. Quando habilitados, a visibilidade deve seguir o escopo de `ADMIN`, `MANAGER`, `STORE_MANAGER` e demais papeis autorizados; vendedores ficam limitados aos proprios leads.
 
 ## Metadados E Internacionalizacao
 
@@ -183,13 +183,15 @@ Leads importados usam origem `EMAIL`; possiveis duplicidades sao marcadas com st
 
 A persistencia de conversas de WhatsApp e implementada em `com.eai.domain.conversation`, `com.eai.application.conversation`, `com.eai.infrastructure.persistence.conversation` e `com.eai.api.conversation`.
 
-A auditoria de acesso de gestores e admins a conversas fica no mesmo contexto de conversas, com entidade de dominio `ConversationAccessAudit`, porta de aplicacao `ConversationAccessAuditRepository` e adapter JPA em infraestrutura.
+A auditoria tecnica de acesso de gestores e admins a conversas fica no mesmo contexto de conversas, com entidade de dominio `ConversationAccessAudit`, porta de aplicacao `ConversationAccessAuditRepository` e adapter JPA em infraestrutura. Tela de auditoria e escopo operacional de `AUDITOR` ficam para fase posterior.
 
 O webhook publico continua em `com.eai.api.whatsapp` e delega para `WhatsAppWebhookService`, que extrai mensagens do payload da Meta e chama `ConversationService`. A resolucao de tenant do webhook usa as propriedades `eai.whatsapp.cloud-api.company-id` e `eai.whatsapp.cloud-api.store-id` enquanto a regra oficial de mapeamento por numero/conta nao estiver definida.
 
 Mensagens recebidas sao armazenadas como `INBOUND` com status `RECEIVED`. O fluxo existente de geracao de link de WhatsApp registra uma mensagem `OUTBOUND` do tipo `TEMPLATE` com status `SENT`, alem do registro legado em `lead_communications`.
 
-O envio ativo de templates aprovados pela WhatsApp Cloud API e implementado por `WhatsAppTemplateSenderService` na aplicacao e por `WhatsAppCloudTemplateClient` na infraestrutura. O endpoint `POST /api/leads/{id}/whatsapp-template` valida acesso ao lead, telefone do contato, template ativo da mesma loja, chama a Cloud API e registra uma mensagem `OUTBOUND` do tipo `TEMPLATE` com status inicial `SENT` ou `FAILED`. O envio de texto livre e implementado por `WhatsAppTextSenderService` e pelo endpoint `POST /api/conversations/{id}/messages`, limitado a conversas com mensagem recebida do cliente nos ultimos 24 horas. O retorno bruto do provedor fica em `conversation_messages.raw_payload` e o id externo, quando retornado, fica em `external_message_id`. Eventos de status recebidos pelo webhook atualizam a mensagem enviada correspondente pelo id externo.
+O envio ativo de templates aprovados pela WhatsApp Cloud API e implementado por `WhatsAppTemplateSenderService` na aplicacao e por `WhatsAppCloudTemplateClient` na infraestrutura. O endpoint `POST /api/leads/{id}/whatsapp-template` valida acesso ao lead, telefone do contato, template ativo da mesma loja, chama a Cloud API e registra uma mensagem `OUTBOUND` do tipo `TEMPLATE` com status inicial `SENT` ou `FAILED`. O envio de texto livre e implementado por `WhatsAppTextSenderService` e pelo endpoint `POST /api/conversations/{id}/messages`, limitado a conversas com mensagem recebida do cliente nos ultimos 24 horas. O retorno bruto do provedor fica em `conversation_messages.raw_payload` e o id externo, quando retornado, fica em `external_message_id`. Eventos de status recebidos pelo webhook atualizam a mensagem enviada correspondente pelo id externo e devem manter dados de status da Meta para rastreio tecnico.
+
+Midias de WhatsApp devem ser armazenadas em S3 ou bucket equivalente. O banco deve guardar metadados e referencia do arquivo armazenado, nao depender de payload bruto como unico registro da midia.
 
 Configuracoes de envio:
 
@@ -316,7 +318,7 @@ Navegacao autenticada:
 
 - O layout autenticado usa menu lateral com Dashboard, Leads, Pipeline, Agenda, Conversas, Relatorios, Atrasados, Usuarios, Empresas, Lojas, Templates, E-mails e Configuracoes.
 - Empresas e visivel apenas para `ADMIN`.
-- Relatorios e visivel para `ADMIN`, `MANAGER`, `SELLER` e `AUDITOR`.
+- Relatorios gerenciais completos ficam para segunda fase.
 - Atrasados, Lojas, Usuarios, Templates, E-mails e Configuracoes sao visiveis para `ADMIN` e `MANAGER`.
 - Criacao de usuarios e vinculo de tenant ficam disponiveis apenas para `ADMIN`.
 

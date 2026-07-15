@@ -21,11 +21,11 @@ Saidas:
 - Refresh token.
 - Tipo do token.
 
-Pre-condicoes:
+Regras:
 
-- Usuario existe.
-- Usuario esta ativo.
-- Senha corresponde ao hash armazenado.
+- Usuario inativo recebe mensagem generica.
+- Login em multiplas sessoes nao e permitido.
+- Deve existir no maximo uma sessao ativa por usuario.
 
 ### Renovar Sessao
 
@@ -33,14 +33,15 @@ Ator:
 
 - Usuario autenticado com refresh token.
 
-Entradas:
-
-- Refresh token.
-
 Saidas:
 
 - Novo token de acesso.
 - Novo refresh token.
+
+Regras:
+
+- Rotacao de refresh token revoga imediatamente o token anterior.
+- Sessao dura 30 dias.
 
 ### Logout
 
@@ -50,7 +51,7 @@ Ator:
 
 Saidas:
 
-- Sessao encerrada conforme politica de autenticacao definida.
+- Todas as sessoes do usuario revogadas.
 
 ## Tenancy E Usuarios
 
@@ -60,13 +61,11 @@ Ator:
 
 - `ADMIN`.
 
-Entradas:
+Regras:
 
-- Dados da empresa.
-
-Saidas:
-
-- Empresa criada ou atualizada.
+- Empresa e agrupador de lojas.
+- Empresa nao concentra dados fiscais/operacionais da loja.
+- Empresa nao pode ser desativada enquanto houver usuarios ativos vinculados.
 
 ### Gerenciar Lojas
 
@@ -77,23 +76,19 @@ Ator:
 
 Entradas:
 
-- Dados da loja.
+- Dados da loja, incluindo dados fiscais/operacionais quando aplicavel.
 
-Saidas:
+Regras:
 
-- Loja criada ou atualizada.
-
-Pre-condicoes:
-
-- Empresa existe.
-- Ator possui permissao para a empresa.
+- CNPJ, endereco, telefone e razao social pertencem a loja.
+- Desativacao de loja preserva dados e historico.
 
 ### Gerenciar Usuarios
 
 Ator:
 
 - `ADMIN`.
-- Papeis gerenciais conforme regra de permissao ainda pendente.
+- Gerente.
 
 Entradas:
 
@@ -102,14 +97,34 @@ Entradas:
 - Empresa.
 - Loja quando aplicavel.
 
+Regras:
+
+- Papeis conhecidos: `ADMIN`, `MANAGER`, `STORE_MANAGER`, `SELLER`, `PRE_SALES`, `F_AND_I` e `AVALIADOR`.
+- Usuario operacional possui loja quando necessario.
+- Desativacao de usuario revoga sessoes ativas.
+- Desativacao de vendedor com leads ativos em atendimento deve gerar aviso para redistribuicao gerencial.
+- Leads vendidos ou perdidos preservam historico do vendedor original.
+
+### Editar Proprio Perfil
+
+Ator:
+
+- Usuario autenticado.
+
 Saidas:
 
-- Usuario criado, atualizado, ativado ou desativado.
+- Perfil atualizado dentro dos limites de permissao.
 
-Pre-condicoes:
+### Redefinir Senha
 
-- Papel informado pertence ao MVP.
-- Usuario operacional possui loja quando necessario.
+Ator:
+
+- Proprio usuario.
+- `ADMIN` ou gerente em acao administrativa.
+
+Saidas:
+
+- Senha redefinida conforme politica de seguranca.
 
 ## Gestao De Leads
 
@@ -127,10 +142,10 @@ Entradas:
 
 - Empresa.
 - Loja.
-- Dados do cliente.
-- Veiculo de interesse.
+- Nome do lead.
+- Telefone WhatsApp.
+- Dados do anuncio: nome do carro, ano, modelo e valor.
 - Origem.
-- Mensagem original.
 - Usuario responsavel opcional.
 
 Saidas:
@@ -140,9 +155,11 @@ Saidas:
 
 Regras:
 
-- Pre-venda gera o lead; depois disso, o lead aparece como disponivel no pipeline.
-- Leads podem entrar por WhatsApp ou por e-mail.
+- Cliente e um lead.
+- Leads podem entrar por WhatsApp, e-mail ou criacao manual.
 - Duplicidade e avaliada por telefone/WhatsApp e loja.
+- Novo clique em anuncio cria novo lead, mantendo rastreio/historico relacionado ao contato anterior.
+- Veiculo estruturado nao pode bloquear criacao quando nao for encontrado.
 
 ### Listar E Pesquisar Leads
 
@@ -154,11 +171,13 @@ Ator:
 - `SELLER`.
 - `PRE_SALES`.
 - `F_AND_I`, quando participar das etapas de simulacao ou proposta.
+- `AVALIADOR`, conforme permissao especifica futura.
 
 Entradas:
 
 - Parametros de paginacao.
 - Filtros opcionais.
+- Busca textual.
 
 Saidas:
 
@@ -166,11 +185,13 @@ Saidas:
 
 Regras:
 
+- Ordenacao padrao: por chegada.
+- Busca textual deve ser normalizada.
 - `ADMIN` visualiza globalmente.
 - `MANAGER` visualiza a empresa.
 - `STORE_MANAGER` visualiza a loja.
 - `SELLER` visualiza leads disponiveis e leads sob sua responsabilidade.
-- Escopo de `PRE_SALES` e `F_AND_I` deve respeitar loja e etapa operacional.
+- Vendedores nao podem ver leads de outros vendedores.
 
 ### Assumir Lead Disponivel
 
@@ -178,13 +199,10 @@ Ator:
 
 - `SELLER`.
 
-Entradas:
-
-- Identidade do lead disponivel.
-
 Saidas:
 
 - Lead atribuido ao vendedor.
+- Historico registrado.
 
 Pre-condicoes:
 
@@ -197,11 +215,6 @@ Ator:
 
 - `MANAGER`.
 - `STORE_MANAGER`.
-
-Entradas:
-
-- Identidade do lead.
-- Identidade do usuario responsavel.
 
 Saidas:
 
@@ -233,28 +246,36 @@ Saidas:
 
 Regras:
 
+- Pipeline pode alterar status por arrastar e soltar.
+- Nenhuma coluna exige dados adicionais antes de aceitar o lead no MVP.
 - `VISIT_SCHEDULED`, `SIMULATING` e `PROPOSAL_APPROVED` sao etapas opcionais.
-- `SIMULATING` e `PROPOSAL_APPROVED` ficam conceitualmente entre negociacao e proposta enviada, sem ordem obrigatoria.
 - `F_AND_I` participa das etapas de simulacao e proposta.
+- Lead vendido ou perdido pode voltar a ficar ativo por recontato.
 
-### Registrar Duplicidade
+### Editar Dados Comerciais Do Lead
 
 Ator:
 
-- Sistema.
-- Usuario com acesso ao lead, quando revisao manual for necessaria.
+- Usuario com acesso ao lead.
 
-Entradas:
+Regras:
 
-- Novo lead recebido.
-- Telefone/WhatsApp.
-- Loja.
+- Depois do primeiro contato, pode ser alterado o carro/anuncio e o nome do lead.
+- Lead pode ter outros numeros vinculados.
+- Valor de venda e motivo de perda exigem permissao especifica para vendedor.
 
-Saidas:
+### Registrar Notas, Observacoes E Tags
 
-- Novo lead marcado como duplicado quando houver correspondencia.
-- Historico da nova chegada registrado.
-- Relacao com lead ou conversa anterior preservada.
+Ator:
+
+- Usuario com acesso ao lead.
+
+Regras:
+
+- Notas e observacoes sao editaveis.
+- Observacoes criam historico.
+- Tags sao globais, cadastraveis e fixas.
+- Um lead nao pode ter tag duplicada do mesmo tipo.
 
 ## Pipeline
 
@@ -271,7 +292,7 @@ Saidas:
 Regras:
 
 - Etapas opcionais aparecem visualmente no MVP.
-- Nenhum status atual precisa ser ocultado no MVP.
+- Diferenciacao visual entre etapas opcionais e obrigatorias sera decidida na fase de UX.
 - Arquitetura deve permitir etapas configuraveis em fase futura.
 
 ## WhatsApp E Conversas
@@ -282,23 +303,19 @@ Ator:
 
 - WhatsApp Cloud API.
 
-Entradas:
-
-- Payload do webhook.
-- Numero de WhatsApp da loja.
-
 Saidas:
 
 - Contato criado ou atualizado.
 - Conversa criada ou atualizada.
 - Mensagem registrada.
+- Midia armazenada em S3/bucket quando aplicavel.
 
 Regras:
 
 - Cada loja deve ter apenas um numero de WhatsApp.
 - Conversa pertence a loja do numero.
-- Quando nao houver vendedor responsavel, a conversa fica na fila da loja.
-- Quando houver lead correspondente, a conversa deve ser vinculada ao lead.
+- Quando nao houver vendedor responsavel, conversa fica na fila da loja.
+- Dados de status da Meta devem ser salvos.
 
 ### Listar Conversas
 
@@ -309,17 +326,13 @@ Ator:
 - `STORE_MANAGER`.
 - `SELLER`.
 
-Saidas:
-
-- Lista de conversas do escopo do usuario.
-
 Regras:
 
 - `ADMIN` visualiza globalmente.
 - `MANAGER` visualiza conversas da empresa.
 - `STORE_MANAGER` visualiza conversas da loja.
 - `SELLER` visualiza conversas dos leads sob sua responsabilidade.
-- Conversas sem vendedor ficam disponiveis na fila da loja.
+- Eventos de auditoria ficam registrados tecnicamente no MVP.
 
 ### Assumir Conversa Ou Lead Da Fila
 
@@ -328,11 +341,6 @@ Ator:
 - `SELLER`.
 - `MANAGER`, quando assumir o lead.
 - `STORE_MANAGER`, dentro da loja.
-
-Saidas:
-
-- Conversa passa a ter dono responsavel.
-- Lead relacionado passa a ter responsavel quando aplicavel.
 
 Regras:
 
@@ -346,39 +354,26 @@ Ator:
 
 - Usuario com acesso ao lead ou conversa.
 
-Entradas:
-
-- Identidade do lead ou conversa.
-- Identidade do template.
-
-Saidas:
-
-- Mensagem enviada ou falha registrada.
-- Comunicacao registrada.
-
 Regras:
 
-- Templates da empresa podem ser usados por todas as lojas da empresa.
-- Templates da loja sao especificos daquela loja.
+- Fora da janela de 24 horas, usuario deve usar template aprovado.
+- Nome do template no EAI deve ser exatamente o aprovado na Meta.
+- Placeholders/componentes da Meta devem ser preenchidos automaticamente.
+- Idioma padrao sem `languageCode`: `pt-BR`.
 
-### Enviar Texto Livre
+### Gerenciar Templates
 
 Ator:
 
-- Dono responsavel da conversa.
+- `ADMIN`.
+- Gerente geral.
 
-Entradas:
+Regras:
 
-- Identidade da conversa.
-- Conteudo textual.
-
-Saidas:
-
-- Mensagem enviada ou falha registrada.
-
-Pre-condicoes:
-
-- Janela de 24 horas do WhatsApp permite texto livre.
+- Templates podem ser da empresa ou da loja.
+- Templates usados podem ser excluidos apenas por exclusao logica.
+- Gerar link conta como primeiro contato.
+- Links gerados sao imutaveis.
 
 ## Importacao De Leads Por E-Mail
 
@@ -386,25 +381,37 @@ Pre-condicoes:
 
 Ator:
 
-- Usuario com permissao para a conta de e-mail.
+- `ADMIN`.
+- Gerente geral.
 - Scheduler, quando configurado.
-
-Entradas:
-
-- Conta de e-mail.
-- Mensagens recebidas.
 
 Saidas:
 
 - Leads criados.
 - Duplicidades marcadas quando aplicavel.
 - Historico registrado.
+- Mensagens importadas marcadas como lidas.
 
 Regras:
 
 - Plataformas como Webmotors e iCarros devem ser registradas como `LeadSource`.
 - Duplicidade usa telefone/WhatsApp e loja.
-- Entrada duplicada gera novo lead marcado como duplicado e preserva relacao com conversa ou lead anterior.
+- Devem ser preservados apenas dados do lead extraidos do e-mail.
+- Testes com falha notificam administradores.
+- Importacoes com falha devem ser tentadas novamente.
+- Excluir conta preserva historico de importacao.
+
+## Dados Padrao
+
+### Gerenciar Seeds E Dados De Demonstracao
+
+Regras:
+
+- Dados de seed nao devem existir em deploys de producao.
+- Dados de demonstracao devem ser separados de seeds obrigatorios.
+- Seeds/documentacao de papeis devem incluir `AVALIADOR`.
+- Templates padrao do MVP serao definidos depois.
+- Templates padrao podem ser aprovados ou alterados por `ADMIN` e gerente geral.
 
 ## LGPD
 
@@ -414,24 +421,18 @@ Ator:
 
 - `ADMIN`.
 
-Entradas:
-
-- Identificacao do titular.
-- Tipo de solicitacao.
-- Justificativa ou base operacional.
-
 Saidas:
 
 - Solicitacao registrada.
-- Dados acessados, corrigidos, bloqueados, anonimizados ou eliminados quando aplicavel.
-- Acao executada registrada para auditoria.
+- Acao manual registrada.
 
 Regras:
 
+- No MVP, nao implementar automacoes irreversiveis de LGPD.
 - A exclusao nao deve ser sempre fisica.
 - Sem expurgo automatico no MVP.
 - Solicitacoes devem ser tratadas caso a caso.
-- Automacoes irreversiveis dependem de validacao juridica.
+- Automacoes irreversiveis dependem de validacao juridica em fase posterior.
 
 ## Segunda Fase
 
@@ -444,3 +445,5 @@ Os casos abaixo ficam fora do MVP:
 - Visualizar KPIs e relatorios gerenciais completos.
 - Configurar etapas do funil por empresa ou loja.
 - Executar parsers dedicados por marketplace.
+- Usar tela de auditoria.
+- Definir escopo operacional de `AUDITOR`.

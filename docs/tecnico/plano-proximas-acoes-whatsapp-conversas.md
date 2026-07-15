@@ -1,115 +1,97 @@
 # Plano De Proximas Acoes: WhatsApp E Conversas
 
-Este plano organiza proximas acoes tecnicas e de produto para evoluir o fluxo de WhatsApp e conversas sem inventar regras ainda nao aprovadas.
+Este plano organiza proximas acoes tecnicas para evoluir o fluxo de WhatsApp e conversas com base nas decisoes de produto ja consolidadas.
 
-## Objetivos
+## Decisoes Ja Consolidadas
 
-- Fechar pendencias de produto que bloqueiam regras definitivas.
-- Endurecer seguranca, auditoria e rastreabilidade.
-- Melhorar a experiencia de gestao de conversas.
-- Reduzir divida tecnica nos pontos de maior risco.
+- Cada loja tem apenas um numero WhatsApp.
+- Numero WhatsApp pertence a loja.
+- Conversas pertencem a loja.
+- Conversa sem vendedor fica na fila da loja.
+- Gerente responde somente se assumir o lead; caso contrario supervisiona.
+- Eventos de auditoria ficam registrados tecnicamente no MVP.
+- Tela de auditoria fica para fase posterior.
+- `AUDITOR` fica fora do MVP.
+- Midias de WhatsApp devem ser armazenadas em S3 ou bucket equivalente.
+- Dados de status da Meta devem ser salvos.
+- Nome do template no EAI deve ser exatamente o aprovado na Meta.
+- Placeholders/componentes da Meta devem ser preenchidos automaticamente.
+- Telefone deve aceitar formatos suportados pelo WhatsApp/Meta.
 
-## Fase 1: Decisoes De Produto
-
-Prioridade: alta.
-
-- Definir status oficial de conversa ou confirmar que o filtro deve usar status da ultima mensagem.
-- Definir comportamento de conversas sem vendedor responsavel para `MANAGER` e `ADMIN`.
-- Definir se `AUDITOR` pode visualizar conversas e se o acesso tambem deve ser registrado.
-- Definir escopo de gerente sem loja vinculada: toda empresa ou acesso bloqueado.
-- Definir politica de retencao dos registros de auditoria.
-- Definir se auditoria precisa de tela, exportacao ou apenas persistencia para consulta tecnica.
-
-Entrega esperada:
-
-- Atualizar `docs/negocio/business-rules.md`.
-- Atualizar `docs/negocio/use-cases.md`.
-- Remover ou marcar como resolvidas as pendencias respondidas em `docs/negocio/pendencias.md`.
-
-## Fase 2: Endurecimento De Autorizacao
+## Fase 1: Alinhamento Tecnico
 
 Prioridade: alta.
 
-- Extrair politica reutilizavel de acesso a conversas para reduzir duplicacao futura.
-- Cobrir `GET /api/conversations/{id}` com teste de auditoria para admin e gerente.
-- Cobrir cenarios negativos: vendedor tentando abrir conversa de outro vendedor, gerente fora do tenant, usuario sem tenant.
-- Avaliar se filtros devem ser aplicados no repositorio em vez de memoria quando volume crescer.
-- Padronizar erro para conversa inacessivel sem vazar existencia do recurso quando necessario.
+- Revisar o modelo atual de conversas contra as regras consolidadas.
+- Documentar como o numero WhatsApp sera mapeado para empresa/loja quando houver multiplas contas.
+- Garantir que politicas de acesso usem papel e tenant de forma reutilizavel.
+- Garantir que vendedor nao consiga acessar leads/conversas de outros vendedores.
+- Garantir que gerente/admin gere auditoria tecnica ao abrir detalhe/historico quando aplicavel.
 
 Entrega esperada:
 
-- Testes unitarios e/ou de API para os principais perfis.
-- Politica de autorizacao documentada em arquitetura.
+- Documentacao tecnica atualizada.
+- Testes de autorizacao e auditoria revisados.
 
-## Fase 3: Gestao E Auditoria
+## Fase 2: Midias WhatsApp
 
-Prioridade: media.
+Prioridade: alta.
 
-- Criar endpoint administrativo para consulta de `conversation_access_audits`, se aprovado pelo produto.
-- Adicionar filtros de auditoria por periodo, ator, conversa, vendedor e loja.
-- Avaliar exportacao CSV de auditoria usando padrao de relatorios existente.
-- Definir mascaramento de dados sensiveis em auditoria e relatorios.
-- Adicionar metrica operacional de conversas auditadas por gerente/admin.
+- Modelar armazenamento de midias em S3 ou bucket equivalente.
+- Persistir metadados e referencia do arquivo armazenado.
+- Evitar depender apenas de payload bruto da Meta para recuperar midias.
+- Definir tratamento de falhas de download/upload de midia.
+- Adicionar testes de webhook para mensagens com midia.
 
 Entrega esperada:
 
-- API de consulta de auditoria ou decisao registrada de manter auditoria apenas em banco.
-- Testes de persistencia/API quando houver endpoint.
+- Plano tecnico de schema/adapters.
+- Testes de aplicacao e webhook cobrindo midia.
+
+## Fase 3: Templates E Status Meta
+
+Prioridade: alta.
+
+- Garantir envio usando nome do template exatamente aprovado na Meta.
+- Preencher placeholders automaticamente com dados de lead, loja, vendedor e entidades aplicaveis.
+- Persistir dados de status recebidos da Meta.
+- Testar transicoes de status por `externalMessageId`.
+
+Entrega esperada:
+
+- Testes de envio de template.
+- Testes de webhook de status.
+- Documentacao de mapeamento de placeholders.
 
 ## Fase 4: Experiencia Da Tela De Conversas
 
 Prioridade: media.
 
-- Exibir nome do vendedor responsavel na lista de conversas quando usuario for gerente/admin.
-- Adicionar estado de filtros ativos e limpeza mais explicita.
+- Exibir nome do vendedor responsavel na lista de conversas para gerente/admin.
+- Adicionar estado de filtros ativos e limpeza explicita.
 - Validar comportamento responsivo com muitos filtros e conversas.
 - Melhorar estados de erro da listagem e do envio de mensagens.
-- Avaliar busca textual por cliente, telefone ou conteudo da ultima mensagem, se aprovado.
+- Avaliar busca textual por cliente, telefone ou conteudo da ultima mensagem.
 
 Entrega esperada:
 
 - Tela de conversas mais adequada para rotina de gestao.
 - Build e lint frontend passando.
 
-## Fase 5: WhatsApp Cloud API
+## Fase 5: Observabilidade E Operacao
 
 Prioridade: media.
 
-- Definir mapeamento oficial de numero WhatsApp para empresa/loja.
-- Suportar multiplas contas/numeros quando regra for aprovada.
-- Definir comportamento para mensagens recebidas sem lead correspondente.
-- Definir tratamento de midias: apenas metadados ou download e armazenamento.
-- Revisar validacao de telefone para E.164 ou regra brasileira.
-
-Entrega esperada:
-
-- Documentacao de regra aprovada.
-- Migrations novas quando houver novo modelo de conta/canal.
-- Testes de webhook e envio cobrindo multi-conta.
-
-## Fase 6: Observabilidade E Operacao
-
-Prioridade: media.
-
-- Adicionar logs estruturados para envio, falha de envio, webhook e auditoria.
+- Adicionar logs estruturados para envio, falha de envio, webhook, midia e auditoria.
 - Definir dashboards tecnicos para falhas da WhatsApp Cloud API.
-- Monitorar volume de mensagens e crescimento de tabelas.
+- Monitorar volume de mensagens, eventos e midias.
 - Planejar indices adicionais se filtros passarem para consultas em banco.
-- Avaliar politica de arquivamento de mensagens antigas.
+- Avaliar politica de arquivamento de mensagens WhatsApp.
 
-Entrega esperada:
+## Fora Do MVP
 
-- Runbook operacional basico.
-- Indicadores de saude do fluxo WhatsApp.
-
-## Riscos E Cuidados
-
-- Nao criar status de conversa sem decisao de produto.
-- Nao alterar migrations existentes; qualquer schema novo deve usar nova migration.
-- Nao colocar regras de perfil em controllers.
-- Nao expor entidades JPA diretamente na API.
-- Nao assumir regra de multi-conta WhatsApp antes de aprovacao.
-
-## Proxima Acao Recomendada
-
-Comecar pela Fase 1, porque status de conversa, escopo de gerente e papel `AUDITOR` afetam diretamente API, tela, testes e auditoria.
+- Tela de auditoria.
+- Escopo operacional de `AUDITOR`.
+- Distribuicao automatica.
+- SLA, follow-ups e notificacoes.
+- Relatorios gerenciais completos.

@@ -34,6 +34,8 @@ Configuracoes IMAP comuns:
 Use `POST /api/email-accounts/{id}/test` depois de criar a conta para validar credenciais e conectividade.
 Use `POST /api/email-accounts/{id}/sync` para importar manualmente mensagens nao lidas.
 
+Contas de e-mail podem ser gerenciadas por `ADMIN` e gerente geral.
+
 ## Scheduler
 
 O job automatico fica desabilitado por padrao:
@@ -57,7 +59,9 @@ Quando habilitado, o scheduler importa contas ativas a cada intervalo configurad
 
 ## Parsing
 
-O parser atual e generico. Ele tenta extrair:
+O parser atual e generico. Ele tenta extrair dados do lead. Para o MVP, devem ser preservados apenas os dados do lead extraidos do e-mail, nao o e-mail original completo.
+
+Ele tenta extrair:
 
 - nome do cliente
 - telefone
@@ -72,11 +76,15 @@ A camada de aplicacao usa a interface `EmailParser` e uma implementacao generica
 
 ## Regra De Duplicidade
 
-Durante a importacao, se existir um lead com o mesmo telefone normalizado e o mesmo veiculo na mesma loja nos ultimos 7 dias, o lead importado e criado com status `DUPLICATED`.
+Durante a importacao, se existir um lead com o mesmo telefone/WhatsApp na mesma loja, o lead importado deve indicar duplicidade.
 
 Se nenhuma duplicidade for encontrada, o lead importado e criado com origem `EMAIL` e status `NEW`.
 
-Ambos os caminhos preservam o corpo original do e-mail em `originalMessage` e registram historico do lead. Entradas de historico criadas pelo scheduler usam um registro de sistema sem usuario.
+Cada chegada deve ficar registrada no historico. Entrada duplicada fica na mesma conversa anterior, mas gera novo lead marcado como duplicado. Entradas de historico criadas pelo scheduler usam um registro de sistema sem usuario quando aplicavel.
+
+Mensagens importadas devem ser marcadas como lidas na conta original. Importacoes com falha devem ser tentadas novamente e testes com falha devem notificar administradores.
+
+Excluir uma conta de e-mail deve preservar o historico de importacao.
 
 ## Seguranca De Senhas
 
@@ -89,6 +97,6 @@ A implementacao atual usa a interface `EncryptionService` com uma implementacao 
 - Apenas IMAP e suportado.
 - O parser generico pode nao reconhecer templates fora do padrao.
 - Mensagens sao lidas de `INBOX`.
-- O leitor atual busca mensagens nao lidas e mensagens recebidas depois de `lastReadAt`, mas nao marca mensagens como lidas.
+- O leitor deve marcar mensagens importadas como lidas na conta original; se a implementacao atual ainda nao fizer isso, tratar como divergencia tecnica a corrigir.
 - Anexos sao ignorados.
 - E-mails somente em HTML podem ter extracao limitada ate que um parser HTML-para-texto seja adicionado.

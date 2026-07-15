@@ -39,14 +39,20 @@ Padrao conhecido:
 - Requisicoes protegidas usam `Authorization: Bearer <token>`.
 - Login e refresh sao publicos.
 - Health check, OpenAPI e metadados de apresentacao sao publicos.
+- Usuario inativo deve receber mensagem generica.
+- Login em multiplas sessoes nao deve ser permitido.
+- Deve existir no maximo uma sessao ativa por usuario.
+- Rotacao de refresh token revoga imediatamente o token anterior.
+- Sessao dura 30 dias.
+- Logout revoga todas as sessoes do usuario.
+- Desativacao de usuario revoga sessoes ativas.
 
 Status:
-PENDENTE DE DEFINIÇÃO
+PARCIALMENTE DEFINIDO
 
 Perguntas para o Software Architect:
 
 - Refresh tokens devem continuar no corpo da resposta ou migrar para cookies HttpOnly?
-- O TTL dos tokens deve variar por ambiente ou papel?
 - O Swagger UI deve continuar publico em producao?
 
 ## Metadados De Apresentacao
@@ -145,15 +151,12 @@ Perguntas para o Software Architect:
 - Usar query parameters para filtros.
 - Nomes de filtros devem seguir o vocabulario da API, nao nomes de colunas do banco.
 - Filtros de data/hora devem usar ISO 8601.
-- Filtros de texto devem documentar a semantica de busca quando aprovada.
+- Busca textual de leads deve ser normalizada.
+- Ordenacao padrao da listagem de leads deve ser por chegada.
+- Filtros obrigatorios de tela nao sao relevantes para o MVP neste momento.
 
 Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Quais filtros sao obrigatorios para as telas do MVP?
-- Busca textual deve ser exata, parcial, sem acento ou normalizada?
+DEFINIDO PARA LEADS
 
 ## Respostas de Erro
 
@@ -244,6 +247,11 @@ Convencoes:
 - O disparo de template exige autenticacao e acesso ao lead.
 - O disparo de template usa o template ativo da mesma loja do lead, envia o nome do template para a WhatsApp Cloud API e registra a resposta bruta do provedor na mensagem da conversa.
 - Eventos de status recebidos pelo webhook atualizam mensagens enviadas pelo `externalMessageId` retornado pela Meta.
+- Dados de status de mensagem recebidos da Meta devem ser salvos pelo sistema.
+- Midias de WhatsApp devem ser armazenadas em S3 ou bucket equivalente, com metadados/referencia persistidos.
+- Placeholders/componentes de templates da Meta devem ser preenchidos automaticamente com dados disponiveis.
+- O idioma padrao para template sem `languageCode` e `pt-BR`.
+- O nome do template no EAI deve ser exatamente o nome aprovado na Meta.
 - DTOs de conversa e mensagem nao expoem entidades de persistencia.
 - Direcao, tipo e status usam codigos tecnicos expostos tambem por `GET /api/metadata`.
 

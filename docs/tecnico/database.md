@@ -1,6 +1,6 @@
 # Banco de Dados
 
-Este documento descreve o modelo conceitual do banco e as regras de ownership. Ele nao inventa novas colunas de negocio.
+Este documento descreve o modelo conceitual do banco e as regras de ownership. Ele nao substitui migrations e nao autoriza mudancas de schema fora do fluxo aprovado.
 
 ## Tecnologia
 
@@ -28,119 +28,97 @@ Regras:
 
 Observacao:
 
-- A base ainda e descartavel em ambiente local. Por decisao de desenvolvimento, as migrations iniciais foram consolidadas em uma unica `V1` com schema completo e dados de demonstracao.
+- A base ainda e descartavel em ambiente local.
 - Depois que a base deixar de ser descartavel, migrations ja aplicadas nao devem ser modificadas; novas alteracoes devem ser criadas em novas versoes.
 
 ## Tabelas Conceituais
 
-Grupos atuais:
+Grupos atuais e alvo:
 
 - Identidade e autenticacao: `users`, `user_roles`, `refresh_tokens`.
 - Tenancy: `companies`, `stores`.
-- Leads: `leads`, `lead_history`, `lead_notes`, `lead_tags`.
-- Mensageria: `message_templates`, `lead_communications`.
-- Conversas de WhatsApp: `whatsapp_contacts`, `conversations`, `conversation_messages`, `conversation_message_events`.
-- Importacao por e-mail: `email_accounts`.
-- Distribuicao e SLA: `lead_distribution_config`, `lead_sla_policy`.
-- Follow-ups: `follow_up_tasks`.
+- Leads: `leads`, `lead_history`, `lead_notes`, `lead_tags` e estruturas futuras para observacoes e telefones vinculados.
+- Item e veiculo: `items` e `vehicles` ou equivalentes futuros.
+- Mensageria: `message_templates` e comunicacoes de lead.
+- WhatsApp: contatos, conversas, mensagens, eventos de status, midias e auditoria tecnica.
+- E-mail: contas de e-mail e historico de importacao.
+- LGPD: solicitacoes e acoes aplicadas.
+- SLA e follow-ups: estruturas existentes ou futuras de apoio, sem regra operacional obrigatoria no MVP.
 
 ## Relacionamentos Conceituais
 
-- Uma empresa tem muitas lojas.
-- Uma loja pertence a uma empresa.
-- Um usuario pode estar vinculado a empresa e loja.
-- Um usuario pode ter multiplos papeis.
-- Um refresh token pertence a um usuario.
-- Um lead pertence a uma empresa e a uma loja.
-- Um lead pode estar atribuido a um usuario.
-- Um lead tem muitos registros de historico.
-- Um lead tem muitas notas.
-- Um lead tem muitas tags.
-- Um lead tem muitas comunicacoes.
-- Um lead tem muitas tarefas de follow-up.
-- Um contato de WhatsApp pertence a uma empresa e loja.
-- Uma conversa pertence a um contato de WhatsApp e pode estar vinculada a um lead.
+- Empresa possui lojas.
+- Empresa e agrupador; loja e unidade operacional.
+- Loja possui dados fiscais/operacionais como CNPJ, endereco, telefone e razao social.
+- Usuario pertence a empresa e, quando operacional, a loja.
+- Usuario possui um unico papel.
+- Lead pertence a empresa e loja.
+- Lead pode ter historico, notas, observacoes, tags e telefones vinculados.
+- Lead pode se relacionar a Item e Veiculo estruturado.
+- Item pertence ao usuario.
+- Veiculo e filho de Item.
+- Uma conversa pertence a loja e pode estar vinculada a um lead.
 - Uma conversa tem muitas mensagens.
 - Uma mensagem de conversa pode ter muitos eventos de status recebidos do provedor.
-- Um template de mensagem pertence a uma empresa e loja.
+- Uma mensagem de conversa pode ter metadados e referencia de midia armazenada em S3/bucket.
+- Um template de mensagem pertence a empresa ou loja.
+- Template usado deve suportar exclusao logica.
 - Uma comunicacao de lead pode referenciar um template.
-- Uma conta de e-mail pertence a uma empresa e loja.
-- Configuracao de distribuicao e escopada por loja.
-- Politica de SLA e escopada por loja.
+- Uma conta de e-mail pertence a empresa e loja.
+- Historico de importacao de e-mail deve ser preservado mesmo se a conta for excluida/desativada.
+- Configuracao de distribuicao e politica de SLA sao escopadas por loja e ficam como apoio/fase posterior.
+- Solicitacoes LGPD devem registrar executor, data e acao aplicada.
 
 ## Constraints e Indices
 
-Constraints conhecidas:
+Constraints conhecidas ou desejadas:
 
 - Chaves primarias usam UUID.
-- Campos com comportamento de enum usam constraints `CHECK`.
+- Campos com comportamento de enum usam constraints `CHECK` ou tipo equivalente definido em migration.
 - Valor de venda deve ser nulo ou nao negativo.
-- Configuracao de distribuicao e unica por empresa e loja.
-- Politica de SLA e unica por empresa e loja.
+- Moeda deve aceitar valores alem de BRL; BRL e o default de negocio.
+- Telefone deve seguir E.164 quando aplicavel.
 - Contatos de WhatsApp sao unicos por loja e telefone.
 - Conversas sao unicas por contato e por lead quando houver lead vinculado.
-- Auditorias de acesso de conversa registram apenas papeis `ADMIN` e `MANAGER`.
-- Minutos de SLA devem ser positivos.
-- Chaves estrangeiras reforcam relacionamentos entre tabelas.
+- Tags devem impedir duplicidade do mesmo tipo no mesmo lead.
+- Refresh token anterior deve ser revogado quando houver rotacao.
+- Sessao ativa deve respeitar a regra de no maximo uma sessao por usuario.
+- Templates usados devem preservar historico por exclusao logica.
+- Auditorias de acesso de conversa registram acesso tecnico de perfis gerenciais e admins enquanto a tela de auditoria fica para fase posterior.
 
-Indices conhecidos:
+Indices conhecidos ou desejados:
 
-- Leads possuem indices por empresa, loja, status, origem, usuario responsavel, data de criacao, veiculo e telefone.
-- Historico, notas e tags possuem indices orientados ao lead.
-- Conversas de WhatsApp possuem indices por empresa, loja, lead, vendedor responsavel e data de atualizacao.
-- Mensagens de conversa possuem indices por conversa, data de criacao, status e identidade externa da mensagem.
-- Eventos de mensagens de conversa possuem indices por mensagem, identidade externa da mensagem, status e data do evento.
-- Auditorias de acesso de conversa possuem indices por conversa, ator, empresa, loja e data de acesso.
-- Tabelas de distribuicao e SLA possuem indices orientados a loja.
-- Tarefas de follow-up possuem indices por lead, usuario/status/vencimento e vencimento.
+- Leads por empresa, loja, status, origem, usuario responsavel, data de criacao, veiculo/item e telefone.
+- Historico, notas, observacoes e tags por lead.
+- Conversas de WhatsApp por empresa, loja, lead, vendedor responsavel e data de atualizacao.
+- Mensagens de conversa por conversa, data de criacao, status e identidade externa da mensagem.
+- Eventos de mensagens por mensagem, identidade externa, status e data do evento.
+- Importacoes de e-mail por conta, loja, status e data.
+- Solicitacoes LGPD por empresa, titular quando aplicavel, status e data.
 
-## Ownership dos Dados
+## Seeds E Dados De Demonstracao
 
-- O codigo de aplicacao e dono do comportamento de negocio.
-- Migrations Flyway sao donas do formato do schema.
-- Adapters de persistencia sao donos do mapeamento entre dominio e entidades de banco.
-- DTOs de API nunca devem expor entidades de persistencia diretamente.
+Regras definidas:
 
-## Dados de Seed
-
-Dados de seed conhecidos:
-
-- Empresa padrao de desenvolvimento: `EAI Motors`.
-- Loja padrao de desenvolvimento: `EAI Motors Centro`.
-- Usuarios de desenvolvimento com perfis `ADMIN`, `MANAGER`, `SELLER` e `AUDITOR`.
-- Todos os usuarios seed usam a senha local `admin123`.
-- Templates de mensagem para primeiro contato, follow-up, convite para visita e proposta.
-- Configuracao de distribuicao `MANUAL`.
-- Politica de SLA local com 15 minutos para atribuicao e 30 minutos para primeiro contato.
-- Conta IMAP de exemplo inativa.
-- Leads de demonstracao cobrindo os status principais do funil.
-- Historico, notas, tags, comunicacoes por WhatsApp e tarefas de follow-up para exercitar os fluxos existentes.
-
-Status:
-PENDENTE DE DEFINIÇÃO
-
-Perguntas para o Product Owner:
-
-- Dados de seed devem existir em deploys de producao?
-- Templates padrao devem ser criados por empresa, por loja ou globalmente?
-- Dados de demonstracao devem ser separados de seeds obrigatorios do sistema?
+- Dados de seed nao devem existir em deploys de producao.
+- Dados de demonstracao devem ser separados de seeds obrigatorios.
+- Producao nao deve receber dados de seed/demonstracao automaticamente.
+- Seeds/documentacao de papeis devem incluir `ADMIN`, `MANAGER`, `STORE_MANAGER`, `SELLER`, `PRE_SALES`, `F_AND_I` e `AVALIADOR`.
+- `AUDITOR` fica fora do MVP.
+- Templates padrao necessarios para o MVP serao definidos depois.
+- Templates padrao podem ser aprovados ou alterados por `ADMIN` e gerente geral.
 
 ## Conflitos Conhecidos
 
-Nenhum conflito tecnico conhecido nesta base consolidada.
+- O banco/codigo existente pode ainda conter estruturas antigas de SLA, follow-up, relatorios, dashboard ou `AUDITOR`. Esses itens devem ser tratados como legado/apoio ou fase posterior quando conflitarem com o MVP consolidado.
+- Qualquer divergencia entre migrations existentes e regras consolidadas deve virar nova migration futura; nao alterar migrations ja aplicadas fora de base descartavel.
 
-Nota:
-
-- `lead_history.user_id` permite valor nulo para suportar registros de sistema, como importacoes automatizadas.
-
-## Decisoes Futuras de Banco
-
-Status:
-PENDENTE DE DEFINIÇÃO
+## Decisoes Futuras De Banco
 
 Perguntas para o Software Architect:
 
 - Testes de integracao devem usar PostgreSQL/Testcontainers em vez de H2?
 - Convencoes de nomes de banco devem ser documentadas em detalhe?
-- Colunas de auditoria devem ser padronizadas em todas as tabelas?
-- Soft delete deve ser introduzido para algumas entidades?
+- Colunas de auditoria devem ser padronizadas em todas tabelas?
+- Soft delete deve ser introduzido como padrao para entidades historicas alem de templates?
+- Como modelar fisicamente Item, Veiculo, observacoes historicas, telefones adicionais e midias WhatsApp sem quebrar o dominio existente?

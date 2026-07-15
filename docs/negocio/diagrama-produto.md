@@ -15,6 +15,7 @@ flowchart LR
         SELLER["Vendedor"]
         PRE_SALES["Pre-venda"]
         FANDI["F&I"]
+        AVALIADOR["Avaliador"]
     end
 
     subgraph EAI["EAI - Plataforma SaaS Automotiva"]
@@ -41,6 +42,7 @@ flowchart LR
     SELLER --> AUTH
     PRE_SALES --> AUTH
     FANDI --> AUTH
+    AVALIADOR --> AUTH
 
     AUTH --> TENANT
     TENANT --> LEADS
@@ -88,15 +90,15 @@ flowchart TD
 
 | Contexto | Capacidades documentadas |
 | --- | --- |
-| Identidade e acesso | Login, renovacao de sessao, logout e controle por papeis conhecidos. |
-| Tenancy | Empresas, lojas, usuarios e escopo de visibilidade por tenant. |
-| Leads | Criacao, pesquisa, atualizacao, atribuicao manual, status, notas, tags, historico e duplicidade por telefone/loja. |
-| Pipeline | Visualizacao de leads agrupados por status, incluindo etapas opcionais do MVP. |
-| Conversas de WhatsApp | Conversas por loja, fila da loja quando sem vendedor e dono responsavel. |
-| Comunicacao | Templates globais da empresa, templates especificos da loja e envio por WhatsApp. |
-| Importacao por e-mail | Contas IMAP por loja, sincronizacao manual, origem `LeadSource` e duplicidade por telefone/loja. |
-| LGPD | Fluxo administrativo basico para exclusao, anonimizacao ou bloqueio quando aplicavel. |
-| Segunda fase | Distribuicao automatica, SLA, follow-ups, notificacoes, KPIs, relatorios gerenciais e funil configuravel. |
+| Identidade e acesso | Login, sessao unica, refresh token rotativo, logout global e controle por papeis conhecidos. |
+| Tenancy | Empresa como agrupador, lojas como unidades operacionais, usuarios e escopo de visibilidade por tenant. |
+| Leads | Criacao, pesquisa normalizada, atualizacao, atribuicao manual, status, notas, observacoes, tags globais, historico e duplicidade por telefone/loja. |
+| Pipeline | Visualizacao de leads agrupados por status e movimentacao por arrastar e soltar. |
+| Conversas de WhatsApp | Conversas por loja, fila da loja quando sem vendedor, dono responsavel e armazenamento de midias em S3/bucket. |
+| Comunicacao | Templates da empresa, templates especificos da loja, placeholders automaticos e envio por WhatsApp. |
+| Importacao por e-mail | Contas IMAP por loja, sincronizacao com retentativas, origem `LeadSource`, mensagens marcadas como lidas e duplicidade por telefone/loja. |
+| LGPD | Fluxo administrativo basico e manual por `ADMIN`, sem automacoes irreversiveis no MVP. |
+| Segunda fase | Distribuicao automatica, SLA, follow-ups, notificacoes, KPIs, relatorios gerenciais, funil configuravel, tela de auditoria e `AUDITOR`. |
 
 ## Limites Conhecidos
 

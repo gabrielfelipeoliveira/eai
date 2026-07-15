@@ -210,7 +210,7 @@ Regras:
 - F&I pode estar relacionado ao lead nas etapas de simulacao/proposta.
 - Eventos de auditoria devem ficar registrados tecnicamente no MVP.
 - Tela de auditoria fica para fase posterior.
-- Escopo de `AUDITOR` em conversas fica fora do momento atual.
+- Escopo de `AUDITOR` em conversas fica fora do MVP.
 
 ### Midias
 
