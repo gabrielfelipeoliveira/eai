@@ -8,6 +8,8 @@ Use `docs/negocio/` para decisoes e contexto de produto. Esta pasta deve ser a r
 
 - [Visao do produto](negocio/vision.md)
 - [Diagrama de produto](negocio/diagrama-produto.md)
+- [Diagrama de produto consolidado do Trello](negocio/diagrama-produto-consolidado-trello.md)
+- [Decisoes consolidadas do Trello](negocio/decisoes-consolidadas-trello.md)
 - [Regras de negocio](negocio/business-rules.md)
 - [Perguntas de negocio consolidadas](negocio/perguntas-negocio.md)
 - [Pendencias de produto](negocio/pendencias.md)
@@ -20,6 +22,7 @@ Use `docs/negocio/` para decisoes e contexto de produto. Esta pasta deve ser a r
 Use `docs/tecnico/` para decisoes e contexto de engenharia. Esta pasta deve ser a referencia principal para Software Architect, desenvolvedores e agentes que estejam avaliando arquitetura, API, banco, setup ou operacao tecnica.
 
 - [Arquitetura](tecnico/architecture.md)
+- [Diagrama de arquitetura consolidada do Trello](tecnico/diagrama-arquitetura-consolidada-trello.md)
 - [Diretrizes de API](tecnico/api.md)
 - [Banco de dados](tecnico/database.md)
 - [Guia de desenvolvimento](tecnico/development-guide.md)
