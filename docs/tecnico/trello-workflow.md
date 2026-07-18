@@ -21,6 +21,7 @@ Fluxo recomendado:
 4. `Aguardando validacao PO`
 5. `Resolvido e documentado`
 6. `Bloqueado ou revisar escopo`
+7. `Cancelado ou descartado`
 
 Significado das listas:
 
@@ -30,6 +31,7 @@ Significado das listas:
 - `Aguardando validacao PO`: existe proposta de regra, escopo ou solucao aguardando confirmacao.
 - `Resolvido e documentado`: decisao registrada, documentacao atualizada e derivados criados ou dispensados explicitamente.
 - `Bloqueado ou revisar escopo`: usar apenas para bloqueio real, conflito de decisao, escopo indefinido ou item que voltou para revisao.
+- `Cancelado ou descartado`: item encerrado sem execucao. Exige comentario explicando motivo, responsavel pela decisao e impacto em cards relacionados.
 
 Cards que ja tiveram decisao registrada, documentacao atualizada e tarefas derivadas criadas nao devem permanecer em `Bloqueado ou revisar escopo`.
 
@@ -46,6 +48,7 @@ Fluxo recomendado:
 7. `Aguardando Code Review`
 8. `Aguardando Teste`
 9. `Concluido`
+10. `Cancelado ou descartado`
 
 Regras de uso:
 
@@ -53,6 +56,7 @@ Regras de uso:
 - Cards puramente tecnicos podem ir direto de `BACKLOG` para `Pronto para desenvolvimento`.
 - UX nao deve decidir regra de negocio nova. Se surgir regra ausente durante UX, crie ou reabra card no board de negocio.
 - Desenvolvimento nao deve iniciar regra de produto sem documentacao oficial ou link para decisao aprovada.
+- Cards cancelados nao devem ser deletados. Mova para `Cancelado ou descartado` e registre o motivo em comentario.
 
 ## Ligacao Entre Cards
 
@@ -63,6 +67,15 @@ Card de negocio -> Card UX -> Card Dev -> PR/commit -> Concluido
 ```
 
 Quando um elo nao for necessario, registre isso no card anterior. Exemplo: `UX dispensado: ajuste tecnico sem impacto visual`.
+
+Todo card derivado deve ter links de origem:
+
+- Card `[UX]` deve apontar para o card de negocio e para a documentacao oficial.
+- Card `[Dev]` deve apontar para o card de negocio, para o card UX quando existir e para a documentacao oficial.
+- Card `[QA]` deve apontar para o card dev ou UX que esta validando.
+- Card de negocio deve receber comentario de fechamento com os cards derivados criados ou explicitamente dispensados.
+
+Nao remova links historicos quando o escopo mudar. Adicione um novo comentario explicando a mudanca.
 
 ## Prefixos
 
@@ -161,6 +174,34 @@ Criterios de aceite:
 Riscos/pendencias:
 - ...
 ```
+
+## Cancelamento
+
+Cards nao devem ser deletados como rotina. Excluir card remove contexto historico e dificulta auditoria futura.
+
+Quando um item for cancelado, descarte ou substituido, mova o card para `Cancelado ou descartado` e registre um comentario neste formato:
+
+```text
+## Cancelamento
+
+Motivo: ...
+
+Decisao tomada por: ...
+Data da decisao: ...
+
+Impacto em negocio: ...
+Impacto em UX: ...
+Impacto em desenvolvimento: ...
+Impacto em documentacao: ...
+
+Cards relacionados:
+- ...
+
+Substituido por:
+- ...
+```
+
+Se o card cancelado ja tiver cards derivados, comente tambem nos derivados ou mova os derivados para `Cancelado ou descartado`, mantendo os links cruzados.
 
 ## Regra De Fechamento
 
