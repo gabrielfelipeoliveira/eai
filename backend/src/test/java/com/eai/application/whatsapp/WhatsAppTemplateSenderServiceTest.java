@@ -64,7 +64,7 @@ class WhatsAppTemplateSenderServiceTest {
     @Test
     @SuppressWarnings("unchecked")
     void sendsTemplateAndRecordsSentMessageWithProviderReturn() {
-        Lead lead = arrangeBaseLead("11999990000");
+        Lead lead = arrangeBaseLead("+5511999990000");
         when(templateClient.sendTemplate(eq("5511999990000"), eq("primeiro_contato"), eq("pt_BR"), any()))
                 .thenReturn(new WhatsAppTemplateProviderResult(true, 200, "wamid.123", "{\"messages\":[{\"id\":\"wamid.123\"}]}"));
         when(conversationService.recordOutboundMessage(eq(lead), eq(ConversationMessageType.TEMPLATE), eq(ConversationMessageStatus.SENT), eq("wamid.123"), any(), any()))
@@ -87,7 +87,7 @@ class WhatsAppTemplateSenderServiceTest {
 
     @Test
     void recordsFailedMessageWhenProviderRejectsSend() {
-        Lead lead = arrangeBaseLead("11999990000");
+        Lead lead = arrangeBaseLead("+5511999990000");
         when(templateClient.sendTemplate(eq("5511999990000"), eq("primeiro_contato"), eq("en_US"), any()))
                 .thenReturn(new WhatsAppTemplateProviderResult(false, 400, null, "{\"error\":{\"message\":\"Invalid template\"}}"));
         when(conversationService.recordOutboundMessage(eq(lead), eq(ConversationMessageType.TEMPLATE), eq(ConversationMessageStatus.FAILED), eq(null), any(), any()))

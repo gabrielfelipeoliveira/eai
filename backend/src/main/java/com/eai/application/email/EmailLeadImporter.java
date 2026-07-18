@@ -2,6 +2,7 @@ package com.eai.application.email;
 
 import com.eai.application.lead.LeadHistoryRepository;
 import com.eai.application.lead.LeadRepository;
+import com.eai.application.lead.PhoneNormalizer;
 import com.eai.domain.email.EmailAccount;
 import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadHistory;
@@ -99,7 +100,7 @@ public class EmailLeadImporter {
                 account.getCompanyId(),
                 account.getStoreId(),
                 customerName,
-                normalizePhone(parsedLead.customerPhone()),
+                PhoneNormalizer.normalize(parsedLead.customerPhone()),
                 parsedLead.customerEmail(),
                 null,
                 parsedLead.vehicleInterest(),
@@ -115,12 +116,5 @@ public class EmailLeadImporter {
                 null,
                 null
         );
-    }
-
-    private String normalizePhone(String phone) {
-        if (phone == null || phone.isBlank()) {
-            return null;
-        }
-        return phone.replaceAll("\\D", "");
     }
 }

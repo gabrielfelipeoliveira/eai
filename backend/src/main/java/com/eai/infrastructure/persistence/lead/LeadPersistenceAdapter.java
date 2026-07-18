@@ -1,8 +1,10 @@
 package com.eai.infrastructure.persistence.lead;
 
+import com.eai.application.item.ItemRepository;
 import com.eai.application.lead.LeadRepository;
 import com.eai.application.lead.LeadSearchCriteria;
 import com.eai.application.lead.PageResult;
+import com.eai.domain.item.Item;
 import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadStatus;
 import jakarta.persistence.criteria.Predicate;
@@ -44,9 +46,11 @@ public class LeadPersistenceAdapter implements LeadRepository {
     );
 
     private final SpringDataLeadRepository repository;
+    private final ItemRepository itemRepository;
 
-    public LeadPersistenceAdapter(SpringDataLeadRepository repository) {
+    public LeadPersistenceAdapter(SpringDataLeadRepository repository, ItemRepository itemRepository) {
         this.repository = repository;
+        this.itemRepository = itemRepository;
     }
 
     @Override
@@ -161,6 +165,13 @@ public class LeadPersistenceAdapter implements LeadRepository {
     }
 
     private Lead toDomain(LeadJpaEntity entity) {
+        Item item = null;
+        if (entity.getItemId() != null) {
+            ItemRepository.ItemWithVehicle itemWithVehicle = itemRepository.findById(entity.getItemId()).orElse(null);
+            if (itemWithVehicle != null) {
+                item = itemWithVehicle.item();
+            }
+        }
         return new Lead(
                 entity.getId(),
                 entity.getCompanyId(),
@@ -170,6 +181,8 @@ public class LeadPersistenceAdapter implements LeadRepository {
                 entity.getCustomerEmail(),
                 entity.getCustomerCity(),
                 entity.getVehicleInterest(),
+                entity.getItemId(),
+                item,
                 entity.getSource(),
                 entity.getOriginalMessage(),
                 entity.getStatus(),
@@ -180,7 +193,8 @@ public class LeadPersistenceAdapter implements LeadRepository {
                 entity.getFirstContactAt(),
                 entity.getLastContactAt(),
                 entity.getLostReason(),
-                entity.getSaleValue()
+                entity.getSaleValue(),
+                entity.getSaleCurrency()
         );
     }
 
@@ -194,6 +208,7 @@ public class LeadPersistenceAdapter implements LeadRepository {
         entity.setCustomerEmail(lead.getCustomerEmail());
         entity.setCustomerCity(lead.getCustomerCity());
         entity.setVehicleInterest(lead.getVehicleInterest());
+        entity.setItemId(lead.getItemId());
         entity.setSource(lead.getSource());
         entity.setOriginalMessage(lead.getOriginalMessage());
         entity.setStatus(lead.getStatus());
@@ -205,6 +220,7 @@ public class LeadPersistenceAdapter implements LeadRepository {
         entity.setLastContactAt(lead.getLastContactAt());
         entity.setLostReason(lead.getLostReason());
         entity.setSaleValue(lead.getSaleValue());
+        entity.setSaleCurrency(lead.getSaleCurrency());
         return entity;
     }
 }

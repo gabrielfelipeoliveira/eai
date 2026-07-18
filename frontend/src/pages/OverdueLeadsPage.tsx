@@ -2,6 +2,7 @@ import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Box, Chip, LinearProgress, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
+import { vehicleLabel } from '../features/leads/leadDisplay';
 import { listOverdueLeads } from '../services/leadService';
 import { listUsers } from '../services/userService';
 
@@ -53,7 +54,7 @@ export function OverdueLeadsPage() {
                     {lead.customerPhone ?? lead.customerEmail ?? '-'}
                   </Typography>
                 </TableCell>
-                <TableCell>{lead.vehicleInterest ?? '-'}</TableCell>
+                <TableCell>{vehicleLabel(lead)}</TableCell>
                 <TableCell>{userName(lead.assignedToUserId)}</TableCell>
                 <TableCell>
                   <Stack direction="row" flexWrap="wrap" gap={0.75}>

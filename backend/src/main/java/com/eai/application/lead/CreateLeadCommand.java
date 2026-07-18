@@ -17,6 +17,8 @@ public record CreateLeadCommand(
         String originalMessage,
         UUID assignedToUserId,
         String lostReason,
-        BigDecimal saleValue
+        BigDecimal saleValue,
+        String saleCurrency,
+        LeadItemCommand item
 ) {
 }

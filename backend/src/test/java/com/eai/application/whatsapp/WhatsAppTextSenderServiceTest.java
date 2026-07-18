@@ -97,7 +97,7 @@ class WhatsAppTextSenderServiceTest {
     }
 
     private WhatsAppContact contact() {
-        return new WhatsAppContact(CONTACT_ID, COMPANY_ID, STORE_ID, null, "11999990000", "Cliente", Instant.now(), Instant.now());
+        return new WhatsAppContact(CONTACT_ID, COMPANY_ID, STORE_ID, null, "+5511999990000", "Cliente", Instant.now(), Instant.now());
     }
 
     private ConversationMessage message(ConversationMessageDirection direction, ConversationMessageStatus status, String content, Instant createdAt) {

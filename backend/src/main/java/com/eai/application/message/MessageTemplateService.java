@@ -125,7 +125,7 @@ public class MessageTemplateService {
         String message = MessageTemplateRenderer.render(template.getContent(), Map.of(
                 "cliente", valueOrEmpty(lead.getCustomerName()),
                 "telefone", valueOrEmpty(lead.getCustomerPhone()),
-                "veiculo", valueOrEmpty(lead.getVehicleInterest()),
+                "veiculo", valueOrEmpty(vehicleDescription(lead)),
                 "vendedor", valueOrEmpty(seller.getName()),
                 "loja", valueOrEmpty(store.getName()),
                 "cidade", valueOrEmpty(lead.getCustomerCity())
@@ -222,9 +222,19 @@ public class MessageTemplateService {
         if (digits.isBlank()) {
             throw new IllegalArgumentException("Lead phone is required to generate WhatsApp link");
         }
-        if (digits.startsWith("55") && digits.length() > 11) {
-            return digits;
+        return digits;
+    }
+
+    private String vehicleDescription(Lead lead) {
+        if (lead.getItem() == null || lead.getItem().getVehicle() == null) {
+            return lead.getVehicleInterest();
         }
-        return "55" + digits;
+        String name = lead.getItem().getVehicle().getName();
+        String model = lead.getItem().getVehicle().getModel();
+        Integer year = lead.getItem().getVehicle().getYear();
+        String description = String.join(" ", java.util.stream.Stream.of(name, model, year == null ? null : year.toString())
+                .filter(value -> value != null && !value.isBlank())
+                .toList());
+        return description.isBlank() ? lead.getVehicleInterest() : description;
     }
 }

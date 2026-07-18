@@ -59,7 +59,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-002`: em andamento. Ajustar tenancy: empresa agrupadora, loja operacional e desativacao sem apagar historico.
 - `EAI-003`: concluido. Sessao unica por usuario, refresh token com TTL de 30 dias, rotacao, logout/revogacao por desativacao e access token recusado para usuario inativo.
 - `EAI-004`: implementado em 2026-07-18. Alinhar status de lead e pipeline com etapas opcionais de F&I.
-- `EAI-005`: backlog. Modelar Item, Veiculo, telefone E.164 e moeda de venda.
+- `EAI-005`: implementado em 2026-07-18. Modelar Item, Veiculo, telefone E.164 e moeda de venda.
 - `EAI-006`: backlog. Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
 - `EAI-007`: backlog. Ajustar visibilidade, ordenacao e busca normalizada de leads.
 - `EAI-008`: backlog. Ajustar notas, observacoes, tags globais e historico de lead.
@@ -123,6 +123,13 @@ Validacao EAI-004 em 2026-07-18:
 - Backend `rtk mvn clean verify` passou com 58 testes, 0 falhas.
 - Frontend `rtk npm run build` passou. O Vite manteve warning existente de chunk JS acima de 500 kB apos minificacao.
 - Validacao manual por codigo: filtros, chips, seletor de status, cards de contagem e colunas do pipeline usam a lista local atualizada e labels de `useMetadata`; drag/drop do pipeline continua chamando somente `changeLeadStatus` sem campos obrigatorios extras.
+
+Validacao EAI-005 em 2026-07-18:
+- Lead referencia somente `item_id`; veiculo estruturado fica em `item.vehicle`, nao como relacionamento direto do Lead.
+- Telefones de leads manuais e importados por e-mail sao normalizados para E.164.
+- `saleCurrency` usa `BRL` como padrao e aceita outros codigos ISO de 3 letras.
+- Backend `rtk mvn clean verify` passou com 62 testes, 0 falhas.
+- Frontend `rtk npm run build` passou. O Vite manteve warning existente de chunk JS acima de 500 kB apos minificacao.
 
 ## Lacunas Ja Registradas Em Cards
 

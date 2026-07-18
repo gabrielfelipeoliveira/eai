@@ -17,6 +17,16 @@ export interface LeadPayload {
   lastContactAt?: string;
   lostReason?: string;
   saleValue?: number;
+  saleCurrency?: string;
+  item?: {
+    name?: string;
+    vehicle?: {
+      name?: string;
+      year?: number;
+      model?: string;
+      value?: number;
+    };
+  };
 }
 
 export interface LeadFilters {

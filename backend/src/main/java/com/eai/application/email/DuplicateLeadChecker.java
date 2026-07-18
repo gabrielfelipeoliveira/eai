@@ -1,6 +1,7 @@
 package com.eai.application.email;
 
 import com.eai.application.lead.LeadRepository;
+import com.eai.application.lead.PhoneNormalizer;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -22,10 +23,6 @@ public class DuplicateLeadChecker {
             return false;
         }
         Instant since = Instant.now().minus(7, ChronoUnit.DAYS);
-        return leadRepository.existsByStoreIdAndPhoneAndVehicleSince(storeId, normalizePhone(phone), vehicleInterest.trim(), since);
-    }
-
-    private String normalizePhone(String phone) {
-        return phone.replaceAll("\\D", "");
+        return leadRepository.existsByStoreIdAndPhoneAndVehicleSince(storeId, PhoneNormalizer.normalize(phone), vehicleInterest.trim(), since);
     }
 }
