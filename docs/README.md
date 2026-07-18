@@ -26,6 +26,7 @@ Use `docs/tecnico/` para decisoes e contexto de engenharia. Esta pasta deve ser 
 - [Diretrizes de API](tecnico/api.md)
 - [Banco de dados](tecnico/database.md)
 - [Guia de desenvolvimento](tecnico/development-guide.md)
+- [Fluxo de trabalho no Trello](tecnico/trello-workflow.md)
 - [Importador de leads por e-mail](tecnico/email-importer.md)
 - [ADRs](tecnico/adr/)
 
