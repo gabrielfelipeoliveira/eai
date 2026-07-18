@@ -107,10 +107,7 @@ public class WhatsAppTextSenderService {
             throw new IllegalArgumentException("Conversation phone is required to send WhatsApp text");
         }
         String digits = phone.replaceAll("\\D", "");
-        if (digits.startsWith("55") && digits.length() > 11) {
-            return validatePhone(digits);
-        }
-        return validatePhone("55" + digits);
+        return validatePhone(digits);
     }
 
     private String validatePhone(String phone) {

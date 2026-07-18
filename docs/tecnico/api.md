@@ -221,6 +221,32 @@ Perguntas para o Software Architect:
 - O OpenAPI deve ser gerado somente a partir dos controllers ou enriquecido com anotacoes explicitas?
 - Exemplos de API devem ser mantidos manualmente?
 
+## Leads
+
+Contrato atual de `POST /api/leads` e `PUT /api/leads/{id}`:
+
+- `customerPhone` aceita E.164 ou telefone brasileiro com DDD; o backend persiste em E.164.
+- `saleCurrency` e opcional e usa `BRL` quando ausente ou em branco.
+- `vehicleInterest` continua como texto legado/fallback.
+- `item` e opcional. No MVP, quando informado, pode conter `vehicle` como detalhe estruturado do item.
+- O Lead referencia somente `itemId`; `vehicle` nao e relacionamento direto do Lead.
+
+Exemplo:
+
+```json
+{
+  "item": {
+    "name": "Anuncio Civic",
+    "vehicle": {
+      "name": "Honda Civic",
+      "year": 2021,
+      "model": "Touring",
+      "value": 128900.00
+    }
+  }
+}
+```
+
 ## Conversas De WhatsApp
 
 Endpoints atuais:

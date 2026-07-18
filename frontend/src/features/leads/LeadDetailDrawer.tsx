@@ -27,6 +27,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { vehicleLabel } from './leadDisplay';
 import { useAuth } from '../../hooks/useAuth';
 import { useMetadata } from '../../hooks/useMetadata';
 import { apiErrorMessage } from '../../services/api';
@@ -297,7 +298,7 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
     return [
       ['{cliente}', currentLead.customerName ?? ''],
       ['{telefone}', currentLead.customerPhone ?? ''],
-      ['{veiculo}', currentLead.vehicleInterest ?? ''],
+      ['{veiculo}', vehicleLabel(currentLead)],
       ['{vendedor}', whatsappSellerName(currentLead)],
       ['{loja}', storeName(currentLead.storeId)],
       ['{cidade}', currentLead.customerCity ?? ''],
@@ -354,7 +355,13 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
                 <Typography variant="caption" color="text.secondary">
                   Veiculo
                 </Typography>
-                <Typography>{selectedLead.vehicleInterest ?? '-'}</Typography>
+                <Typography>{vehicleLabel(selectedLead)}</Typography>
+              </Grid2>
+              <Grid2 size={6}>
+                <Typography variant="caption" color="text.secondary">
+                  Moeda
+                </Typography>
+                <Typography>{selectedLead.saleCurrency}</Typography>
               </Grid2>
             </Grid2>
 

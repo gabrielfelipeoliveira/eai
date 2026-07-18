@@ -3,8 +3,10 @@ package com.eai.api.lead;
 import com.eai.application.distribution.LeadDistributionService;
 import com.eai.application.conversation.ConversationService;
 import com.eai.application.lead.CreateLeadCommand;
+import com.eai.application.lead.LeadItemCommand;
 import com.eai.application.lead.LeadSearchCriteria;
 import com.eai.application.lead.LeadService;
+import com.eai.application.lead.LeadVehicleCommand;
 import com.eai.application.lead.UpdateLeadCommand;
 import com.eai.application.message.MessageTemplateService;
 import com.eai.application.security.AuthenticatedUser;
@@ -78,7 +80,9 @@ public class LeadController {
                 request.originalMessage(),
                 request.assignedToUserId(),
                 request.lostReason(),
-                request.saleValue()
+                request.saleValue(),
+                request.saleCurrency(),
+                toItemCommand(request.item())
         ), authenticatedUser));
     }
 
@@ -134,7 +138,9 @@ public class LeadController {
                 request.firstContactAt(),
                 request.lastContactAt(),
                 request.lostReason(),
-                request.saleValue()
+                request.saleValue(),
+                request.saleCurrency(),
+                toItemCommand(request.item())
         ), authenticatedUser));
     }
 
@@ -251,5 +257,13 @@ public class LeadController {
             return LeadResponse.fromDomain(lead);
         }
         return LeadResponse.fromDomain(lead, policy.getMinutesToAssign(), policy.getMinutesToFirstContact(), Instant.now());
+    }
+
+    private LeadItemCommand toItemCommand(LeadRequest.LeadItemRequest request) {
+        return request == null ? null : new LeadItemCommand(request.name(), toVehicleCommand(request.vehicle()));
+    }
+
+    private LeadVehicleCommand toVehicleCommand(LeadRequest.LeadVehicleRequest request) {
+        return request == null ? null : new LeadVehicleCommand(request.name(), request.year(), request.model(), request.value());
     }
 }

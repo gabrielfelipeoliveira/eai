@@ -158,10 +158,7 @@ public class WhatsAppTemplateSenderService {
             throw new IllegalArgumentException("Lead phone is required to send WhatsApp template");
         }
         String digits = phone.replaceAll("\\D", "");
-        if (digits.startsWith("55") && digits.length() > 11) {
-            return validatePhone(digits);
-        }
-        return validatePhone("55" + digits);
+        return validatePhone(digits);
     }
 
     private String validatePhone(String phone) {

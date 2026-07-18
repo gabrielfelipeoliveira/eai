@@ -21,6 +21,8 @@ Regras:
 ## Migrations Atuais
 
 - `V1__initial_schema.sql`, consolidada com o schema completo e dados demo atuais.
+- `V2__adjust_tenancy_company_store_users.sql`, ajuste de tenancy entre empresa, loja e usuarios.
+- `V4__lead_items_vehicles_money_phone.sql`, adiciona `items`, `vehicles`, `leads.item_id`, `leads.sale_currency`, normalizacao E.164 dos telefones demo e constraints de moeda/telefone.
 
 Observacao:
 
@@ -51,7 +53,7 @@ Grupos atuais e alvo:
 - Usuario possui um unico papel.
 - Lead pertence a empresa e loja.
 - Lead pode ter historico, notas, observacoes, tags e telefones vinculados.
-- Lead pode se relacionar a Item e Veiculo estruturado.
+- Lead pode se relacionar a Item; Veiculo estruturado e filho de Item, nao relacionamento direto do Lead.
 - Item pertence ao usuario.
 - Veiculo e filho de Item.
 - Uma conversa pertence a loja e pode estar vinculada a um lead.

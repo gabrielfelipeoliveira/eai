@@ -16,8 +16,10 @@ import java.time.temporal.ChronoUnit;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.blankOrNullString;
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -52,6 +54,13 @@ class LeadControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalElements", greaterThanOrEqualTo(1)))
                 .andExpect(jsonPath("$.content[0].id", not(blankOrNullString())));
+
+        mockMvc.perform(get("/api/leads/{id}", leadId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.customerPhone").value("+5511999990000"))
+                .andExpect(jsonPath("$.saleCurrency").value("BRL"))
+                .andExpect(jsonPath("$.item", nullValue()));
 
         mockMvc.perform(patch("/api/leads/{id}/assign-to-me", leadId)
                         .header("Authorization", "Bearer " + token))
@@ -184,8 +193,8 @@ class LeadControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.SIMULATING").isArray())
                 .andExpect(jsonPath("$.PROPOSAL_APPROVED[0].id").value(leadId))
-                .andExpect(jsonPath("$.AVAILABLE[0].id").value(availableLeadId))
-                .andExpect(jsonPath("$.ASSIGNED[0].id").value(assignedLeadId));
+                .andExpect(jsonPath("$.AVAILABLE[*].id", hasItem(availableLeadId)))
+                .andExpect(jsonPath("$.ASSIGNED[*].id", hasItem(assignedLeadId)));
 
         String followUpId = createFollowUp(token, leadId);
 
@@ -210,6 +219,75 @@ class LeadControllerTest {
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].description").value("Follow-up completed: Retornar proposta"));
+    }
+
+    @Test
+    void createLeadPreservesValidE164Phone() throws Exception {
+        String token = login();
+
+        mockMvc.perform(post("/api/leads")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+
+{"companyId":"%s","storeId":"%s","customerName":"Cliente E164","customerPhone":"+12125550123","vehicleInterest":"Honda Civic","source":"MANUAL"}
+
+                                """.formatted(DEFAULT_COMPANY_ID, DEFAULT_STORE_ID)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.customerPhone").value("+12125550123"));
+    }
+
+    @Test
+    void createLeadRejectsInvalidPhone() throws Exception {
+        String token = login();
+
+        mockMvc.perform(post("/api/leads")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+
+{"companyId":"%s","storeId":"%s","customerName":"Cliente Invalido","customerPhone":"123","vehicleInterest":"Honda Civic","source":"MANUAL"}
+
+                                """.formatted(DEFAULT_COMPANY_ID, DEFAULT_STORE_ID)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createLeadAcceptsCustomSaleCurrency() throws Exception {
+        String token = login();
+
+        mockMvc.perform(post("/api/leads")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+
+{"companyId":"%s","storeId":"%s","customerName":"Cliente USD","customerPhone":"11999990003","vehicleInterest":"Honda Civic","source":"MANUAL","saleValue":120000.00,"saleCurrency":"USD"}
+
+                                """.formatted(DEFAULT_COMPANY_ID, DEFAULT_STORE_ID)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.saleValue").value(120000.00))
+                .andExpect(jsonPath("$.saleCurrency").value("USD"));
+    }
+
+    @Test
+    void createLeadWithStructuredItemAndVehicle() throws Exception {
+        String token = login();
+
+        mockMvc.perform(post("/api/leads")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+
+{"companyId":"%s","storeId":"%s","customerName":"Cliente Estruturado","customerPhone":"11999990004","vehicleInterest":"Fallback Civic","source":"MANUAL","item":{"name":"Anuncio Civic","vehicle":{"name":"Honda Civic","year":2021,"model":"Touring","value":128900.00}}}
+
+                                """.formatted(DEFAULT_COMPANY_ID, DEFAULT_STORE_ID)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.itemId", not(blankOrNullString())))
+                .andExpect(jsonPath("$.item.name").value("Anuncio Civic"))
+                .andExpect(jsonPath("$.item.vehicle.name").value("Honda Civic"))
+                .andExpect(jsonPath("$.item.vehicle.year").value(2021))
+                .andExpect(jsonPath("$.item.vehicle.model").value("Touring"))
+                .andExpect(jsonPath("$.item.vehicle.value").value(128900.00));
     }
 
     private String login() throws Exception {
@@ -251,6 +329,8 @@ class LeadControllerTest {
                                 """.formatted(DEFAULT_COMPANY_ID, DEFAULT_STORE_ID, customerName, customerPhone)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("AVAILABLE"))
+                .andExpect(jsonPath("$.customerPhone").value("+55" + customerPhone))
+                .andExpect(jsonPath("$.saleCurrency").value("BRL"))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();

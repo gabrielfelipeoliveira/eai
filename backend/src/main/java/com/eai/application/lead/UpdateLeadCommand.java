@@ -22,6 +22,8 @@ public record UpdateLeadCommand(
         Instant firstContactAt,
         Instant lastContactAt,
         String lostReason,
-        BigDecimal saleValue
+        BigDecimal saleValue,
+        String saleCurrency,
+        LeadItemCommand item
 ) {
 }

@@ -2,6 +2,7 @@ package com.eai.api.lead;
 
 import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -27,6 +28,21 @@ public record LeadRequest(
         Instant firstContactAt,
         Instant lastContactAt,
         @Size(max = 240) String lostReason,
-        @DecimalMin("0.00") BigDecimal saleValue
+        @DecimalMin("0.00") BigDecimal saleValue,
+        @Size(max = 3) String saleCurrency,
+        @Valid LeadItemRequest item
 ) {
+    public record LeadItemRequest(
+            @Size(max = 180) String name,
+            @Valid LeadVehicleRequest vehicle
+    ) {
+    }
+
+    public record LeadVehicleRequest(
+            @Size(max = 180) String name,
+            Integer year,
+            @Size(max = 120) String model,
+            @DecimalMin("0.00") BigDecimal value
+    ) {
+    }
 }

@@ -18,6 +18,8 @@ public record LeadResponse(
         String customerEmail,
         String customerCity,
         String vehicleInterest,
+        UUID itemId,
+        LeadItemResponse item,
         LeadSource source,
         String originalMessage,
         LeadStatus status,
@@ -29,6 +31,7 @@ public record LeadResponse(
         Instant lastContactAt,
         String lostReason,
         BigDecimal saleValue,
+        String saleCurrency,
         boolean overdueToAssign,
         boolean overdueToFirstContact
 ) {
@@ -55,6 +58,8 @@ public record LeadResponse(
                 lead.getCustomerEmail(),
                 lead.getCustomerCity(),
                 lead.getVehicleInterest(),
+                lead.getItemId(),
+                lead.getItem() == null ? null : LeadItemResponse.fromDomain(lead.getItem()),
                 lead.getSource(),
                 lead.getOriginalMessage(),
                 lead.getStatus(),
@@ -66,8 +71,37 @@ public record LeadResponse(
                 lead.getLastContactAt(),
                 lead.getLostReason(),
                 lead.getSaleValue(),
+                lead.getSaleCurrency(),
                 overdueToAssign,
                 overdueToFirstContact
         );
+    }
+
+    public record LeadItemResponse(UUID id, UUID ownerUserId, String name, LeadVehicleResponse vehicle, Instant createdAt, Instant updatedAt) {
+        static LeadItemResponse fromDomain(com.eai.domain.item.Item item) {
+            return new LeadItemResponse(
+                    item.getId(),
+                    item.getOwnerUserId(),
+                    item.getName(),
+                    item.getVehicle() == null ? null : LeadVehicleResponse.fromDomain(item.getVehicle()),
+                    item.getCreatedAt(),
+                    item.getUpdatedAt()
+            );
+        }
+    }
+
+    public record LeadVehicleResponse(UUID id, UUID itemId, String name, Integer year, String model, BigDecimal value, Instant createdAt, Instant updatedAt) {
+        static LeadVehicleResponse fromDomain(com.eai.domain.item.Vehicle vehicle) {
+            return new LeadVehicleResponse(
+                    vehicle.getId(),
+                    vehicle.getItemId(),
+                    vehicle.getName(),
+                    vehicle.getYear(),
+                    vehicle.getModel(),
+                    vehicle.getValue(),
+                    vehicle.getCreatedAt(),
+                    vehicle.getUpdatedAt()
+            );
+        }
     }
 }

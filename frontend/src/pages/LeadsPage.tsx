@@ -31,6 +31,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { LeadDetailDrawer } from '../features/leads/LeadDetailDrawer';
+import { vehicleLabel } from '../features/leads/leadDisplay';
 import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
 import { apiErrorMessage } from '../services/api';
@@ -68,13 +69,26 @@ const leadSchema = z.object({
   companyId: z.string().min(1, 'Selecione a empresa'),
   storeId: z.string().min(1, 'Selecione a loja'),
   customerName: z.string().min(1, 'Informe o cliente').max(160),
-  customerPhone: z.string().max(40),
+  customerPhone: z.string().max(40).refine((value) => {
+    if (!value) {
+      return true;
+    }
+    const trimmed = value.trim();
+    const digits = trimmed.replace(/\D/g, '');
+    return /^\+[1-9]\d{7,14}$/.test(trimmed) || digits.length === 10 || digits.length === 11 || (digits.startsWith('55') && digits.length >= 8 && digits.length <= 15);
+  }, 'Informe telefone E.164 ou telefone brasileiro com DDD'),
   customerEmail: z.string().email('Informe um e-mail valido').max(180).or(z.literal('')),
   customerCity: z.string().max(120),
   vehicleInterest: z.string().max(180),
+  itemName: z.string().max(180),
+  vehicleName: z.string().max(180),
+  vehicleYear: z.string(),
+  vehicleModel: z.string().max(120),
+  vehicleValue: z.string(),
   source: z.enum(['MANUAL', 'EMAIL', 'WEBSITE', 'FACEBOOK', 'INSTAGRAM', 'WEBMOTORS', 'ICARROS', 'OLX', 'API']),
   originalMessage: z.string(),
   saleValue: z.string(),
+  saleCurrency: z.string().trim().length(3, 'Informe moeda com 3 letras').regex(/^[A-Za-z]{3}$/, 'Informe moeda ISO com 3 letras'),
 });
 
 type LeadFormValues = z.infer<typeof leadSchema>;
@@ -102,9 +116,15 @@ export function LeadsPage() {
       customerEmail: '',
       customerCity: '',
       vehicleInterest: '',
+      itemName: '',
+      vehicleName: '',
+      vehicleYear: '',
+      vehicleModel: '',
+      vehicleValue: '',
       source: 'MANUAL',
       originalMessage: '',
       saleValue: '',
+      saleCurrency: 'BRL',
     }),
     [user?.companyId, user?.storeId],
   );
@@ -153,16 +173,31 @@ export function LeadsPage() {
   }, [emptyLeadValues.storeId, setValue, storesQuery.data]);
 
   const createLeadMutation = useMutation({
-    mutationFn: (values: LeadFormValues) =>
-      createLead({
-        ...values,
+    mutationFn: (values: LeadFormValues) => {
+      const vehicle =
+        values.vehicleName || values.vehicleYear || values.vehicleModel || values.vehicleValue
+          ? {
+              name: values.vehicleName || undefined,
+              year: values.vehicleYear ? Number(values.vehicleYear) : undefined,
+              model: values.vehicleModel || undefined,
+              value: values.vehicleValue ? Number(values.vehicleValue) : undefined,
+            }
+          : undefined;
+      return createLead({
+        companyId: values.companyId,
+        storeId: values.storeId,
+        customerName: values.customerName,
         customerPhone: values.customerPhone || undefined,
         customerEmail: values.customerEmail || undefined,
         customerCity: values.customerCity || undefined,
         vehicleInterest: values.vehicleInterest || undefined,
+        source: values.source,
         originalMessage: values.originalMessage || undefined,
         saleValue: values.saleValue ? Number(values.saleValue) : undefined,
-      }),
+        saleCurrency: values.saleCurrency || 'BRL',
+        item: values.itemName || vehicle ? { name: values.itemName || undefined, vehicle } : undefined,
+      });
+    },
     onSuccess: async () => {
       setDrawerMode(null);
       reset(emptyLeadValues);
@@ -480,7 +515,7 @@ export function LeadsPage() {
                     {lead.customerPhone ?? lead.customerEmail ?? '-'}
                   </Typography>
                 </TableCell>
-                <TableCell>{lead.vehicleInterest ?? '-'}</TableCell>
+                <TableCell>{vehicleLabel(lead)}</TableCell>
                 <TableCell>
                   <Stack direction="row" flexWrap="wrap" gap={0.75}>
                     <Chip color={metadata.color('leadStatuses', lead.status)} label={metadata.label('leadStatuses', lead.status)} size="small" />
@@ -552,6 +587,21 @@ export function LeadsPage() {
               <TextField label="E-mail" error={Boolean(errors.customerEmail)} helperText={errors.customerEmail?.message} {...register('customerEmail')} />
               <TextField label="Cidade" error={Boolean(errors.customerCity)} helperText={errors.customerCity?.message} {...register('customerCity')} />
               <TextField label="Veiculo de interesse" error={Boolean(errors.vehicleInterest)} helperText={errors.vehicleInterest?.message} {...register('vehicleInterest')} />
+              <TextField label="Nome do item" error={Boolean(errors.itemName)} helperText={errors.itemName?.message} {...register('itemName')} />
+              <Grid2 container spacing={1.5}>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField fullWidth label="Nome do veiculo" error={Boolean(errors.vehicleName)} helperText={errors.vehicleName?.message} {...register('vehicleName')} />
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField fullWidth label="Ano" type="number" error={Boolean(errors.vehicleYear)} helperText={errors.vehicleYear?.message} {...register('vehicleYear')} />
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField fullWidth label="Modelo" error={Boolean(errors.vehicleModel)} helperText={errors.vehicleModel?.message} {...register('vehicleModel')} />
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField fullWidth label="Valor do veiculo" type="number" error={Boolean(errors.vehicleValue)} helperText={errors.vehicleValue?.message} {...register('vehicleValue')} />
+                </Grid2>
+              </Grid2>
               <TextField select label="Origem" error={Boolean(errors.source)} helperText={errors.source?.message} {...register('source')}>
                 {sources.map((source) => (
                   <MenuItem key={source} value={source}>
@@ -576,7 +626,14 @@ export function LeadsPage() {
                   </MenuItem>
                 ))}
               </TextField>
-              <TextField label="Valor da venda" type="number" error={Boolean(errors.saleValue)} helperText={errors.saleValue?.message} {...register('saleValue')} />
+              <Grid2 container spacing={1.5}>
+                <Grid2 size={{ xs: 12, md: 8 }}>
+                  <TextField fullWidth label="Valor da venda" type="number" error={Boolean(errors.saleValue)} helperText={errors.saleValue?.message} {...register('saleValue')} />
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <TextField fullWidth label="Moeda" error={Boolean(errors.saleCurrency)} helperText={errors.saleCurrency?.message} {...register('saleCurrency')} />
+                </Grid2>
+              </Grid2>
               <TextField label="Mensagem original" minRows={3} multiline {...register('originalMessage')} />
               <Button disabled={createLeadMutation.isPending} type="submit" variant="contained">
                 Criar lead

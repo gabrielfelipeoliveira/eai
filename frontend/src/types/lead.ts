@@ -34,6 +34,8 @@ export interface Lead {
   customerEmail: string | null;
   customerCity: string | null;
   vehicleInterest: string | null;
+  itemId: string | null;
+  item: LeadItem | null;
   source: LeadSource;
   originalMessage: string | null;
   status: LeadStatus;
@@ -45,8 +47,29 @@ export interface Lead {
   lastContactAt: string | null;
   lostReason: string | null;
   saleValue: number | null;
+  saleCurrency: string;
   overdueToAssign: boolean;
   overdueToFirstContact: boolean;
+}
+
+export interface LeadItem {
+  id: string;
+  ownerUserId: string;
+  name: string | null;
+  vehicle: LeadVehicle | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LeadVehicle {
+  id: string;
+  itemId: string;
+  name: string | null;
+  year: number | null;
+  model: string | null;
+  value: number | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface FollowUpTask {

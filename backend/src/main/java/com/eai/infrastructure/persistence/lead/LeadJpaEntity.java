@@ -46,6 +46,9 @@ public class LeadJpaEntity {
     @Column(name = "vehicle_interest")
     private String vehicleInterest;
 
+    @Column(name = "item_id")
+    private UUID itemId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private LeadSource source;
@@ -80,5 +83,8 @@ public class LeadJpaEntity {
 
     @Column(name = "sale_value", precision = 14, scale = 2)
     private BigDecimal saleValue;
+
+    @Column(name = "sale_currency", nullable = false)
+    private String saleCurrency;
 
 }

@@ -13,6 +13,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { useMemo, useState } from 'react';
 import { LeadDetailDrawer } from '../features/leads/LeadDetailDrawer';
+import { vehicleLabel } from '../features/leads/leadDisplay';
 import { useMetadata } from '../hooks/useMetadata';
 import { changeLeadStatus, getPipeline, listLeads } from '../services/leadService';
 import type { Lead, LeadStatus, PipelineResponse } from '../types/lead';
@@ -156,7 +157,7 @@ export function PipelinePage() {
                       {lead.customerName}
                     </Typography>
                     <Typography variant="caption" color="text.secondary" display="block">
-                      {lead.vehicleInterest ?? 'Sem veiculo'}
+                      {vehicleLabel(lead)}
                     </Typography>
                     <Typography variant="caption" color="text.secondary" display="block">
                       {lead.customerPhone ?? lead.customerEmail ?? 'Sem contato'}

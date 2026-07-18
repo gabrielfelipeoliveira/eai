@@ -3,9 +3,12 @@ package com.eai.application.lead;
 import com.eai.application.common.ConflictException;
 import com.eai.application.common.ForbiddenException;
 import com.eai.application.common.NotFoundException;
+import com.eai.application.item.ItemRepository;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.application.tenant.CompanyService;
 import com.eai.application.tenant.StoreService;
+import com.eai.domain.item.Item;
+import com.eai.domain.item.Vehicle;
 import com.eai.application.user.UserRepository;
 import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadHistory;
@@ -33,6 +36,7 @@ public class LeadService {
     private final CompanyService companyService;
     private final StoreService storeService;
     private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
 
     public LeadService(
             LeadRepository leadRepository,
@@ -41,7 +45,8 @@ public class LeadService {
             LeadTagRepository tagRepository,
             CompanyService companyService,
             StoreService storeService,
-            UserRepository userRepository
+            UserRepository userRepository,
+            ItemRepository itemRepository
     ) {
         this.leadRepository = leadRepository;
         this.historyRepository = historyRepository;
@@ -50,6 +55,7 @@ public class LeadService {
         this.companyService = companyService;
         this.storeService = storeService;
         this.userRepository = userRepository;
+        this.itemRepository = itemRepository;
     }
 
     @Transactional(readOnly = true)
@@ -73,19 +79,24 @@ public class LeadService {
             assertCanAssignUser(command.assignedToUserId(), command.companyId(), command.storeId(), authenticatedUser);
         }
         LeadSource source = command.source() == null ? LeadSource.MANUAL : command.source();
+        String normalizedPhone = PhoneNormalizer.normalize(command.customerPhone());
+        ItemRepository.ItemWithVehicle itemWithVehicle = createItemWithVehicle(authenticatedUser.id(), command.item());
         Lead lead = Lead.create(
                 command.companyId(),
                 command.storeId(),
                 command.customerName(),
-                command.customerPhone(),
+                normalizedPhone,
                 command.customerEmail(),
                 command.customerCity(),
                 command.vehicleInterest(),
+                itemWithVehicle == null ? null : itemWithVehicle.item().getId(),
+                itemWithVehicle == null ? null : itemWithVehicle.item(),
                 source,
                 command.originalMessage(),
                 command.assignedToUserId(),
                 command.lostReason(),
-                command.saleValue()
+                command.saleValue(),
+                command.saleCurrency()
         );
         Lead savedLead = leadRepository.save(lead);
         historyRepository.save(LeadHistory.create(savedLead.getId(), authenticatedUser.id(), null, savedLead.getStatus(), "Lead created"));
@@ -105,14 +116,18 @@ public class LeadService {
         Instant assignedAt = command.assignedToUserId() == null
                 ? null
                 : command.assignedToUserId().equals(lead.getAssignedToUserId()) ? lead.getAssignedAt() : Instant.now();
+        String normalizedPhone = PhoneNormalizer.normalize(command.customerPhone());
+        ItemRepository.ItemWithVehicle itemWithVehicle = createItemWithVehicle(authenticatedUser.id(), command.item());
         lead.update(
                 command.companyId(),
                 command.storeId(),
                 command.customerName(),
-                command.customerPhone(),
+                normalizedPhone,
                 command.customerEmail(),
                 command.customerCity(),
                 command.vehicleInterest(),
+                itemWithVehicle == null ? null : itemWithVehicle.item().getId(),
+                itemWithVehicle == null ? null : itemWithVehicle.item(),
                 command.source(),
                 command.originalMessage(),
                 command.status(),
@@ -121,7 +136,8 @@ public class LeadService {
                 command.firstContactAt(),
                 command.lastContactAt(),
                 command.lostReason(),
-                command.saleValue()
+                command.saleValue(),
+                command.saleCurrency()
         );
         Lead savedLead = leadRepository.save(lead);
         if (previousStatus != savedLead.getStatus()) {
@@ -205,6 +221,23 @@ public class LeadService {
     private Lead findRequired(UUID id) {
         return leadRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Lead not found"));
+    }
+
+    private ItemRepository.ItemWithVehicle createItemWithVehicle(UUID ownerUserId, LeadItemCommand itemCommand) {
+        LeadVehicleCommand vehicleCommand = itemCommand == null ? null : itemCommand.vehicle();
+        if (!hasItemData(itemCommand) && (vehicleCommand == null || !vehicleCommand.hasData())) {
+            return null;
+        }
+        String itemName = itemCommand == null ? null : itemCommand.name();
+        Item item = Item.create(ownerUserId, itemName);
+        Vehicle vehicle = vehicleCommand == null || !vehicleCommand.hasData()
+                ? null
+                : Vehicle.create(item.getId(), vehicleCommand.name(), vehicleCommand.year(), vehicleCommand.model(), vehicleCommand.value());
+        return itemRepository.save(item, vehicle);
+    }
+
+    private boolean hasItemData(LeadItemCommand itemCommand) {
+        return itemCommand != null && itemCommand.name() != null && !itemCommand.name().isBlank();
     }
 
     private LeadSearchCriteria applyScope(LeadSearchCriteria criteria, AuthenticatedUser authenticatedUser) {
