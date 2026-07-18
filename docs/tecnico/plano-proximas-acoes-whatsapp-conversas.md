@@ -91,7 +91,7 @@ Prioridade: media.
 ## Fora Do MVP
 
 - Tela de auditoria.
-- Escopo operacional de `AUDITOR`.
+- Escopo operacional de `AUDITOR` fica fora do MVP.
 - Distribuicao automatica.
 - SLA, follow-ups e notificacoes.
 - Relatorios gerenciais completos.

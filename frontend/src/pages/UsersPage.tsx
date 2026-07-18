@@ -31,7 +31,7 @@ import { listStores } from '../services/storeService';
 import { assignUserTenant, createUser, listUsers } from '../services/userService';
 import type { AuthUser, UserRole } from '../types/auth';
 
-const roles: UserRole[] = ['ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER', 'PRE_SALES', 'F_AND_I', 'AUDITOR'];
+const roles: UserRole[] = ['ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER', 'PRE_SALES', 'F_AND_I', 'AVALIADOR'];
 
 const userSchema = z.object({
   name: z.string().min(1, 'Informe o nome').max(160),
@@ -41,7 +41,7 @@ const userSchema = z.object({
   jobTitle: z.string().max(120).optional(),
   companyId: z.string().min(1, 'Selecione a empresa'),
   storeId: z.string().min(1, 'Selecione a loja'),
-  roles: z.array(z.enum(['ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER', 'PRE_SALES', 'F_AND_I', 'AUDITOR'])).min(1, 'Selecione uma role'),
+  roles: z.array(z.enum(['ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER', 'PRE_SALES', 'F_AND_I', 'AVALIADOR'])).min(1, 'Selecione uma role'),
 });
 
 const tenantSchema = z.object({

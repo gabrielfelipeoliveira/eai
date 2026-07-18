@@ -14,7 +14,7 @@ Fora de escopo deste diagrama:
 
 - Regras oficiais de multi-conta WhatsApp por empresa/loja ainda pendentes.
 - Ciclo de vida proprio de status de conversa, ainda pendente de decisao de produto.
-- Tela de auditoria e escopo operacional de `AUDITOR`, que ficam para fase posterior.
+- Tela de auditoria e escopo operacional de `AUDITOR`, que ficam fora do MVP e para fase posterior.
 
 ## Visao De Componentes
 

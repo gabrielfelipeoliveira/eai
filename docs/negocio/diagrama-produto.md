@@ -98,7 +98,7 @@ flowchart TD
 | Comunicacao | Templates da empresa, templates especificos da loja, placeholders automaticos e envio por WhatsApp. |
 | Importacao por e-mail | Contas IMAP por loja, sincronizacao com retentativas, origem `LeadSource`, mensagens marcadas como lidas e duplicidade por telefone/loja. |
 | LGPD | Fluxo administrativo basico e manual por `ADMIN`, sem automacoes irreversiveis no MVP. |
-| Segunda fase | Distribuicao automatica, SLA, follow-ups, notificacoes, KPIs, relatorios gerenciais, funil configuravel, tela de auditoria e `AUDITOR`. |
+| Segunda fase | Distribuicao automatica, SLA, follow-ups, notificacoes, KPIs, relatorios gerenciais, funil configuravel, tela de auditoria e `AUDITOR` fora do MVP. |
 
 ## Limites Conhecidos
 

@@ -22,7 +22,7 @@ Os itens abaixo nao bloqueiam o MVP, mas precisam de detalhamento antes de serem
 - Parsers dedicados para plataformas especificas.
 - Configuracao de etapas do funil por empresa ou loja.
 - Tela de auditoria.
-- Papel/escopo operacional de `AUDITOR`.
+- Papel/escopo operacional de `AUDITOR` fica fora do MVP.
 - Eventos que criam notificacoes, auditoria ou relatorios.
 - Automacoes irreversiveis de LGPD, com validacao juridica previa.
 - Politica formal de prazos de retencao por tipo de dado.

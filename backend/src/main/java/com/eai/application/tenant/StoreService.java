@@ -28,7 +28,7 @@ public class StoreService {
         if (hasRole(authenticatedUser, UserRole.ADMIN)) {
             return storeRepository.findAll();
         }
-        if (hasRole(authenticatedUser, UserRole.MANAGER) || hasRole(authenticatedUser, UserRole.AUDITOR)) {
+        if (hasRole(authenticatedUser, UserRole.MANAGER)) {
             UUID companyId = requireCompany(authenticatedUser);
             if (authenticatedUser.storeId() != null) {
                 return storeRepository.findByIdIn(List.of(authenticatedUser.storeId()));
@@ -116,7 +116,7 @@ public class StoreService {
         if (hasRole(authenticatedUser, UserRole.ADMIN)) {
             return;
         }
-        if ((hasRole(authenticatedUser, UserRole.MANAGER) || hasRole(authenticatedUser, UserRole.AUDITOR))
+        if (hasRole(authenticatedUser, UserRole.MANAGER)
                 && store.getCompanyId().equals(requireCompany(authenticatedUser))) {
             if (authenticatedUser.storeId() == null || authenticatedUser.storeId().equals(store.getId())) {
                 return;

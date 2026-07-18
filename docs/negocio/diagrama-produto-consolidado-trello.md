@@ -156,7 +156,7 @@ mindmap
     Parsers dedicados
     Funil configuravel por empresa ou loja
     Tela de auditoria
-    Escopo operacional de AUDITOR
+    Escopo operacional de AUDITOR fora do MVP
     Automacoes irreversiveis de LGPD
     Politica formal de retencao
 ```

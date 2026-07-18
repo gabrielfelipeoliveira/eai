@@ -99,7 +99,7 @@ public class MetadataController {
                 option(UserRole.SELLER, "user.role.seller", "Vendedor", 4, "success"),
                 option(UserRole.PRE_SALES, "user.role.pre_sales", "Pre-venda", 5, "info"),
                 option(UserRole.F_AND_I, "user.role.f_and_i", "F&I", 6, "secondary"),
-                option(UserRole.AUDITOR, "user.role.auditor", "Auditoria", 7, "secondary")
+                option(UserRole.AVALIADOR, "user.role.avaliador", "Avaliador", 7, "secondary")
         );
     }
 

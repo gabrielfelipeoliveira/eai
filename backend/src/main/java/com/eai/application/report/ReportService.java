@@ -212,7 +212,7 @@ public class ReportService {
             return new ReportScope(companyId, requireStore(authenticatedUser), authenticatedUser.id());
         }
 
-        if (hasRole(authenticatedUser, UserRole.MANAGER) || hasRole(authenticatedUser, UserRole.AUDITOR)) {
+        if (hasRole(authenticatedUser, UserRole.MANAGER)) {
             UUID storeId = authenticatedUser.storeId() == null ? filters.storeId() : authenticatedUser.storeId();
             return new ReportScope(companyId, storeId, filters.sellerId());
         }

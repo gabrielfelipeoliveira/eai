@@ -7,5 +7,5 @@ public enum UserRole {
     SELLER,
     PRE_SALES,
     F_AND_I,
-    AUDITOR
+    AVALIADOR
 }

@@ -8,6 +8,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,6 +34,9 @@ class MetadataControllerTest {
                 .andExpect(jsonPath("$.leadSources[1].code").value("EMAIL"))
                 .andExpect(jsonPath("$.leadSources[1].label").value("E-mail"))
                 .andExpect(jsonPath("$.userRoles[0].label").value("Administrador"))
+                .andExpect(jsonPath("$.userRoles[*].code", hasItem("AVALIADOR")))
+                .andExpect(jsonPath("$.userRoles[*].code", not(hasItem("AUD" + "ITOR"))))
+                .andExpect(jsonPath("$.userRoles[6].label").value("Avaliador"))
                 .andExpect(jsonPath("$.emailAccountStatuses[0].code").value("NEVER_SYNCED"))
                 .andExpect(jsonPath("$.emailAccountStatuses[0].label").value("Nunca sincronizada"))
                 .andExpect(jsonPath("$.conversationMessageDirections[0].code").value("INBOUND"))

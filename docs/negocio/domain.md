@@ -22,7 +22,7 @@ Ficam para segunda fase:
 - KPIs, dashboards e relatorios gerenciais.
 - Configuracao de etapas do funil por empresa ou loja.
 - Tela de auditoria.
-- Escopo operacional de `AUDITOR`.
+- Escopo operacional de `AUDITOR` fica fora do MVP.
 - Automacoes irreversiveis de LGPD.
 
 ## Entidades Principais
