@@ -62,7 +62,7 @@ Variavel de ambiente obrigatoria em producao:
 Configuracoes opcionais de TTL dos tokens:
 
 - `eai.security.access-token-ttl-minutes`: padrao `15`
-- `eai.security.refresh-token-ttl-hours`: padrao `168`
+- `eai.security.refresh-token-ttl-hours`: padrao `720`
 
 Usuarios seed de desenvolvimento:
 

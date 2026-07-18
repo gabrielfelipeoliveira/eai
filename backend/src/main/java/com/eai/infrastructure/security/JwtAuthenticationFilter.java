@@ -3,6 +3,7 @@ package com.eai.infrastructure.security;
 import com.eai.application.common.UnauthorizedException;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.application.security.TokenProvider;
+import com.eai.application.user.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,9 +20,11 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
+    private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(TokenProvider tokenProvider) {
+    public JwtAuthenticationFilter(TokenProvider tokenProvider, UserRepository userRepository) {
         this.tokenProvider = tokenProvider;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -32,6 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             AuthenticatedUser authenticatedUser;
             try {
                 authenticatedUser = tokenProvider.parseAccessToken(authorization.substring(7));
+                if (userRepository.findById(authenticatedUser.id()).filter(user -> user.isActive()).isEmpty()) {
+                    throw new UnauthorizedException("Invalid access token");
+                }
             } catch (UnauthorizedException exception) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
                 return;

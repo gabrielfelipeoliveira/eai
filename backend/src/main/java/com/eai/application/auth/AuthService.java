@@ -31,7 +31,7 @@ public class AuthService {
             RefreshTokenRepository refreshTokenRepository,
             PasswordHasher passwordHasher,
             TokenProvider tokenProvider,
-            @Value("${eai.security.refresh-token-ttl-hours:168}") long refreshTokenTtlHours
+            @Value("${eai.security.refresh-token-ttl-hours:720}") long refreshTokenTtlHours
     ) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
@@ -47,6 +47,7 @@ public class AuthService {
         if (!user.isActive() || !passwordHasher.matches(password, user.getPasswordHash())) {
             throw new UnauthorizedException("Invalid credentials");
         }
+        refreshTokenRepository.revokeAllByUserId(user.getId());
         return issueTokens(user);
     }
 

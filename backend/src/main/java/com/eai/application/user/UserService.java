@@ -3,6 +3,7 @@ package com.eai.application.user;
 import com.eai.application.common.ConflictException;
 import com.eai.application.common.ForbiddenException;
 import com.eai.application.common.NotFoundException;
+import com.eai.application.auth.RefreshTokenRepository;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.application.tenant.CompanyService;
 import com.eai.application.tenant.StoreService;
@@ -24,17 +25,20 @@ public class UserService {
     private final PasswordHasher passwordHasher;
     private final CompanyService companyService;
     private final StoreService storeService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public UserService(
             UserRepository userRepository,
             PasswordHasher passwordHasher,
             CompanyService companyService,
-            StoreService storeService
+            StoreService storeService,
+            RefreshTokenRepository refreshTokenRepository
     ) {
         this.userRepository = userRepository;
         this.passwordHasher = passwordHasher;
         this.companyService = companyService;
         this.storeService = storeService;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     @Transactional(readOnly = true)
@@ -123,7 +127,9 @@ public class UserService {
     public User deactivateUser(UUID id) {
         User user = getUser(id);
         user.deactivate();
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        refreshTokenRepository.revokeAllByUserId(id);
+        return savedUser;
     }
 
     private String normalizeEmail(String email) {

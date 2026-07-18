@@ -24,7 +24,7 @@ management:
 eai:
   security:
     access-token-ttl-minutes: 15
-    refresh-token-ttl-hours: 168
+    refresh-token-ttl-hours: 720
   email:
     importer:
       enabled: false
