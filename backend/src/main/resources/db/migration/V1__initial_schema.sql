@@ -42,7 +42,7 @@ CREATE TABLE users (
 
 CREATE TABLE user_roles (
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    role VARCHAR(30) NOT NULL CHECK (role IN ('ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER', 'PRE_SALES', 'F_AND_I', 'AUDITOR')),
+    role VARCHAR(30) NOT NULL CHECK (role IN ('ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER', 'PRE_SALES', 'F_AND_I', 'AVALIADOR')),
     PRIMARY KEY (user_id, role)
 );
 
@@ -66,7 +66,7 @@ CREATE TABLE leads (
     customer_email VARCHAR(180),
     customer_city VARCHAR(120),
     vehicle_interest VARCHAR(180),
-    source VARCHAR(30) NOT NULL CHECK (source IN ('MANUAL', 'EMAIL', 'WEBSITE', 'FACEBOOK', 'INSTAGRAM', 'WEBMOTORS', 'ICARROS', 'OLX', 'API')),
+    source VARCHAR(30) NOT NULL CHECK (source IN ('MANUAL', 'EMAIL', 'WEBSITE', 'FACEBOOK', 'INSTAGRAM', 'WEBMOTORS', 'ICARROS', 'OLX', 'API', 'WHATSAPP')),
     original_message TEXT,
     status VARCHAR(30) NOT NULL CHECK (status IN ('NEW', 'AVAILABLE', 'ASSIGNED', 'FIRST_CONTACT', 'IN_NEGOTIATION', 'VISIT_SCHEDULED', 'PROPOSAL_SENT', 'SOLD', 'LOST', 'DUPLICATED')),
     assigned_to_user_id UUID REFERENCES users(id),
@@ -141,7 +141,7 @@ CREATE TABLE lead_communications (
     id UUID PRIMARY KEY,
     lead_id UUID NOT NULL REFERENCES leads(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES users(id),
-    channel VARCHAR(30) NOT NULL CHECK (channel IN ('WHATSAPP_LINK')),
+    channel VARCHAR(30) NOT NULL CHECK (channel IN ('WHATSAPP_LINK', 'WHATSAPP_TEMPLATE')),
     template_id UUID REFERENCES message_templates(id),
     message TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL
@@ -149,6 +149,95 @@ CREATE TABLE lead_communications (
 
 CREATE INDEX idx_lead_communications_lead_id ON lead_communications(lead_id);
 CREATE INDEX idx_lead_communications_created_at ON lead_communications(created_at DESC);
+
+CREATE TABLE whatsapp_contacts (
+    id UUID PRIMARY KEY,
+    company_id UUID NOT NULL REFERENCES companies(id),
+    store_id UUID NOT NULL REFERENCES stores(id),
+    lead_id UUID REFERENCES leads(id) ON DELETE SET NULL,
+    phone VARCHAR(40) NOT NULL,
+    display_name VARCHAR(160),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    UNIQUE (store_id, phone)
+);
+
+CREATE INDEX idx_whatsapp_contacts_company_id ON whatsapp_contacts(company_id);
+CREATE INDEX idx_whatsapp_contacts_store_id ON whatsapp_contacts(store_id);
+CREATE INDEX idx_whatsapp_contacts_lead_id ON whatsapp_contacts(lead_id);
+
+CREATE TABLE conversations (
+    id UUID PRIMARY KEY,
+    company_id UUID NOT NULL REFERENCES companies(id),
+    store_id UUID NOT NULL REFERENCES stores(id),
+    contact_id UUID NOT NULL REFERENCES whatsapp_contacts(id) ON DELETE CASCADE,
+    lead_id UUID REFERENCES leads(id) ON DELETE SET NULL,
+    responsible_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    UNIQUE (contact_id),
+    UNIQUE (lead_id)
+);
+
+CREATE INDEX idx_conversations_company_id ON conversations(company_id);
+CREATE INDEX idx_conversations_store_id ON conversations(store_id);
+CREATE INDEX idx_conversations_lead_id ON conversations(lead_id);
+CREATE INDEX idx_conversations_responsible_user_id ON conversations(responsible_user_id);
+CREATE INDEX idx_conversations_updated_at ON conversations(updated_at DESC);
+
+CREATE TABLE conversation_messages (
+    id UUID PRIMARY KEY,
+    conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+    direction VARCHAR(20) NOT NULL CHECK (direction IN ('INBOUND', 'OUTBOUND')),
+    type VARCHAR(20) NOT NULL CHECK (type IN ('TEXT', 'TEMPLATE', 'IMAGE', 'AUDIO', 'DOCUMENT')),
+    status VARCHAR(20) NOT NULL CHECK (status IN ('RECEIVED', 'SENT', 'DELIVERED', 'READ', 'FAILED')),
+    external_message_id VARCHAR(160),
+    content TEXT,
+    media_id VARCHAR(160),
+    media_mime_type VARCHAR(120),
+    raw_payload TEXT,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE UNIQUE INDEX idx_conversation_messages_external_message_id ON conversation_messages(external_message_id);
+CREATE INDEX idx_conversation_messages_conversation_id ON conversation_messages(conversation_id);
+CREATE INDEX idx_conversation_messages_created_at ON conversation_messages(created_at ASC);
+CREATE INDEX idx_conversation_messages_status ON conversation_messages(status);
+
+CREATE TABLE conversation_message_events (
+    id UUID PRIMARY KEY,
+    message_id UUID REFERENCES conversation_messages(id) ON DELETE SET NULL,
+    external_message_id VARCHAR(160) NOT NULL,
+    status VARCHAR(20) NOT NULL CHECK (status IN ('RECEIVED', 'SENT', 'DELIVERED', 'READ', 'FAILED')),
+    failure_reason TEXT,
+    raw_payload TEXT,
+    occurred_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE INDEX idx_conversation_message_events_message_id ON conversation_message_events(message_id);
+CREATE INDEX idx_conversation_message_events_external_message_id ON conversation_message_events(external_message_id);
+CREATE INDEX idx_conversation_message_events_status ON conversation_message_events(status);
+CREATE INDEX idx_conversation_message_events_occurred_at ON conversation_message_events(occurred_at DESC);
+
+CREATE TABLE conversation_access_audits (
+    id UUID PRIMARY KEY,
+    conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+    company_id UUID NOT NULL REFERENCES companies(id),
+    store_id UUID NOT NULL REFERENCES stores(id),
+    lead_id UUID REFERENCES leads(id) ON DELETE SET NULL,
+    actor_user_id UUID NOT NULL REFERENCES users(id),
+    actor_role VARCHAR(20) NOT NULL CHECK (actor_role IN ('ADMIN', 'MANAGER')),
+    access_type VARCHAR(40) NOT NULL,
+    accessed_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE INDEX idx_conversation_access_audits_conversation_id ON conversation_access_audits(conversation_id);
+CREATE INDEX idx_conversation_access_audits_actor_user_id ON conversation_access_audits(actor_user_id);
+CREATE INDEX idx_conversation_access_audits_company_id ON conversation_access_audits(company_id);
+CREATE INDEX idx_conversation_access_audits_store_id ON conversation_access_audits(store_id);
+CREATE INDEX idx_conversation_access_audits_accessed_at ON conversation_access_audits(accessed_at DESC);
 
 CREATE TABLE email_accounts (
     id UUID PRIMARY KEY,
@@ -249,7 +338,7 @@ VALUES
     ('00000000-0000-0000-0000-000000000011', 'Ana Souza', 'ana@eai.com', '$2a$10$rittMsrhSOzttZy/ST1Pz.AEC1YrNnxA7MaGVS2JApfL871P.yn/6', '11990000011', 'Vendedora', 'ACTIVE', '00000000-0000-0000-0000-000000000101', '00000000-0000-0000-0000-000000000201', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     ('00000000-0000-0000-0000-000000000012', 'Bruno Lima', 'bruno@eai.com', '$2a$10$rittMsrhSOzttZy/ST1Pz.AEC1YrNnxA7MaGVS2JApfL871P.yn/6', '11990000012', 'Vendedor', 'ACTIVE', '00000000-0000-0000-0000-000000000101', '00000000-0000-0000-0000-000000000201', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     ('00000000-0000-0000-0000-000000000013', 'Carla Mendes', 'carla@eai.com', '$2a$10$rittMsrhSOzttZy/ST1Pz.AEC1YrNnxA7MaGVS2JApfL871P.yn/6', '11990000013', 'Vendedora', 'ACTIVE', '00000000-0000-0000-0000-000000000101', '00000000-0000-0000-0000-000000000201', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('00000000-0000-0000-0000-000000000031', 'Auditoria EAI', 'auditor@eai.com', '$2a$10$rittMsrhSOzttZy/ST1Pz.AEC1YrNnxA7MaGVS2JApfL871P.yn/6', '11990000031', 'Auditoria', 'ACTIVE', '00000000-0000-0000-0000-000000000101', '00000000-0000-0000-0000-000000000201', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    ('00000000-0000-0000-0000-000000000031', 'Avaliador EAI', 'avaliador@eai.com', '$2a$10$rittMsrhSOzttZy/ST1Pz.AEC1YrNnxA7MaGVS2JApfL871P.yn/6', '11990000031', 'Avaliador', 'ACTIVE', '00000000-0000-0000-0000-000000000101', '00000000-0000-0000-0000-000000000201', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO user_roles (user_id, role)
 VALUES
@@ -258,7 +347,7 @@ VALUES
     ('00000000-0000-0000-0000-000000000011', 'SELLER'),
     ('00000000-0000-0000-0000-000000000012', 'SELLER'),
     ('00000000-0000-0000-0000-000000000013', 'SELLER'),
-    ('00000000-0000-0000-0000-000000000031', 'AUDITOR');
+    ('00000000-0000-0000-0000-000000000031', 'AVALIADOR');
 
 INSERT INTO message_templates (id, company_id, store_id, name, type, content, active, created_at, updated_at)
 VALUES

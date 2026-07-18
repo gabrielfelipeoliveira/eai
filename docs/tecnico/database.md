@@ -20,15 +20,12 @@ Regras:
 
 ## Migrations Atuais
 
-- `V1__initial_schema.sql`
-- `V2__whatsapp_conversations.sql`
-- `V3__lead_communication_whatsapp_template_channel.sql`
-- `V4__conversation_message_events.sql`
-- `V5__conversation_access_audits.sql`
+- `V1__initial_schema.sql`, consolidada com o schema completo e dados demo atuais.
 
 Observacao:
 
 - A base ainda e descartavel em ambiente local.
+- A consolidacao altera o checksum do `V1`; recrie/limpe a base local ou repare a tabela de historico do Flyway antes de rodar novamente.
 - Depois que a base deixar de ser descartavel, migrations ja aplicadas nao devem ser modificadas; novas alteracoes devem ser criadas em novas versoes.
 
 ## Tabelas Conceituais
@@ -110,7 +107,7 @@ Regras definidas:
 
 ## Conflitos Conhecidos
 
-- O banco/codigo existente pode ainda conter estruturas antigas de SLA, follow-up, relatorios, dashboard ou `AUDITOR`. Esses itens devem ser tratados como legado/apoio ou fase posterior quando conflitarem com o MVP consolidado.
+- O banco/codigo existente pode ainda conter estruturas antigas de SLA, follow-up, relatorios, dashboard ou `AUDITOR` fora do MVP. Esses itens devem ser tratados como legado/apoio ou fase posterior quando conflitarem com o MVP consolidado.
 - Qualquer divergencia entre migrations existentes e regras consolidadas deve virar nova migration futura; nao alterar migrations ja aplicadas fora de base descartavel.
 
 ## Decisoes Futuras De Banco

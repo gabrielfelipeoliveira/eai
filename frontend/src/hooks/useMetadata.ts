@@ -44,7 +44,7 @@ export const fallbackMetadata: MetadataCatalog = {
     option('SELLER', 'user.role.seller', 'Vendedor', 4, 'success'),
     option('PRE_SALES', 'user.role.pre_sales', 'Pre-venda', 5, 'info'),
     option('F_AND_I', 'user.role.f_and_i', 'F&I', 6, 'secondary'),
-    option('AUDITOR', 'user.role.auditor', 'Auditoria', 7, 'secondary'),
+    option('AVALIADOR', 'user.role.avaliador', 'Avaliador', 7, 'secondary'),
   ],
   userStatuses: [
     option('ACTIVE', 'user.status.active', 'Ativo', 1, 'success'),

@@ -446,4 +446,4 @@ Os casos abaixo ficam fora do MVP:
 - Configurar etapas do funil por empresa ou loja.
 - Executar parsers dedicados por marketplace.
 - Usar tela de auditoria.
-- Definir escopo operacional de `AUDITOR`.
+- Definir escopo operacional de `AUDITOR` fora do MVP.

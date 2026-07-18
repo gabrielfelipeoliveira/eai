@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'AUDITOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public List<UserResponse> listUsers(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
         return userService.listUsers(authenticatedUser).stream()
                 .map(UserResponse::fromDomain)
@@ -39,7 +39,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'AUDITOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public UserResponse getUser(@PathVariable UUID id, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
         return UserResponse.fromDomain(userService.getUser(id, authenticatedUser));
     }

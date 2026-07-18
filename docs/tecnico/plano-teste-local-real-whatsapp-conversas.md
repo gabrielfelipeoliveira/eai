@@ -26,7 +26,7 @@ Validar, com uma mensagem real de WhatsApp, que o EAI consegue:
 - Java 21.
 - Node.js e npm.
 - Docker para PostgreSQL local, se o banco ainda nao estiver rodando.
-- Branch atualizada com as migrations incluindo `V5__conversation_access_audits.sql`.
+- Branch atualizada com a migration consolidada `V1__initial_schema.sql`.
 
 ## Variaveis De Ambiente Necessarias
 
@@ -349,7 +349,7 @@ O teste local real e considerado aprovado quando:
 
 - Conferir se o usuario logado e `MANAGER` ou `ADMIN`.
 - Abrir mensagens pela rota/tela de historico, pois a auditoria e gravada ao consultar detalhe ou mensagens.
-- Conferir se a migration `V5__conversation_access_audits.sql` foi aplicada.
+- Conferir se a migration consolidada `V1__initial_schema.sql` foi aplicada.
 
 ## Evidencias Para Registrar
 

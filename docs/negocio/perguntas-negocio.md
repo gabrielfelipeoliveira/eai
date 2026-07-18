@@ -8,7 +8,7 @@ Status: confirmado.
 
 O MVP inclui tenancy basico, papeis e permissoes iniciais, captacao de leads por WhatsApp e e-mail, gestao de leads, pipeline comercial, conversas de WhatsApp, templates, fluxo entre pre-venda, vendedor, F&I e avaliador, e LGPD basica com tratamento manual por `ADMIN`.
 
-Ficam para fase posterior distribuicao automatica, SLA, follow-ups, notificacoes, KPIs, dashboard gerencial completo, relatorios gerenciais, parsers dedicados, funil configuravel, tela de auditoria, escopo operacional de `AUDITOR`, automacoes irreversiveis de LGPD e politica formal de retencao.
+Ficam fora do MVP e para fase posterior distribuicao automatica, SLA, follow-ups, notificacoes, KPIs, dashboard gerencial completo, relatorios gerenciais, parsers dedicados, funil configuravel, tela de auditoria, escopo operacional de `AUDITOR`, automacoes irreversiveis de LGPD e politica formal de retencao.
 
 ## 2. Papeis De Usuario
 

@@ -226,7 +226,7 @@ flowchart LR
     Later --> FollowUps["Follow-ups e notificacoes"]
     Later --> Reports["KPIs, dashboards e relatorios"]
     Later --> AuditUI["Tela de auditoria"]
-    Later --> AuditorRole["Escopo de AUDITOR"]
+    Later --> AuditorRole["Escopo de AUDITOR fora do MVP"]
     Later --> FunnelConfig["Funil configuravel"]
     Later --> LgpdAutomation["Automacoes LGPD irreversiveis"]
     Later --> RetentionPolicy["Politica formal de retencao"]

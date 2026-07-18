@@ -70,7 +70,7 @@ Temas candidatos:
 - Parsers dedicados para Webmotors, iCarros e outras origens.
 - Configuracao de funil por empresa ou loja.
 - Tela de auditoria.
-- Papel/escopo operacional de `AUDITOR`.
+- Papel/escopo operacional de `AUDITOR` fica fora do MVP.
 - Eventos que criam notificacoes, auditoria ou relatorios.
 - Regras avancadas de auditoria e retencao.
 - Automacoes irreversiveis de LGPD com validacao juridica.

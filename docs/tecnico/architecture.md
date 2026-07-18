@@ -183,7 +183,7 @@ Leads importados usam origem `EMAIL`; possiveis duplicidades sao marcadas com st
 
 A persistencia de conversas de WhatsApp e implementada em `com.eai.domain.conversation`, `com.eai.application.conversation`, `com.eai.infrastructure.persistence.conversation` e `com.eai.api.conversation`.
 
-A auditoria tecnica de acesso de gestores e admins a conversas fica no mesmo contexto de conversas, com entidade de dominio `ConversationAccessAudit`, porta de aplicacao `ConversationAccessAuditRepository` e adapter JPA em infraestrutura. Tela de auditoria e escopo operacional de `AUDITOR` ficam para fase posterior.
+A auditoria tecnica de acesso de gestores e admins a conversas fica no mesmo contexto de conversas, com entidade de dominio `ConversationAccessAudit`, porta de aplicacao `ConversationAccessAuditRepository` e adapter JPA em infraestrutura. Tela de auditoria e escopo operacional de `AUDITOR` ficam fora do MVP e para fase posterior.
 
 O webhook publico continua em `com.eai.api.whatsapp` e delega para `WhatsAppWebhookService`, que extrai mensagens do payload da Meta e chama `ConversationService`. A resolucao de tenant do webhook usa as propriedades `eai.whatsapp.cloud-api.company-id` e `eai.whatsapp.cloud-api.store-id` enquanto a regra oficial de mapeamento por numero/conta nao estiver definida.
 

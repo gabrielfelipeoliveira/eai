@@ -64,11 +64,11 @@ export function ReportsPage() {
   const { hasAnyRole, user } = useAuth();
   const metadata = useMetadata();
   const isAdmin = hasAnyRole(['ADMIN']);
-  const canFilterTenant = hasAnyRole(['ADMIN', 'MANAGER', 'AUDITOR']);
-  const canFilterSellers = hasAnyRole(['ADMIN', 'MANAGER', 'AUDITOR']);
+  const canFilterTenant = hasAnyRole(['ADMIN', 'MANAGER']);
+  const canFilterSellers = hasAnyRole(['ADMIN', 'MANAGER']);
   const [filters, setFilters] = useState<ReportFilters>({
     companyId: isAdmin ? undefined : user?.companyId,
-    storeId: isAdmin || user?.roles.includes('MANAGER') || user?.roles.includes('AUDITOR') ? undefined : user?.storeId,
+    storeId: isAdmin || user?.roles.includes('MANAGER') ? undefined : user?.storeId,
     sellerId: user?.roles.includes('SELLER') ? user.id : undefined,
     dateFrom: thirtyDaysAgo(),
     dateTo: today(),

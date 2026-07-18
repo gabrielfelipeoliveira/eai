@@ -25,7 +25,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/reports")
-@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SELLER', 'AUDITOR')")
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SELLER')")
 public class ReportController {
 
     private final ReportService reportService;
