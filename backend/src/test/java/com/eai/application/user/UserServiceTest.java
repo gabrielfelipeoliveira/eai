@@ -1,5 +1,6 @@
 package com.eai.application.user;
 
+import com.eai.application.auth.RefreshTokenRepository;
 import com.eai.application.security.PasswordHasher;
 import com.eai.application.tenant.CompanyService;
 import com.eai.application.tenant.StoreService;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class UserServiceTest {
@@ -29,7 +31,8 @@ class UserServiceTest {
     private final PasswordHasher passwordHasher = mock(PasswordHasher.class);
     private final CompanyService companyService = mock(CompanyService.class);
     private final StoreService storeService = mock(StoreService.class);
-    private final UserService service = new UserService(userRepository, passwordHasher, companyService, storeService);
+    private final RefreshTokenRepository refreshTokenRepository = mock(RefreshTokenRepository.class);
+    private final UserService service = new UserService(userRepository, passwordHasher, companyService, storeService, refreshTokenRepository);
 
     @Test
     void acceptsAdminWithoutCompanyOrStore() {
@@ -81,6 +84,18 @@ class UserServiceTest {
         assertThat(user.getStoreId()).isEqualTo(STORE_ID);
     }
 
+    @Test
+    void deactivateUserMarksUserInactiveAndRevokesSessions() {
+        User user = user(UserRole.SELLER);
+        when(userRepository.findById(user.getId())).thenReturn(java.util.Optional.of(user));
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        User deactivatedUser = service.deactivateUser(user.getId());
+
+        assertThat(deactivatedUser.isActive()).isFalse();
+        verify(refreshTokenRepository).revokeAllByUserId(user.getId());
+    }
+
     private CreateUserCommand command(UserRole role, UUID companyId, UUID storeId) {
         return new CreateUserCommand("User", role.name().toLowerCase() + "@eai.com", "secret123", null, null, companyId, storeId, Set.of(role));
     }
@@ -102,5 +117,10 @@ class UserServiceTest {
     private Store store(TenantStatus status) {
         Instant now = Instant.parse("2026-07-18T12:00:00Z");
         return new Store(STORE_ID, COMPANY_ID, "Loja", "00000000000192", null, null, null, null, null, status, now, now);
+    }
+
+    private User user(UserRole role) {
+        Instant now = Instant.parse("2026-07-18T12:00:00Z");
+        return new User(UUID.randomUUID(), "User", "user@eai.com", "hash", null, null, COMPANY_ID, STORE_ID, com.eai.domain.user.UserStatus.ACTIVE, Set.of(role), now, now);
     }
 }

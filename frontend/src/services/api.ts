@@ -58,7 +58,9 @@ api.interceptors.response.use(
       originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
       return api(originalRequest);
     } catch (refreshError) {
-      clearTokens();
+      if ((refreshError as { response?: { status?: number } }).response?.status === 401) {
+        clearTokens();
+      }
       return Promise.reject(refreshError);
     }
   },

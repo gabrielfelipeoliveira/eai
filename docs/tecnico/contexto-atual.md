@@ -57,7 +57,7 @@ Cards de desenvolvimento conhecidos:
 
 - `EAI-001`: concluido. Alinhar papeis: remover `AUDITOR` do MVP e incluir `AVALIADOR`.
 - `EAI-002`: em andamento. Ajustar tenancy: empresa agrupadora, loja operacional e desativacao sem apagar historico.
-- `EAI-003`: proximo card livre recomendado. Implementar sessao unica, TTL de 30 dias e revogacao por desativacao.
+- `EAI-003`: concluido. Sessao unica por usuario, refresh token com TTL de 30 dias, rotacao, logout/revogacao por desativacao e access token recusado para usuario inativo.
 - `EAI-004`: backlog. Alinhar status de lead e pipeline com etapas opcionais de F&I.
 - `EAI-005`: backlog. Modelar Item, Veiculo, telefone E.164 e moeda de venda.
 - `EAI-006`: backlog. Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
@@ -110,6 +110,11 @@ Na ultima validacao:
 - Banco local Postgres do compose subiu saudavel apos reset de volume local de teste.
 - Backend subiu contra Postgres padrao do compose e aplicou Flyway do zero.
 - Smoke autenticado respondeu `200` para `/api/auth/me`, `/api/companies`, `/api/users`, `/api/leads?page=0&size=5` e `/api/pipeline`.
+
+Validacao EAI-003 em 2026-07-18:
+- Backend `rtk mvn clean verify` passou com 58 testes, 0 falhas.
+- Frontend `rtk npm run build` passou.
+- Cobertura adicionada para segundo login invalidar refresh anterior, refresh token rotacionado/revogado, TTL de 30 dias, usuario inativo sem login/refresh, desativacao revogando sessoes e access token rejeitado apos desativacao.
 
 ## Lacunas Ja Registradas Em Cards
 
