@@ -47,6 +47,9 @@ class PipelineServiceTest {
         assertThat(pipeline.get(LeadStatus.NEW)).containsExactly(unassignedNew);
         assertThat(pipeline.get(LeadStatus.AVAILABLE)).containsExactly(unassignedAvailable);
         assertThat(pipeline.get(LeadStatus.ASSIGNED)).containsExactly(ownAssigned);
+        assertThat(pipeline).containsOnlyKeys(LeadStatus.values());
+        assertThat(pipeline.get(LeadStatus.SIMULATING)).isEmpty();
+        assertThat(pipeline.get(LeadStatus.PROPOSAL_APPROVED)).isEmpty();
     }
 
     private Lead lead(LeadStatus status, UUID assignedToUserId) {

@@ -71,6 +71,32 @@ class LeadControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("FIRST_CONTACT"));
 
+        mockMvc.perform(patch("/api/leads/{id}/status", leadId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "status": "SIMULATING",
+                                  "description": "Simulacao enviada para F&I"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("SIMULATING"))
+                .andExpect(jsonPath("$.lastContactAt", not(blankOrNullString())));
+
+        mockMvc.perform(patch("/api/leads/{id}/status", leadId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "status": "PROPOSAL_APPROVED",
+                                  "description": "Proposta aprovada pela financeira"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("PROPOSAL_APPROVED"))
+                .andExpect(jsonPath("$.lastContactAt", not(blankOrNullString())));
+
         mockMvc.perform(post("/api/leads/{id}/notes", leadId)
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -90,7 +116,10 @@ class LeadControllerTest {
         mockMvc.perform(get("/api/leads/{id}/history", leadId)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].newStatus").value("FIRST_CONTACT"));
+                .andExpect(jsonPath("$[0].newStatus").value("PROPOSAL_APPROVED"))
+                .andExpect(jsonPath("$[0].description").value("Proposta aprovada pela financeira"))
+                .andExpect(jsonPath("$[1].newStatus").value("SIMULATING"))
+                .andExpect(jsonPath("$[2].newStatus").value("FIRST_CONTACT"));
 
         mockMvc.perform(get("/api/templates/active")
                         .header("Authorization", "Bearer " + token))
@@ -153,7 +182,8 @@ class LeadControllerTest {
         mockMvc.perform(get("/api/pipeline")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.FIRST_CONTACT[0].id", not(blankOrNullString())))
+                .andExpect(jsonPath("$.SIMULATING").isArray())
+                .andExpect(jsonPath("$.PROPOSAL_APPROVED[0].id").value(leadId))
                 .andExpect(jsonPath("$.AVAILABLE[0].id").value(availableLeadId))
                 .andExpect(jsonPath("$.ASSIGNED[0].id").value(assignedLeadId));
 

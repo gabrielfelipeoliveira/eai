@@ -5,6 +5,8 @@ export type LeadStatus =
   | 'FIRST_CONTACT'
   | 'IN_NEGOTIATION'
   | 'VISIT_SCHEDULED'
+  | 'SIMULATING'
+  | 'PROPOSAL_APPROVED'
   | 'PROPOSAL_SENT'
   | 'SOLD'
   | 'LOST'
