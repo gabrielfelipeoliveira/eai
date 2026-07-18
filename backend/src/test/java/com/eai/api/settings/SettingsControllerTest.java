@@ -54,18 +54,15 @@ class SettingsControllerTest {
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "companyId": "%s",
-                                  "name": "Empresa EAI Settings",
-                                  "document": "00000000000191",
-                                  "email": "settings@eai.com",
-                                  "phone": "1133334444",
-                                  "status": "ACTIVE"
-                                }
-                                """.formatted(DEFAULT_COMPANY_ID)))
+{
+  "companyId": "%s",
+  "name": "Empresa EAI Settings",
+  "status": "ACTIVE"
+}
+""".formatted(DEFAULT_COMPANY_ID)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Empresa EAI Settings"))
-                .andExpect(jsonPath("$.email").value("settings@eai.com"));
+                .andExpect(jsonPath("$.status").value("ACTIVE"));
     }
 
     @Test
@@ -156,6 +153,7 @@ class SettingsControllerTest {
     }
 
     private void createUser(String token, String name, String email, String role) throws Exception {
+        String storeId = "MANAGER".equals(role) ? null : "\"" + DEFAULT_STORE_ID + "\"";
         mockMvc.perform(post("/api/users")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -164,13 +162,13 @@ class SettingsControllerTest {
                                   "name": "%s",
                                   "email": "%s",
                                   "password": "manager123",
-                                  "phone": "11900000000",
-                                  "jobTitle": "%s",
-                                  "companyId": "%s",
-                                  "storeId": "%s",
-                                  "roles": ["%s"]
-                                }
-                                """.formatted(name, email, role, DEFAULT_COMPANY_ID, DEFAULT_STORE_ID, role)))
+  "phone": "11900000000",
+  "jobTitle": "%s",
+  "companyId": "%s",
+  "storeId": %s,
+  "roles": ["%s"]
+}
+""".formatted(name, email, role, DEFAULT_COMPANY_ID, storeId, role)))
                 .andExpect(status().isOk());
     }
 }

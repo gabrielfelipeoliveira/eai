@@ -25,6 +25,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
+import { apiErrorMessage } from '../services/api';
 import { listCompanies } from '../services/companyService';
 import { createStore, listStores, updateStore } from '../services/storeService';
 import type { Store } from '../types/tenant';
@@ -193,7 +194,9 @@ export function StoresPage() {
               </Typography>
             </Box>
 
-            {saveStoreMutation.isError && <Alert severity="error">Nao foi possivel salvar a loja.</Alert>}
+            {saveStoreMutation.isError && (
+              <Alert severity="error">{apiErrorMessage(saveStoreMutation.error) ?? 'Nao foi possivel salvar a loja.'}</Alert>
+            )}
 
             {isAdmin ? (
               <TextField select label="Empresa" error={Boolean(errors.companyId)} helperText={errors.companyId?.message} {...register('companyId')}>

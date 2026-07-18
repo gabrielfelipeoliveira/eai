@@ -3,6 +3,7 @@ import { Alert, Box, Button, Grid2, LinearProgress, MenuItem, Paper, Stack, Swit
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useMetadata } from '../hooks/useMetadata';
+import { apiErrorMessage } from '../services/api';
 import { getDistributionConfig, updateDistributionConfig } from '../services/distributionService';
 import type { LeadDistributionMode } from '../types/distribution';
 
@@ -62,9 +63,9 @@ export function DistributionSettingsPage() {
       </Box>
 
       {configQuery.isLoading && <LinearProgress />}
-      {configQuery.isError && <Alert severity="error">Nao foi possivel carregar a configuracao.</Alert>}
+      {configQuery.isError && <Alert severity="error">{apiErrorMessage(configQuery.error) ?? 'Nao foi possivel carregar a configuracao.'}</Alert>}
       {updateMutation.isSuccess && <Alert severity="success">Configuracao salva.</Alert>}
-      {updateMutation.isError && <Alert severity="error">Nao foi possivel salvar a configuracao.</Alert>}
+      {updateMutation.isError && <Alert severity="error">{apiErrorMessage(updateMutation.error) ?? 'Nao foi possivel salvar a configuracao.'}</Alert>}
 
       <Paper variant="outlined" sx={{ borderRadius: 1, p: 3 }}>
         <Grid2 container spacing={2.5}>

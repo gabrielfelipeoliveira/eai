@@ -28,6 +28,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
+import { apiErrorMessage } from '../services/api';
 import {
   getSettings,
   updateSettingsCompany,
@@ -45,9 +46,6 @@ const distributionModes: LeadDistributionMode[] = ['MANUAL', 'ROUND_ROBIN', 'LEA
 const companySchema = z.object({
   companyId: z.string().optional(),
   name: z.string().trim().min(1, 'Informe o nome').max(160),
-  document: z.string().trim().min(1, 'Informe o documento').max(40),
-  email: optionalText,
-  phone: optionalText,
   status: statusSchema,
 });
 
@@ -96,13 +94,12 @@ export function SettingsPage() {
   const metadata = useMetadata();
   const isAdmin = hasAnyRole(['ADMIN']);
   const [tab, setTab] = useState(0);
-  const [selectedCompanyId, setSelectedCompanyId] = useState(user?.companyId);
-  const [selectedStoreId, setSelectedStoreId] = useState(user?.storeId);
+  const [selectedCompanyId, setSelectedCompanyId] = useState(user?.companyId ?? undefined);
+  const [selectedStoreId, setSelectedStoreId] = useState(user?.storeId ?? undefined);
 
   const settingsQuery = useQuery({
     queryKey: ['settings', selectedCompanyId, selectedStoreId],
     queryFn: () => getSettings({ companyId: selectedCompanyId, storeId: selectedStoreId }),
-    enabled: Boolean(selectedCompanyId && selectedStoreId),
   });
 
   const companyForm = useForm<CompanyForm>({ resolver: zodResolver(companySchema) });
@@ -115,12 +112,11 @@ export function SettingsPage() {
       return;
     }
     const { company, distribution, store } = settingsQuery.data;
+    setSelectedCompanyId(company.id);
+    setSelectedStoreId(store.id);
     companyForm.reset({
       companyId: company.id,
       name: company.name,
-      document: company.document,
-      email: company.email ?? '',
-      phone: company.phone ?? '',
       status: company.status,
     });
     storeForm.reset({
@@ -209,13 +205,19 @@ export function SettingsPage() {
       </Box>
 
       {settingsQuery.isLoading && <LinearProgress />}
-      {settingsQuery.isError && <Alert severity="error">Nao foi possivel carregar as configuracoes.</Alert>}
+      {settingsQuery.isError && <Alert severity="error">{apiErrorMessage(settingsQuery.error) ?? 'Nao foi possivel carregar as configuracoes.'}</Alert>}
       {companyMutation.isSuccess && <Alert severity="success">Dados da empresa salvos.</Alert>}
       {storeMutation.isSuccess && <Alert severity="success">Dados da loja salvos.</Alert>}
       {distributionMutation.isSuccess && <Alert severity="success">Distribuicao salva.</Alert>}
       {slaMutation.isSuccess && <Alert severity="success">SLA salvo.</Alert>}
       {(companyMutation.isError || storeMutation.isError || distributionMutation.isError || slaMutation.isError) && (
-        <Alert severity="error">Nao foi possivel salvar a configuracao.</Alert>
+        <Alert severity="error">
+          {apiErrorMessage(companyMutation.error)
+            ?? apiErrorMessage(storeMutation.error)
+            ?? apiErrorMessage(distributionMutation.error)
+            ?? apiErrorMessage(slaMutation.error)
+            ?? 'Nao foi possivel salvar a configuracao.'}
+        </Alert>
       )}
 
       {settingsQuery.data && (
@@ -265,17 +267,8 @@ export function SettingsPage() {
               <Stack spacing={2.5}>
                 <SectionTitle title="Empresa" description={isAdmin ? 'Dados cadastrais da empresa selecionada.' : 'Somente administradores alteram dados da empresa.'} />
                 <Grid2 container spacing={2}>
-                  <Grid2 size={{ xs: 12, md: 6 }}>
+                  <Grid2 size={{ xs: 12, md: 8 }}>
                     <TextField disabled={!isAdmin} fullWidth label="Nome" {...companyForm.register('name')} error={Boolean(companyForm.formState.errors.name)} helperText={companyForm.formState.errors.name?.message} />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 6 }}>
-                    <TextField disabled={!isAdmin} fullWidth label="Documento" {...companyForm.register('document')} error={Boolean(companyForm.formState.errors.document)} helperText={companyForm.formState.errors.document?.message} />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 4 }}>
-                    <TextField disabled={!isAdmin} fullWidth label="E-mail" {...companyForm.register('email')} />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 4 }}>
-                    <TextField disabled={!isAdmin} fullWidth label="Telefone" {...companyForm.register('phone')} />
                   </Grid2>
                   <Grid2 size={{ xs: 12, md: 4 }}>
                     <TextField disabled={!isAdmin} fullWidth label="Status" select {...companyForm.register('status')}>

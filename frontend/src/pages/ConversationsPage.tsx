@@ -29,6 +29,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
+import { apiErrorCode, apiErrorMessage } from '../services/api';
 import { listConversationMessages, listConversations, sendConversationTextMessage } from '../services/conversationService';
 import { listActiveTemplates, sendWhatsappTemplate } from '../services/templateService';
 import { listUsers } from '../services/userService';
@@ -111,14 +112,6 @@ function statusIcon(status: ConversationMessage['status']) {
     return <DoneAllIcon fontSize="inherit" />;
   }
   return <CheckIcon fontSize="inherit" />;
-}
-
-function apiErrorCode(error: unknown) {
-  return (error as { response?: { data?: { code?: string } } }).response?.data?.code;
-}
-
-function apiErrorMessage(error: unknown) {
-  return (error as { response?: { data?: { message?: string } } }).response?.data?.message;
 }
 
 function dayStart(value: string) {

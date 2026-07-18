@@ -32,6 +32,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
+import { apiErrorMessage } from '../services/api';
 import { listCompanies } from '../services/companyService';
 import { listStores } from '../services/storeService';
 import { createTemplate, deleteTemplate, listTemplates, updateTemplate } from '../services/templateService';
@@ -212,7 +213,9 @@ export function TemplatesPage() {
           <DialogTitle>{editingTemplate ? 'Editar template' : 'Novo template'}</DialogTitle>
           <DialogContent>
             <Stack spacing={2} sx={{ pt: 1 }}>
-              {saveMutation.isError && <Alert severity="error">Nao foi possivel salvar o template.</Alert>}
+              {saveMutation.isError && (
+                <Alert severity="error">{apiErrorMessage(saveMutation.error) ?? 'Nao foi possivel salvar o template.'}</Alert>
+              )}
               <Grid2 container spacing={2}>
                 <Grid2 size={{ xs: 12, md: 6 }}>
                   <TextField fullWidth label="Nome" error={Boolean(errors.name)} helperText={errors.name?.message} {...register('name')} />

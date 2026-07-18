@@ -15,6 +15,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,14 +45,14 @@ public class JwtTokenProvider implements TokenProvider {
     public String createAccessToken(User user) {
         try {
             String header = encodeJson(Map.of("alg", "HS256", "typ", "JWT"));
-            String payload = encodeJson(Map.of(
-                    "sub", user.getId().toString(),
-                    "email", user.getEmail(),
-                    "companyId", user.getCompanyId().toString(),
-                    "storeId", user.getStoreId().toString(),
-                    "roles", user.getRoles().stream().map(Enum::name).sorted().toList(),
-                    "exp", Instant.now().plusSeconds(accessTokenTtlMinutes * 60).getEpochSecond()
-            ));
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("sub", user.getId().toString());
+            claims.put("email", user.getEmail());
+            claims.put("companyId", user.getCompanyId() == null ? null : user.getCompanyId().toString());
+            claims.put("storeId", user.getStoreId() == null ? null : user.getStoreId().toString());
+            claims.put("roles", user.getRoles().stream().map(Enum::name).sorted().toList());
+            claims.put("exp", Instant.now().plusSeconds(accessTokenTtlMinutes * 60).getEpochSecond());
+            String payload = encodeJson(claims);
             String unsignedToken = header + "." + payload;
             return unsignedToken + "." + sign(unsignedToken);
         } catch (Exception exception) {

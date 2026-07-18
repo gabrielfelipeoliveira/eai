@@ -124,6 +124,10 @@ public class Store {
         return status;
     }
 
+    public boolean isActive() {
+        return status == TenantStatus.ACTIVE;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
     }

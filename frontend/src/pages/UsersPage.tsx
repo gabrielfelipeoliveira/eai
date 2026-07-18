@@ -26,12 +26,14 @@ import { useEffect, useMemo } from 'react';
 import { z } from 'zod';
 import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
+import { apiErrorMessage } from '../services/api';
 import { listCompanies } from '../services/companyService';
 import { listStores } from '../services/storeService';
 import { assignUserTenant, createUser, listUsers } from '../services/userService';
 import type { AuthUser, UserRole } from '../types/auth';
 
 const roles: UserRole[] = ['ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER', 'PRE_SALES', 'F_AND_I', 'AVALIADOR'];
+const operationalRoles: UserRole[] = ['STORE_MANAGER', 'SELLER', 'PRE_SALES', 'F_AND_I', 'AVALIADOR'];
 
 const userSchema = z.object({
   name: z.string().min(1, 'Informe o nome').max(160),
@@ -39,19 +41,34 @@ const userSchema = z.object({
   password: z.string().min(6, 'Use ao menos 6 caracteres').max(80),
   phone: z.string().max(40).optional(),
   jobTitle: z.string().max(120).optional(),
-  companyId: z.string().min(1, 'Selecione a empresa'),
-  storeId: z.string().min(1, 'Selecione a loja'),
-  roles: z.array(z.enum(['ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER', 'PRE_SALES', 'F_AND_I', 'AVALIADOR'])).min(1, 'Selecione uma role'),
+  companyId: z.string(),
+  storeId: z.string(),
+  roles: z.array(z.enum(['ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER', 'PRE_SALES', 'F_AND_I', 'AVALIADOR'])).length(1, 'Selecione um papel'),
+}).superRefine((values, context) => {
+  const role = values.roles[0];
+  if (role === 'MANAGER' && !values.companyId) {
+    context.addIssue({ code: 'custom', path: ['companyId'], message: 'Selecione a empresa' });
+  }
+  if (operationalRoles.includes(role) && !values.companyId) {
+    context.addIssue({ code: 'custom', path: ['companyId'], message: 'Selecione a empresa' });
+  }
+  if (operationalRoles.includes(role) && !values.storeId) {
+    context.addIssue({ code: 'custom', path: ['storeId'], message: 'Selecione a loja' });
+  }
 });
 
 const tenantSchema = z.object({
   userId: z.string().min(1, 'Selecione o usuario'),
-  companyId: z.string().min(1, 'Selecione a empresa'),
-  storeId: z.string().min(1, 'Selecione a loja'),
+  companyId: z.string(),
+  storeId: z.string(),
 });
 
 type UserFormValues = z.infer<typeof userSchema>;
 type TenantFormValues = z.infer<typeof tenantSchema>;
+type TenantAssignmentValues = Omit<TenantFormValues, 'companyId' | 'storeId'> & {
+  companyId: string | null;
+  storeId: string | null;
+};
 
 export function UsersPage() {
   const { hasAnyRole } = useAuth();
@@ -109,7 +126,14 @@ export function UsersPage() {
   });
 
   const selectedCompanyId = watch('companyId');
+  const selectedRoles = watch('roles');
+  const selectedTenantUserId = watchTenant('userId');
   const selectedTenantCompanyId = watchTenant('companyId');
+  const selectedRole = selectedRoles[0];
+  const selectedRoleNeedsCompany = selectedRole !== 'ADMIN';
+  const selectedRoleNeedsStore = operationalRoles.includes(selectedRole);
+  const selectedTenantUser = usersQuery.data?.find((user) => user.id === selectedTenantUserId);
+  const selectedTenantNeedsStore = Boolean(selectedTenantUser?.roles.some((role) => operationalRoles.includes(role)));
 
   const storesQuery = useQuery({
     queryKey: ['stores', selectedCompanyId],
@@ -125,22 +149,33 @@ export function UsersPage() {
 
   useEffect(() => {
     const firstCompany = companiesQuery.data?.[0];
-    if (firstCompany && !selectedCompanyId) {
+    if (selectedRoleNeedsCompany && firstCompany && !selectedCompanyId) {
       setValue('companyId', firstCompany.id);
     }
-  }, [companiesQuery.data, selectedCompanyId, setValue]);
+  }, [companiesQuery.data, selectedCompanyId, selectedRoleNeedsCompany, setValue]);
 
   useEffect(() => {
-    if (storesQuery.data?.length) {
+    if (selectedRoleNeedsStore && storesQuery.data?.length) {
       setValue('storeId', storesQuery.data[0].id);
+    } else if (!selectedRoleNeedsStore) {
+      setValue('storeId', '');
     }
-  }, [selectedCompanyId, setValue, storesQuery.data]);
+  }, [selectedCompanyId, selectedRoleNeedsStore, setValue, storesQuery.data]);
 
   useEffect(() => {
-    if (tenantStoresQuery.data?.length) {
-      setTenantValue('storeId', tenantStoresQuery.data[0].id);
+    if (!selectedRoleNeedsCompany) {
+      setValue('companyId', '');
+      setValue('storeId', '');
     }
-  }, [selectedTenantCompanyId, setTenantValue, tenantStoresQuery.data]);
+  }, [selectedRoleNeedsCompany, setValue]);
+
+  useEffect(() => {
+    if (selectedTenantNeedsStore && tenantStoresQuery.data?.length) {
+      setTenantValue('storeId', tenantStoresQuery.data[0].id);
+    } else if (!selectedTenantNeedsStore) {
+      setTenantValue('storeId', '');
+    }
+  }, [selectedTenantCompanyId, selectedTenantNeedsStore, setTenantValue, tenantStoresQuery.data]);
 
   const createUserMutation = useMutation({
     mutationFn: createUser,
@@ -152,7 +187,7 @@ export function UsersPage() {
         phone: '',
         jobTitle: '',
         companyId: selectedCompanyId,
-        storeId: storesQuery.data?.[0]?.id ?? '',
+        storeId: selectedRoleNeedsStore ? storesQuery.data?.[0]?.id ?? '' : '',
         roles: ['SELLER'],
       });
       await queryClient.invalidateQueries({ queryKey: ['users'] });
@@ -160,7 +195,7 @@ export function UsersPage() {
   });
 
   const assignTenantMutation = useMutation({
-    mutationFn: (values: TenantFormValues) =>
+    mutationFn: (values: TenantAssignmentValues) =>
       assignUserTenant(values.userId, {
         companyId: values.companyId,
         storeId: values.storeId,
@@ -176,28 +211,36 @@ export function UsersPage() {
     [storesQuery.data, tenantStoresQuery.data],
   );
 
-  function companyName(companyId: string) {
-    return companiesQuery.data?.find((company) => company.id === companyId)?.name ?? companyId;
+  function companyName(companyId: string | null) {
+    return companyId ? companiesQuery.data?.find((company) => company.id === companyId)?.name ?? companyId : '-';
   }
 
-  function storeName(storeId: string) {
-    return knownStores.find((store) => store.id === storeId)?.name ?? storeId;
+  function storeName(storeId: string | null) {
+    return storeId ? knownStores.find((store) => store.id === storeId)?.name ?? storeId : '-';
   }
 
   function startTenantAssignment(user: AuthUser) {
     resetTenant({
       userId: user.id,
-      companyId: user.companyId,
-      storeId: user.storeId,
+      companyId: user.companyId ?? '',
+      storeId: user.storeId ?? '',
     });
   }
 
   function onSubmit(values: UserFormValues) {
-    createUserMutation.mutate(values);
+    createUserMutation.mutate({
+      ...values,
+      companyId: values.companyId || null,
+      storeId: values.storeId || null,
+    });
   }
 
   function onTenantSubmit(values: TenantFormValues) {
-    assignTenantMutation.mutate(values);
+    assignTenantMutation.mutate({
+      ...values,
+      companyId: values.companyId || null,
+      storeId: values.storeId || null,
+    });
   }
 
   return (
@@ -278,7 +321,9 @@ export function UsersPage() {
                 </Typography>
               </Box>
 
-              {createUserMutation.isError && <Alert severity="error">Nao foi possivel criar o usuario.</Alert>}
+              {createUserMutation.isError && (
+                <Alert severity="error">{apiErrorMessage(createUserMutation.error) ?? 'Nao foi possivel criar o usuario.'}</Alert>
+              )}
 
               <TextField label="Nome" error={Boolean(errors.name)} helperText={errors.name?.message} {...register('name')} />
               <TextField
@@ -302,14 +347,16 @@ export function UsersPage() {
                 helperText={errors.jobTitle?.message}
                 {...register('jobTitle')}
               />
-              <TextField select label="Empresa" error={Boolean(errors.companyId)} helperText={errors.companyId?.message} {...register('companyId')}>
+              <TextField select label="Empresa" disabled={!selectedRoleNeedsCompany} error={Boolean(errors.companyId)} helperText={errors.companyId?.message} {...register('companyId')}>
+                <MenuItem value="">Sem empresa</MenuItem>
                 {companiesQuery.data?.map((company) => (
                   <MenuItem key={company.id} value={company.id}>
                     {company.name}
                   </MenuItem>
                 ))}
               </TextField>
-              <TextField select label="Loja" error={Boolean(errors.storeId)} helperText={errors.storeId?.message} {...register('storeId')}>
+              <TextField select label="Loja" disabled={!selectedRoleNeedsStore} error={Boolean(errors.storeId)} helperText={errors.storeId?.message} {...register('storeId')}>
+                <MenuItem value="">Sem loja</MenuItem>
                 {storesQuery.data?.map((store) => (
                   <MenuItem key={store.id} value={store.id}>
                     {store.name}
@@ -331,10 +378,7 @@ export function UsersPage() {
                           <Checkbox
                             checked={field.value.includes(role)}
                             onChange={(event) => {
-                              const nextValue = event.target.checked
-                                ? [...field.value, role]
-                                : field.value.filter((value) => value !== role);
-                              field.onChange(nextValue);
+                              field.onChange(event.target.checked ? [role] : []);
                             }}
                           />
                         }
@@ -367,7 +411,9 @@ export function UsersPage() {
                 </Typography>
               </Box>
 
-              {assignTenantMutation.isError && <Alert severity="error">Nao foi possivel vincular o usuario.</Alert>}
+              {assignTenantMutation.isError && (
+                <Alert severity="error">{apiErrorMessage(assignTenantMutation.error) ?? 'Nao foi possivel vincular o usuario.'}</Alert>
+              )}
 
               <TextField select label="Usuario" error={Boolean(tenantErrors.userId)} helperText={tenantErrors.userId?.message} {...registerTenant('userId')}>
                 {usersQuery.data?.map((user) => (
@@ -383,13 +429,15 @@ export function UsersPage() {
                 helperText={tenantErrors.companyId?.message}
                 {...registerTenant('companyId')}
               >
+                <MenuItem value="">Sem empresa</MenuItem>
                 {companiesQuery.data?.map((company) => (
                   <MenuItem key={company.id} value={company.id}>
                     {company.name}
                   </MenuItem>
                 ))}
               </TextField>
-              <TextField select label="Loja" error={Boolean(tenantErrors.storeId)} helperText={tenantErrors.storeId?.message} {...registerTenant('storeId')}>
+              <TextField select label="Loja" disabled={!selectedTenantNeedsStore} error={Boolean(tenantErrors.storeId)} helperText={tenantErrors.storeId?.message} {...registerTenant('storeId')}>
+                <MenuItem value="">Sem loja</MenuItem>
                 {tenantStoresQuery.data?.map((store) => (
                   <MenuItem key={store.id} value={store.id}>
                     {store.name}

@@ -14,6 +14,10 @@ public interface UserRepository {
 
     List<User> findByStoreId(UUID storeId);
 
+    boolean existsActiveByCompanyId(UUID companyId);
+
+    List<User> findActiveByStoreId(UUID storeId);
+
     Optional<User> findById(UUID id);
 
     Optional<User> findByEmail(String email);

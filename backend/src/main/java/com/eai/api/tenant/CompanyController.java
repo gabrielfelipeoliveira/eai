@@ -42,10 +42,7 @@ public class CompanyController {
     @PostMapping
     public CompanyResponse createCompany(@Valid @RequestBody CompanyCreateRequest request) {
         return CompanyResponse.fromDomain(companyService.createCompany(new CreateCompanyCommand(
-                request.name(),
-                request.document(),
-                request.email(),
-                request.phone()
+                request.name()
         )));
     }
 
@@ -53,9 +50,6 @@ public class CompanyController {
     public CompanyResponse updateCompany(@PathVariable UUID id, @Valid @RequestBody CompanyRequest request) {
         return CompanyResponse.fromDomain(companyService.updateCompany(id, new UpdateCompanyCommand(
                 request.name(),
-                request.document(),
-                request.email(),
-                request.phone(),
                 request.status()
         )));
     }

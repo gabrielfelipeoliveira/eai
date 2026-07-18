@@ -3,9 +3,6 @@ export type TenantStatus = 'ACTIVE' | 'INACTIVE';
 export interface Company {
   id: string;
   name: string;
-  document: string;
-  email: string | null;
-  phone: string | null;
   status: TenantStatus;
   createdAt: string;
   updatedAt: string;

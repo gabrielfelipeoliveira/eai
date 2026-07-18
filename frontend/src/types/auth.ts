@@ -8,8 +8,8 @@ export interface AuthUser {
   email: string;
   phone: string | null;
   jobTitle: string | null;
-  companyId: string;
-  storeId: string;
+  companyId: string | null;
+  storeId: string | null;
   status: UserStatus;
   roles: UserRole[];
   createdAt: string;

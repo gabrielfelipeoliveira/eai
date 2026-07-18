@@ -30,16 +30,6 @@ public class CompanyPersistenceAdapter implements CompanyRepository {
     }
 
     @Override
-    public boolean existsByDocument(String document) {
-        return repository.existsByDocument(document);
-    }
-
-    @Override
-    public boolean existsByDocumentAndIdNot(String document, UUID id) {
-        return repository.existsByDocumentAndIdNot(document, id);
-    }
-
-    @Override
     public Company save(Company company) {
         return toDomain(repository.save(toEntity(company)));
     }
@@ -48,9 +38,6 @@ public class CompanyPersistenceAdapter implements CompanyRepository {
         return new Company(
                 entity.getId(),
                 entity.getName(),
-                entity.getDocument(),
-                entity.getEmail(),
-                entity.getPhone(),
                 entity.getStatus(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
@@ -61,9 +48,6 @@ public class CompanyPersistenceAdapter implements CompanyRepository {
         CompanyJpaEntity entity = new CompanyJpaEntity();
         entity.setId(company.getId());
         entity.setName(company.getName());
-        entity.setDocument(company.getDocument());
-        entity.setEmail(company.getEmail());
-        entity.setPhone(company.getPhone());
         entity.setStatus(company.getStatus());
         entity.setCreatedAt(company.getCreatedAt());
         entity.setUpdatedAt(company.getUpdatedAt());

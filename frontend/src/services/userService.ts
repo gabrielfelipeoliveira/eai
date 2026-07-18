@@ -7,14 +7,14 @@ export interface CreateUserPayload {
   password: string;
   phone?: string;
   jobTitle?: string;
-  companyId: string;
-  storeId: string;
+  companyId: string | null;
+  storeId: string | null;
   roles: UserRole[];
 }
 
 export interface AssignUserTenantPayload {
-  companyId: string;
-  storeId: string;
+  companyId: string | null;
+  storeId: string | null;
 }
 
 export async function listUsers() {

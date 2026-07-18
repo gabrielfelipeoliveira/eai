@@ -2,6 +2,7 @@ package com.eai.infrastructure.persistence.user;
 
 import com.eai.application.user.UserRepository;
 import com.eai.domain.user.User;
+import com.eai.domain.user.UserStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -34,6 +35,18 @@ public class UserPersistenceAdapter implements UserRepository {
     @Override
     public List<User> findByStoreId(UUID storeId) {
         return repository.findByStoreId(storeId).stream()
+                .map(this::toDomain)
+                .toList();
+    }
+
+    @Override
+    public boolean existsActiveByCompanyId(UUID companyId) {
+        return repository.existsByCompanyIdAndStatus(companyId, UserStatus.ACTIVE);
+    }
+
+    @Override
+    public List<User> findActiveByStoreId(UUID storeId) {
+        return repository.findByStoreIdAndStatus(storeId, UserStatus.ACTIVE).stream()
                 .map(this::toDomain)
                 .toList();
     }

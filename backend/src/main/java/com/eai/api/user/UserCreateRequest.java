@@ -4,7 +4,6 @@ import com.eai.domain.user.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.Set;
@@ -16,8 +15,8 @@ public record UserCreateRequest(
         @NotBlank @Size(min = 6, max = 80) String password,
         @Size(max = 40) String phone,
         @Size(max = 120) String jobTitle,
-        @NotNull UUID companyId,
-        @NotNull UUID storeId,
+        UUID companyId,
+        UUID storeId,
         @NotEmpty Set<UserRole> roles
 ) {
 }
