@@ -95,7 +95,7 @@ Regras:
 - Veiculo deve ser entidade estruturada.
 - A criacao nao deve ser barrada caso o veiculo estruturado nao seja encontrado.
 - Veiculo deve ser tabela filha de Item.
-- Item pertence ao lead.
+- Item pertence ao usuario.
 
 ### Dados Internacionais
 
