@@ -8,17 +8,19 @@ Leia os documentos nesta ordem antes de implementar qualquer mudanca:
 
 1. `.agents/AGENTS.md`
 2. `docs/README.md`
-3. `docs/negocio/vision.md`
-4. `docs/negocio/business-rules.md`
-5. `docs/negocio/pendencias.md`
-6. `docs/negocio/domain.md`
-7. `docs/negocio/use-cases.md`
-8. `docs/negocio/roadmap.md`
-9. `docs/tecnico/architecture.md`
-10. `docs/tecnico/api.md`
-11. `docs/tecnico/database.md`
-12. ADRs relevantes em `docs/tecnico/adr/`
-13. Arquivo especifico do papel em `.agents/`
+3. `docs/tecnico/contexto-atual.md`
+4. `docs/tecnico/trello-workflow.md`
+5. `docs/negocio/vision.md`
+6. `docs/negocio/business-rules.md`
+7. `docs/negocio/pendencias.md`
+8. `docs/negocio/domain.md`
+9. `docs/negocio/use-cases.md`
+10. `docs/negocio/roadmap.md`
+11. `docs/tecnico/architecture.md`
+12. `docs/tecnico/api.md`
+13. `docs/tecnico/database.md`
+14. ADRs relevantes em `docs/tecnico/adr/`
+15. Arquivo especifico do papel em `.agents/`
 
 Quando documentacao e codigo entrarem em conflito, nao escolha um lado silenciosamente. Registre o conflito no resumo do trabalho ou na documentacao apropriada.
 
@@ -37,18 +39,22 @@ Quando documentacao e codigo entrarem em conflito, nao escolha um lado silencios
 - Nao modifique migrations Flyway existentes depois que forem aplicadas fora de experimentacao local.
 - Sempre reporte as validacoes executadas.
 - Sempre reporte vulnerabilidades apontadas por build, auditoria de dependencias, Mend/SCA ou alertas de CVE do Java.
+- Use `docs/tecnico/contexto-atual.md` como handoff operacional entre pessoas e agentes.
+- Use cards `EAI-###` do Trello para nomear branches, PRs e referencias de commits.
 
 ## Fluxo De Desenvolvimento
 
 1. Leia a documentacao oficial relevante.
-2. Inspecione o codigo existente na area afetada.
-3. Identifique lacunas de regra de negocio antes de codar.
-4. Peca esclarecimento ao Product Owner quando o comportamento nao estiver definido.
-5. Implemente apenas comportamento aprovado.
-6. Adicione ou atualize testes quando comportamento ou logica compartilhada mudar.
-7. Atualize documentacao quando arquitetura, API, setup, workflow ou regras de produto mudarem.
-8. Execute validacoes relevantes.
-9. Resuma mudancas, validacoes, vulnerabilidades, riscos e pendencias.
+2. Confirme o card `EAI-###` no Trello e a branch correspondente.
+3. Inspecione o codigo existente na area afetada.
+4. Identifique lacunas de regra de negocio antes de codar.
+5. Peca esclarecimento ao Product Owner quando o comportamento nao estiver definido.
+6. Implemente apenas comportamento aprovado.
+7. Adicione ou atualize testes quando comportamento ou logica compartilhada mudar.
+8. Atualize documentacao quando arquitetura, API, setup, workflow ou regras de produto mudarem.
+9. Execute validacoes relevantes.
+10. Atualize Trello e `docs/tecnico/contexto-atual.md` quando o status operacional mudar.
+11. Resuma mudancas, validacoes, vulnerabilidades, riscos e pendencias.
 
 ## Padrao De Commit
 

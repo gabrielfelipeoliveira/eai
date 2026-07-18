@@ -21,6 +21,7 @@ Use `docs/negocio/` para decisoes e contexto de produto. Esta pasta deve ser a r
 
 Use `docs/tecnico/` para decisoes e contexto de engenharia. Esta pasta deve ser a referencia principal para Software Architect, desenvolvedores e agentes que estejam avaliando arquitetura, API, banco, setup ou operacao tecnica.
 
+- [Contexto atual e handoff operacional](tecnico/contexto-atual.md)
 - [Arquitetura](tecnico/architecture.md)
 - [Diagrama de arquitetura consolidada do Trello](tecnico/diagrama-arquitetura-consolidada-trello.md)
 - [Diretrizes de API](tecnico/api.md)

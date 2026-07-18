@@ -8,16 +8,18 @@ Leia primeiro:
 
 1. `.agents/AGENTS.md`
 2. `docs/README.md`
-3. `docs/negocio/vision.md`
-4. `docs/negocio/business-rules.md`
-5. `docs/negocio/pendencias.md`
-6. `docs/negocio/domain.md`
-7. `docs/negocio/use-cases.md`
-8. `docs/negocio/roadmap.md`
-9. `docs/tecnico/architecture.md`
-10. `docs/tecnico/api.md`
-11. `docs/tecnico/database.md`
-12. Arquivos relevantes em `.agents/` conforme o papel executado
+3. `docs/tecnico/contexto-atual.md`
+4. `docs/tecnico/trello-workflow.md`
+5. `docs/negocio/vision.md`
+6. `docs/negocio/business-rules.md`
+7. `docs/negocio/pendencias.md`
+8. `docs/negocio/domain.md`
+9. `docs/negocio/use-cases.md`
+10. `docs/negocio/roadmap.md`
+11. `docs/tecnico/architecture.md`
+12. `docs/tecnico/api.md`
+13. `docs/tecnico/database.md`
+14. Arquivos relevantes em `.agents/` conforme o papel executado
 
 Regras importantes:
 
@@ -30,5 +32,7 @@ Regras importantes:
 - Mantenha o dominio independente de Spring e JPA.
 - Nao modifique migrations Flyway existentes depois que forem aplicadas fora de experimentacao local.
 - Sempre reporte vulnerabilidades apontadas por build, auditoria de dependencias, Mend/SCA ou alertas de CVE do Java, mesmo quando a correcao ficar fora do escopo da tarefa.
+- Use `docs/tecnico/contexto-atual.md` como handoff operacional entre pessoas e agentes.
+- Use cards `EAI-###` do Trello para nomear branches, PRs e referencias de commits.
 
 Durante a Sprint 0, o repositorio e somente de documentacao: sem implementacao de funcionalidades, mudancas de banco, mudancas de API, alteracoes de regras de negocio ou grandes refactors.
