@@ -81,6 +81,6 @@ Uma tarefa so esta concluida quando:
 - Mudancas de configuracao sao documentadas.
 - A resposta final lista as validacoes executadas.
 
-## Regra Da Sprint 0
+## Nota Historica Da Fase Inicial
 
-A Sprint 0 e somente de documentacao. Implementacao de funcionalidades, alteracoes de API, alteracoes de banco de dados e mudancas de regras de negocio nao sao permitidas.
+Na fase inicial, o repositorio era somente de documentacao. Na fase atual, implementacao e permitida apenas quando houver card `EAI-###` no Trello, decisao/documentacao oficial correspondente e branch conforme `docs/tecnico/trello-workflow.md`.

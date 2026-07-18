@@ -2,7 +2,7 @@
 
 Diagrama tecnico baseado nas decisoes consolidadas do Trello em `docs/negocio/decisoes-consolidadas-trello.md`.
 
-Este documento descreve a arquitetura alvo para orientar documentacao tecnica futura. Ele nao substitui ADRs nem autoriza implementacao fora da Sprint 0.
+Este documento descreve a arquitetura alvo para orientar documentacao tecnica futura. Ele nao substitui ADRs nem autoriza implementacao sem card `EAI-###`, decisao/documentacao oficial correspondente e branch conforme `docs/tecnico/trello-workflow.md`.
 
 ## Visao De Contexto
 

@@ -225,6 +225,6 @@ npm run build
 - [ADRs - Architecture Decision Records](docs/tecnico/adr)
 - [Onboarding de agentes de IA](.agents/AGENTS.md)
 
-## Baseline De Documentacao Da Sprint 0
+## Baseline Inicial De Documentacao
 
-A Sprint 0 estabeleceu o conjunto de documentos usado como fonte oficial para desenvolvedores, Product Owner, Software Architect e agentes de IA. Trabalhos futuros de funcionalidade devem consultar os documentos relevantes antes da implementacao. Regras de negocio ausentes devem ser registradas como pendencias para o Product Owner em vez de serem assumidas.
+A fase inicial estabeleceu o conjunto de documentos usado como fonte oficial para desenvolvedores, Product Owner, Software Architect e agentes de IA. Trabalhos futuros de funcionalidade devem consultar os documentos relevantes antes da implementacao. Regras de negocio ausentes devem ser registradas como pendencias para o Product Owner em vez de serem assumidas.

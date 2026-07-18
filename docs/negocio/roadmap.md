@@ -2,7 +2,7 @@
 
 Este roadmap organiza a evolucao conhecida do projeto. Regras aprovadas ficam em [Regras de negocio](business-rules.md), e duvidas abertas ficam em [Pendencias de produto](pendencias.md).
 
-## Sprint 0: Base De Engenharia
+## Fase Inicial: Base De Engenharia
 
 Objetivo:
 

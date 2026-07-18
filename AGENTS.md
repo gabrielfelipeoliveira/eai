@@ -35,4 +35,4 @@ Regras importantes:
 - Use `docs/tecnico/contexto-atual.md` como handoff operacional entre pessoas e agentes.
 - Use cards `EAI-###` do Trello para nomear branches, PRs e referencias de commits.
 
-Durante a Sprint 0, o repositorio e somente de documentacao: sem implementacao de funcionalidades, mudancas de banco, mudancas de API, alteracoes de regras de negocio ou grandes refactors.
+Nota historica: na fase inicial, o repositorio era somente de documentacao. Na fase atual, implementacao e permitida apenas quando houver card `EAI-###` no Trello, decisao/documentacao oficial correspondente e branch conforme `docs/tecnico/trello-workflow.md`.
