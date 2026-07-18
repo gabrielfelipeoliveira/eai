@@ -1,9 +1,12 @@
 package com.eai.domain.conversation;
 
+import lombok.Getter;
+
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class Conversation {
 
     private final UUID id;
@@ -46,35 +49,4 @@ public class Conversation {
         }
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getCompanyId() {
-        return companyId;
-    }
-
-    public UUID getStoreId() {
-        return storeId;
-    }
-
-    public UUID getContactId() {
-        return contactId;
-    }
-
-    public UUID getLeadId() {
-        return leadId;
-    }
-
-    public UUID getResponsibleUserId() {
-        return responsibleUserId;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
 }

@@ -1,9 +1,12 @@
 package com.eai.domain.tenant;
 
+import lombok.Getter;
+
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class Store {
 
     private final UUID id;
@@ -84,56 +87,8 @@ public class Store {
         this.updatedAt = Instant.now();
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getCompanyId() {
-        return companyId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDocument() {
-        return document;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public TenantStatus getStatus() {
-        return status;
-    }
-
     public boolean isActive() {
         return status == TenantStatus.ACTIVE;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
     }
 
     private static String requireText(String value, String fieldName) {

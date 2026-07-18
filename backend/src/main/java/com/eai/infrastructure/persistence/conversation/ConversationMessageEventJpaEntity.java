@@ -1,5 +1,8 @@
 package com.eai.infrastructure.persistence.conversation;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import com.eai.domain.conversation.ConversationMessageStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +14,8 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "conversation_message_events")
 public class ConversationMessageEventJpaEntity {
@@ -40,67 +45,4 @@ public class ConversationMessageEventJpaEntity {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getMessageId() {
-        return messageId;
-    }
-
-    public void setMessageId(UUID messageId) {
-        this.messageId = messageId;
-    }
-
-    public String getExternalMessageId() {
-        return externalMessageId;
-    }
-
-    public void setExternalMessageId(String externalMessageId) {
-        this.externalMessageId = externalMessageId;
-    }
-
-    public ConversationMessageStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ConversationMessageStatus status) {
-        this.status = status;
-    }
-
-    public String getFailureReason() {
-        return failureReason;
-    }
-
-    public void setFailureReason(String failureReason) {
-        this.failureReason = failureReason;
-    }
-
-    public String getRawPayload() {
-        return rawPayload;
-    }
-
-    public void setRawPayload(String rawPayload) {
-        this.rawPayload = rawPayload;
-    }
-
-    public Instant getOccurredAt() {
-        return occurredAt;
-    }
-
-    public void setOccurredAt(Instant occurredAt) {
-        this.occurredAt = occurredAt;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
 }

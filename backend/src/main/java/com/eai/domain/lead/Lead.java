@@ -1,10 +1,13 @@
 package com.eai.domain.lead;
 
+import lombok.Getter;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class Lead {
 
     private final UUID id;
@@ -165,82 +168,6 @@ public class Lead {
         this.assignedToUserId = Objects.requireNonNull(userId);
         this.assignedAt = Instant.now();
         return changeStatus(LeadStatus.ASSIGNED);
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getCompanyId() {
-        return companyId;
-    }
-
-    public UUID getStoreId() {
-        return storeId;
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public String getCustomerPhone() {
-        return customerPhone;
-    }
-
-    public String getCustomerEmail() {
-        return customerEmail;
-    }
-
-    public String getCustomerCity() {
-        return customerCity;
-    }
-
-    public String getVehicleInterest() {
-        return vehicleInterest;
-    }
-
-    public LeadSource getSource() {
-        return source;
-    }
-
-    public String getOriginalMessage() {
-        return originalMessage;
-    }
-
-    public LeadStatus getStatus() {
-        return status;
-    }
-
-    public UUID getAssignedToUserId() {
-        return assignedToUserId;
-    }
-
-    public Instant getAssignedAt() {
-        return assignedAt;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public Instant getFirstContactAt() {
-        return firstContactAt;
-    }
-
-    public Instant getLastContactAt() {
-        return lastContactAt;
-    }
-
-    public String getLostReason() {
-        return lostReason;
-    }
-
-    public BigDecimal getSaleValue() {
-        return saleValue;
     }
 
     private static String requireText(String value, String fieldName) {

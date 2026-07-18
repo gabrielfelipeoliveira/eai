@@ -1,9 +1,12 @@
 package com.eai.domain.lead;
 
+import lombok.Getter;
+
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class LeadNote {
 
     private final UUID id;
@@ -22,26 +25,6 @@ public class LeadNote {
 
     public static LeadNote create(UUID leadId, UUID userId, String note) {
         return new LeadNote(UUID.randomUUID(), leadId, userId, note, Instant.now());
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getLeadId() {
-        return leadId;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
     }
 
     private static String requireText(String value) {

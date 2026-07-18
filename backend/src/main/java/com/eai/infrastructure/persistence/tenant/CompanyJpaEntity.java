@@ -1,5 +1,8 @@
 package com.eai.infrastructure.persistence.tenant;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import com.eai.domain.tenant.TenantStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +14,8 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "companies")
 public class CompanyJpaEntity {
@@ -31,43 +36,4 @@ public class CompanyJpaEntity {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public TenantStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TenantStatus status) {
-        this.status = status;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 }

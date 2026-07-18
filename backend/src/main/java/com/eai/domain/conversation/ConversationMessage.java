@@ -1,9 +1,12 @@
 package com.eai.domain.conversation;
 
+import lombok.Getter;
+
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class ConversationMessage {
 
     private final UUID id;
@@ -55,54 +58,6 @@ public class ConversationMessage {
     public static ConversationMessage outbound(UUID conversationId, ConversationMessageType type, ConversationMessageStatus status, String externalMessageId, String content, String rawPayload) {
         Instant now = Instant.now();
         return new ConversationMessage(UUID.randomUUID(), conversationId, ConversationMessageDirection.OUTBOUND, type, status, externalMessageId, content, null, null, rawPayload, now, now);
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getConversationId() {
-        return conversationId;
-    }
-
-    public ConversationMessageDirection getDirection() {
-        return direction;
-    }
-
-    public ConversationMessageType getType() {
-        return type;
-    }
-
-    public ConversationMessageStatus getStatus() {
-        return status;
-    }
-
-    public String getExternalMessageId() {
-        return externalMessageId;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public String getMediaId() {
-        return mediaId;
-    }
-
-    public String getMediaMimeType() {
-        return mediaMimeType;
-    }
-
-    public String getRawPayload() {
-        return rawPayload;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
     }
 
     public void updateStatus(ConversationMessageStatus status) {

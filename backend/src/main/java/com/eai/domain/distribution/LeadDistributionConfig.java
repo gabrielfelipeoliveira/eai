@@ -1,8 +1,11 @@
 package com.eai.domain.distribution;
 
+import lombok.Getter;
+
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class LeadDistributionConfig {
 
     private final UUID id;
@@ -28,23 +31,4 @@ public class LeadDistributionConfig {
         this.active = active;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getCompanyId() {
-        return companyId;
-    }
-
-    public UUID getStoreId() {
-        return storeId;
-    }
-
-    public LeadDistributionMode getMode() {
-        return mode;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
 }

@@ -1,9 +1,12 @@
 package com.eai.domain.email;
 
+import lombok.Getter;
+
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class EmailAccount {
 
     private final UUID id;
@@ -134,74 +137,6 @@ public class EmailAccount {
         this.lastSyncMessage = trimToNull(message);
         this.lastSyncAt = Instant.now();
         this.updatedAt = this.lastSyncAt;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getCompanyId() {
-        return companyId;
-    }
-
-    public UUID getStoreId() {
-        return storeId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getEncryptedPassword() {
-        return encryptedPassword;
-    }
-
-    public EmailProtocol getProtocol() {
-        return protocol;
-    }
-
-    public boolean isUseSsl() {
-        return useSsl;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public Instant getLastReadAt() {
-        return lastReadAt;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public EmailAccountStatus getLastSyncStatus() {
-        return lastSyncStatus;
-    }
-
-    public String getLastSyncMessage() {
-        return lastSyncMessage;
-    }
-
-    public Instant getLastSyncAt() {
-        return lastSyncAt;
     }
 
     private static String requireText(String value, String fieldName) {

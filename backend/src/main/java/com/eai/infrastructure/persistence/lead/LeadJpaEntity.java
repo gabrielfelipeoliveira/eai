@@ -1,5 +1,8 @@
 package com.eai.infrastructure.persistence.lead;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
 import jakarta.persistence.Column;
@@ -13,6 +16,8 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "leads")
 public class LeadJpaEntity {
@@ -76,155 +81,4 @@ public class LeadJpaEntity {
     @Column(name = "sale_value", precision = 14, scale = 2)
     private BigDecimal saleValue;
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getCompanyId() {
-        return companyId;
-    }
-
-    public void setCompanyId(UUID companyId) {
-        this.companyId = companyId;
-    }
-
-    public UUID getStoreId() {
-        return storeId;
-    }
-
-    public void setStoreId(UUID storeId) {
-        this.storeId = storeId;
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public String getCustomerPhone() {
-        return customerPhone;
-    }
-
-    public void setCustomerPhone(String customerPhone) {
-        this.customerPhone = customerPhone;
-    }
-
-    public String getCustomerEmail() {
-        return customerEmail;
-    }
-
-    public void setCustomerEmail(String customerEmail) {
-        this.customerEmail = customerEmail;
-    }
-
-    public String getCustomerCity() {
-        return customerCity;
-    }
-
-    public void setCustomerCity(String customerCity) {
-        this.customerCity = customerCity;
-    }
-
-    public String getVehicleInterest() {
-        return vehicleInterest;
-    }
-
-    public void setVehicleInterest(String vehicleInterest) {
-        this.vehicleInterest = vehicleInterest;
-    }
-
-    public LeadSource getSource() {
-        return source;
-    }
-
-    public void setSource(LeadSource source) {
-        this.source = source;
-    }
-
-    public String getOriginalMessage() {
-        return originalMessage;
-    }
-
-    public void setOriginalMessage(String originalMessage) {
-        this.originalMessage = originalMessage;
-    }
-
-    public LeadStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(LeadStatus status) {
-        this.status = status;
-    }
-
-    public UUID getAssignedToUserId() {
-        return assignedToUserId;
-    }
-
-    public void setAssignedToUserId(UUID assignedToUserId) {
-        this.assignedToUserId = assignedToUserId;
-    }
-
-    public Instant getAssignedAt() {
-        return assignedAt;
-    }
-
-    public void setAssignedAt(Instant assignedAt) {
-        this.assignedAt = assignedAt;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Instant getFirstContactAt() {
-        return firstContactAt;
-    }
-
-    public void setFirstContactAt(Instant firstContactAt) {
-        this.firstContactAt = firstContactAt;
-    }
-
-    public Instant getLastContactAt() {
-        return lastContactAt;
-    }
-
-    public void setLastContactAt(Instant lastContactAt) {
-        this.lastContactAt = lastContactAt;
-    }
-
-    public String getLostReason() {
-        return lostReason;
-    }
-
-    public void setLostReason(String lostReason) {
-        this.lostReason = lostReason;
-    }
-
-    public BigDecimal getSaleValue() {
-        return saleValue;
-    }
-
-    public void setSaleValue(BigDecimal saleValue) {
-        this.saleValue = saleValue;
-    }
 }

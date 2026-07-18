@@ -1,9 +1,12 @@
 package com.eai.domain.conversation;
 
+import lombok.Getter;
+
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class ConversationMessageEvent {
 
     private final UUID id;
@@ -38,38 +41,6 @@ public class ConversationMessageEvent {
     public static ConversationMessageEvent statusReceived(UUID messageId, String externalMessageId, ConversationMessageStatus status, String failureReason, String rawPayload, Instant occurredAt) {
         Instant now = Instant.now();
         return new ConversationMessageEvent(UUID.randomUUID(), messageId, externalMessageId, status, failureReason, rawPayload, occurredAt == null ? now : occurredAt, now);
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getMessageId() {
-        return messageId;
-    }
-
-    public String getExternalMessageId() {
-        return externalMessageId;
-    }
-
-    public ConversationMessageStatus getStatus() {
-        return status;
-    }
-
-    public String getFailureReason() {
-        return failureReason;
-    }
-
-    public String getRawPayload() {
-        return rawPayload;
-    }
-
-    public Instant getOccurredAt() {
-        return occurredAt;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
     }
 
     private static String trimToNull(String value) {

@@ -1,9 +1,12 @@
 package com.eai.domain.lead;
 
+import lombok.Getter;
+
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class FollowUpTask {
 
     private final UUID id;
@@ -81,46 +84,6 @@ public class FollowUpTask {
             return FollowUpTaskStatus.OVERDUE;
         }
         return status;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getLeadId() {
-        return leadId;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Instant getDueAt() {
-        return dueAt;
-    }
-
-    public Instant getCompletedAt() {
-        return completedAt;
-    }
-
-    public FollowUpTaskStatus getStatus() {
-        return status;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
     }
 
     private static String requireText(String value, String fieldName) {

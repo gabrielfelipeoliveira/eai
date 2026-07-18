@@ -1,9 +1,12 @@
 package com.eai.domain.message;
 
+import lombok.Getter;
+
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class MessageTemplate {
 
     private final UUID id;
@@ -51,42 +54,6 @@ public class MessageTemplate {
         this.content = requireText(content, "content");
         this.active = active;
         this.updatedAt = Instant.now();
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getCompanyId() {
-        return companyId;
-    }
-
-    public UUID getStoreId() {
-        return storeId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public MessageTemplateType getType() {
-        return type;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
     }
 
     private static String requireText(String value, String fieldName) {

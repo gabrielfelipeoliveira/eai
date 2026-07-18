@@ -1,11 +1,14 @@
 package com.eai.domain.conversation;
 
+import lombok.Getter;
+
 import com.eai.domain.user.UserRole;
 
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class ConversationAccessAudit {
 
     private final UUID id;
@@ -44,39 +47,4 @@ public class ConversationAccessAudit {
         );
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getConversationId() {
-        return conversationId;
-    }
-
-    public UUID getCompanyId() {
-        return companyId;
-    }
-
-    public UUID getStoreId() {
-        return storeId;
-    }
-
-    public UUID getLeadId() {
-        return leadId;
-    }
-
-    public UUID getActorUserId() {
-        return actorUserId;
-    }
-
-    public UserRole getActorRole() {
-        return actorRole;
-    }
-
-    public String getAccessType() {
-        return accessType;
-    }
-
-    public Instant getAccessedAt() {
-        return accessedAt;
-    }
 }

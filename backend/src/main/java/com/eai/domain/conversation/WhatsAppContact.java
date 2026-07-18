@@ -1,9 +1,12 @@
 package com.eai.domain.conversation;
 
+import lombok.Getter;
+
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class WhatsAppContact {
 
     private final UUID id;
@@ -44,38 +47,6 @@ public class WhatsAppContact {
             this.displayName = normalized;
             this.updatedAt = Instant.now();
         }
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getCompanyId() {
-        return companyId;
-    }
-
-    public UUID getStoreId() {
-        return storeId;
-    }
-
-    public UUID getLeadId() {
-        return leadId;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
     }
 
     private static String requirePhone(String value) {

@@ -1,11 +1,14 @@
 package com.eai.domain.user;
 
+import lombok.Getter;
+
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+@Getter
 public class User {
 
     private final UUID id;
@@ -106,52 +109,8 @@ public class User {
         return status == UserStatus.ACTIVE;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public String getJobTitle() {
-        return jobTitle;
-    }
-
-    public UUID getCompanyId() {
-        return companyId;
-    }
-
-    public UUID getStoreId() {
-        return storeId;
-    }
-
-    public UserStatus getStatus() {
-        return status;
-    }
-
     public Set<UserRole> getRoles() {
         return Set.copyOf(roles);
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
     }
 
     private static String requireText(String value, String fieldName) {

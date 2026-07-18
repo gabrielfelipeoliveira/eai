@@ -1,5 +1,8 @@
 package com.eai.infrastructure.persistence.lead;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -7,6 +10,8 @@ import jakarta.persistence.Table;
 
 import java.util.UUID;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "lead_tags")
 public class LeadTagJpaEntity {
@@ -20,27 +25,4 @@ public class LeadTagJpaEntity {
     @Column(nullable = false)
     private String name;
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getLeadId() {
-        return leadId;
-    }
-
-    public void setLeadId(UUID leadId) {
-        this.leadId = leadId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

@@ -1,8 +1,11 @@
 package com.eai.domain.lead;
 
+import lombok.Getter;
+
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class LeadTag {
 
     private final UUID id;
@@ -17,18 +20,6 @@ public class LeadTag {
 
     public static LeadTag create(UUID leadId, String name) {
         return new LeadTag(UUID.randomUUID(), leadId, name);
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getLeadId() {
-        return leadId;
-    }
-
-    public String getName() {
-        return name;
     }
 
     private static String requireText(String value) {

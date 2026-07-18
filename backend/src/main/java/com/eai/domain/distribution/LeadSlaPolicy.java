@@ -1,8 +1,11 @@
 package com.eai.domain.distribution;
 
+import lombok.Getter;
+
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class LeadSlaPolicy {
 
     private final UUID id;
@@ -32,27 +35,4 @@ public class LeadSlaPolicy {
         this.active = active;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getCompanyId() {
-        return companyId;
-    }
-
-    public UUID getStoreId() {
-        return storeId;
-    }
-
-    public int getMinutesToAssign() {
-        return minutesToAssign;
-    }
-
-    public int getMinutesToFirstContact() {
-        return minutesToFirstContact;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
 }

@@ -1,9 +1,12 @@
 package com.eai.domain.message;
 
+import lombok.Getter;
+
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class LeadCommunication {
 
     private final UUID id;
@@ -26,34 +29,6 @@ public class LeadCommunication {
 
     public static LeadCommunication create(UUID leadId, UUID userId, LeadCommunicationChannel channel, UUID templateId, String message) {
         return new LeadCommunication(UUID.randomUUID(), leadId, userId, channel, templateId, message, Instant.now());
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getLeadId() {
-        return leadId;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public LeadCommunicationChannel getChannel() {
-        return channel;
-    }
-
-    public UUID getTemplateId() {
-        return templateId;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
     }
 
     private static String requireText(String value, String fieldName) {

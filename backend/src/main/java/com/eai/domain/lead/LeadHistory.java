@@ -1,9 +1,12 @@
 package com.eai.domain.lead;
 
+import lombok.Getter;
+
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
 public class LeadHistory {
 
     private final UUID id;
@@ -28,31 +31,4 @@ public class LeadHistory {
         return new LeadHistory(UUID.randomUUID(), leadId, userId, previousStatus, newStatus, description, Instant.now());
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getLeadId() {
-        return leadId;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public LeadStatus getPreviousStatus() {
-        return previousStatus;
-    }
-
-    public LeadStatus getNewStatus() {
-        return newStatus;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
 }
