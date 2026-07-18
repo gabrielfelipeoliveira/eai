@@ -9,9 +9,6 @@ import java.util.UUID;
 public record CompanyResponse(
         UUID id,
         String name,
-        String document,
-        String email,
-        String phone,
         TenantStatus status,
         Instant createdAt,
         Instant updatedAt
@@ -20,9 +17,6 @@ public record CompanyResponse(
         return new CompanyResponse(
                 company.getId(),
                 company.getName(),
-                company.getDocument(),
-                company.getEmail(),
-                company.getPhone(),
                 company.getStatus(),
                 company.getCreatedAt(),
                 company.getUpdatedAt()

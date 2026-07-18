@@ -6,6 +6,7 @@ import com.eai.application.common.NotFoundException;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.application.tenant.CompanyService;
 import com.eai.application.tenant.StoreService;
+import com.eai.domain.tenant.Company;
 import com.eai.domain.tenant.Store;
 import com.eai.application.security.PasswordHasher;
 import com.eai.domain.user.User;
@@ -74,6 +75,7 @@ public class UserService {
         if (userRepository.existsByEmail(email)) {
             throw new ConflictException("Email already registered");
         }
+        validateTenant(command.companyId(), command.storeId(), command.roles());
         User user = User.create(
                 command.name(),
                 email,
@@ -84,7 +86,6 @@ public class UserService {
                 command.storeId(),
                 command.roles()
         );
-        validateTenant(user.getCompanyId(), user.getStoreId());
         return userRepository.save(user);
     }
 
@@ -95,7 +96,7 @@ public class UserService {
         if (userRepository.existsByEmailAndIdNot(email, id)) {
             throw new ConflictException("Email already registered");
         }
-        validateTenant(command.companyId(), command.storeId());
+        validateTenant(command.companyId(), command.storeId(), command.roles());
         user.updateProfile(command.name(), email, command.phone(), command.jobTitle(), command.companyId(), command.storeId(), command.roles());
         if (command.password() != null && !command.password().isBlank()) {
             user.updatePasswordHash(passwordHasher.hash(command.password()));
@@ -106,7 +107,7 @@ public class UserService {
     @Transactional
     public User assignTenant(UUID id, AssignUserTenantCommand command) {
         User user = findRequired(id);
-        validateTenant(command.companyId(), command.storeId());
+        validateTenant(command.companyId(), command.storeId(), user.getRoles());
         user.updateTenant(command.companyId(), command.storeId());
         return userRepository.save(user);
     }
@@ -137,15 +138,48 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
-    private void validateTenant(UUID companyId, UUID storeId) {
-        if (companyId == null || storeId == null) {
-            throw new IllegalArgumentException("companyId and storeId are required");
+    private void validateTenant(UUID companyId, UUID storeId, java.util.Set<UserRole> roles) {
+        if (roles == null || roles.size() != 1) {
+            throw new IllegalArgumentException("User must have exactly one role");
         }
-        companyService.findRequired(companyId);
+        UserRole role = roles.iterator().next();
+        if (role == UserRole.ADMIN) {
+            if (storeId != null) {
+                throw new IllegalArgumentException("ADMIN users must not be linked to a store");
+            }
+            if (companyId != null) {
+                assertActiveCompany(companyId);
+            }
+            return;
+        }
+        if (companyId == null) {
+            throw new IllegalArgumentException("companyId is required for role " + role);
+        }
+        Company company = assertActiveCompany(companyId);
+        if (role == UserRole.MANAGER) {
+            if (storeId != null) {
+                throw new IllegalArgumentException("MANAGER users must not be linked to a store");
+            }
+            return;
+        }
+        if (storeId == null) {
+            throw new IllegalArgumentException("storeId is required for role " + role);
+        }
         Store store = storeService.findRequired(storeId);
         if (!store.getCompanyId().equals(companyId)) {
             throw new IllegalArgumentException("store does not belong to company");
         }
+        if (!company.isActive() || !store.isActive()) {
+            throw new IllegalArgumentException("company and store must be active");
+        }
+    }
+
+    private Company assertActiveCompany(UUID companyId) {
+        Company company = companyService.findRequired(companyId);
+        if (!company.isActive()) {
+            throw new IllegalArgumentException("company must be active");
+        }
+        return company;
     }
 
     private void assertCanAccessUser(User user, AuthenticatedUser authenticatedUser) {

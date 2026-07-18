@@ -1,0 +1,106 @@
+package com.eai.application.user;
+
+import com.eai.application.security.PasswordHasher;
+import com.eai.application.tenant.CompanyService;
+import com.eai.application.tenant.StoreService;
+import com.eai.domain.tenant.Company;
+import com.eai.domain.tenant.Store;
+import com.eai.domain.tenant.TenantStatus;
+import com.eai.domain.user.User;
+import com.eai.domain.user.UserRole;
+import org.junit.jupiter.api.Test;
+
+import java.time.Instant;
+import java.util.Set;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+class UserServiceTest {
+
+    private static final UUID COMPANY_ID = UUID.fromString("00000000-0000-0000-0000-000000000101");
+    private static final UUID STORE_ID = UUID.fromString("00000000-0000-0000-0000-000000000201");
+
+    private final UserRepository userRepository = mock(UserRepository.class);
+    private final PasswordHasher passwordHasher = mock(PasswordHasher.class);
+    private final CompanyService companyService = mock(CompanyService.class);
+    private final StoreService storeService = mock(StoreService.class);
+    private final UserService service = new UserService(userRepository, passwordHasher, companyService, storeService);
+
+    @Test
+    void acceptsAdminWithoutCompanyOrStore() {
+        arrangeSave();
+
+        User user = service.createUser(command(UserRole.ADMIN, null, null));
+
+        assertThat(user.getCompanyId()).isNull();
+        assertThat(user.getStoreId()).isNull();
+    }
+
+    @Test
+    void acceptsManagerWithCompanyAndWithoutStore() {
+        arrangeActiveCompany();
+        arrangeSave();
+
+        User user = service.createUser(command(UserRole.MANAGER, COMPANY_ID, null));
+
+        assertThat(user.getCompanyId()).isEqualTo(COMPANY_ID);
+        assertThat(user.getStoreId()).isNull();
+    }
+
+    @Test
+    void rejectsManagerWithStore() {
+        arrangeActiveCompany();
+
+        assertThatThrownBy(() -> service.createUser(command(UserRole.MANAGER, COMPANY_ID, STORE_ID)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("MANAGER");
+    }
+
+    @Test
+    void requiresStoreForOperationalRoles() {
+        arrangeActiveCompany();
+
+        assertThatThrownBy(() -> service.createUser(command(UserRole.SELLER, COMPANY_ID, null)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("storeId");
+    }
+
+    @Test
+    void acceptsOperationalRoleWithActiveCompanyAndStore() {
+        arrangeActiveCompany();
+        when(storeService.findRequired(STORE_ID)).thenReturn(store(TenantStatus.ACTIVE));
+        arrangeSave();
+
+        User user = service.createUser(command(UserRole.SELLER, COMPANY_ID, STORE_ID));
+
+        assertThat(user.getStoreId()).isEqualTo(STORE_ID);
+    }
+
+    private CreateUserCommand command(UserRole role, UUID companyId, UUID storeId) {
+        return new CreateUserCommand("User", role.name().toLowerCase() + "@eai.com", "secret123", null, null, companyId, storeId, Set.of(role));
+    }
+
+    private void arrangeActiveCompany() {
+        when(companyService.findRequired(COMPANY_ID)).thenReturn(company(TenantStatus.ACTIVE));
+    }
+
+    private void arrangeSave() {
+        when(passwordHasher.hash("secret123")).thenReturn("hash");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    }
+
+    private Company company(TenantStatus status) {
+        Instant now = Instant.parse("2026-07-18T12:00:00Z");
+        return new Company(COMPANY_ID, "EAI", status, now, now);
+    }
+
+    private Store store(TenantStatus status) {
+        Instant now = Instant.parse("2026-07-18T12:00:00Z");
+        return new Store(STORE_ID, COMPANY_ID, "Loja", "00000000000192", null, null, null, null, null, status, now, now);
+    }
+}

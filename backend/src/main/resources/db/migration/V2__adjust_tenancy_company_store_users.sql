@@ -1,0 +1,5 @@
+ALTER TABLE users ALTER COLUMN store_id DROP NOT NULL;
+
+ALTER TABLE companies DROP COLUMN document;
+ALTER TABLE companies DROP COLUMN email;
+ALTER TABLE companies DROP COLUMN phone;

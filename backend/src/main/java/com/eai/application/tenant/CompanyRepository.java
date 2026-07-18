@@ -12,9 +12,5 @@ public interface CompanyRepository {
 
     Optional<Company> findById(UUID id);
 
-    boolean existsByDocument(String document);
-
-    boolean existsByDocumentAndIdNot(String document, UUID id);
-
     Company save(Company company);
 }

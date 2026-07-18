@@ -73,12 +73,12 @@ public class SettingsService {
     }
 
     @Transactional
-    public Company updateCompany(UUID companyId, String name, String document, String email, String phone, TenantStatus status, AuthenticatedUser authenticatedUser) {
+    public Company updateCompany(UUID companyId, String name, TenantStatus status, AuthenticatedUser authenticatedUser) {
         if (!hasRole(authenticatedUser, UserRole.ADMIN)) {
             throw new ForbiddenException("Access denied for company settings");
         }
         UUID resolvedCompanyId = companyId == null ? requireCompany(authenticatedUser) : companyId;
-        return companyService.updateCompany(resolvedCompanyId, new UpdateCompanyCommand(name, document, email, phone, status));
+        return companyService.updateCompany(resolvedCompanyId, new UpdateCompanyCommand(name, status));
     }
 
     @Transactional
@@ -133,8 +133,8 @@ public class SettingsService {
     }
 
     private TenantScope resolveScope(UUID companyId, UUID storeId, AuthenticatedUser authenticatedUser) {
-        UUID resolvedCompanyId = companyId == null ? requireCompany(authenticatedUser) : companyId;
-        UUID resolvedStoreId = storeId == null ? requireStore(authenticatedUser) : storeId;
+        UUID resolvedCompanyId = companyId == null ? defaultCompany(authenticatedUser) : companyId;
+        UUID resolvedStoreId = storeId == null ? defaultStore(resolvedCompanyId, authenticatedUser) : storeId;
         Store store = storeService.getStore(resolvedStoreId, authenticatedUser);
         if (!store.getCompanyId().equals(resolvedCompanyId)) {
             throw new IllegalArgumentException("store does not belong to company");
@@ -161,6 +161,29 @@ public class SettingsService {
             throw new ForbiddenException("User is not linked to a store");
         }
         return authenticatedUser.storeId();
+    }
+
+    private UUID defaultCompany(AuthenticatedUser authenticatedUser) {
+        if (authenticatedUser.companyId() != null) {
+            return authenticatedUser.companyId();
+        }
+        if (hasRole(authenticatedUser, UserRole.ADMIN)) {
+            return companyService.listCompanies().stream()
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("No company available"))
+                    .getId();
+        }
+        return requireCompany(authenticatedUser);
+    }
+
+    private UUID defaultStore(UUID companyId, AuthenticatedUser authenticatedUser) {
+        if (authenticatedUser.storeId() != null) {
+            return authenticatedUser.storeId();
+        }
+        return storeService.listStoresByCompany(companyId, authenticatedUser).stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No store available for company"))
+                .getId();
     }
 
     private boolean hasRole(AuthenticatedUser authenticatedUser, UserRole role) {

@@ -29,6 +29,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useAuth } from '../../hooks/useAuth';
 import { useMetadata } from '../../hooks/useMetadata';
+import { apiErrorMessage } from '../../services/api';
 import { listCompanies } from '../../services/companyService';
 import {
   addLeadNote,
@@ -401,7 +402,9 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
                   ))}
                 </TextField>
                 <TextField label="Pre-visualizacao" minRows={4} multiline slotProps={{ input: { readOnly: true } }} value={whatsappPreview} />
-                {whatsappLinkMutation.isError && <Alert severity="error">Nao foi possivel gerar o link do WhatsApp.</Alert>}
+                {whatsappLinkMutation.isError && (
+                  <Alert severity="error">{apiErrorMessage(whatsappLinkMutation.error) ?? 'Nao foi possivel gerar o link do WhatsApp.'}</Alert>
+                )}
                 <Button
                   disabled={!selectedTemplateId || !selectedLead.customerPhone || whatsappLinkMutation.isPending}
                   onClick={() => whatsappLinkMutation.mutate({ leadId: selectedLead.id, templateId: selectedTemplateId })}

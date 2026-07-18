@@ -67,8 +67,8 @@ export function ReportsPage() {
   const canFilterTenant = hasAnyRole(['ADMIN', 'MANAGER']);
   const canFilterSellers = hasAnyRole(['ADMIN', 'MANAGER']);
   const [filters, setFilters] = useState<ReportFilters>({
-    companyId: isAdmin ? undefined : user?.companyId,
-    storeId: isAdmin || user?.roles.includes('MANAGER') ? undefined : user?.storeId,
+    companyId: isAdmin ? undefined : user?.companyId ?? undefined,
+    storeId: isAdmin || user?.roles.includes('MANAGER') ? undefined : user?.storeId ?? undefined,
     sellerId: user?.roles.includes('SELLER') ? user.id : undefined,
     dateFrom: thirtyDaysAgo(),
     dateTo: today(),

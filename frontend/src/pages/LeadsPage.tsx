@@ -33,6 +33,7 @@ import { z } from 'zod';
 import { LeadDetailDrawer } from '../features/leads/LeadDetailDrawer';
 import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
+import { apiErrorMessage } from '../services/api';
 import { listCompanies } from '../services/companyService';
 import {
   assignLeadAutomatically,
@@ -541,7 +542,9 @@ export function LeadsPage() {
 
           {drawerMode === 'create' && (
             <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ display: 'grid', gap: 2 }}>
-              {createLeadMutation.isError && <Alert severity="error">Nao foi possivel criar o lead.</Alert>}
+              {createLeadMutation.isError && (
+                <Alert severity="error">{apiErrorMessage(createLeadMutation.error) ?? 'Nao foi possivel criar o lead.'}</Alert>
+              )}
               <TextField label="Cliente" error={Boolean(errors.customerName)} helperText={errors.customerName?.message} {...register('customerName')} />
               <TextField label="Telefone" error={Boolean(errors.customerPhone)} helperText={errors.customerPhone?.message} {...register('customerPhone')} />
               <TextField label="E-mail" error={Boolean(errors.customerEmail)} helperText={errors.customerEmail?.message} {...register('customerEmail')} />

@@ -26,9 +26,6 @@ export interface Settings {
 export interface SettingsCompanyPayload {
   companyId?: string;
   name: string;
-  document: string;
-  email?: string;
-  phone?: string;
   status: TenantStatus;
 }
 

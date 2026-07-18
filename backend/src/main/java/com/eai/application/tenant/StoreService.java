@@ -4,7 +4,11 @@ import com.eai.application.common.ConflictException;
 import com.eai.application.common.ForbiddenException;
 import com.eai.application.common.NotFoundException;
 import com.eai.application.security.AuthenticatedUser;
+import com.eai.application.user.UserRepository;
+import com.eai.domain.tenant.Company;
 import com.eai.domain.tenant.Store;
+import com.eai.domain.tenant.TenantStatus;
+import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +21,12 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final CompanyService companyService;
+    private final UserRepository userRepository;
 
-    public StoreService(StoreRepository storeRepository, CompanyService companyService) {
+    public StoreService(StoreRepository storeRepository, CompanyService companyService, UserRepository userRepository) {
         this.storeRepository = storeRepository;
         this.companyService = companyService;
+        this.userRepository = userRepository;
     }
 
     @Transactional(readOnly = true)
@@ -57,7 +63,7 @@ public class StoreService {
     @Transactional
     public Store createStore(CreateStoreCommand command, AuthenticatedUser authenticatedUser) {
         assertCanManageCompany(command.companyId(), authenticatedUser);
-        companyService.findRequired(command.companyId());
+        assertActiveCompany(command.companyId());
         String document = normalizeDocument(command.document());
         if (storeRepository.existsByDocument(document)) {
             throw new ConflictException("Store document already registered");
@@ -79,7 +85,7 @@ public class StoreService {
         Store store = findRequired(id);
         assertCanAccessStore(store, authenticatedUser);
         assertCanManageCompany(command.companyId(), authenticatedUser);
-        companyService.findRequired(command.companyId());
+        assertActiveCompany(command.companyId());
         String document = normalizeDocument(command.document());
         if (storeRepository.existsByDocumentAndIdNot(document, id)) {
             throw new ConflictException("Store document already registered");
@@ -95,6 +101,9 @@ public class StoreService {
                 command.address(),
                 command.status()
         );
+        if (store.getStatus() == TenantStatus.INACTIVE) {
+            deactivateActiveUsers(store.getId());
+        }
         return storeRepository.save(store);
     }
 
@@ -161,5 +170,20 @@ public class StoreService {
             throw new IllegalArgumentException("document is required");
         }
         return document.trim();
+    }
+
+    private Company assertActiveCompany(UUID companyId) {
+        Company company = companyService.findRequired(companyId);
+        if (!company.isActive()) {
+            throw new IllegalArgumentException("company must be active");
+        }
+        return company;
+    }
+
+    private void deactivateActiveUsers(UUID storeId) {
+        for (User user : userRepository.findActiveByStoreId(storeId)) {
+            user.deactivate();
+            userRepository.save(user);
+        }
     }
 }

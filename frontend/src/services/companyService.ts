@@ -3,9 +3,6 @@ import type { Company, TenantStatus } from '../types/tenant';
 
 export interface CompanyPayload {
   name: string;
-  document: string;
-  email?: string;
-  phone?: string;
   status?: TenantStatus;
 }
 

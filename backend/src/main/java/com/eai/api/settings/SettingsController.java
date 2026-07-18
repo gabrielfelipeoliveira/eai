@@ -46,9 +46,6 @@ public class SettingsController {
         return CompanyResponse.fromDomain(settingsService.updateCompany(
                 request.companyId(),
                 request.name(),
-                request.document(),
-                request.email(),
-                request.phone(),
                 request.status(),
                 authenticatedUser
         ));

@@ -72,8 +72,8 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
   const canFilterTenant = hasAnyRole(['ADMIN', 'MANAGER']);
   const isAdmin = hasAnyRole(['ADMIN']);
   const [filters, setFilters] = useState<DashboardFilters>({
-    companyId: isAdmin ? undefined : user?.companyId,
-    storeId: isAdmin || user?.roles.includes('MANAGER') ? undefined : user?.storeId,
+    companyId: isAdmin ? undefined : user?.companyId ?? undefined,
+    storeId: isAdmin || user?.roles.includes('MANAGER') ? undefined : user?.storeId ?? undefined,
     dateFrom: thirtyDaysAgo(),
     dateTo: today(),
   });

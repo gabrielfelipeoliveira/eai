@@ -1,8 +1,9 @@
 package com.eai.application.tenant;
 
-import com.eai.application.common.ConflictException;
 import com.eai.application.common.NotFoundException;
+import com.eai.application.user.UserRepository;
 import com.eai.domain.tenant.Company;
+import com.eai.domain.tenant.TenantStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,9 +14,11 @@ import java.util.UUID;
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
+    private final UserRepository userRepository;
 
-    public CompanyService(CompanyRepository companyRepository) {
+    public CompanyService(CompanyRepository companyRepository, UserRepository userRepository) {
         this.companyRepository = companyRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional(readOnly = true)
@@ -30,21 +33,18 @@ public class CompanyService {
 
     @Transactional
     public Company createCompany(CreateCompanyCommand command) {
-        String document = normalizeDocument(command.document());
-        if (companyRepository.existsByDocument(document)) {
-            throw new ConflictException("Company document already registered");
-        }
-        return companyRepository.save(Company.create(command.name(), document, command.email(), command.phone()));
+        return companyRepository.save(Company.create(command.name()));
     }
 
     @Transactional
     public Company updateCompany(UUID id, UpdateCompanyCommand command) {
         Company company = findRequired(id);
-        String document = normalizeDocument(command.document());
-        if (companyRepository.existsByDocumentAndIdNot(document, id)) {
-            throw new ConflictException("Company document already registered");
+        if (company.getStatus() != TenantStatus.INACTIVE
+                && command.status() == TenantStatus.INACTIVE
+                && userRepository.existsActiveByCompanyId(id)) {
+            throw new IllegalArgumentException("Cannot deactivate company with active users");
         }
-        company.update(command.name(), document, command.email(), command.phone(), command.status());
+        company.update(command.name(), command.status());
         return companyRepository.save(company);
     }
 
@@ -53,10 +53,4 @@ public class CompanyService {
                 .orElseThrow(() -> new NotFoundException("Company not found"));
     }
 
-    private String normalizeDocument(String document) {
-        if (document == null || document.isBlank()) {
-            throw new IllegalArgumentException("document is required");
-        }
-        return document.trim();
-    }
 }

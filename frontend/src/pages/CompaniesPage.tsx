@@ -23,14 +23,12 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useMetadata } from '../hooks/useMetadata';
+import { apiErrorMessage } from '../services/api';
 import { createCompany, listCompanies, updateCompany } from '../services/companyService';
 import type { Company } from '../types/tenant';
 
 const companySchema = z.object({
   name: z.string().min(1, 'Informe o nome').max(160),
-  document: z.string().min(1, 'Informe o documento').max(40),
-  email: z.string().email('Informe um e-mail valido').max(180).or(z.literal('')),
-  phone: z.string().max(40),
   status: z.enum(['ACTIVE', 'INACTIVE']),
 });
 
@@ -38,9 +36,6 @@ type CompanyFormValues = z.infer<typeof companySchema>;
 
 const emptyValues: CompanyFormValues = {
   name: '',
-  document: '',
-  email: '',
-  phone: '',
   status: 'ACTIVE',
 };
 
@@ -71,21 +66,13 @@ export function CompaniesPage() {
     }
     reset({
       name: editingCompany.name,
-      document: editingCompany.document,
-      email: editingCompany.email ?? '',
-      phone: editingCompany.phone ?? '',
       status: editingCompany.status,
     });
   }, [editingCompany, reset]);
 
   const saveCompanyMutation = useMutation({
     mutationFn: (values: CompanyFormValues) => {
-      const payload = {
-        ...values,
-        email: values.email || undefined,
-        phone: values.phone || undefined,
-      };
-      return editingCompany ? updateCompany(editingCompany.id, payload) : createCompany(payload);
+      return editingCompany ? updateCompany(editingCompany.id, values) : createCompany(values);
     },
     onSuccess: async () => {
       setEditingCompany(null);
@@ -114,8 +101,6 @@ export function CompaniesPage() {
               <TableHead>
                 <TableRow>
                   <TableCell>Nome</TableCell>
-                  <TableCell>Documento</TableCell>
-                  <TableCell>E-mail</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell align="right">Acoes</TableCell>
                 </TableRow>
@@ -124,8 +109,6 @@ export function CompaniesPage() {
                 {companiesQuery.data?.map((company) => (
                   <TableRow key={company.id}>
                     <TableCell>{company.name}</TableCell>
-                    <TableCell>{company.document}</TableCell>
-                    <TableCell>{company.email ?? '-'}</TableCell>
                     <TableCell>
                       <Chip color={metadata.color('tenantStatuses', company.status)} label={metadata.label('tenantStatuses', company.status)} size="small" />
                     </TableCell>
@@ -138,7 +121,7 @@ export function CompaniesPage() {
                 ))}
                 {!companiesQuery.isLoading && companiesQuery.data?.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={5}>Nenhuma empresa encontrada.</TableCell>
+                    <TableCell colSpan={3}>Nenhuma empresa encontrada.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -155,12 +138,11 @@ export function CompaniesPage() {
               </Typography>
             </Box>
 
-            {saveCompanyMutation.isError && <Alert severity="error">Nao foi possivel salvar a empresa.</Alert>}
+            {saveCompanyMutation.isError && (
+              <Alert severity="error">{apiErrorMessage(saveCompanyMutation.error) ?? 'Nao foi possivel salvar a empresa.'}</Alert>
+            )}
 
             <TextField label="Nome" error={Boolean(errors.name)} helperText={errors.name?.message} {...register('name')} />
-            <TextField label="Documento" error={Boolean(errors.document)} helperText={errors.document?.message} {...register('document')} />
-            <TextField label="E-mail" type="email" error={Boolean(errors.email)} helperText={errors.email?.message} {...register('email')} />
-            <TextField label="Telefone" error={Boolean(errors.phone)} helperText={errors.phone?.message} {...register('phone')} />
             <TextField select label="Status" error={Boolean(errors.status)} helperText={errors.status?.message} {...register('status')}>
               {metadata.options('tenantStatuses').map((status) => (
                 <MenuItem key={status.code} value={status.code}>

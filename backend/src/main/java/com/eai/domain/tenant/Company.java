@@ -8,9 +8,6 @@ public class Company {
 
     private final UUID id;
     private String name;
-    private String document;
-    private String email;
-    private String phone;
     private TenantStatus status;
     private final Instant createdAt;
     private Instant updatedAt;
@@ -18,33 +15,24 @@ public class Company {
     public Company(
             UUID id,
             String name,
-            String document,
-            String email,
-            String phone,
             TenantStatus status,
             Instant createdAt,
             Instant updatedAt
     ) {
         this.id = Objects.requireNonNull(id);
         this.name = requireText(name, "name");
-        this.document = requireText(document, "document");
-        this.email = normalizeOptional(email);
-        this.phone = normalizeOptional(phone);
         this.status = Objects.requireNonNull(status);
         this.createdAt = Objects.requireNonNull(createdAt);
         this.updatedAt = Objects.requireNonNull(updatedAt);
     }
 
-    public static Company create(String name, String document, String email, String phone) {
+    public static Company create(String name) {
         Instant now = Instant.now();
-        return new Company(UUID.randomUUID(), name, document, email, phone, TenantStatus.ACTIVE, now, now);
+        return new Company(UUID.randomUUID(), name, TenantStatus.ACTIVE, now, now);
     }
 
-    public void update(String name, String document, String email, String phone, TenantStatus status) {
+    public void update(String name, TenantStatus status) {
         this.name = requireText(name, "name");
-        this.document = requireText(document, "document");
-        this.email = normalizeOptional(email);
-        this.phone = normalizeOptional(phone);
         this.status = Objects.requireNonNull(status);
         this.updatedAt = Instant.now();
     }
@@ -57,20 +45,12 @@ public class Company {
         return name;
     }
 
-    public String getDocument() {
-        return document;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
     public TenantStatus getStatus() {
         return status;
+    }
+
+    public boolean isActive() {
+        return status == TenantStatus.ACTIVE;
     }
 
     public Instant getCreatedAt() {
@@ -88,7 +68,4 @@ public class Company {
         return value.trim();
     }
 
-    private static String normalizeOptional(String value) {
-        return value == null || value.isBlank() ? null : value.trim();
-    }
 }

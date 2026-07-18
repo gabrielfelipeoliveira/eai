@@ -210,7 +210,7 @@ public class LeadDistributionService {
         if (hasRole(authenticatedUser, UserRole.ADMIN)) {
             return;
         }
-        if (hasRole(authenticatedUser, UserRole.MANAGER) && companyId.equals(authenticatedUser.companyId()) && storeId.equals(authenticatedUser.storeId())) {
+        if (hasRole(authenticatedUser, UserRole.MANAGER) && companyId.equals(authenticatedUser.companyId())) {
             return;
         }
         throw new ForbiddenException("Access denied for lead distribution settings");
@@ -220,7 +220,10 @@ public class LeadDistributionService {
         if (hasRole(authenticatedUser, UserRole.ADMIN)) {
             return;
         }
-        if (companyId.equals(authenticatedUser.companyId()) && storeId.equals(authenticatedUser.storeId())) {
+        if (hasRole(authenticatedUser, UserRole.MANAGER) && companyId.equals(authenticatedUser.companyId())) {
+            return;
+        }
+        if (storeId.equals(authenticatedUser.storeId())) {
             return;
         }
         throw new ForbiddenException("Access denied for lead distribution");
