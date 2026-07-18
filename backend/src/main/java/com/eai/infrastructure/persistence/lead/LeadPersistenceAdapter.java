@@ -27,6 +27,8 @@ public class LeadPersistenceAdapter implements LeadRepository {
             LeadStatus.FIRST_CONTACT,
             LeadStatus.IN_NEGOTIATION,
             LeadStatus.VISIT_SCHEDULED,
+            LeadStatus.SIMULATING,
+            LeadStatus.PROPOSAL_APPROVED,
             LeadStatus.PROPOSAL_SENT
     );
     private static final List<LeadStatus> SLA_CANDIDATE_STATUSES = List.of(
@@ -36,6 +38,8 @@ public class LeadPersistenceAdapter implements LeadRepository {
             LeadStatus.FIRST_CONTACT,
             LeadStatus.IN_NEGOTIATION,
             LeadStatus.VISIT_SCHEDULED,
+            LeadStatus.SIMULATING,
+            LeadStatus.PROPOSAL_APPROVED,
             LeadStatus.PROPOSAL_SENT
     );
 

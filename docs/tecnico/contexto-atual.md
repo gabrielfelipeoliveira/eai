@@ -58,7 +58,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-001`: concluido. Alinhar papeis: remover `AUDITOR` do MVP e incluir `AVALIADOR`.
 - `EAI-002`: em andamento. Ajustar tenancy: empresa agrupadora, loja operacional e desativacao sem apagar historico.
 - `EAI-003`: concluido. Sessao unica por usuario, refresh token com TTL de 30 dias, rotacao, logout/revogacao por desativacao e access token recusado para usuario inativo.
-- `EAI-004`: backlog. Alinhar status de lead e pipeline com etapas opcionais de F&I.
+- `EAI-004`: implementado em 2026-07-18. Alinhar status de lead e pipeline com etapas opcionais de F&I.
 - `EAI-005`: backlog. Modelar Item, Veiculo, telefone E.164 e moeda de venda.
 - `EAI-006`: backlog. Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
 - `EAI-007`: backlog. Ajustar visibilidade, ordenacao e busca normalizada de leads.
@@ -115,6 +115,14 @@ Validacao EAI-003 em 2026-07-18:
 - Backend `rtk mvn clean verify` passou com 58 testes, 0 falhas.
 - Frontend `rtk npm run build` passou.
 - Cobertura adicionada para segundo login invalidar refresh anterior, refresh token rotacionado/revogado, TTL de 30 dias, usuario inativo sem login/refresh, desativacao revogando sessoes e access token rejeitado apos desativacao.
+
+Validacao EAI-004 em 2026-07-18:
+- Implementado `SIMULATING` e `PROPOSAL_APPROVED` como status oficiais de lead entre `VISIT_SCHEDULED` e `PROPOSAL_SENT`, sem vinculo/responsavel F&I neste card.
+- Backend atualizado em dominio, metadados, pipeline, contagens abertas, candidatos de SLA e migration Flyway Java `V3__expand_lead_status_checks`.
+- Frontend atualizado em tipos, fallback de metadados, Pipeline, Leads e drawer de detalhe.
+- Backend `rtk mvn clean verify` passou com 58 testes, 0 falhas.
+- Frontend `rtk npm run build` passou. O Vite manteve warning existente de chunk JS acima de 500 kB apos minificacao.
+- Validacao manual por codigo: filtros, chips, seletor de status, cards de contagem e colunas do pipeline usam a lista local atualizada e labels de `useMetadata`; drag/drop do pipeline continua chamando somente `changeLeadStatus` sem campos obrigatorios extras.
 
 ## Lacunas Ja Registradas Em Cards
 

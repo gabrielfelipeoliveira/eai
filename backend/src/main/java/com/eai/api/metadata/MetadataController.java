@@ -61,10 +61,12 @@ public class MetadataController {
                 option(LeadStatus.FIRST_CONTACT, "lead.status.first_contact", "Primeiro contato", 4, "warning"),
                 option(LeadStatus.IN_NEGOTIATION, "lead.status.in_negotiation", "Em negociacao", 5, "warning"),
                 option(LeadStatus.VISIT_SCHEDULED, "lead.status.visit_scheduled", "Visita agendada", 6, "info"),
-                option(LeadStatus.PROPOSAL_SENT, "lead.status.proposal_sent", "Proposta enviada", 7, "secondary"),
-                option(LeadStatus.SOLD, "lead.status.sold", "Vendido", 8, "success"),
-                option(LeadStatus.LOST, "lead.status.lost", "Perdido", 9, "error"),
-                option(LeadStatus.DUPLICATED, "lead.status.duplicated", "Duplicado", 10, "default")
+                option(LeadStatus.SIMULATING, "lead.status.simulating", "Simulacao", 7, "info"),
+                option(LeadStatus.PROPOSAL_APPROVED, "lead.status.proposal_approved", "Proposta aprovada", 8, "secondary"),
+                option(LeadStatus.PROPOSAL_SENT, "lead.status.proposal_sent", "Proposta enviada", 9, "secondary"),
+                option(LeadStatus.SOLD, "lead.status.sold", "Vendido", 10, "success"),
+                option(LeadStatus.LOST, "lead.status.lost", "Perdido", 11, "error"),
+                option(LeadStatus.DUPLICATED, "lead.status.duplicated", "Duplicado", 12, "default")
         );
     }
 

@@ -156,7 +156,8 @@ public class Lead {
             this.firstContactAt = now;
         }
         if (newStatus == LeadStatus.FIRST_CONTACT || newStatus == LeadStatus.IN_NEGOTIATION
-                || newStatus == LeadStatus.VISIT_SCHEDULED || newStatus == LeadStatus.PROPOSAL_SENT
+                || newStatus == LeadStatus.VISIT_SCHEDULED || newStatus == LeadStatus.SIMULATING
+                || newStatus == LeadStatus.PROPOSAL_APPROVED || newStatus == LeadStatus.PROPOSAL_SENT
                 || newStatus == LeadStatus.SOLD || newStatus == LeadStatus.LOST) {
             this.lastContactAt = now;
         }
