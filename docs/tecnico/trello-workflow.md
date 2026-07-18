@@ -88,6 +88,38 @@ Use prefixos para deixar o tipo de trabalho claro:
 - `[QA]`: validacao manual, teste exploratorio ou plano de teste.
 - `[Futuro]`: item fora do MVP ou fase posterior.
 
+## Numeracao E Branches
+
+Cards do board `EAI - Desenvolvimento` devem ter identificador sequencial proprio do projeto no inicio do titulo:
+
+```text
+[EAI-001] [Dev][MVP] Titulo do card
+```
+
+O identificador `EAI-###` e permanente. Nao renumere cards concluidos, cancelados ou em andamento. Se um card for cancelado, mantenha o numero para preservar historico.
+
+Use o numero do card na branch:
+
+```text
+feature/eai-001-slug-curto
+bugfix/eai-001-slug-curto
+hotfix/eai-001-slug-curto
+chore/eai-001-slug-curto
+docs/eai-001-slug-curto
+test/eai-001-slug-curto
+```
+
+Tipos recomendados:
+
+- `feature`: nova funcionalidade ou incremento funcional.
+- `bugfix`: correcao em desenvolvimento normal.
+- `hotfix`: correcao urgente em producao ou ambiente equivalente.
+- `chore`: infraestrutura, build, CI, dependencia ou manutencao sem mudanca funcional direta.
+- `docs`: documentacao.
+- `test`: cobertura de testes, E2E, contratos ou qualidade automatizada.
+
+Inclua o identificador no PR, commit principal e comentarios de fechamento quando aplicavel.
+
 ## Modelo De Card De Negocio
 
 O corpo do card de negocio deve preservar a pergunta/contexto original. Respostas, decisoes, evidencias e encaminhamentos devem ser registrados em comentarios.
