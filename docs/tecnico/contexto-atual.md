@@ -75,6 +75,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-018`: backlog. Criar testes E2E dos fluxos criticos do MVP.
 - `EAI-019`: backlog. Adicionar validacao de contrato OpenAPI.
 - `EAI-020`: backlog. Padronizar uso seguro de Lombok no backend.
+- `EAI-021`: em andamento. Reforcar obrigatoriedade de branch e PR para qualquer mudanca.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -82,12 +83,12 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- Nenhum card em andamento registrado neste arquivo. Antes de iniciar o proximo desenvolvimento, confirme a ordem atualizada no Trello.
+- `EAI-021` - Reforcar obrigatoriedade de branch e PR para qualquer mudanca.
 
 Branch sugerida:
 
 ```text
-feature/eai-###-slug-curto
+docs/eai-021-reforca-fluxo-pr
 ```
 
 ## Validacao Padrao
