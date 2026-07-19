@@ -74,6 +74,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-017`: backlog. Adicionar testes unitarios e de componentes no frontend.
 - `EAI-018`: backlog. Criar testes E2E dos fluxos criticos do MVP.
 - `EAI-019`: backlog. Adicionar validacao de contrato OpenAPI.
+- `EAI-020`: backlog. Padronizar uso seguro de Lombok no backend.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -137,6 +138,7 @@ Nao crie novos cards duplicados sem antes verificar o Trello:
 - Seeds obrigatorios versus dados demonstrativos: `EAI-013`.
 - LGPD ADMIN manual: `EAI-014`.
 - Qualidade automatizada, CI, Testcontainers, frontend tests, E2E e OpenAPI: `EAI-015` a `EAI-019`.
+- Padronizacao segura de Lombok no backend: `EAI-020`.
 
 ## Encerramento De Sessao
 
