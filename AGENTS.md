@@ -34,5 +34,6 @@ Regras importantes:
 - Sempre reporte vulnerabilidades apontadas por build, auditoria de dependencias, Mend/SCA ou alertas de CVE do Java, mesmo quando a correcao ficar fora do escopo da tarefa.
 - Use `docs/tecnico/contexto-atual.md` como handoff operacional entre pessoas e agentes.
 - Use cards `EAI-###` do Trello para nomear branches, PRs e referencias de commits.
+- Toda mudanca deve seguir o fluxo de Trello, branch e PR descrito em `docs/tecnico/trello-workflow.md`, inclusive documentacao, processo e ajustes pequenos. Nao commite direto na `main`.
 
 Nota historica: na fase inicial, o repositorio era somente de documentacao. Na fase atual, implementacao e permitida apenas quando houver card `EAI-###` no Trello, decisao/documentacao oficial correspondente e branch conforme `docs/tecnico/trello-workflow.md`.

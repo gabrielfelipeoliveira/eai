@@ -20,6 +20,8 @@ Antes de implementar qualquer mudanca, leia:
 
 Se documentacao, Trello e codigo estiverem em conflito, nao escolha um lado silenciosamente. Registre o conflito no card ou na documentacao apropriada antes de implementar.
 
+Toda mudanca versionada deve seguir o fluxo de card `EAI-###`, branch, commit, push, PR, comentario no Trello e fechamento rastreavel. Isso inclui documentacao, processo e ajustes pequenos. Nao commite direto na `main`.
+
 ## Fontes De Verdade
 
 - Git e documentacao versionada: memoria permanente de arquitetura, regras e contexto tecnico.
