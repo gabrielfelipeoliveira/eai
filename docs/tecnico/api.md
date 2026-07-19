@@ -226,15 +226,19 @@ Perguntas para o Software Architect:
 Contrato atual de `POST /api/leads` e `PUT /api/leads/{id}`:
 
 - `customerPhone` aceita E.164 ou telefone brasileiro com DDD; o backend persiste em E.164.
+- `additionalPhones` aceita lista opcional de telefones adicionais; o backend normaliza para E.164, remove repeticoes e ignora o telefone principal quando repetido.
 - `saleCurrency` e opcional e usa `BRL` quando ausente ou em branco.
 - `vehicleInterest` continua como texto legado/fallback.
 - `item` e opcional. No MVP, quando informado, pode conter `vehicle` como detalhe estruturado do item.
 - O Lead referencia somente `itemId`; `vehicle` nao e relacionamento direto do Lead.
+- Se existir lead anterior na mesma loja com qualquer telefone informado, o novo lead pode retornar `status: "DUPLICATED"` e `relatedLeadId` apontando para o lead anterior mais recente.
 
 Exemplo:
 
 ```json
 {
+  "customerPhone": "11999990000",
+  "additionalPhones": ["+5511988880000"],
   "item": {
     "name": "Anuncio Civic",
     "vehicle": {

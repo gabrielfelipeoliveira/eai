@@ -5,15 +5,20 @@ import lombok.Setter;
 
 import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -36,6 +41,11 @@ public class LeadJpaEntity {
 
     @Column(name = "customer_phone")
     private String customerPhone;
+
+    @ElementCollection
+    @CollectionTable(name = "lead_additional_phones", joinColumns = @JoinColumn(name = "lead_id"))
+    @Column(name = "phone", nullable = false)
+    private Set<String> additionalPhones = new HashSet<>();
 
     @Column(name = "customer_email")
     private String customerEmail;
@@ -86,5 +96,8 @@ public class LeadJpaEntity {
 
     @Column(name = "sale_currency", nullable = false)
     private String saleCurrency;
+
+    @Column(name = "related_lead_id")
+    private UUID relatedLeadId;
 
 }

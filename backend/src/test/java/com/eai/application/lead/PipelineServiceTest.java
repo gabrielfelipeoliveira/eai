@@ -120,7 +120,12 @@ class PipelineServiceTest {
         }
 
         @Override
-        public boolean existsByStoreIdAndPhoneAndVehicleSince(UUID storeId, String phone, String vehicleInterest, Instant since) {
+        public Optional<Lead> findMostRecentByStoreIdAndAnyPhone(UUID storeId, List<String> phones) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean existsByStoreIdAndAnyPhone(UUID storeId, List<String> phones) {
             throw new UnsupportedOperationException();
         }
     }

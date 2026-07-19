@@ -5,7 +5,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,17 +20,18 @@ public interface SpringDataLeadRepository extends JpaRepository<LeadJpaEntity, U
     long countByAssignedToUserIdAndStatusIn(UUID userId, List<com.eai.domain.lead.LeadStatus> statuses);
 
     @Query("""
-            select count(lead) > 0
+            select distinct lead
             from LeadJpaEntity lead
+            left join lead.additionalPhones additionalPhone
             where lead.storeId = :storeId
-              and lead.customerPhone = :phone
-              and lower(lead.vehicleInterest) = :vehicleInterest
-              and lead.createdAt >= :since
+              and (
+                    lead.customerPhone in :phones
+                    or additionalPhone in :phones
+              )
+            order by lead.createdAt desc
             """)
-    boolean existsDuplicate(
+    List<LeadJpaEntity> findByStoreIdAndAnyPhoneOrderByCreatedAtDesc(
             @Param("storeId") UUID storeId,
-            @Param("phone") String phone,
-            @Param("vehicleInterest") String vehicleInterest,
-            @Param("since") Instant since
+            @Param("phones") List<String> phones
     );
 }

@@ -290,6 +290,43 @@ class LeadControllerTest {
                 .andExpect(jsonPath("$.item.vehicle.value").value(128900.00));
     }
 
+    @Test
+    void createLeadMarksDuplicateByPhoneAndStoreEvenWithDifferentVehicle() throws Exception {
+        String token = login();
+        String firstLeadId = createManualLead(token, "Cliente Duplicidade Origem", "11999770001");
+
+        mockMvc.perform(post("/api/leads")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+
+                                {"companyId":"%s","storeId":"%s","customerName":"Cliente Duplicidade Novo","customerPhone":"11999770001","vehicleInterest":"Toyota Corolla","source":"MANUAL"}
+
+                                """.formatted(DEFAULT_COMPANY_ID, DEFAULT_STORE_ID)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("DUPLICATED"))
+                .andExpect(jsonPath("$.relatedLeadId").value(firstLeadId));
+    }
+
+    @Test
+    void createLeadNormalizesAdditionalPhonesAndUsesThemForDuplicateDetection() throws Exception {
+        String token = login();
+        String firstLeadId = createManualLead(token, "Cliente Telefone Adicional Origem", "11999770002");
+
+        mockMvc.perform(post("/api/leads")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+
+                                {"companyId":"%s","storeId":"%s","customerName":"Cliente Telefone Adicional","customerPhone":"11999770003","additionalPhones":["(11) 99977-0002","11999770003"],"vehicleInterest":"Jeep Compass","source":"MANUAL"}
+
+                                """.formatted(DEFAULT_COMPANY_ID, DEFAULT_STORE_ID)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("DUPLICATED"))
+                .andExpect(jsonPath("$.relatedLeadId").value(firstLeadId))
+                .andExpect(jsonPath("$.additionalPhones[0]").value("+5511999770002"));
+    }
+
     private String login() throws Exception {
         String response = mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)

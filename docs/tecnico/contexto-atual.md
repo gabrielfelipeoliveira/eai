@@ -116,19 +116,20 @@ Use `mvn clean verify` como validacao padrao do backend. `mvn test` sem `clean` 
 
 Ultima validacao em 2026-07-19:
 
-- `main` estava limpa e alinhada com `origin/main`.
-- Backend `mvn clean verify` passou com 62 testes, 0 falhas.
-- Frontend `npm run build` passou.
+- Branch `feature/eai-006-ciclo-vida-recontato-duplicidade-telefones`.
+- Backend `mvn clean verify` via Docker passou com 64 testes, 0 falhas.
+- Frontend `npm run build` via Docker passou.
 - Avisos conhecidos:
-  - SpringDoc `/v3/api-docs` e `/swagger-ui.html` habilitados por default.
-  - Mockito usa self-attaching inline mock maker; JDK futuro pode exigir agente configurado.
-  - Vite reporta chunk JS acima de 500 kB apos minificacao.
+- Flyway reporta H2 2.4.240 mais novo que a versao verificada.
+- SpringDoc `/v3/api-docs` e `/swagger-ui.html` habilitados por default.
+- Mockito usa self-attaching inline mock maker; JDK futuro pode exigir agente configurado.
+- Vite reporta chunk JS acima de 500 kB apos minificacao.
 
 ## Lacunas Ja Registradas Em Cards
 
 Nao crie novos cards duplicados sem antes verificar o Trello:
 
-- Duplicidade, recontato e telefones de lead: `EAI-006`.
+- Duplicidade, recontato e telefones de lead: `EAI-006` em implementacao nesta branch.
 - Visibilidade, ordenacao e busca normalizada de leads: `EAI-007`.
 - Notas, observacoes, tags globais e historico de lead: `EAI-008`.
 - Importacao de leads por e-mail e duplicidade por telefone+loja: `EAI-009`.

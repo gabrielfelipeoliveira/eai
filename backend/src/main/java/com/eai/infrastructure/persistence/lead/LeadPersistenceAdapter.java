@@ -13,7 +13,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -104,13 +103,23 @@ public class LeadPersistenceAdapter implements LeadRepository {
     }
 
     @Override
+    public Optional<Lead> findMostRecentByStoreIdAndAnyPhone(UUID storeId, List<String> phones) {
+        if (phones == null || phones.isEmpty()) {
+            return Optional.empty();
+        }
+        return repository.findByStoreIdAndAnyPhoneOrderByCreatedAtDesc(storeId, phones).stream()
+                .findFirst()
+                .map(this::toDomain);
+    }
+
+    @Override
     public long countOpenByAssignedToUserId(UUID userId) {
         return repository.countByAssignedToUserIdAndStatusIn(userId, OPEN_STATUSES);
     }
 
     @Override
-    public boolean existsByStoreIdAndPhoneAndVehicleSince(UUID storeId, String phone, String vehicleInterest, Instant since) {
-        return repository.existsDuplicate(storeId, phone, vehicleInterest.toLowerCase(Locale.ROOT), since);
+    public boolean existsByStoreIdAndAnyPhone(UUID storeId, List<String> phones) {
+        return findMostRecentByStoreIdAndAnyPhone(storeId, phones).isPresent();
     }
 
     private Specification<LeadJpaEntity> toSpecification(LeadSearchCriteria criteria) {
@@ -178,6 +187,7 @@ public class LeadPersistenceAdapter implements LeadRepository {
                 entity.getStoreId(),
                 entity.getCustomerName(),
                 entity.getCustomerPhone(),
+                List.copyOf(entity.getAdditionalPhones()),
                 entity.getCustomerEmail(),
                 entity.getCustomerCity(),
                 entity.getVehicleInterest(),
@@ -194,7 +204,8 @@ public class LeadPersistenceAdapter implements LeadRepository {
                 entity.getLastContactAt(),
                 entity.getLostReason(),
                 entity.getSaleValue(),
-                entity.getSaleCurrency()
+                entity.getSaleCurrency(),
+                entity.getRelatedLeadId()
         );
     }
 
@@ -205,6 +216,7 @@ public class LeadPersistenceAdapter implements LeadRepository {
         entity.setStoreId(lead.getStoreId());
         entity.setCustomerName(lead.getCustomerName());
         entity.setCustomerPhone(lead.getCustomerPhone());
+        entity.setAdditionalPhones(new java.util.HashSet<>(lead.getAdditionalPhones()));
         entity.setCustomerEmail(lead.getCustomerEmail());
         entity.setCustomerCity(lead.getCustomerCity());
         entity.setVehicleInterest(lead.getVehicleInterest());
@@ -221,6 +233,7 @@ public class LeadPersistenceAdapter implements LeadRepository {
         entity.setLostReason(lead.getLostReason());
         entity.setSaleValue(lead.getSaleValue());
         entity.setSaleCurrency(lead.getSaleCurrency());
+        entity.setRelatedLeadId(lead.getRelatedLeadId());
         return entity;
     }
 }

@@ -2,7 +2,6 @@ package com.eai.application.lead;
 
 import com.eai.domain.lead.Lead;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,7 +22,9 @@ public interface LeadRepository {
 
     Optional<UUID> findMostRecentAssignedSellerId(UUID storeId);
 
+    Optional<Lead> findMostRecentByStoreIdAndAnyPhone(UUID storeId, List<String> phones);
+
     long countOpenByAssignedToUserId(UUID userId);
 
-    boolean existsByStoreIdAndPhoneAndVehicleSince(UUID storeId, String phone, String vehicleInterest, Instant since);
+    boolean existsByStoreIdAndAnyPhone(UUID storeId, List<String> phones);
 }

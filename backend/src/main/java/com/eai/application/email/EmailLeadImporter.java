@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -55,8 +57,9 @@ public class EmailLeadImporter {
                 if (parsedLead == null) {
                     continue;
                 }
-                boolean duplicate = duplicateLeadChecker.isPossibleDuplicate(account.getStoreId(), parsedLead.customerPhone(), parsedLead.vehicleInterest());
-                Lead lead = createLead(account, parsedLead, duplicate);
+                Optional<Lead> duplicateLead = duplicateLeadChecker.findPossibleDuplicate(account.getStoreId(), parsedLead.customerPhone());
+                boolean duplicate = duplicateLead.isPresent();
+                Lead lead = createLead(account, parsedLead, duplicateLead.map(Lead::getId).orElse(null));
                 Lead savedLead = leadRepository.save(lead);
                 historyRepository.save(LeadHistory.create(
                         savedLead.getId(),
@@ -90,7 +93,7 @@ public class EmailLeadImporter {
         emailAccountRepository.findActive().forEach(account -> importAccount(account, null));
     }
 
-    private Lead createLead(EmailAccount account, ParsedEmailLead parsedLead, boolean duplicate) {
+    private Lead createLead(EmailAccount account, ParsedEmailLead parsedLead, UUID relatedLeadId) {
         Instant now = Instant.now();
         String customerName = parsedLead.customerName() == null || parsedLead.customerName().isBlank()
                 ? "Lead por e-mail"
@@ -101,12 +104,15 @@ public class EmailLeadImporter {
                 account.getStoreId(),
                 customerName,
                 PhoneNormalizer.normalize(parsedLead.customerPhone()),
+                List.of(),
                 parsedLead.customerEmail(),
                 null,
                 parsedLead.vehicleInterest(),
+                null,
+                null,
                 LeadSource.EMAIL,
                 parsedLead.originalMessage(),
-                duplicate ? LeadStatus.DUPLICATED : LeadStatus.NEW,
+                relatedLeadId == null ? LeadStatus.NEW : LeadStatus.DUPLICATED,
                 null,
                 null,
                 now,
@@ -114,7 +120,9 @@ public class EmailLeadImporter {
                 null,
                 null,
                 null,
-                null
+                null,
+                null,
+                relatedLeadId
         );
     }
 }

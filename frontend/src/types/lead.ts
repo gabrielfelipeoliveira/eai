@@ -31,6 +31,7 @@ export interface Lead {
   storeId: string;
   customerName: string;
   customerPhone: string | null;
+  additionalPhones: string[];
   customerEmail: string | null;
   customerCity: string | null;
   vehicleInterest: string | null;
@@ -48,6 +49,7 @@ export interface Lead {
   lostReason: string | null;
   saleValue: number | null;
   saleCurrency: string;
+  relatedLeadId: string | null;
   overdueToAssign: boolean;
   overdueToFirstContact: boolean;
 }
