@@ -12,6 +12,7 @@ import com.eai.domain.conversation.ConversationMessageStatus;
 import com.eai.domain.conversation.ConversationMessageType;
 import com.eai.domain.conversation.WhatsAppContact;
 import com.eai.domain.user.UserRole;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -48,6 +49,7 @@ class WhatsAppTextSenderServiceTest {
             textClient
     );
 
+    @DisplayName("Envia texto livre dentro da janela de 24 horas")
     @Test
     void sendsFreeTextWhenLatestInboundMessageIsWithin24HourWindow() {
         Conversation conversation = conversation();
@@ -68,6 +70,7 @@ class WhatsAppTextSenderServiceTest {
         verify(textClient).sendText("5511999990000", "Bom dia");
     }
 
+    @DisplayName("Bloqueia texto livre fora da janela de 24 horas")
     @Test
     void blocksFreeTextWhenLatestInboundMessageIsOutside24HourWindow() {
         when(settings.templateSendingConfigured()).thenReturn(true);

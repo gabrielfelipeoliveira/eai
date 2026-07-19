@@ -8,6 +8,7 @@ import com.eai.domain.tenant.TenantStatus;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
 import com.eai.domain.user.UserStatus;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -32,6 +33,7 @@ class StoreServiceTest {
     private final UserRepository userRepository = mock(UserRepository.class);
     private final StoreService service = new StoreService(storeRepository, companyService, userRepository);
 
+    @DisplayName("Desativa loja e usuarios ativos vinculados")
     @Test
     void deactivatesStoreAndActiveUsersLinkedToStore() {
         Store store = store(TenantStatus.ACTIVE);

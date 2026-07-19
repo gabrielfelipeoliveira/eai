@@ -77,6 +77,7 @@ O codigo backend fica abaixo de `com.eai`:
 - Use testes de integracao para limites Spring, API e persistencia.
 - Nao ignore testes falhando sem documentar o motivo.
 - Mantenha testes focados em comportamento, nao em detalhes de implementacao.
+- Use `@DisplayName` em PT-BR em todos os testes JUnit novos ou alterados.
 
 ## Comandos De Validacao
 

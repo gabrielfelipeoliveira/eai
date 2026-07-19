@@ -1,6 +1,6 @@
 # Contexto Atual Do Projeto
 
-Ultima atualizacao: 2026-07-18.
+Ultima atualizacao: 2026-07-19.
 
 Este arquivo e o handoff operacional do projeto EAI. Ele existe para que qualquer desenvolvedor ou agente de IA consiga retomar o trabalho sem depender do historico de uma conversa especifica.
 
@@ -56,11 +56,11 @@ test/eai-003-slug-curto
 Cards de desenvolvimento conhecidos:
 
 - `EAI-001`: concluido. Alinhar papeis: remover `AUDITOR` do MVP e incluir `AVALIADOR`.
-- `EAI-002`: em andamento. Ajustar tenancy: empresa agrupadora, loja operacional e desativacao sem apagar historico.
-- `EAI-003`: concluido. Sessao unica por usuario, refresh token com TTL de 30 dias, rotacao, logout/revogacao por desativacao e access token recusado para usuario inativo.
-- `EAI-004`: implementado em 2026-07-18. Alinhar status de lead e pipeline com etapas opcionais de F&I.
-- `EAI-005`: implementado em 2026-07-18. Modelar Item, Veiculo, telefone E.164 e moeda de venda.
-- `EAI-006`: backlog. Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
+- `EAI-002`: concluido. Ajustar tenancy: empresa agrupadora, loja operacional e desativacao sem apagar historico.
+- `EAI-003`: concluido. Implementar sessao unica, TTL de 30 dias e revogacao por desativacao.
+- `EAI-004`: concluido. Alinhar status de lead e pipeline com etapas opcionais de F&I.
+- `EAI-005`: concluido. Modelar Item, Veiculo, telefone E.164 e moeda de venda.
+- `EAI-006`: em andamento. Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
 - `EAI-007`: backlog. Ajustar visibilidade, ordenacao e busca normalizada de leads.
 - `EAI-008`: backlog. Ajustar notas, observacoes, tags globais e historico de lead.
 - `EAI-009`: backlog. Ajustar importacao de leads por e-mail e duplicidade por telefone+loja.
@@ -76,6 +76,18 @@ Cards de desenvolvimento conhecidos:
 - `EAI-019`: backlog. Adicionar validacao de contrato OpenAPI.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
+
+## Proximo Desenvolvimento
+
+Card em andamento:
+
+- `EAI-006`: Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
+
+Branch sugerida:
+
+```text
+feature/eai-006-ciclo-vida-recontato-duplicidade-telefones
+```
 
 ## Validacao Padrao
 
@@ -102,43 +114,22 @@ Use `mvn clean verify` como validacao padrao do backend. `mvn test` sem `clean` 
 
 ## Estado Tecnico Validado
 
-Na ultima validacao:
+Ultima validacao em 2026-07-19:
 
-- `main` estava atualizada com o remoto.
-- Backend `mvn clean test` passou com 40 testes, 0 falhas.
-- Frontend `npm run build` passou.
-- Banco local Postgres do compose subiu saudavel apos reset de volume local de teste.
-- Backend subiu contra Postgres padrao do compose e aplicou Flyway do zero.
-- Smoke autenticado respondeu `200` para `/api/auth/me`, `/api/companies`, `/api/users`, `/api/leads?page=0&size=5` e `/api/pipeline`.
-
-Validacao EAI-003 em 2026-07-18:
-- Backend `rtk mvn clean verify` passou com 58 testes, 0 falhas.
-- Frontend `rtk npm run build` passou.
-- Cobertura adicionada para segundo login invalidar refresh anterior, refresh token rotacionado/revogado, TTL de 30 dias, usuario inativo sem login/refresh, desativacao revogando sessoes e access token rejeitado apos desativacao.
-
-Validacao EAI-004 em 2026-07-18:
-- Implementado `SIMULATING` e `PROPOSAL_APPROVED` como status oficiais de lead entre `VISIT_SCHEDULED` e `PROPOSAL_SENT`, sem vinculo/responsavel F&I neste card.
-- Backend atualizado em dominio, metadados, pipeline, contagens abertas, candidatos de SLA e migration Flyway Java `V3__expand_lead_status_checks`.
-- Frontend atualizado em tipos, fallback de metadados, Pipeline, Leads e drawer de detalhe.
-- Backend `rtk mvn clean verify` passou com 58 testes, 0 falhas.
-- Frontend `rtk npm run build` passou. O Vite manteve warning existente de chunk JS acima de 500 kB apos minificacao.
-- Validacao manual por codigo: filtros, chips, seletor de status, cards de contagem e colunas do pipeline usam a lista local atualizada e labels de `useMetadata`; drag/drop do pipeline continua chamando somente `changeLeadStatus` sem campos obrigatorios extras.
-
-Validacao EAI-005 em 2026-07-18:
-- Lead referencia somente `item_id`; veiculo estruturado fica em `item.vehicle`, nao como relacionamento direto do Lead.
-- Telefones de leads manuais e importados por e-mail sao normalizados para E.164.
-- `saleCurrency` usa `BRL` como padrao e aceita outros codigos ISO de 3 letras.
-- Backend `rtk mvn clean verify` passou com 62 testes, 0 falhas.
-- Frontend `rtk npm run build` passou. O Vite manteve warning existente de chunk JS acima de 500 kB apos minificacao.
+- Branch `feature/eai-006-ciclo-vida-recontato-duplicidade-telefones`.
+- Backend `mvn clean verify` via Docker passou com 64 testes, 0 falhas.
+- Frontend `npm run build` via Docker passou.
+- Avisos conhecidos:
+- Flyway reporta H2 2.4.240 mais novo que a versao verificada.
+- SpringDoc `/v3/api-docs` e `/swagger-ui.html` habilitados por default.
+- Mockito usa self-attaching inline mock maker; JDK futuro pode exigir agente configurado.
+- Vite reporta chunk JS acima de 500 kB apos minificacao.
 
 ## Lacunas Ja Registradas Em Cards
 
 Nao crie novos cards duplicados sem antes verificar o Trello:
 
-- Sessao unica, TTL de 30 dias e revogacao por desativacao: `EAI-003`.
-- Status de lead/pipeline e etapas opcionais de F&I: `EAI-004`.
-- Item, Veiculo, telefone E.164 e moeda de venda: `EAI-005`.
-- Duplicidade, recontato e telefones de lead: `EAI-006`.
+- Duplicidade, recontato e telefones de lead: `EAI-006` em implementacao nesta branch.
 - Visibilidade, ordenacao e busca normalizada de leads: `EAI-007`.
 - Notas, observacoes, tags globais e historico de lead: `EAI-008`.
 - Importacao de leads por e-mail e duplicidade por telefone+loja: `EAI-009`.

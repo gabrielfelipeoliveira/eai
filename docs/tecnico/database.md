@@ -36,7 +36,7 @@ Grupos atuais e alvo:
 
 - Identidade e autenticacao: `users`, `user_roles`, `refresh_tokens`.
 - Tenancy: `companies`, `stores`.
-- Leads: `leads`, `lead_history`, `lead_notes`, `lead_tags` e estruturas futuras para observacoes e telefones vinculados.
+- Leads: `leads`, `lead_history`, `lead_notes`, `lead_tags`, `lead_additional_phones` e estruturas futuras para observacoes.
 - Item e veiculo: `items` e `vehicles` ou equivalentes futuros.
 - Mensageria: `message_templates` e comunicacoes de lead.
 - WhatsApp: contatos, conversas, mensagens, eventos de status, midias e auditoria tecnica.
@@ -53,6 +53,7 @@ Grupos atuais e alvo:
 - Usuario possui um unico papel.
 - Lead pertence a empresa e loja.
 - Lead pode ter historico, notas, observacoes, tags e telefones vinculados.
+- Lead pode apontar `related_lead_id` para preservar relacao com lead anterior em duplicidade, recontato ou novo clique em anuncio.
 - Lead pode se relacionar a Item; Veiculo estruturado e filho de Item, nao relacionamento direto do Lead.
 - Item pertence ao usuario.
 - Veiculo e filho de Item.
@@ -76,7 +77,7 @@ Constraints conhecidas ou desejadas:
 - Campos com comportamento de enum usam constraints `CHECK` ou tipo equivalente definido em migration.
 - Valor de venda deve ser nulo ou nao negativo.
 - Moeda deve aceitar valores alem de BRL; BRL e o default de negocio.
-- Telefone deve seguir E.164 quando aplicavel.
+- Telefone principal e telefones adicionais de lead devem seguir E.164 quando aplicavel.
 - Contatos de WhatsApp sao unicos por loja e telefone.
 - Conversas sao unicas por contato e por lead quando houver lead vinculado.
 - Tags devem impedir duplicidade do mesmo tipo no mesmo lead.

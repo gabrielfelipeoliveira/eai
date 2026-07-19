@@ -7,6 +7,7 @@ import com.eai.application.user.UserRepository;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
 import com.eai.domain.user.UserStatus;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
@@ -44,6 +45,7 @@ class AuthServiceTest {
             REFRESH_TTL.toHours()
     );
 
+    @DisplayName("Login revoga sessoes anteriores antes de salvar novo refresh token")
     @Test
     void loginRevokesPreviousSessionsBeforeSavingNewRefreshToken() {
         User user = user(UserStatus.ACTIVE);
@@ -61,6 +63,7 @@ class AuthServiceTest {
         inOrder.verify(refreshTokenRepository).save(any(RefreshTokenRecord.class));
     }
 
+    @DisplayName("Refresh revoga token usado antes de salvar o proximo")
     @Test
     void refreshRevokesUsedTokenBeforeSavingNextRefreshToken() {
         User user = user(UserStatus.ACTIVE);
@@ -78,6 +81,7 @@ class AuthServiceTest {
         inOrder.verify(refreshTokenRepository).save(any(RefreshTokenRecord.class));
     }
 
+    @DisplayName("Refresh rejeita token expirado ou revogado")
     @Test
     void refreshRejectsExpiredOrRevokedToken() {
         when(refreshTokenRepository.findByTokenHash(anyString()))
@@ -96,6 +100,7 @@ class AuthServiceTest {
         verify(refreshTokenRepository, never()).save(any(RefreshTokenRecord.class));
     }
 
+    @DisplayName("Usuario inativo nao faz login nem renova sessao")
     @Test
     void inactiveUserCannotLoginOrRefreshSession() {
         User inactiveUser = user(UserStatus.INACTIVE);
@@ -114,6 +119,7 @@ class AuthServiceTest {
         verify(refreshTokenRepository, never()).save(any(RefreshTokenRecord.class));
     }
 
+    @DisplayName("Novo refresh token expira em trinta dias")
     @Test
     void newRefreshTokenExpiresInThirtyDays() {
         User user = user(UserStatus.ACTIVE);

@@ -1,5 +1,6 @@
 package com.eai.api.lead;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,6 +43,7 @@ class LeadControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @DisplayName("Fluxo de gestao de leads funciona de ponta a ponta")
     @Test
     void leadManagementFlowWorks() throws Exception {
         String token = login();
@@ -221,6 +223,7 @@ class LeadControllerTest {
                 .andExpect(jsonPath("$[0].description").value("Follow-up completed: Retornar proposta"));
     }
 
+    @DisplayName("Criacao de lead preserva telefone E.164 valido")
     @Test
     void createLeadPreservesValidE164Phone() throws Exception {
         String token = login();
@@ -237,6 +240,7 @@ class LeadControllerTest {
                 .andExpect(jsonPath("$.customerPhone").value("+12125550123"));
     }
 
+    @DisplayName("Criacao de lead rejeita telefone invalido")
     @Test
     void createLeadRejectsInvalidPhone() throws Exception {
         String token = login();
@@ -252,6 +256,7 @@ class LeadControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @DisplayName("Criacao de lead aceita moeda de venda customizada")
     @Test
     void createLeadAcceptsCustomSaleCurrency() throws Exception {
         String token = login();
@@ -269,6 +274,7 @@ class LeadControllerTest {
                 .andExpect(jsonPath("$.saleCurrency").value("USD"));
     }
 
+    @DisplayName("Criacao de lead aceita item e veiculo estruturados")
     @Test
     void createLeadWithStructuredItemAndVehicle() throws Exception {
         String token = login();
@@ -288,6 +294,45 @@ class LeadControllerTest {
                 .andExpect(jsonPath("$.item.vehicle.year").value(2021))
                 .andExpect(jsonPath("$.item.vehicle.model").value("Touring"))
                 .andExpect(jsonPath("$.item.vehicle.value").value(128900.00));
+    }
+
+    @DisplayName("Criacao de lead marca duplicidade por telefone e loja mesmo com veiculo diferente")
+    @Test
+    void createLeadMarksDuplicateByPhoneAndStoreEvenWithDifferentVehicle() throws Exception {
+        String token = login();
+        String firstLeadId = createManualLead(token, "Cliente Duplicidade Origem", "11999770001");
+
+        mockMvc.perform(post("/api/leads")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+
+                                {"companyId":"%s","storeId":"%s","customerName":"Cliente Duplicidade Novo","customerPhone":"11999770001","vehicleInterest":"Toyota Corolla","source":"MANUAL"}
+
+                                """.formatted(DEFAULT_COMPANY_ID, DEFAULT_STORE_ID)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("DUPLICATED"))
+                .andExpect(jsonPath("$.relatedLeadId").value(firstLeadId));
+    }
+
+    @DisplayName("Criacao de lead normaliza telefones adicionais e usa na duplicidade")
+    @Test
+    void createLeadNormalizesAdditionalPhonesAndUsesThemForDuplicateDetection() throws Exception {
+        String token = login();
+        String firstLeadId = createManualLead(token, "Cliente Telefone Adicional Origem", "11999770002");
+
+        mockMvc.perform(post("/api/leads")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+
+                                {"companyId":"%s","storeId":"%s","customerName":"Cliente Telefone Adicional","customerPhone":"11999770003","additionalPhones":["(11) 99977-0002","11999770003"],"vehicleInterest":"Jeep Compass","source":"MANUAL"}
+
+                                """.formatted(DEFAULT_COMPANY_ID, DEFAULT_STORE_ID)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("DUPLICATED"))
+                .andExpect(jsonPath("$.relatedLeadId").value(firstLeadId))
+                .andExpect(jsonPath("$.additionalPhones[0]").value("+5511999770002"));
     }
 
     private String login() throws Exception {

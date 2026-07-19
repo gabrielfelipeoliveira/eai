@@ -19,6 +19,7 @@ import com.eai.domain.message.MessageTemplateType;
 import com.eai.domain.tenant.Store;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -61,6 +62,7 @@ class WhatsAppTemplateSenderServiceTest {
             templateClient
     );
 
+    @DisplayName("Envia template e registra mensagem enviada com retorno do provedor")
     @Test
     @SuppressWarnings("unchecked")
     void sendsTemplateAndRecordsSentMessageWithProviderReturn() {
@@ -85,6 +87,7 @@ class WhatsAppTemplateSenderServiceTest {
         assertThat(communication.getValue().getChannel()).isEqualTo(LeadCommunicationChannel.WHATSAPP_TEMPLATE);
     }
 
+    @DisplayName("Registra mensagem com falha quando provedor rejeita envio")
     @Test
     void recordsFailedMessageWhenProviderRejectsSend() {
         Lead lead = arrangeBaseLead("+5511999990000");

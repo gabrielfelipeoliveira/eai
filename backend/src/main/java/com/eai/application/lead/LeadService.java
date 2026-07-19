@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -80,12 +81,14 @@ public class LeadService {
         }
         LeadSource source = command.source() == null ? LeadSource.MANUAL : command.source();
         String normalizedPhone = PhoneNormalizer.normalize(command.customerPhone());
+        List<String> normalizedAdditionalPhones = normalizeAdditionalPhones(command.additionalPhones(), normalizedPhone);
         ItemRepository.ItemWithVehicle itemWithVehicle = createItemWithVehicle(authenticatedUser.id(), command.item());
         Lead lead = Lead.create(
                 command.companyId(),
                 command.storeId(),
                 command.customerName(),
                 normalizedPhone,
+                normalizedAdditionalPhones,
                 command.customerEmail(),
                 command.customerCity(),
                 command.vehicleInterest(),
@@ -98,8 +101,18 @@ public class LeadService {
                 command.saleValue(),
                 command.saleCurrency()
         );
+        leadRepository.findMostRecentByStoreIdAndAnyPhone(command.storeId(), allPhones(normalizedPhone, normalizedAdditionalPhones))
+                .ifPresent(existingLead -> lead.markDuplicated(existingLead.getId()));
         Lead savedLead = leadRepository.save(lead);
-        historyRepository.save(LeadHistory.create(savedLead.getId(), authenticatedUser.id(), null, savedLead.getStatus(), "Lead created"));
+        historyRepository.save(LeadHistory.create(
+                savedLead.getId(),
+                authenticatedUser.id(),
+                null,
+                savedLead.getStatus(),
+                savedLead.getStatus() == LeadStatus.DUPLICATED
+                        ? "Lead criado como duplicado por telefone/WhatsApp na mesma loja"
+                        : "Lead created"
+        ));
         return savedLead;
     }
 
@@ -117,12 +130,14 @@ public class LeadService {
                 ? null
                 : command.assignedToUserId().equals(lead.getAssignedToUserId()) ? lead.getAssignedAt() : Instant.now();
         String normalizedPhone = PhoneNormalizer.normalize(command.customerPhone());
+        List<String> normalizedAdditionalPhones = normalizeAdditionalPhones(command.additionalPhones(), normalizedPhone);
         ItemRepository.ItemWithVehicle itemWithVehicle = createItemWithVehicle(authenticatedUser.id(), command.item());
         lead.update(
                 command.companyId(),
                 command.storeId(),
                 command.customerName(),
                 normalizedPhone,
+                normalizedAdditionalPhones,
                 command.customerEmail(),
                 command.customerCity(),
                 command.vehicleInterest(),
@@ -216,6 +231,32 @@ public class LeadService {
             throw new NotFoundException("Lead tag not found");
         }
         tagRepository.deleteById(tag.getId());
+    }
+
+    private List<String> normalizeAdditionalPhones(List<String> additionalPhones, String primaryPhone) {
+        if (additionalPhones == null || additionalPhones.isEmpty()) {
+            return List.of();
+        }
+        List<String> normalized = new ArrayList<>();
+        for (String phone : additionalPhones) {
+            String normalizedPhone = PhoneNormalizer.normalize(phone);
+            if (normalizedPhone == null || normalizedPhone.equals(primaryPhone) || normalized.contains(normalizedPhone)) {
+                continue;
+            }
+            normalized.add(normalizedPhone);
+        }
+        return List.copyOf(normalized);
+    }
+
+    private List<String> allPhones(String primaryPhone, List<String> additionalPhones) {
+        List<String> phones = new ArrayList<>();
+        if (primaryPhone != null) {
+            phones.add(primaryPhone);
+        }
+        if (additionalPhones != null) {
+            phones.addAll(additionalPhones);
+        }
+        return List.copyOf(phones);
     }
 
     private Lead findRequired(UUID id) {

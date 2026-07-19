@@ -6,6 +6,7 @@ export interface LeadPayload {
   storeId: string;
   customerName: string;
   customerPhone?: string;
+  additionalPhones?: string[];
   customerEmail?: string;
   customerCity?: string;
   vehicleInterest?: string;

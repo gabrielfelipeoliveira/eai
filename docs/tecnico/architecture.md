@@ -411,6 +411,7 @@ Regras:
 - Adicionar testes quando comportamento de negocio ou logica compartilhada mudar.
 - Preferir testes unitarios focados para dominio e aplicacao.
 - Usar testes de integracao quando o comportamento depender de Spring, persistencia ou fronteiras HTTP.
+- Todo teste backend com JUnit deve ter `@DisplayName` em PT-BR descrevendo o comportamento validado.
 - Nao pular testes falhando sem documentar o motivo.
 
 Status:

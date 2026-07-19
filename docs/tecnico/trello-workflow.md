@@ -120,6 +120,99 @@ Tipos recomendados:
 
 Inclua o identificador no PR, commit principal e comentarios de fechamento quando aplicavel.
 
+## Branches, PRs E Comentarios De Desenvolvimento
+
+Antes de analisar ou codar um card, faca a reserva operacional do trabalho:
+
+1. Volte para `main`.
+2. Execute `git pull --ff-only`.
+3. Confirme que o workspace esta limpo.
+4. Consulte o Trello e confirme que o card `EAI-###` ainda esta livre.
+5. Se o card ja estiver `Em andamento`, nao inicie trabalho paralelo sem alinhamento explicito.
+6. Se o card estiver livre, mova para `Em andamento`.
+7. Crie a branch seguindo o padrao deste documento.
+8. Atualize `docs/tecnico/contexto-atual.md` com o card em andamento e a branch.
+9. Adicione comentario de inicio no card.
+10. Faca commit e push dessa reserva/handoff antes de iniciar a analise tecnica ou implementacao.
+
+O commit inicial de reserva deve ser documental e pequeno. Exemplo:
+
+```text
+docs: EAI-006 inicia desenvolvimento
+```
+
+Modelo de comentario de inicio:
+
+```text
+## Inicio de desenvolvimento
+
+Branch: feature/eai-###-slug-curto
+
+Validacao inicial da main em AAAA-MM-DD:
+- Backend: mvn clean verify passou com N testes, 0 falhas.
+- Frontend: npm run build passou.
+
+Status:
+- Card reservado para desenvolvimento.
+- Handoff atualizado em docs/tecnico/contexto-atual.md.
+
+Proximo passo:
+- Analisar documentacao e codigo relacionados antes de implementar.
+```
+
+Ao abrir PR, mova o card para `Aguardando Code Review` e adicione comentario com o link:
+
+```text
+## Pull request
+
+PR: ...
+Branch: feature/eai-###-slug-curto
+
+Resumo:
+- ...
+
+Validacoes executadas:
+- ...
+```
+
+Depois do merge e validacao final, comente o fechamento e mova o card para `Concluido`.
+
+Modelo de comentario de conclusao:
+
+```text
+## Conclusao EAI-###
+
+Implementado em PR: ...
+Commit: ...
+Branch: feature/eai-###-slug-curto
+
+Resumo:
+- ...
+
+Documentacao atualizada:
+- ...
+
+Validacoes executadas:
+- mvn clean verify com N testes, 0 falhas.
+- npm run build passou.
+- Smoke runtime, quando aplicavel: ...
+
+Vulnerabilidades/avisos:
+- Nenhuma nova vulnerabilidade encontrada.
+- Avisos conhecidos: ...
+
+Pendencias:
+- Nenhuma, ou listar proximos cards/decisoes.
+```
+
+Commits devem manter o identificador do card no assunto ou corpo. Exemplos:
+
+```text
+feat: EAI-006 ajusta ciclo de vida e duplicidade de leads
+docs: EAI-006 atualiza handoff operacional
+test: EAI-016 adiciona integracao Postgres com Testcontainers
+```
+
 ## Modelo De Card De Negocio
 
 O corpo do card de negocio deve preservar a pergunta/contexto original. Respostas, decisoes, evidencias e encaminhamentos devem ser registrados em comentarios.
