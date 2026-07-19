@@ -120,6 +120,82 @@ Tipos recomendados:
 
 Inclua o identificador no PR, commit principal e comentarios de fechamento quando aplicavel.
 
+## Branches, PRs E Comentarios De Desenvolvimento
+
+Ao iniciar um card de desenvolvimento:
+
+1. Confirme que o card `EAI-###` esta no Trello e que a documentacao oficial existe.
+2. Crie a branch seguindo o padrao deste documento.
+3. Mova o card para `Em andamento`.
+4. Adicione comentario de inicio no card.
+
+Modelo de comentario de inicio:
+
+```text
+## Inicio de desenvolvimento
+
+Branch: feature/eai-###-slug-curto
+
+Validacao inicial da main em AAAA-MM-DD:
+- Backend: mvn clean verify passou com N testes, 0 falhas.
+- Frontend: npm run build passou.
+
+Proximo passo: ...
+```
+
+Ao abrir PR, mova o card para `Aguardando Code Review` e adicione comentario com o link:
+
+```text
+## Pull request
+
+PR: ...
+Branch: feature/eai-###-slug-curto
+
+Resumo:
+- ...
+
+Validacoes executadas:
+- ...
+```
+
+Depois do merge e validacao final, comente o fechamento e mova o card para `Concluido`.
+
+Modelo de comentario de conclusao:
+
+```text
+## Conclusao EAI-###
+
+Implementado em PR: ...
+Commit: ...
+Branch: feature/eai-###-slug-curto
+
+Resumo:
+- ...
+
+Documentacao atualizada:
+- ...
+
+Validacoes executadas:
+- mvn clean verify com N testes, 0 falhas.
+- npm run build passou.
+- Smoke runtime, quando aplicavel: ...
+
+Vulnerabilidades/avisos:
+- Nenhuma nova vulnerabilidade encontrada.
+- Avisos conhecidos: ...
+
+Pendencias:
+- Nenhuma, ou listar proximos cards/decisoes.
+```
+
+Commits devem manter o identificador do card no assunto ou corpo. Exemplos:
+
+```text
+feat: EAI-006 ajusta ciclo de vida e duplicidade de leads
+docs: EAI-006 atualiza handoff operacional
+test: EAI-016 adiciona integracao Postgres com Testcontainers
+```
+
 ## Modelo De Card De Negocio
 
 O corpo do card de negocio deve preservar a pergunta/contexto original. Respostas, decisoes, evidencias e encaminhamentos devem ser registrados em comentarios.
