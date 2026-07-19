@@ -44,7 +44,6 @@ class LeadControllerTest {
     private ObjectMapper objectMapper;
 
     @DisplayName("Fluxo de gestao de leads funciona de ponta a ponta")
-
     @Test
     void leadManagementFlowWorks() throws Exception {
         String token = login();
@@ -225,7 +224,6 @@ class LeadControllerTest {
     }
 
     @DisplayName("Criacao de lead preserva telefone E.164 valido")
-
     @Test
     void createLeadPreservesValidE164Phone() throws Exception {
         String token = login();
@@ -243,7 +241,6 @@ class LeadControllerTest {
     }
 
     @DisplayName("Criacao de lead rejeita telefone invalido")
-
     @Test
     void createLeadRejectsInvalidPhone() throws Exception {
         String token = login();
@@ -260,7 +257,6 @@ class LeadControllerTest {
     }
 
     @DisplayName("Criacao de lead aceita moeda de venda customizada")
-
     @Test
     void createLeadAcceptsCustomSaleCurrency() throws Exception {
         String token = login();
@@ -279,7 +275,6 @@ class LeadControllerTest {
     }
 
     @DisplayName("Criacao de lead aceita item e veiculo estruturados")
-
     @Test
     void createLeadWithStructuredItemAndVehicle() throws Exception {
         String token = login();
@@ -302,7 +297,6 @@ class LeadControllerTest {
     }
 
     @DisplayName("Criacao de lead marca duplicidade por telefone e loja mesmo com veiculo diferente")
-
     @Test
     void createLeadMarksDuplicateByPhoneAndStoreEvenWithDifferentVehicle() throws Exception {
         String token = login();
@@ -322,7 +316,6 @@ class LeadControllerTest {
     }
 
     @DisplayName("Criacao de lead normaliza telefones adicionais e usa na duplicidade")
-
     @Test
     void createLeadNormalizesAdditionalPhonesAndUsesThemForDuplicateDetection() throws Exception {
         String token = login();

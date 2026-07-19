@@ -36,7 +36,6 @@ class SettingsControllerTest {
     private ObjectMapper objectMapper;
 
     @DisplayName("Admin carrega configuracoes agregadas e atualiza empresa")
-
     @Test
     void adminCanLoadAggregatedSettingsAndUpdateCompany() throws Exception {
         String token = login("admin@eai.com", "admin123");
@@ -69,7 +68,6 @@ class SettingsControllerTest {
     }
 
     @DisplayName("Gerente atualiza loja, distribuicao e SLA")
-
     @Test
     void managerCanUpdateStoreDistributionAndSla() throws Exception {
         String adminToken = login("admin@eai.com", "admin123");
@@ -131,7 +129,6 @@ class SettingsControllerTest {
     }
 
     @DisplayName("Vendedor nao acessa configuracoes administrativas")
-
     @Test
     void sellerCannotAccessAdministrativeSettings() throws Exception {
         String adminToken = login("admin@eai.com", "admin123");

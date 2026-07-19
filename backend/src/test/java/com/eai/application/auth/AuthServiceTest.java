@@ -46,7 +46,6 @@ class AuthServiceTest {
     );
 
     @DisplayName("Login revoga sessoes anteriores antes de salvar novo refresh token")
-
     @Test
     void loginRevokesPreviousSessionsBeforeSavingNewRefreshToken() {
         User user = user(UserStatus.ACTIVE);
@@ -65,7 +64,6 @@ class AuthServiceTest {
     }
 
     @DisplayName("Refresh revoga token usado antes de salvar o proximo")
-
     @Test
     void refreshRevokesUsedTokenBeforeSavingNextRefreshToken() {
         User user = user(UserStatus.ACTIVE);
@@ -84,7 +82,6 @@ class AuthServiceTest {
     }
 
     @DisplayName("Refresh rejeita token expirado ou revogado")
-
     @Test
     void refreshRejectsExpiredOrRevokedToken() {
         when(refreshTokenRepository.findByTokenHash(anyString()))
@@ -104,7 +101,6 @@ class AuthServiceTest {
     }
 
     @DisplayName("Usuario inativo nao faz login nem renova sessao")
-
     @Test
     void inactiveUserCannotLoginOrRefreshSession() {
         User inactiveUser = user(UserStatus.INACTIVE);
@@ -124,7 +120,6 @@ class AuthServiceTest {
     }
 
     @DisplayName("Novo refresh token expira em trinta dias")
-
     @Test
     void newRefreshTokenExpiresInThirtyDays() {
         User user = user(UserStatus.ACTIVE);

@@ -30,7 +30,6 @@ class WhatsAppWebhookControllerTest {
     private ObjectMapper objectMapper;
 
     @DisplayName("Webhook do WhatsApp valida quando o token confere")
-
     @Test
     void verifiesWebhookWhenTokenMatches() throws Exception {
         mockMvc.perform(get("/api/webhooks/whatsapp")
@@ -42,7 +41,6 @@ class WhatsAppWebhookControllerTest {
     }
 
     @DisplayName("Webhook do WhatsApp rejeita token divergente")
-
     @Test
     void rejectsWebhookVerificationWhenTokenDoesNotMatch() throws Exception {
         mockMvc.perform(get("/api/webhooks/whatsapp")
@@ -53,7 +51,6 @@ class WhatsAppWebhookControllerTest {
     }
 
     @DisplayName("Webhook do WhatsApp recebe eventos sem autenticacao")
-
     @Test
     void receivesWebhookEventsWithoutAuthentication() throws Exception {
         mockMvc.perform(post("/api/webhooks/whatsapp")
@@ -68,7 +65,6 @@ class WhatsAppWebhookControllerTest {
     }
 
     @DisplayName("Webhook persiste mensagem recebida e cria conversa por telefone")
-
     @Test
     void persistsIncomingMessageAndCreatesConversationByPhone() throws Exception {
         mockMvc.perform(post("/api/webhooks/whatsapp")

@@ -25,7 +25,6 @@ class LeadAssignmentStrategyTest {
     private static final UUID STORE_ID = UUID.fromString("00000000-0000-0000-0000-000000000201");
 
     @DisplayName("Round robin seleciona proximo vendedor apos atribuicao mais recente")
-
     @Test
     void roundRobinSelectsNextSellerAfterMostRecentAssignment() {
         LeadRepository repository = mock(LeadRepository.class);
@@ -40,7 +39,6 @@ class LeadAssignmentStrategyTest {
     }
 
     @DisplayName("Menor carga seleciona vendedor com menos leads abertos")
-
     @Test
     void leastBusySelectsSellerWithFewerOpenLeads() {
         LeadRepository repository = mock(LeadRepository.class);

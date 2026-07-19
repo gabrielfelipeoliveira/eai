@@ -21,7 +21,6 @@ class LeadSlaEvaluatorTest {
     private final LeadSlaEvaluator evaluator = new LeadSlaEvaluator();
 
     @DisplayName("Identifica lead atrasado para atribuicao")
-
     @Test
     void identifiesLeadOverdueToAssign() {
         Instant createdAt = Instant.parse("2026-07-07T10:00:00Z");
@@ -32,7 +31,6 @@ class LeadSlaEvaluatorTest {
     }
 
     @DisplayName("Identifica lead atrasado para primeiro contato")
-
     @Test
     void identifiesLeadOverdueToFirstContact() {
         Instant createdAt = Instant.parse("2026-07-07T10:00:00Z");
@@ -44,7 +42,6 @@ class LeadSlaEvaluatorTest {
     }
 
     @DisplayName("Nao marca atraso de primeiro contato apos contato realizado")
-
     @Test
     void doesNotMarkFirstContactOverdueAfterFirstContact() {
         Instant createdAt = Instant.parse("2026-07-07T10:00:00Z");

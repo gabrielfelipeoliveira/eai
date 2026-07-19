@@ -12,7 +12,6 @@ class GenericEmailParserTest {
     private final GenericEmailParser parser = new GenericEmailParser();
 
     @DisplayName("Parser extrai lead de e-mail com campos rotulados")
-
     @Test
     void shouldParseLabeledLeadEmail() {
         EmailMessage message = new EmailMessage(
@@ -40,7 +39,6 @@ class GenericEmailParserTest {
     }
 
     @DisplayName("Parser usa regex como fallback para telefone e e-mail")
-
     @Test
     void shouldFallbackToRegexForPhoneAndEmail() {
         EmailMessage message = new EmailMessage(

@@ -34,7 +34,6 @@ class StoreServiceTest {
     private final StoreService service = new StoreService(storeRepository, companyService, userRepository);
 
     @DisplayName("Desativa loja e usuarios ativos vinculados")
-
     @Test
     void deactivatesStoreAndActiveUsersLinkedToStore() {
         Store store = store(TenantStatus.ACTIVE);

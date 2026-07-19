@@ -45,7 +45,6 @@ class ConversationServiceTest {
     private final ConversationService service = new ConversationService(contactRepository, conversationRepository, messageRepository, messageEventRepository, accessAuditRepository, leadRepository, leadHistoryRepository);
 
     @DisplayName("Lista conversas do vendedor ordenadas pela ultima interacao com nao lidas")
-
     @Test
     void listsSellerSummariesOrderedByLatestInteractionWithUnreadCount() {
         Conversation older = conversation("00000000-0000-0000-0000-000000000401", "00000000-0000-0000-0000-000000000501", "00000000-0000-0000-0000-000000000601", SELLER_ID);
@@ -66,7 +65,6 @@ class ConversationServiceTest {
     }
 
     @DisplayName("Listagem do vendedor usa escopo do responsavel")
-
     @Test
     void sellerListUsesResponsibleUserScope() {
         when(conversationRepository.findByResponsibleUserId(SELLER_ID)).thenReturn(List.of());
@@ -78,7 +76,6 @@ class ConversationServiceTest {
     }
 
     @DisplayName("Gerente filtra conversas por vendedor, status e periodo")
-
     @Test
     void filtersSummariesBySellerStatusAndPeriodForManager() {
         Conversation matching = conversation("00000000-0000-0000-0000-000000000403", "00000000-0000-0000-0000-000000000503", "00000000-0000-0000-0000-000000000603", SELLER_ID);
@@ -103,7 +100,6 @@ class ConversationServiceTest {
     }
 
     @DisplayName("Filtro do vendedor nao amplia seu escopo")
-
     @Test
     void sellerFilterCannotExpandSellerScope() {
         Conversation own = conversation("00000000-0000-0000-0000-000000000407", "00000000-0000-0000-0000-000000000507", "00000000-0000-0000-0000-000000000607", SELLER_ID);
@@ -118,7 +114,6 @@ class ConversationServiceTest {
     }
 
     @DisplayName("Listagem de mensagens marca recebidas como lidas")
-
     @Test
     void marksInboundReceivedMessagesAsReadWhenListingMessages() {
         Conversation conversation = conversation("00000000-0000-0000-0000-000000000404", "00000000-0000-0000-0000-000000000504", "00000000-0000-0000-0000-000000000604", SELLER_ID);
@@ -136,7 +131,6 @@ class ConversationServiceTest {
     }
 
     @DisplayName("Listagem de mensagens registra acesso do gerente")
-
     @Test
     void recordsManagerAccessWhenListingMessages() {
         Conversation conversation = conversation("00000000-0000-0000-0000-000000000408", "00000000-0000-0000-0000-000000000508", "00000000-0000-0000-0000-000000000608", SELLER_ID);
@@ -154,7 +148,6 @@ class ConversationServiceTest {
     }
 
     @DisplayName("Atualiza status da mensagem de saida pelo id externo")
-
     @Test
     void updatesOutboundMessageStatusByExternalId() {
         ConversationMessage message = message(UUID.randomUUID(), ConversationMessageDirection.OUTBOUND, ConversationMessageStatus.SENT, "Bom dia", "2026-07-08T11:02:00Z");
@@ -174,7 +167,6 @@ class ConversationServiceTest {
     }
 
     @DisplayName("Evento atrasado do provedor nao rebaixa status lido")
-
     @Test
     void doesNotDowngradeReadStatusWhenDelayedProviderEventArrives() {
         ConversationMessage message = message(UUID.randomUUID(), ConversationMessageDirection.OUTBOUND, ConversationMessageStatus.READ, "Bom dia", "2026-07-08T11:02:00Z");
@@ -188,7 +180,6 @@ class ConversationServiceTest {
     }
 
     @DisplayName("Registra evento de falha com motivo")
-
     @Test
     void recordsFailedStatusEventWithReason() {
         ConversationMessage message = message(UUID.randomUUID(), ConversationMessageDirection.OUTBOUND, ConversationMessageStatus.SENT, "Bom dia", "2026-07-08T11:02:00Z");
@@ -215,7 +206,6 @@ class ConversationServiceTest {
     }
 
     @DisplayName("Registra evento de status mesmo sem mensagem encontrada")
-
     @Test
     void recordsStatusEventEvenWhenMessageWasNotFound() {
         when(messageRepository.findByExternalMessageId("wamid.unknown")).thenReturn(Optional.empty());

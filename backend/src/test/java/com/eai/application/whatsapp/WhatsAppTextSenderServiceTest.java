@@ -50,7 +50,6 @@ class WhatsAppTextSenderServiceTest {
     );
 
     @DisplayName("Envia texto livre dentro da janela de 24 horas")
-
     @Test
     void sendsFreeTextWhenLatestInboundMessageIsWithin24HourWindow() {
         Conversation conversation = conversation();
@@ -72,7 +71,6 @@ class WhatsAppTextSenderServiceTest {
     }
 
     @DisplayName("Bloqueia texto livre fora da janela de 24 horas")
-
     @Test
     void blocksFreeTextWhenLatestInboundMessageIsOutside24HourWindow() {
         when(settings.templateSendingConfigured()).thenReturn(true);

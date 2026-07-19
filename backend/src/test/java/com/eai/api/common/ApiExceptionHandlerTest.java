@@ -14,7 +14,6 @@ class ApiExceptionHandlerTest {
     private final ApiExceptionHandler handler = new ApiExceptionHandler(messageSource());
 
     @DisplayName("Traduz mensagens conhecidas com acentos")
-
     @Test
     void translatesKnownMessagesWithAccents() {
         ResponseEntity<ErrorResponse> response = handler.handleIllegalArgumentException(
@@ -26,7 +25,6 @@ class ApiExceptionHandlerTest {
     }
 
     @DisplayName("Traduz mensagens dinamicas de campo obrigatorio com acentos")
-
     @Test
     void translatesDynamicRequiredFieldMessagesWithAccents() {
         ResponseEntity<ErrorResponse> response = handler.handleIllegalArgumentException(

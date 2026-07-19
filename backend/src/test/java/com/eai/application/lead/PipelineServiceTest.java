@@ -25,7 +25,6 @@ class PipelineServiceTest {
     private static final UUID OTHER_SELLER_ID = UUID.randomUUID();
 
     @DisplayName("Pipeline do vendedor inclui leads sem dono e seus proprios leads")
-
     @Test
     void sellerPipelineIncludesUnassignedAndOwnAssignedLeadsOnly() {
         Lead unassignedNew = lead(LeadStatus.NEW, null);

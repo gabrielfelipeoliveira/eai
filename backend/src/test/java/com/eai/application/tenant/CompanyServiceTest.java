@@ -25,7 +25,6 @@ class CompanyServiceTest {
     private final CompanyService service = new CompanyService(companyRepository, userRepository);
 
     @DisplayName("Bloqueia desativacao de empresa com usuarios ativos")
-
     @Test
     void blocksDeactivationWhenCompanyHasActiveUsers() {
         when(companyRepository.findById(COMPANY_ID)).thenReturn(Optional.of(company(TenantStatus.ACTIVE)));
@@ -37,7 +36,6 @@ class CompanyServiceTest {
     }
 
     @DisplayName("Desativa empresa sem usuarios ativos")
-
     @Test
     void deactivatesCompanyWhenThereAreNoActiveUsers() {
         when(companyRepository.findById(COMPANY_ID)).thenReturn(Optional.of(company(TenantStatus.ACTIVE)));

@@ -36,7 +36,6 @@ class UserServiceTest {
     private final UserService service = new UserService(userRepository, passwordHasher, companyService, storeService, refreshTokenRepository);
 
     @DisplayName("Aceita admin sem empresa ou loja")
-
     @Test
     void acceptsAdminWithoutCompanyOrStore() {
         arrangeSave();
@@ -48,7 +47,6 @@ class UserServiceTest {
     }
 
     @DisplayName("Aceita gerente com empresa e sem loja")
-
     @Test
     void acceptsManagerWithCompanyAndWithoutStore() {
         arrangeActiveCompany();
@@ -61,7 +59,6 @@ class UserServiceTest {
     }
 
     @DisplayName("Rejeita gerente com loja")
-
     @Test
     void rejectsManagerWithStore() {
         arrangeActiveCompany();
@@ -72,7 +69,6 @@ class UserServiceTest {
     }
 
     @DisplayName("Exige loja para papeis operacionais")
-
     @Test
     void requiresStoreForOperationalRoles() {
         arrangeActiveCompany();
@@ -83,7 +79,6 @@ class UserServiceTest {
     }
 
     @DisplayName("Aceita papel operacional com empresa e loja ativas")
-
     @Test
     void acceptsOperationalRoleWithActiveCompanyAndStore() {
         arrangeActiveCompany();
@@ -96,7 +91,6 @@ class UserServiceTest {
     }
 
     @DisplayName("Desativacao de usuario marca inativo e revoga sessoes")
-
     @Test
     void deactivateUserMarksUserInactiveAndRevokesSessions() {
         User user = user(UserRole.SELLER);

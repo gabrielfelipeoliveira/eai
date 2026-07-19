@@ -35,7 +35,6 @@ class AuthControllerTest {
     private ObjectMapper objectMapper;
 
     @DisplayName("Login do admin seed retorna tokens")
-
     @Test
     void loginReturnsTokensForSeedAdmin() throws Exception {
         mockMvc.perform(post("/api/auth/login")
@@ -53,7 +52,6 @@ class AuthControllerTest {
     }
 
     @DisplayName("Login do avaliador seed retorna token e papel")
-
     @Test
     void loginReturnsTokenForSeedAvaliador() throws Exception {
         String token = login("avaliador@eai.com");
@@ -66,7 +64,6 @@ class AuthControllerTest {
     }
 
     @DisplayName("Avaliador nao acessa endpoints legados de auditoria")
-
     @Test
     void avaliadorCannotAccessAuditorOnlyLegacyEndpoints() throws Exception {
         String token = login("avaliador@eai.com");
@@ -81,7 +78,6 @@ class AuthControllerTest {
     }
 
     @DisplayName("Endpoint de usuarios exige token de acesso")
-
     @Test
     void usersEndpointRequiresAccessToken() throws Exception {
         mockMvc.perform(get("/api/users"))
@@ -89,7 +85,6 @@ class AuthControllerTest {
     }
 
     @DisplayName("Segundo login invalida refresh token anterior")
-
     @Test
     void secondLoginInvalidatesRefreshTokenIssuedByFirstLogin() throws Exception {
         JsonNode firstLogin = loginTokens("admin@eai.com");
@@ -106,7 +101,6 @@ class AuthControllerTest {
     }
 
     @DisplayName("Usuario desativado nao usa access token nem refresh token")
-
     @Test
     @DirtiesContext
     void deactivatedUserCannotUseAccessOrRefreshToken() throws Exception {
@@ -132,7 +126,6 @@ class AuthControllerTest {
     }
 
     @DisplayName("Login aceita preflight CORS do frontend")
-
     @Test
     void loginAllowsFrontendCorsPreflight() throws Exception {
         mockMvc.perform(options("/api/auth/login")

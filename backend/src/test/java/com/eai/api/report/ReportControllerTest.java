@@ -40,7 +40,6 @@ class ReportControllerTest {
     private ObjectMapper objectMapper;
 
     @DisplayName("Relatorios e exportacao CSV funcionam")
-
     @Test
     void reportsAndCsvExportWork() throws Exception {
         String token = login();

@@ -24,7 +24,6 @@ class MetadataControllerTest {
     private MockMvc mockMvc;
 
     @DisplayName("Metadados sao publicos e retornam catalogo de apresentacao")
-
     @Test
     void metadataIsPublicAndReturnsPresentationCatalog() throws Exception {
         mockMvc.perform(get("/api/metadata").header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR"))

@@ -88,7 +88,6 @@ class WhatsAppTemplateSenderServiceTest {
     }
 
     @DisplayName("Registra mensagem com falha quando provedor rejeita envio")
-
     @Test
     void recordsFailedMessageWhenProviderRejectsSend() {
         Lead lead = arrangeBaseLead("+5511999990000");
