@@ -13,6 +13,7 @@ import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
 import com.eai.domain.user.UserRole;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -43,6 +44,8 @@ class ConversationServiceTest {
     private final LeadHistoryRepository leadHistoryRepository = mock(LeadHistoryRepository.class);
     private final ConversationService service = new ConversationService(contactRepository, conversationRepository, messageRepository, messageEventRepository, accessAuditRepository, leadRepository, leadHistoryRepository);
 
+    @DisplayName("Lista conversas do vendedor ordenadas pela ultima interacao com nao lidas")
+
     @Test
     void listsSellerSummariesOrderedByLatestInteractionWithUnreadCount() {
         Conversation older = conversation("00000000-0000-0000-0000-000000000401", "00000000-0000-0000-0000-000000000501", "00000000-0000-0000-0000-000000000601", SELLER_ID);
@@ -62,6 +65,8 @@ class ConversationServiceTest {
         assertThat(summaries.get(1).id()).isEqualTo(older.getId());
     }
 
+    @DisplayName("Listagem do vendedor usa escopo do responsavel")
+
     @Test
     void sellerListUsesResponsibleUserScope() {
         when(conversationRepository.findByResponsibleUserId(SELLER_ID)).thenReturn(List.of());
@@ -71,6 +76,8 @@ class ConversationServiceTest {
 
         assertThat(service.listConversations(seller())).isEmpty();
     }
+
+    @DisplayName("Gerente filtra conversas por vendedor, status e periodo")
 
     @Test
     void filtersSummariesBySellerStatusAndPeriodForManager() {
@@ -95,6 +102,8 @@ class ConversationServiceTest {
         assertThat(summaries).extracting(ConversationSummary::id).containsExactly(matching.getId());
     }
 
+    @DisplayName("Filtro do vendedor nao amplia seu escopo")
+
     @Test
     void sellerFilterCannotExpandSellerScope() {
         Conversation own = conversation("00000000-0000-0000-0000-000000000407", "00000000-0000-0000-0000-000000000507", "00000000-0000-0000-0000-000000000607", SELLER_ID);
@@ -107,6 +116,8 @@ class ConversationServiceTest {
 
         assertThat(summaries).extracting(ConversationSummary::id).containsExactly(own.getId());
     }
+
+    @DisplayName("Listagem de mensagens marca recebidas como lidas")
 
     @Test
     void marksInboundReceivedMessagesAsReadWhenListingMessages() {
@@ -124,6 +135,8 @@ class ConversationServiceTest {
         assertThat(messages).containsExactly(older, newer);
     }
 
+    @DisplayName("Listagem de mensagens registra acesso do gerente")
+
     @Test
     void recordsManagerAccessWhenListingMessages() {
         Conversation conversation = conversation("00000000-0000-0000-0000-000000000408", "00000000-0000-0000-0000-000000000508", "00000000-0000-0000-0000-000000000608", SELLER_ID);
@@ -139,6 +152,8 @@ class ConversationServiceTest {
                         && "LIST_MESSAGES".equals(audit.getAccessType())
         ));
     }
+
+    @DisplayName("Atualiza status da mensagem de saida pelo id externo")
 
     @Test
     void updatesOutboundMessageStatusByExternalId() {
@@ -158,6 +173,8 @@ class ConversationServiceTest {
         verify(messageRepository).save(message);
     }
 
+    @DisplayName("Evento atrasado do provedor nao rebaixa status lido")
+
     @Test
     void doesNotDowngradeReadStatusWhenDelayedProviderEventArrives() {
         ConversationMessage message = message(UUID.randomUUID(), ConversationMessageDirection.OUTBOUND, ConversationMessageStatus.READ, "Bom dia", "2026-07-08T11:02:00Z");
@@ -169,6 +186,8 @@ class ConversationServiceTest {
         assertThat(updated).isPresent();
         assertThat(updated.get().getStatus()).isEqualTo(ConversationMessageStatus.READ);
     }
+
+    @DisplayName("Registra evento de falha com motivo")
 
     @Test
     void recordsFailedStatusEventWithReason() {
@@ -194,6 +213,8 @@ class ConversationServiceTest {
                         && Instant.parse("2026-07-08T11:03:00Z").equals(event.getOccurredAt())
         ));
     }
+
+    @DisplayName("Registra evento de status mesmo sem mensagem encontrada")
 
     @Test
     void recordsStatusEventEvenWhenMessageWasNotFound() {

@@ -1,5 +1,6 @@
 package com.eai.api.metadata;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +22,8 @@ class MetadataControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @DisplayName("Metadados sao publicos e retornam catalogo de apresentacao")
 
     @Test
     void metadataIsPublicAndReturnsPresentationCatalog() throws Exception {

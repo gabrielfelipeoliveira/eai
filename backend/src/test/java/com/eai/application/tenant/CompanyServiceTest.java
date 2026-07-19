@@ -3,6 +3,7 @@ package com.eai.application.tenant;
 import com.eai.application.user.UserRepository;
 import com.eai.domain.tenant.Company;
 import com.eai.domain.tenant.TenantStatus;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -23,6 +24,8 @@ class CompanyServiceTest {
     private final UserRepository userRepository = mock(UserRepository.class);
     private final CompanyService service = new CompanyService(companyRepository, userRepository);
 
+    @DisplayName("Bloqueia desativacao de empresa com usuarios ativos")
+
     @Test
     void blocksDeactivationWhenCompanyHasActiveUsers() {
         when(companyRepository.findById(COMPANY_ID)).thenReturn(Optional.of(company(TenantStatus.ACTIVE)));
@@ -32,6 +35,8 @@ class CompanyServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("active users");
     }
+
+    @DisplayName("Desativa empresa sem usuarios ativos")
 
     @Test
     void deactivatesCompanyWhenThereAreNoActiveUsers() {

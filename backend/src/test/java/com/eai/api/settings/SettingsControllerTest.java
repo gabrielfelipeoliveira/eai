@@ -1,5 +1,6 @@
 package com.eai.api.settings;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,6 +35,8 @@ class SettingsControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @DisplayName("Admin carrega configuracoes agregadas e atualiza empresa")
+
     @Test
     void adminCanLoadAggregatedSettingsAndUpdateCompany() throws Exception {
         String token = login("admin@eai.com", "admin123");
@@ -64,6 +67,8 @@ class SettingsControllerTest {
                 .andExpect(jsonPath("$.name").value("Empresa EAI Settings"))
                 .andExpect(jsonPath("$.status").value("ACTIVE"));
     }
+
+    @DisplayName("Gerente atualiza loja, distribuicao e SLA")
 
     @Test
     void managerCanUpdateStoreDistributionAndSla() throws Exception {
@@ -124,6 +129,8 @@ class SettingsControllerTest {
                 .andExpect(jsonPath("$.minutesToFirstContact").value(25))
                 .andExpect(jsonPath("$.slaActive").value(true));
     }
+
+    @DisplayName("Vendedor nao acessa configuracoes administrativas")
 
     @Test
     void sellerCannotAccessAdministrativeSettings() throws Exception {

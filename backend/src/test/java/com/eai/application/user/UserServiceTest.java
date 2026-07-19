@@ -9,6 +9,7 @@ import com.eai.domain.tenant.Store;
 import com.eai.domain.tenant.TenantStatus;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -34,6 +35,8 @@ class UserServiceTest {
     private final RefreshTokenRepository refreshTokenRepository = mock(RefreshTokenRepository.class);
     private final UserService service = new UserService(userRepository, passwordHasher, companyService, storeService, refreshTokenRepository);
 
+    @DisplayName("Aceita admin sem empresa ou loja")
+
     @Test
     void acceptsAdminWithoutCompanyOrStore() {
         arrangeSave();
@@ -43,6 +46,8 @@ class UserServiceTest {
         assertThat(user.getCompanyId()).isNull();
         assertThat(user.getStoreId()).isNull();
     }
+
+    @DisplayName("Aceita gerente com empresa e sem loja")
 
     @Test
     void acceptsManagerWithCompanyAndWithoutStore() {
@@ -55,6 +60,8 @@ class UserServiceTest {
         assertThat(user.getStoreId()).isNull();
     }
 
+    @DisplayName("Rejeita gerente com loja")
+
     @Test
     void rejectsManagerWithStore() {
         arrangeActiveCompany();
@@ -64,6 +71,8 @@ class UserServiceTest {
                 .hasMessageContaining("MANAGER");
     }
 
+    @DisplayName("Exige loja para papeis operacionais")
+
     @Test
     void requiresStoreForOperationalRoles() {
         arrangeActiveCompany();
@@ -72,6 +81,8 @@ class UserServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("storeId");
     }
+
+    @DisplayName("Aceita papel operacional com empresa e loja ativas")
 
     @Test
     void acceptsOperationalRoleWithActiveCompanyAndStore() {
@@ -83,6 +94,8 @@ class UserServiceTest {
 
         assertThat(user.getStoreId()).isEqualTo(STORE_ID);
     }
+
+    @DisplayName("Desativacao de usuario marca inativo e revoga sessoes")
 
     @Test
     void deactivateUserMarksUserInactiveAndRevokesSessions() {

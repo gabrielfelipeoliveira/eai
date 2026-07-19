@@ -1,5 +1,6 @@
 package com.eai.api.whatsapp;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +29,8 @@ class WhatsAppWebhookControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @DisplayName("Webhook do WhatsApp valida quando o token confere")
+
     @Test
     void verifiesWebhookWhenTokenMatches() throws Exception {
         mockMvc.perform(get("/api/webhooks/whatsapp")
@@ -38,6 +41,8 @@ class WhatsAppWebhookControllerTest {
                 .andExpect(content().string("challenge-123"));
     }
 
+    @DisplayName("Webhook do WhatsApp rejeita token divergente")
+
     @Test
     void rejectsWebhookVerificationWhenTokenDoesNotMatch() throws Exception {
         mockMvc.perform(get("/api/webhooks/whatsapp")
@@ -46,6 +51,8 @@ class WhatsAppWebhookControllerTest {
                         .param("hub.challenge", "challenge-123"))
                 .andExpect(status().isForbidden());
     }
+
+    @DisplayName("Webhook do WhatsApp recebe eventos sem autenticacao")
 
     @Test
     void receivesWebhookEventsWithoutAuthentication() throws Exception {
@@ -59,6 +66,8 @@ class WhatsAppWebhookControllerTest {
                                 """))
                 .andExpect(status().isAccepted());
     }
+
+    @DisplayName("Webhook persiste mensagem recebida e cria conversa por telefone")
 
     @Test
     void persistsIncomingMessageAndCreatesConversationByPhone() throws Exception {

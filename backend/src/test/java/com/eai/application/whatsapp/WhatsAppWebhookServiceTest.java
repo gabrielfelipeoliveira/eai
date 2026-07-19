@@ -2,6 +2,7 @@ package com.eai.application.whatsapp;
 
 import com.eai.application.conversation.ConversationService;
 import com.eai.domain.conversation.ConversationMessageStatus;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;
 
@@ -15,6 +16,8 @@ class WhatsAppWebhookServiceTest {
     private final WhatsAppChannelSettings settings = mock(WhatsAppChannelSettings.class);
     private final ConversationService conversationService = mock(ConversationService.class);
     private final WhatsAppWebhookService service = new WhatsAppWebhookService(settings, conversationService, new ObjectMapper());
+
+    @DisplayName("Atualiza status da mensagem a partir do webhook do provedor")
 
     @Test
     void updatesMessageStatusFromProviderWebhookEvent() {
@@ -30,6 +33,8 @@ class WhatsAppWebhookServiceTest {
                 Instant.parse("2026-07-08T16:00:00Z")
         );
     }
+
+    @DisplayName("Interpreta eventos de status enviado, lido e falha do provedor")
 
     @Test
     void parsesSentReadAndFailedStatusEventsFromProviderWebhookEvent() {
