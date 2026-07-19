@@ -41,6 +41,7 @@ Quando documentacao e codigo entrarem em conflito, nao escolha um lado silencios
 - Sempre reporte vulnerabilidades apontadas por build, auditoria de dependencias, Mend/SCA ou alertas de CVE do Java.
 - Use `docs/tecnico/contexto-atual.md` como handoff operacional entre pessoas e agentes.
 - Use cards `EAI-###` do Trello para nomear branches, PRs e referencias de commits.
+- Toda mudanca deve seguir o fluxo de Trello, branch e PR descrito em `docs/tecnico/trello-workflow.md`, inclusive documentacao, processo e ajustes pequenos. Nao commite direto na `main`.
 
 ## Fluxo De Desenvolvimento
 
@@ -55,6 +56,8 @@ Quando documentacao e codigo entrarem em conflito, nao escolha um lado silencios
 9. Execute validacoes relevantes.
 10. Atualize Trello e `docs/tecnico/contexto-atual.md` quando o status operacional mudar.
 11. Resuma mudancas, validacoes, vulnerabilidades, riscos e pendencias.
+
+Este fluxo tambem vale para mudancas somente documentais ou de processo. Nao ha excecao para commit direto na `main`.
 
 ## Padrao De Commit
 

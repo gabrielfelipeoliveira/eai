@@ -20,6 +20,8 @@ Antes de implementar qualquer mudanca, leia:
 
 Se documentacao, Trello e codigo estiverem em conflito, nao escolha um lado silenciosamente. Registre o conflito no card ou na documentacao apropriada antes de implementar.
 
+Toda mudanca versionada deve seguir o fluxo de card `EAI-###`, branch, commit, push, PR, comentario no Trello e fechamento rastreavel. Isso inclui documentacao, processo e ajustes pequenos. Nao commite direto na `main`.
+
 ## Fontes De Verdade
 
 - Git e documentacao versionada: memoria permanente de arquitetura, regras e contexto tecnico.
@@ -75,6 +77,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-018`: backlog. Criar testes E2E dos fluxos criticos do MVP.
 - `EAI-019`: backlog. Adicionar validacao de contrato OpenAPI.
 - `EAI-020`: backlog. Padronizar uso seguro de Lombok no backend.
+- `EAI-021`: concluido. Reforcar obrigatoriedade de branch e PR para qualquer mudanca.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 

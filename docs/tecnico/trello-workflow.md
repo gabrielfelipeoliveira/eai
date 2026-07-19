@@ -124,6 +124,8 @@ Inclua o identificador no PR, commit principal e comentarios de fechamento quand
 
 Antes de analisar ou codar um card, faca a reserva operacional do trabalho:
 
+Esta regra nao tem excecao para mudancas pequenas, documentais ou de processo. Toda alteracao versionada deve passar por card `EAI-###`, branch, commit, push, PR, comentario no Trello e fechamento rastreavel. Nao commite direto na `main`.
+
 1. Volte para `main`.
 2. Execute `git pull --ff-only`.
 3. Confirme que o workspace esta limpo.
