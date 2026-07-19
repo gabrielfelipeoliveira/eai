@@ -60,7 +60,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-003`: concluido. Implementar sessao unica, TTL de 30 dias e revogacao por desativacao.
 - `EAI-004`: concluido. Alinhar status de lead e pipeline com etapas opcionais de F&I.
 - `EAI-005`: concluido. Modelar Item, Veiculo, telefone E.164 e moeda de venda.
-- `EAI-006`: em andamento. Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
+- `EAI-006`: concluido. Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
 - `EAI-007`: backlog. Ajustar visibilidade, ordenacao e busca normalizada de leads.
 - `EAI-008`: backlog. Ajustar notas, observacoes, tags globais e historico de lead.
 - `EAI-009`: backlog. Ajustar importacao de leads por e-mail e duplicidade por telefone+loja.
@@ -81,12 +81,12 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- `EAI-006`: Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
+- Nenhum card em andamento registrado neste arquivo. Antes de iniciar o proximo desenvolvimento, confirme a ordem atualizada no Trello.
 
 Branch sugerida:
 
 ```text
-feature/eai-006-ciclo-vida-recontato-duplicidade-telefones
+feature/eai-###-slug-curto
 ```
 
 ## Validacao Padrao
@@ -129,7 +129,7 @@ Ultima validacao em 2026-07-19:
 
 Nao crie novos cards duplicados sem antes verificar o Trello:
 
-- Duplicidade, recontato e telefones de lead: `EAI-006` em implementacao nesta branch.
+- Duplicidade, recontato e telefones de lead: `EAI-006` concluido.
 - Visibilidade, ordenacao e busca normalizada de leads: `EAI-007`.
 - Notas, observacoes, tags globais e historico de lead: `EAI-008`.
 - Importacao de leads por e-mail e duplicidade por telefone+loja: `EAI-009`.
