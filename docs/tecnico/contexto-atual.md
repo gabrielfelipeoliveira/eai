@@ -71,11 +71,11 @@ Cards de desenvolvimento conhecidos:
 - `EAI-008`: concluido. Ajustar notas, observacoes, tags globais e historico de lead.
 - `EAI-009`: concluido. Ajustar importacao de leads por e-mail, historico persistente e duplicidade por telefone+loja.
 - `EAI-010`: concluido. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
-- `EAI-011`: em andamento. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
+- `EAI-011`: concluido. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
 - `EAI-012`: backlog. Implementar armazenamento de midias WhatsApp em bucket.
 - `EAI-013`: backlog. Separar seeds obrigatorios de dados demonstrativos e bloquear demo em producao.
 - `EAI-014`: backlog. Implementar fluxo LGPD basico manual por ADMIN.
-- `EAI-015`: backlog. Padronizar validacao CI com backend clean verify e frontend build.
+- `EAI-015`: em andamento. Padronizar validacao CI com backend clean verify e frontend build.
 - `EAI-016`: backlog. Adicionar testes de integracao com Postgres via Testcontainers.
 - `EAI-017`: backlog. Adicionar testes unitarios e de componentes no frontend.
 - `EAI-018`: backlog. Criar testes E2E dos fluxos criticos do MVP.
@@ -93,12 +93,12 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- `EAI-011`: ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
+- `EAI-015`: padronizar validacao CI com backend clean verify e frontend build.
 
 Branch sugerida:
 
 ```text
-feature/eai-011-conversas-whatsapp-fila-supervisao
+feature/eai-015-validacao-ci-build
 ```
 
 ## Validacao Padrao
@@ -128,7 +128,7 @@ Use `mvn clean verify` como validacao padrao do backend. `mvn test` sem `clean` 
 
 Ultima validacao em 2026-07-20:
 
-- Branch `feature/eai-011-conversas-whatsapp-fila-supervisao`.
+- Branch `main` apos merge do `EAI-011`; desenvolvimento atual em `feature/eai-015-validacao-ci-build`.
 - Backend `mvn clean verify` via Docker passou com 91 testes, 0 falhas, 0 erros e 0 skips.
 - Frontend `npm run build` passou.
 - Frontend `npm run lint` passou com 0 erros e 1 warning ja comentado no card `EAI-015`.
