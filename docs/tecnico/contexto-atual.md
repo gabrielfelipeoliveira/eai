@@ -75,7 +75,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-012`: backlog. Implementar armazenamento de midias WhatsApp em bucket.
 - `EAI-013`: backlog. Separar seeds obrigatorios de dados demonstrativos e bloquear demo em producao.
 - `EAI-014`: backlog. Implementar fluxo LGPD basico manual por ADMIN.
-- `EAI-015`: em andamento. Padronizar validacao CI com backend clean verify e frontend build.
+- `EAI-015`: concluido. Padronizar validacao CI com backend clean verify e frontend build.
 - `EAI-016`: backlog. Adicionar testes de integracao com Postgres via Testcontainers.
 - `EAI-017`: backlog. Adicionar testes unitarios e de componentes no frontend.
 - `EAI-018`: backlog. Criar testes E2E dos fluxos criticos do MVP.
@@ -128,10 +128,11 @@ Use `mvn clean verify` como validacao padrao do backend. `mvn test` sem `clean` 
 
 Ultima validacao em 2026-07-20:
 
-- Branch `main` apos merge do `EAI-011`; desenvolvimento atual em `feature/eai-015-validacao-ci-build`.
+- Branch `feature/eai-015-validacao-ci-build`.
 - Backend `mvn clean verify` via Docker passou com 91 testes, 0 falhas, 0 erros e 0 skips.
 - Frontend `npm run build` passou.
 - Frontend `npm run lint` passou com 0 erros e 1 warning ja comentado no card `EAI-015`.
+- GitHub Actions PR `#17`: checks `Backend` e `Frontend` passaram com sucesso.
 - Avisos conhecidos:
 - Flyway reporta H2 2.4.240 mais novo que a versao verificada.
 - SpringDoc `/v3/api-docs` e `/swagger-ui.html` habilitados por default.
