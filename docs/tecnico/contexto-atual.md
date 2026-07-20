@@ -70,8 +70,8 @@ Cards de desenvolvimento conhecidos:
 - `EAI-007`: concluido. Ajustar visibilidade, ordenacao e busca normalizada de leads.
 - `EAI-008`: concluido. Ajustar notas, observacoes, tags globais e historico de lead.
 - `EAI-009`: concluido. Ajustar importacao de leads por e-mail, historico persistente e duplicidade por telefone+loja.
-- `EAI-010`: em andamento. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
-- `EAI-011`: backlog. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
+- `EAI-010`: concluido. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
+- `EAI-011`: em andamento. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
 - `EAI-012`: backlog. Implementar armazenamento de midias WhatsApp em bucket.
 - `EAI-013`: backlog. Separar seeds obrigatorios de dados demonstrativos e bloquear demo em producao.
 - `EAI-014`: backlog. Implementar fluxo LGPD basico manual por ADMIN.
@@ -92,12 +92,12 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- `EAI-010`: ajustar templates WhatsApp, placeholders, soft delete e status Meta.
+- `EAI-011`: ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
 
 Branch sugerida:
 
 ```text
-feature/eai-010-templates-whatsapp-placeholders-soft-delete
+feature/eai-011-conversas-whatsapp-fila-supervisao
 ```
 
 ## Validacao Padrao
