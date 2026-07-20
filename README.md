@@ -173,7 +173,7 @@ Backend:
 
 ```bash
 cd backend
-mvn clean package
+mvn clean verify
 ```
 
 Confira a versao do Java usada pelo Maven antes do build:
@@ -189,9 +189,14 @@ Frontend:
 
 ```bash
 cd frontend
-npm install
+npm ci
 npm run build
 ```
+
+O CI executa esses mesmos gates em pull requests e pushes para `main`:
+
+- backend: `mvn clean verify`
+- frontend: `npm ci` e `npm run build`
 
 ## Estrutura Do Projeto
 
