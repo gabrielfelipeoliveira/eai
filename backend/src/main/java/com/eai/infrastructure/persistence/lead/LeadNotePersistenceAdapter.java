@@ -28,8 +28,13 @@ public class LeadNotePersistenceAdapter implements LeadNoteRepository {
         return toDomain(repository.save(toEntity(note)));
     }
 
+    @Override
+    public java.util.Optional<LeadNote> findById(UUID id) {
+        return repository.findById(id).map(this::toDomain);
+    }
+
     private LeadNote toDomain(LeadNoteJpaEntity entity) {
-        return new LeadNote(entity.getId(), entity.getLeadId(), entity.getUserId(), entity.getNote(), entity.getCreatedAt());
+        return new LeadNote(entity.getId(), entity.getLeadId(), entity.getUserId(), entity.getNote(), entity.getCreatedAt(), entity.getUpdatedAt());
     }
 
     private LeadNoteJpaEntity toEntity(LeadNote note) {
@@ -39,6 +44,7 @@ public class LeadNotePersistenceAdapter implements LeadNoteRepository {
         entity.setUserId(note.getUserId());
         entity.setNote(note.getNote());
         entity.setCreatedAt(note.getCreatedAt());
+        entity.setUpdatedAt(note.getUpdatedAt());
         return entity;
     }
 }

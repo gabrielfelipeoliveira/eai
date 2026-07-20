@@ -141,7 +141,16 @@ curl -H "Authorization: Bearer <access-token>" "http://localhost:8080/api/leads?
 curl -X PATCH -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/<lead-id>/assign-to-me
 curl -X PATCH http://localhost:8080/api/leads/<lead-id>/status -H "Authorization: Bearer <access-token>" -H "Content-Type: application/json" -d "{\"status\":\"FIRST_CONTACT\",\"description\":\"Primeiro contato realizado\"}"
 curl -X POST http://localhost:8080/api/leads/<lead-id>/notes -H "Authorization: Bearer <access-token>" -H "Content-Type: application/json" -d "{\"note\":\"Cliente pediu proposta por WhatsApp\"}"
+curl -X PUT http://localhost:8080/api/leads/<lead-id>/notes/<note-id> -H "Authorization: Bearer <access-token>" -H "Content-Type: application/json" -d "{\"note\":\"Cliente pediu proposta atualizada por WhatsApp\"}"
 curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/<lead-id>/history
+```
+
+Tags de lead usam catalogo global:
+
+```bash
+curl -X POST http://localhost:8080/api/leads/tags/catalog -H "Authorization: Bearer <access-token>" -H "Content-Type: application/json" -d "{\"name\":\"VIP\",\"type\":\"PRIORITY\"}"
+curl -H "Authorization: Bearer <access-token>" http://localhost:8080/api/leads/tags/catalog
+curl -X POST http://localhost:8080/api/leads/<lead-id>/tags -H "Authorization: Bearer <access-token>" -H "Content-Type: application/json" -d "{\"tagId\":\"<tag-id>\"}"
 ```
 
 Consultar o pipeline agrupado por status:

@@ -105,12 +105,24 @@ export interface LeadNote {
   userId: string;
   note: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface LeadTag {
   id: string;
   leadId: string;
+  tagId: string;
   name: string;
+  type: string;
+}
+
+export interface LeadTagDefinition {
+  id: string;
+  name: string;
+  type: string;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface PageResponse<T> {

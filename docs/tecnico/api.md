@@ -234,6 +234,26 @@ Contrato atual de `POST /api/leads` e `PUT /api/leads/{id}`:
 - O Lead referencia somente `itemId`; `vehicle` nao e relacionamento direto do Lead.
 - Se existir lead anterior na mesma loja com qualquer telefone informado, o novo lead pode retornar `status: "DUPLICATED"` e `relatedLeadId` apontando para o lead anterior mais recente.
 
+Contratos atuais de observacoes, historico e tags:
+
+- `POST /api/leads/{id}/notes`: cria observacao editavel para o lead e registra evento no historico com descricao `Observacao criada`.
+- `PUT /api/leads/{id}/notes/{noteId}`: edita observacao existente do lead e registra evento no historico com descricao `Observacao atualizada`.
+- `GET /api/leads/{id}/notes`: lista observacoes do lead por atualizacao/criacao mais recente.
+- `GET /api/leads/{id}/history`: lista historico do lead por data mais recente.
+- `GET /api/leads/tags/catalog`: lista tags globais ativas cadastradas.
+- `POST /api/leads/tags/catalog`: cadastra tag global com `name` e `type`.
+- `POST /api/leads/{id}/tags`: associa tag global ao lead usando `tagId`.
+- `GET /api/leads/{id}/tags`: lista tags associadas ao lead.
+- `DELETE /api/leads/{id}/tags/{tagId}`: remove associacao da tag com o lead.
+
+Regras de contrato:
+
+- Tags de lead nao sao texto livre; a associacao deve usar tag cadastrada no catalogo global.
+- O backend bloqueia tag duplicada no mesmo lead.
+- O backend bloqueia mais de uma tag do mesmo `type` no mesmo lead.
+- Respostas de tag do lead retornam `id`, `leadId`, `tagId`, `name` e `type`.
+- Respostas de observacao retornam `id`, `leadId`, `userId`, `note`, `createdAt` e `updatedAt`.
+
 Exemplo:
 
 ```json

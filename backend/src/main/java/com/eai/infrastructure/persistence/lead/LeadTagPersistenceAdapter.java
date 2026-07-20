@@ -30,6 +30,16 @@ public class LeadTagPersistenceAdapter implements LeadTagRepository {
     }
 
     @Override
+    public boolean existsByLeadIdAndTagId(UUID leadId, UUID tagId) {
+        return repository.existsByLeadIdAndTagId(leadId, tagId);
+    }
+
+    @Override
+    public boolean existsByLeadIdAndType(UUID leadId, String type) {
+        return repository.existsByLeadIdAndType(leadId, type);
+    }
+
+    @Override
     public LeadTag save(LeadTag tag) {
         return toDomain(repository.save(toEntity(tag)));
     }
@@ -40,14 +50,16 @@ public class LeadTagPersistenceAdapter implements LeadTagRepository {
     }
 
     private LeadTag toDomain(LeadTagJpaEntity entity) {
-        return new LeadTag(entity.getId(), entity.getLeadId(), entity.getName());
+        return new LeadTag(entity.getId(), entity.getLeadId(), entity.getTagId(), entity.getName(), entity.getType());
     }
 
     private LeadTagJpaEntity toEntity(LeadTag tag) {
         LeadTagJpaEntity entity = new LeadTagJpaEntity();
         entity.setId(tag.getId());
         entity.setLeadId(tag.getLeadId());
+        entity.setTagId(tag.getTagId());
         entity.setName(tag.getName());
+        entity.setType(tag.getType());
         return entity;
     }
 }

@@ -23,6 +23,8 @@ Regras:
 - `V1__initial_schema.sql`, consolidada com o schema completo e dados demo atuais.
 - `V2__adjust_tenancy_company_store_users.sql`, ajuste de tenancy entre empresa, loja e usuarios.
 - `V4__lead_items_vehicles_money_phone.sql`, adiciona `items`, `vehicles`, `leads.item_id`, `leads.sale_currency`, normalizacao E.164 dos telefones demo e constraints de moeda/telefone.
+- `V5__lead_recontact_duplicates_phones.sql`, adiciona telefones adicionais, relacao de duplicidade/recontato e indices de busca por telefone.
+- `V6__lead_notes_editable_global_tags.java`, adiciona `lead_notes.updated_at`, cria catalogo global `lead_tag_definitions` e vincula `lead_tags` por `tag_id` e `type`.
 
 Observacao:
 
@@ -36,7 +38,7 @@ Grupos atuais e alvo:
 
 - Identidade e autenticacao: `users`, `user_roles`, `refresh_tokens`.
 - Tenancy: `companies`, `stores`.
-- Leads: `leads`, `lead_history`, `lead_notes`, `lead_tags`, `lead_additional_phones` e estruturas futuras para observacoes.
+- Leads: `leads`, `lead_history`, `lead_notes`, `lead_tags`, `lead_tag_definitions`, `lead_additional_phones` e estruturas futuras quando aprovadas.
 - Item e veiculo: `items` e `vehicles` ou equivalentes futuros.
 - Mensageria: `message_templates` e comunicacoes de lead.
 - WhatsApp: contatos, conversas, mensagens, eventos de status, midias e auditoria tecnica.
@@ -53,6 +55,8 @@ Grupos atuais e alvo:
 - Usuario possui um unico papel.
 - Lead pertence a empresa e loja.
 - Lead pode ter historico, notas, observacoes, tags e telefones vinculados.
+- Observacoes em `lead_notes` possuem `created_at` e `updated_at`; edicoes geram evento em `lead_history`.
+- Tags de lead usam catalogo global em `lead_tag_definitions`; `lead_tags` associa lead e tag cadastrada, preservando `name` e `type` para consulta.
 - Lead pode apontar `related_lead_id` para preservar relacao com lead anterior em duplicidade, recontato ou novo clique em anuncio.
 - Lead pode se relacionar a Item; Veiculo estruturado e filho de Item, nao relacionamento direto do Lead.
 - Item pertence ao usuario.

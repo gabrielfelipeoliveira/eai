@@ -3,9 +3,11 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AutoModeIcon from '@mui/icons-material/AutoMode';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
 import EventIcon from '@mui/icons-material/Event';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import NotesIcon from '@mui/icons-material/Notes';
+import SaveIcon from '@mui/icons-material/Save';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import {
@@ -40,11 +42,14 @@ import {
   changeLeadStatus,
   completeFollowUpTask,
   createFollowUpTask,
+  createLeadTagDefinition,
   deleteLeadTag,
   listLeadFollowUps,
   listLeadHistory,
   listLeadNotes,
+  listLeadTagDefinitions,
   listLeadTags,
+  updateLeadNote,
 } from '../../services/leadService';
 import { listStores } from '../../services/storeService';
 import { generateWhatsappLink, listActiveTemplates, listLeadCommunications } from '../../services/templateService';
@@ -88,7 +93,11 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
   const queryClient = useQueryClient();
   const [selectedLead, setSelectedLead] = useState<Lead | null>(lead);
   const [noteText, setNoteText] = useState('');
-  const [tagText, setTagText] = useState('');
+  const [noteEditText, setNoteEditText] = useState('');
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+  const [tagNameText, setTagNameText] = useState('');
+  const [tagTypeText, setTagTypeText] = useState('GENERAL');
+  const [selectedTagDefinitionId, setSelectedTagDefinitionId] = useState('');
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
   const canListUsers = hasAnyRole(['ADMIN', 'MANAGER']);
   const canDistribute = hasAnyRole(['ADMIN', 'MANAGER']);
@@ -98,7 +107,11 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
     setSelectedLead(lead);
     setSelectedTemplateId('');
     setNoteText('');
-    setTagText('');
+    setNoteEditText('');
+    setEditingNoteId(null);
+    setTagNameText('');
+    setTagTypeText('GENERAL');
+    setSelectedTagDefinitionId('');
   }, [lead]);
 
   const storesQuery = useQuery({
@@ -134,6 +147,12 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
     queryKey: ['lead-tags', selectedLead?.id],
     queryFn: () => listLeadTags(selectedLead!.id),
     enabled: Boolean(open && selectedLead?.id),
+  });
+
+  const tagDefinitionsQuery = useQuery({
+    queryKey: ['lead-tag-definitions'],
+    queryFn: listLeadTagDefinitions,
+    enabled: open,
   });
 
   const followUpsQuery = useQuery({
@@ -201,14 +220,39 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
     mutationFn: ({ leadId, note }: { leadId: string; note: string }) => addLeadNote(leadId, note),
     onSuccess: async (_, variables) => {
       setNoteText('');
-      await queryClient.invalidateQueries({ queryKey: ['lead-notes', variables.leadId] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['lead-notes', variables.leadId] }),
+        queryClient.invalidateQueries({ queryKey: ['lead-history', variables.leadId] }),
+      ]);
+    },
+  });
+
+  const updateNoteMutation = useMutation({
+    mutationFn: ({ leadId, noteId, note }: { leadId: string; noteId: string; note: string }) => updateLeadNote(leadId, noteId, note),
+    onSuccess: async (_, variables) => {
+      setEditingNoteId(null);
+      setNoteEditText('');
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['lead-notes', variables.leadId] }),
+        queryClient.invalidateQueries({ queryKey: ['lead-history', variables.leadId] }),
+      ]);
+    },
+  });
+
+  const createTagDefinitionMutation = useMutation({
+    mutationFn: ({ name, type }: { name: string; type: string }) => createLeadTagDefinition(name, type),
+    onSuccess: async (tagDefinition) => {
+      setTagNameText('');
+      setTagTypeText('GENERAL');
+      setSelectedTagDefinitionId(tagDefinition.id);
+      await queryClient.invalidateQueries({ queryKey: ['lead-tag-definitions'] });
     },
   });
 
   const addTagMutation = useMutation({
-    mutationFn: ({ leadId, name }: { leadId: string; name: string }) => addLeadTag(leadId, name),
+    mutationFn: ({ leadId, tagId }: { leadId: string; tagId: string }) => addLeadTag(leadId, tagId),
     onSuccess: async (_, variables) => {
-      setTagText('');
+      setSelectedTagDefinitionId('');
       await queryClient.invalidateQueries({ queryKey: ['lead-tags', variables.leadId] });
     },
   });
@@ -314,6 +358,8 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
 
   const selectedTemplate = activeTemplatesQuery.data?.find((template) => template.id === selectedTemplateId);
   const whatsappPreview = selectedLead ? renderTemplate(selectedTemplate, selectedLead) : '';
+  const usedTagTypes = new Set(tagsQuery.data?.map((tag) => tag.type) ?? []);
+  const availableTagDefinitions = tagDefinitionsQuery.data?.filter((tagDefinition) => !usedTagTypes.has(tagDefinition.type)) ?? [];
 
   return (
     <Drawer anchor="right" onClose={onClose} open={open} PaperProps={{ sx: { width: { xs: '100%', md: 560 } } }}>
@@ -512,17 +558,47 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
                   <Chip
                     key={tag.id}
                     icon={<LocalOfferIcon />}
-                    label={tag.name}
+                    label={`${tag.name} (${tag.type})`}
                     onDelete={() => deleteTagMutation.mutate({ leadId: selectedLead.id, tagId: tag.id })}
                     size="small"
                   />
                 ))}
               </Stack>
-              <Stack direction="row" spacing={1}>
-                <TextField fullWidth label="Nova tag" onChange={(event) => setTagText(event.target.value)} size="small" value={tagText} />
-                <Button disabled={!tagText.trim()} onClick={() => addTagMutation.mutate({ leadId: selectedLead.id, name: tagText })} variant="outlined">
-                  Adicionar
-                </Button>
+              <Stack spacing={1}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+                  <TextField
+                    fullWidth
+                    label="Tag global"
+                    onChange={(event) => setSelectedTagDefinitionId(event.target.value)}
+                    select
+                    size="small"
+                    value={selectedTagDefinitionId}
+                  >
+                    {availableTagDefinitions.map((tagDefinition) => (
+                      <MenuItem key={tagDefinition.id} value={tagDefinition.id}>
+                        {tagDefinition.name} ({tagDefinition.type})
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                  <Button disabled={!selectedTagDefinitionId} onClick={() => addTagMutation.mutate({ leadId: selectedLead.id, tagId: selectedTagDefinitionId })} variant="outlined">
+                    Adicionar
+                  </Button>
+                </Stack>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+                  <TextField fullWidth label="Nova tag global" onChange={(event) => setTagNameText(event.target.value)} size="small" value={tagNameText} />
+                  <TextField label="Tipo" onChange={(event) => setTagTypeText(event.target.value.toUpperCase())} size="small" value={tagTypeText} />
+                  <Button disabled={!tagNameText.trim() || !tagTypeText.trim()} onClick={() => createTagDefinitionMutation.mutate({ name: tagNameText, type: tagTypeText })} variant="outlined">
+                    Cadastrar
+                  </Button>
+                </Stack>
+                {(addTagMutation.isError || createTagDefinitionMutation.isError) && (
+                  <Alert severity="error">{apiErrorMessage(addTagMutation.error ?? createTagDefinitionMutation.error) ?? 'Nao foi possivel atualizar as tags.'}</Alert>
+                )}
+                {!tagDefinitionsQuery.isLoading && tagDefinitionsQuery.data?.length === 0 && (
+                  <Typography color="text.secondary" variant="body2">
+                    Nenhuma tag global cadastrada.
+                  </Typography>
+                )}
               </Stack>
             </Box>
 
@@ -539,12 +615,34 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
               <Stack spacing={1}>
                 {notesQuery.data?.map((note) => (
                   <Paper key={note.id} variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
-                    <Typography variant="body2">{note.note}</Typography>
+                    {editingNoteId === note.id ? (
+                      <Stack spacing={1}>
+                        <TextField fullWidth minRows={2} multiline onChange={(event) => setNoteEditText(event.target.value)} size="small" value={noteEditText} />
+                        <Stack direction="row" spacing={1}>
+                          <Button disabled={!noteEditText.trim()} onClick={() => updateNoteMutation.mutate({ leadId: selectedLead.id, noteId: note.id, note: noteEditText })} size="small" startIcon={<SaveIcon />} variant="contained">
+                            Salvar
+                          </Button>
+                          <Button onClick={() => { setEditingNoteId(null); setNoteEditText(''); }} size="small" variant="text">
+                            Cancelar
+                          </Button>
+                        </Stack>
+                      </Stack>
+                    ) : (
+                      <Stack spacing={1}>
+                        <Typography variant="body2">{note.note}</Typography>
+                        <Button onClick={() => { setEditingNoteId(note.id); setNoteEditText(note.note); }} size="small" startIcon={<EditIcon />} variant="text">
+                          Editar
+                        </Button>
+                      </Stack>
+                    )}
                     <Typography variant="caption" color="text.secondary">
-                      {userName(note.userId)} - {new Date(note.createdAt).toLocaleString('pt-BR')}
+                      {userName(note.userId)} - {new Date(note.updatedAt).toLocaleString('pt-BR')}
                     </Typography>
                   </Paper>
                 ))}
+                {updateNoteMutation.isError && (
+                  <Alert severity="error">{apiErrorMessage(updateNoteMutation.error) ?? 'Nao foi possivel editar a observacao.'}</Alert>
+                )}
               </Stack>
             </Box>
 

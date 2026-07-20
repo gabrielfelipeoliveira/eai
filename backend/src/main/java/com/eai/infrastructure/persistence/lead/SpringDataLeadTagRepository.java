@@ -8,4 +8,8 @@ import java.util.UUID;
 public interface SpringDataLeadTagRepository extends JpaRepository<LeadTagJpaEntity, UUID> {
 
     List<LeadTagJpaEntity> findByLeadIdOrderByNameAsc(UUID leadId);
+
+    boolean existsByLeadIdAndTagId(UUID leadId, UUID tagId);
+
+    boolean existsByLeadIdAndType(UUID leadId, String type);
 }
