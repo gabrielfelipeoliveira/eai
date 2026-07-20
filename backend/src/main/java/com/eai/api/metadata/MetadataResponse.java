@@ -11,6 +11,7 @@ public record MetadataResponse(
         List<MetadataOptionResponse> userStatuses,
         List<MetadataOptionResponse> tenantStatuses,
         List<MetadataOptionResponse> messageTemplateTypes,
+        List<MetadataOptionResponse> messageTemplateMetaStatuses,
         List<MetadataOptionResponse> leadDistributionModes,
         List<MetadataOptionResponse> emailAccountStatuses,
         List<MetadataOptionResponse> emailProtocols,

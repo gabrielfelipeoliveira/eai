@@ -12,17 +12,17 @@ public interface MessageTemplateRepository {
 
     List<MessageTemplate> findByCompanyId(UUID companyId);
 
-    List<MessageTemplate> findByStoreId(UUID storeId);
+    List<MessageTemplate> findByStoreScope(UUID companyId, UUID storeId);
 
     List<MessageTemplate> findActive();
 
     List<MessageTemplate> findActiveByCompanyId(UUID companyId);
 
-    List<MessageTemplate> findActiveByStoreId(UUID storeId);
+    List<MessageTemplate> findActiveByStoreScope(UUID companyId, UUID storeId);
 
     Optional<MessageTemplate> findById(UUID id);
 
     MessageTemplate save(MessageTemplate template);
 
-    void deleteById(UUID id);
+    void softDelete(MessageTemplate template);
 }

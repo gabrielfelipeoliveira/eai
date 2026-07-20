@@ -69,8 +69,8 @@ Cards de desenvolvimento conhecidos:
 - `EAI-006`: concluido. Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
 - `EAI-007`: concluido. Ajustar visibilidade, ordenacao e busca normalizada de leads.
 - `EAI-008`: concluido. Ajustar notas, observacoes, tags globais e historico de lead.
-- `EAI-009`: em andamento. Ajustar importacao de leads por e-mail, historico persistente e duplicidade por telefone+loja.
-- `EAI-010`: backlog. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
+- `EAI-009`: concluido. Ajustar importacao de leads por e-mail, historico persistente e duplicidade por telefone+loja.
+- `EAI-010`: em andamento. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
 - `EAI-011`: backlog. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
 - `EAI-012`: backlog. Implementar armazenamento de midias WhatsApp em bucket.
 - `EAI-013`: backlog. Separar seeds obrigatorios de dados demonstrativos e bloquear demo em producao.
@@ -92,12 +92,12 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- `EAI-009`: ajustar importacao de leads por e-mail, historico persistente, leitura IMAP e duplicidade por telefone/WhatsApp + loja.
+- `EAI-010`: ajustar templates WhatsApp, placeholders, soft delete e status Meta.
 
 Branch sugerida:
 
 ```text
-feature/eai-009-importacao-email-duplicidade-loja
+feature/eai-010-templates-whatsapp-placeholders-soft-delete
 ```
 
 ## Validacao Padrao
@@ -127,9 +127,9 @@ Use `mvn clean verify` como validacao padrao do backend. `mvn test` sem `clean` 
 
 Ultima validacao em 2026-07-20:
 
-- Branch `feature/eai-009-importacao-email-duplicidade-loja`.
-- Backend `mvn clean verify` via Docker passou com 80 testes, 0 falhas, 0 erros e 0 skips.
-- Frontend nao foi alterado nesta tarefa.
+- Branch `feature/eai-010-templates-whatsapp-placeholders-soft-delete`.
+- Backend `mvn clean verify` via Docker passou com 86 testes, 0 falhas, 0 erros e 0 skips.
+- Frontend `npm run build` via Docker passou.
 - Avisos conhecidos:
 - Flyway reporta H2 2.4.240 mais novo que a versao verificada.
 - SpringDoc `/v3/api-docs` e `/swagger-ui.html` habilitados por default.

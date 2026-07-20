@@ -1,6 +1,7 @@
 package com.eai.api.message;
 
 import com.eai.domain.message.MessageTemplate;
+import com.eai.domain.message.MessageTemplateMetaStatus;
 import com.eai.domain.message.MessageTemplateType;
 
 import java.time.Instant;
@@ -13,9 +14,12 @@ public record MessageTemplateResponse(
         String name,
         MessageTemplateType type,
         String content,
+        String languageCode,
+        MessageTemplateMetaStatus metaStatus,
         boolean active,
         Instant createdAt,
-        Instant updatedAt
+        Instant updatedAt,
+        Instant deletedAt
 ) {
     public static MessageTemplateResponse fromDomain(MessageTemplate template) {
         return new MessageTemplateResponse(
@@ -25,9 +29,12 @@ public record MessageTemplateResponse(
                 template.getName(),
                 template.getType(),
                 template.getContent(),
+                template.getLanguageCode(),
+                template.getMetaStatus(),
                 template.isActive(),
                 template.getCreatedAt(),
-                template.getUpdatedAt()
+                template.getUpdatedAt(),
+                template.getDeletedAt()
         );
     }
 }

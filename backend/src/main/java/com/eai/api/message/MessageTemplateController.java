@@ -58,6 +58,8 @@ public class MessageTemplateController {
                 request.name(),
                 request.type(),
                 request.content(),
+                request.languageCode(),
+                request.metaStatus(),
                 request.active()
         ), authenticatedUser));
     }
@@ -75,6 +77,8 @@ public class MessageTemplateController {
                 request.name(),
                 request.type(),
                 request.content(),
+                request.languageCode(),
+                request.metaStatus(),
                 request.active()
         ), authenticatedUser));
     }

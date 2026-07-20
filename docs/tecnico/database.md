@@ -26,6 +26,7 @@ Regras:
 - `V5__lead_recontact_duplicates_phones.sql`, adiciona telefones adicionais, relacao de duplicidade/recontato e indices de busca por telefone.
 - `V6__lead_notes_editable_global_tags.java`, adiciona `lead_notes.updated_at`, cria catalogo global `lead_tag_definitions` e vincula `lead_tags` por `tag_id` e `type`.
 - `V7__email_import_history.sql`, cria historico persistente de importacoes de e-mail por conta, loja, status e data, preservado quando a conta e removida.
+- `V8__message_templates_meta_soft_delete.sql`, permite template global de empresa com `store_id` nulo, adiciona `language_code`, `meta_status`, `deleted_at` e normaliza nomes demo para o padrao tecnico da Meta.
 
 Observacao:
 
@@ -66,8 +67,8 @@ Grupos atuais e alvo:
 - Uma conversa tem muitas mensagens.
 - Uma mensagem de conversa pode ter muitos eventos de status recebidos do provedor.
 - Uma mensagem de conversa pode ter metadados e referencia de midia armazenada em S3/bucket.
-- Um template de mensagem pertence a empresa ou loja.
-- Template usado deve suportar exclusao logica.
+- Um template de mensagem pertence a empresa e pode ser global da empresa ou especifico de uma loja.
+- Template usado deve suportar exclusao logica por `deleted_at`; listas operacionais nao retornam templates excluidos.
 - Uma comunicacao de lead pode referenciar um template.
 - Uma conta de e-mail pertence a empresa e loja.
 - Historico de importacao de e-mail deve ser preservado mesmo se a conta for excluida/desativada.
@@ -89,6 +90,7 @@ Constraints conhecidas ou desejadas:
 - Refresh token anterior deve ser revogado quando houver rotacao.
 - Sessao ativa deve respeitar a regra de no maximo uma sessao por usuario.
 - Templates usados devem preservar historico por exclusao logica.
+- Templates ativos para uso operacional devem estar aprovados na Meta.
 - Auditorias de acesso de conversa registram acesso tecnico de perfis gerenciais e admins enquanto a tela de auditoria fica para fase posterior.
 
 Indices conhecidos ou desejados:

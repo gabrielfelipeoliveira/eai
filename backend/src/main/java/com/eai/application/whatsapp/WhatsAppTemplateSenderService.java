@@ -17,24 +17,20 @@ import com.eai.domain.lead.Lead;
 import com.eai.domain.message.LeadCommunication;
 import com.eai.domain.message.LeadCommunicationChannel;
 import com.eai.domain.message.MessageTemplate;
+import com.eai.domain.message.MessageTemplateMetaStatus;
 import com.eai.domain.tenant.Store;
 import com.eai.domain.user.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class WhatsAppTemplateSenderService {
 
-    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{([a-zA-Z0-9_]+)}");
-    private static final String DEFAULT_LANGUAGE_CODE = "pt_BR";
+    private static final String DEFAULT_LANGUAGE_CODE = "pt-BR";
 
     private final MessageTemplateRepository templateRepository;
     private final LeadCommunicationRepository communicationRepository;
@@ -73,7 +69,7 @@ public class WhatsAppTemplateSenderService {
         Lead lead = leadService.getLead(leadId, authenticatedUser);
         MessageTemplate template = templateRepository.findById(command.templateId())
                 .orElseThrow(() -> new NotFoundException("Message template not found"));
-        if (!template.isActive() || !template.getCompanyId().equals(lead.getCompanyId()) || !template.getStoreId().equals(lead.getStoreId())) {
+        if (!canUseTemplateForLead(template, lead)) {
             throw new NotFoundException("Message template not found");
         }
 
@@ -95,7 +91,7 @@ public class WhatsAppTemplateSenderService {
         WhatsAppTemplateProviderResult providerResult = templateClient.sendTemplate(
                 phone,
                 template.getName(),
-                languageCode(command.languageCode()),
+                languageCode(command.languageCode(), template.getLanguageCode()),
                 bodyParameters
         );
         ConversationMessageStatus status = providerResult.successful()
@@ -130,23 +126,19 @@ public class WhatsAppTemplateSenderService {
     }
 
     private List<String> resolveBodyParameters(String content, Map<String, String> placeholders) {
-        Matcher matcher = PLACEHOLDER_PATTERN.matcher(content);
-        LinkedHashSet<String> names = new LinkedHashSet<>();
-        while (matcher.find()) {
-            names.add(matcher.group(1));
-        }
-        List<String> parameters = new ArrayList<>();
-        for (String name : names) {
-            parameters.add(valueOrEmpty(placeholders.get(name)));
-        }
-        return parameters;
+        return MessageTemplateRenderer.placeholderNamesInOrder(content).stream()
+                .map(name -> valueOrEmpty(placeholders.get(name)))
+                .toList();
     }
 
-    private String languageCode(String languageCode) {
-        if (languageCode == null || languageCode.isBlank()) {
-            return DEFAULT_LANGUAGE_CODE;
+    private String languageCode(String requestedLanguageCode, String templateLanguageCode) {
+        if (requestedLanguageCode != null && !requestedLanguageCode.isBlank()) {
+            return requestedLanguageCode.trim();
         }
-        return languageCode.trim();
+        if (templateLanguageCode != null && !templateLanguageCode.isBlank()) {
+            return templateLanguageCode.trim();
+        }
+        return DEFAULT_LANGUAGE_CODE;
     }
 
     private String valueOrEmpty(String value) {
@@ -166,5 +158,13 @@ public class WhatsAppTemplateSenderService {
             throw new IllegalArgumentException("Lead phone is not valid for WhatsApp template sending");
         }
         return phone;
+    }
+
+    private boolean canUseTemplateForLead(MessageTemplate template, Lead lead) {
+        return template.isActive()
+                && !template.isDeleted()
+                && template.getMetaStatus() == MessageTemplateMetaStatus.APPROVED
+                && template.getCompanyId().equals(lead.getCompanyId())
+                && (template.getStoreId() == null || template.getStoreId().equals(lead.getStoreId()));
     }
 }

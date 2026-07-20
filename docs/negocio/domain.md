@@ -263,6 +263,7 @@ Atributos conhecidos:
 - Identidade da loja quando especifico de loja.
 - Nome exatamente igual ao aprovado na Meta.
 - Idioma, com padrao `pt-BR`.
+- Status oficial da Meta.
 - Tipo.
 - Conteudo.
 - Indicador de ativo.
@@ -276,6 +277,7 @@ Regras definidas:
 - Templates podem ser criados, editados, desativados ou apagados por gerente geral e `ADMIN`.
 - Templates ja usados podem ser excluidos apenas de forma logica.
 - Placeholders/componentes da Meta devem ser preenchidos automaticamente.
+- Apenas templates ativos e aprovados na Meta devem ser usados em envios operacionais.
 
 ### Contato De WhatsApp
 

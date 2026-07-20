@@ -65,6 +65,13 @@ export const fallbackMetadata: MetadataCatalog = {
     option('SOLD', 'message_template.type.sold', 'Venda concluida', 6, 'success'),
     option('LOST', 'message_template.type.lost', 'Lead perdido', 7, 'error'),
   ],
+  messageTemplateMetaStatuses: [
+    option('PENDING', 'message_template.meta_status.pending', 'Pendente na Meta', 1, 'warning'),
+    option('APPROVED', 'message_template.meta_status.approved', 'Aprovado na Meta', 2, 'success'),
+    option('REJECTED', 'message_template.meta_status.rejected', 'Rejeitado na Meta', 3, 'error'),
+    option('PAUSED', 'message_template.meta_status.paused', 'Pausado na Meta', 4, 'warning'),
+    option('DISABLED', 'message_template.meta_status.disabled', 'Desabilitado na Meta', 5, 'default'),
+  ],
   leadDistributionModes: [
     option('MANUAL', 'lead_distribution.mode.manual', 'Manual', 1, 'default'),
     option('ROUND_ROBIN', 'lead_distribution.mode.round_robin', 'Rodizio', 2, 'primary'),
