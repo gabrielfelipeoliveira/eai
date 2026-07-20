@@ -85,6 +85,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-022`: concluido. Registrar novos problemas no Trello e atribuir cards movimentados.
 - `EAI-023`: concluido. Ajustar atribuicao de membros apenas em cards puxados.
 - `EAI-024`: backlog. Notificar administradores sobre falhas de e-mail quando houver infraestrutura de notificacao.
+- `EAI-025`: backlog. Atualizar Vite/esbuild por vulnerabilidades npm audit.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -127,14 +128,16 @@ Use `mvn clean verify` como validacao padrao do backend. `mvn test` sem `clean` 
 
 Ultima validacao em 2026-07-20:
 
-- Branch `feature/eai-010-templates-whatsapp-placeholders-soft-delete`.
-- Backend `mvn clean verify` via Docker passou com 86 testes, 0 falhas, 0 erros e 0 skips.
-- Frontend `npm run build` via Docker passou.
+- Branch `feature/eai-011-conversas-whatsapp-fila-supervisao`.
+- Backend `mvn clean verify` via Docker passou com 91 testes, 0 falhas, 0 erros e 0 skips.
+- Frontend `npm run build` passou.
+- Frontend `npm run lint` passou com 0 erros e 1 warning ja comentado no card `EAI-015`.
 - Avisos conhecidos:
 - Flyway reporta H2 2.4.240 mais novo que a versao verificada.
 - SpringDoc `/v3/api-docs` e `/swagger-ui.html` habilitados por default.
 - Mockito usa self-attaching inline mock maker; JDK futuro pode exigir agente configurado.
 - Vite reporta chunk JS acima de 500 kB apos minificacao.
+- `npm audit` reporta vulnerabilidades em Vite/esbuild; registrado no card `EAI-025`.
 
 ## Lacunas Ja Registradas Em Cards
 
@@ -149,6 +152,7 @@ Nao crie novos cards duplicados sem antes verificar o Trello:
 - LGPD ADMIN manual: `EAI-014`.
 - Qualidade automatizada, CI, Testcontainers, frontend tests, E2E e OpenAPI: `EAI-015` a `EAI-019`.
 - Padronizacao segura de Lombok no backend: `EAI-020`.
+- Vulnerabilidades npm audit em Vite/esbuild: `EAI-025`.
 
 ## Encerramento De Sessao
 

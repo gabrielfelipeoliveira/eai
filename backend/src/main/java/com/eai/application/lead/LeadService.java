@@ -3,6 +3,7 @@ package com.eai.application.lead;
 import com.eai.application.common.ConflictException;
 import com.eai.application.common.ForbiddenException;
 import com.eai.application.common.NotFoundException;
+import com.eai.application.conversation.ConversationRepository;
 import com.eai.application.item.ItemRepository;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.application.tenant.CompanyService;
@@ -42,6 +43,7 @@ public class LeadService {
     private final StoreService storeService;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
+    private final ConversationRepository conversationRepository;
 
     public LeadService(
             LeadRepository leadRepository,
@@ -52,7 +54,8 @@ public class LeadService {
             CompanyService companyService,
             StoreService storeService,
             UserRepository userRepository,
-            ItemRepository itemRepository
+            ItemRepository itemRepository,
+            ConversationRepository conversationRepository
     ) {
         this.leadRepository = leadRepository;
         this.historyRepository = historyRepository;
@@ -63,6 +66,7 @@ public class LeadService {
         this.storeService = storeService;
         this.userRepository = userRepository;
         this.itemRepository = itemRepository;
+        this.conversationRepository = conversationRepository;
     }
 
     @Transactional(readOnly = true)
@@ -161,6 +165,7 @@ public class LeadService {
                 command.saleCurrency()
         );
         Lead savedLead = leadRepository.save(lead);
+        syncConversationOwner(savedLead);
         if (previousStatus != savedLead.getStatus()) {
             historyRepository.save(LeadHistory.create(savedLead.getId(), authenticatedUser.id(), previousStatus, savedLead.getStatus(), "Lead updated"));
         }
@@ -181,7 +186,9 @@ public class LeadService {
     public Lead assignToMe(UUID id, AuthenticatedUser authenticatedUser) {
         Lead lead = findRequired(id);
         assertCanAccessLead(lead, authenticatedUser);
-        if (lead.getAssignedToUserId() != null && !lead.getAssignedToUserId().equals(authenticatedUser.id())) {
+        if (lead.getAssignedToUserId() != null
+                && !lead.getAssignedToUserId().equals(authenticatedUser.id())
+                && !canTakeOverAssignment(authenticatedUser)) {
             throw new ConflictException("Lead already assigned");
         }
         return assign(id, authenticatedUser.id(), authenticatedUser);
@@ -194,8 +201,22 @@ public class LeadService {
         assertCanAssignUser(userId, lead.getCompanyId(), lead.getStoreId(), authenticatedUser);
         LeadStatus previousStatus = lead.assignTo(userId);
         Lead savedLead = leadRepository.save(lead);
+        syncConversationOwner(savedLead);
         historyRepository.save(LeadHistory.create(savedLead.getId(), authenticatedUser.id(), previousStatus, savedLead.getStatus(), "Lead assigned"));
         return savedLead;
+    }
+
+    private void syncConversationOwner(Lead lead) {
+        conversationRepository.findByLeadId(lead.getId()).ifPresent(conversation -> {
+            conversation.linkLead(lead.getId(), lead.getAssignedToUserId());
+            conversationRepository.save(conversation);
+        });
+    }
+
+    private boolean canTakeOverAssignment(AuthenticatedUser authenticatedUser) {
+        return hasRole(authenticatedUser, UserRole.ADMIN)
+                || hasRole(authenticatedUser, UserRole.MANAGER)
+                || hasRole(authenticatedUser, UserRole.STORE_MANAGER);
     }
 
     @Transactional

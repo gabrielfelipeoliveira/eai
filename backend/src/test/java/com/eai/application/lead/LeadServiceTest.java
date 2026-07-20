@@ -1,6 +1,7 @@
 package com.eai.application.lead;
 
 import com.eai.application.common.ForbiddenException;
+import com.eai.application.conversation.ConversationRepository;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadSource;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 class LeadServiceTest {
 
@@ -119,7 +121,7 @@ class LeadServiceTest {
     }
 
     private LeadService service(LeadRepository leadRepository) {
-        return new LeadService(leadRepository, null, null, null, null, null, null, null, null);
+        return new LeadService(leadRepository, null, null, null, null, null, null, null, null, mock(ConversationRepository.class));
     }
 
     private LeadSearchCriteria emptyCriteria() {

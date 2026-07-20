@@ -51,6 +51,7 @@ public class WhatsAppTextSenderService {
         }
         String message = normalizeContent(content);
         Conversation conversation = conversationService.getConversation(conversationId, authenticatedUser);
+        conversationService.assertCanSendMessage(conversation, authenticatedUser);
         assertWithinFreeTextWindow(conversation.getId());
         WhatsAppContact contact = contactRepository.findById(conversation.getContactId())
                 .orElseThrow(() -> new NotFoundException("WhatsApp contact not found"));

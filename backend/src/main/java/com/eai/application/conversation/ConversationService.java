@@ -126,6 +126,13 @@ public class ConversationService {
         return conversation;
     }
 
+    public void assertCanSendMessage(Conversation conversation, AuthenticatedUser authenticatedUser) {
+        if (authenticatedUser.id().equals(conversation.getResponsibleUserId())) {
+            return;
+        }
+        throw new ForbiddenException("Conversation must be assigned to the authenticated user before sending messages");
+    }
+
     @Transactional
     public List<ConversationMessage> listMessages(UUID conversationId, AuthenticatedUser authenticatedUser) {
         Conversation conversation = conversationRepository.findById(conversationId)
