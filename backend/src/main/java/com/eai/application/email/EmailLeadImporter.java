@@ -90,7 +90,9 @@ public class EmailLeadImporter {
             account.recordSuccess(newestReadAt == null ? Instant.now() : newestReadAt, resultMessage);
             emailAccountRepository.save(account);
             importHistoryRepository.save(EmailImportHistory.success(account, messages.size(), created, duplicated, resultMessage, startedAt));
-            markMessagesAsReadAfterCommit(account, password, previousReadAt, newestReadAt);
+            if (!messages.isEmpty()) {
+                markMessagesAsReadAfterCommit(account, password, previousReadAt, newestReadAt);
+            }
             return new EmailImportResult(messages.size(), created, duplicated, "SUCCESS", resultMessage);
         } catch (RuntimeException exception) {
             String failureMessage = exception.getMessage();
