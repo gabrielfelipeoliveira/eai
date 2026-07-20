@@ -5,6 +5,7 @@ import com.eai.application.common.NotFoundException;
 import com.eai.application.conversation.ConversationService;
 import com.eai.application.lead.LeadService;
 import com.eai.application.security.AuthenticatedUser;
+import com.eai.application.tenant.CompanyService;
 import com.eai.application.tenant.StoreService;
 import com.eai.application.user.UserRepository;
 import com.eai.domain.conversation.ConversationMessageStatus;
@@ -32,6 +33,7 @@ public class MessageTemplateService {
     private final MessageTemplateRepository templateRepository;
     private final LeadCommunicationRepository communicationRepository;
     private final LeadService leadService;
+    private final CompanyService companyService;
     private final StoreService storeService;
     private final UserRepository userRepository;
     private final ConversationService conversationService;
@@ -40,6 +42,7 @@ public class MessageTemplateService {
             MessageTemplateRepository templateRepository,
             LeadCommunicationRepository communicationRepository,
             LeadService leadService,
+            CompanyService companyService,
             StoreService storeService,
             UserRepository userRepository,
             ConversationService conversationService
@@ -47,6 +50,7 @@ public class MessageTemplateService {
         this.templateRepository = templateRepository;
         this.communicationRepository = communicationRepository;
         this.leadService = leadService;
+        this.companyService = companyService;
         this.storeService = storeService;
         this.userRepository = userRepository;
         this.conversationService = conversationService;
@@ -156,6 +160,7 @@ public class MessageTemplateService {
         if (companyId == null) {
             throw new IllegalArgumentException("companyId is required");
         }
+        companyService.findRequired(companyId);
         if (storeId == null) {
             return;
         }

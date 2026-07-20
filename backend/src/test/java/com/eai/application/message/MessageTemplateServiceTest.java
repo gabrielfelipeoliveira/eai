@@ -3,6 +3,7 @@ package com.eai.application.message;
 import com.eai.application.conversation.ConversationService;
 import com.eai.application.lead.LeadService;
 import com.eai.application.security.AuthenticatedUser;
+import com.eai.application.tenant.CompanyService;
 import com.eai.application.tenant.StoreService;
 import com.eai.application.user.UserRepository;
 import com.eai.domain.conversation.ConversationMessage;
@@ -44,6 +45,7 @@ class MessageTemplateServiceTest {
     private final MessageTemplateRepository templateRepository = mock(MessageTemplateRepository.class);
     private final LeadCommunicationRepository communicationRepository = mock(LeadCommunicationRepository.class);
     private final LeadService leadService = mock(LeadService.class);
+    private final CompanyService companyService = mock(CompanyService.class);
     private final StoreService storeService = mock(StoreService.class);
     private final UserRepository userRepository = mock(UserRepository.class);
     private final ConversationService conversationService = mock(ConversationService.class);
@@ -51,6 +53,7 @@ class MessageTemplateServiceTest {
             templateRepository,
             communicationRepository,
             leadService,
+            companyService,
             storeService,
             userRepository,
             conversationService
@@ -76,6 +79,27 @@ class MessageTemplateServiceTest {
         verify(templateRepository).softDelete(templateCaptor.capture());
         assertThat(templateCaptor.getValue().isActive()).isFalse();
         assertThat(templateCaptor.getValue().getDeletedAt()).isNotNull();
+    }
+
+    @DisplayName("Criacao de template global valida empresa")
+    @Test
+    void createCompanyTemplateValidatesCompany() {
+        CreateMessageTemplateCommand command = new CreateMessageTemplateCommand(
+                COMPANY_ID,
+                null,
+                "primeiro_contato",
+                MessageTemplateType.FIRST_CONTACT,
+                "Ola {cliente}",
+                "pt-BR",
+                MessageTemplateMetaStatus.APPROVED,
+                true
+        );
+        when(templateRepository.save(any(MessageTemplate.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        MessageTemplate created = service.createTemplate(command, manager());
+
+        verify(companyService).findRequired(COMPANY_ID);
+        assertThat(created.getStoreId()).isNull();
     }
 
     @DisplayName("Link de WhatsApp permite template global aprovado da empresa")

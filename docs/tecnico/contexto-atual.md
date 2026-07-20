@@ -128,7 +128,7 @@ Use `mvn clean verify` como validacao padrao do backend. `mvn test` sem `clean` 
 Ultima validacao em 2026-07-20:
 
 - Branch `feature/eai-010-templates-whatsapp-placeholders-soft-delete`.
-- Backend `mvn clean verify` via Docker passou com 85 testes, 0 falhas, 0 erros e 0 skips.
+- Backend `mvn clean verify` via Docker passou com 86 testes, 0 falhas, 0 erros e 0 skips.
 - Frontend `npm run build` via Docker passou.
 - Avisos conhecidos:
 - Flyway reporta H2 2.4.240 mais novo que a versao verificada.
