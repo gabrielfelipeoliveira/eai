@@ -88,8 +88,16 @@ public class V6__lead_notes_editable_global_tags extends BaseJavaMigration {
             case "financiamento" -> "FINANCING";
             case "perdido" -> "OUTCOME";
             case "duplicado" -> "STATUS";
-            default -> "GENERAL";
+            default -> legacyType(normalizedName);
         };
+    }
+
+    private String legacyType(String normalizedName) {
+        String suffix = normalizedName.toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9]+", "_");
+        if (suffix.isBlank()) {
+            return "GENERAL";
+        }
+        return ("LEGACY_" + suffix).substring(0, Math.min(40, 7 + suffix.length()));
     }
 
     private void execute(Connection connection, String sql) throws Exception {
