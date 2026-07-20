@@ -47,7 +47,7 @@ public class ImapEmailReader implements EmailReader {
         try {
             store = openStore(account, password);
             inbox = store.getFolder("INBOX");
-            inbox.open(Folder.READ_ONLY);
+            inbox.open(Folder.READ_WRITE);
             Message[] messages = inbox.search(searchTerm(since));
             List<EmailMessage> result = new ArrayList<>();
             for (Message message : messages) {
@@ -57,6 +57,7 @@ public class ImapEmailReader implements EmailReader {
                         extractText(message),
                         receivedAt(message)
                 ));
+                message.setFlag(Flags.Flag.SEEN, true);
             }
             return result;
         } catch (MessagingException | IOException exception) {

@@ -69,7 +69,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-006`: concluido. Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
 - `EAI-007`: concluido. Ajustar visibilidade, ordenacao e busca normalizada de leads.
 - `EAI-008`: concluido. Ajustar notas, observacoes, tags globais e historico de lead.
-- `EAI-009`: em andamento. Ajustar importacao de leads por e-mail e duplicidade por telefone+loja.
+- `EAI-009`: em andamento. Ajustar importacao de leads por e-mail, historico persistente e duplicidade por telefone+loja.
 - `EAI-010`: backlog. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
 - `EAI-011`: backlog. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
 - `EAI-012`: backlog. Implementar armazenamento de midias WhatsApp em bucket.
@@ -84,6 +84,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-021`: concluido. Reforcar obrigatoriedade de branch e PR para qualquer mudanca.
 - `EAI-022`: concluido. Registrar novos problemas no Trello e atribuir cards movimentados.
 - `EAI-023`: concluido. Ajustar atribuicao de membros apenas em cards puxados.
+- `EAI-024`: backlog. Notificar administradores sobre falhas de e-mail quando houver infraestrutura de notificacao.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -91,7 +92,7 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- `EAI-009`: ajustar importacao de leads por e-mail e duplicidade por telefone/WhatsApp + loja.
+- `EAI-009`: ajustar importacao de leads por e-mail, historico persistente, leitura IMAP e duplicidade por telefone/WhatsApp + loja.
 
 Branch sugerida:
 
@@ -126,9 +127,9 @@ Use `mvn clean verify` como validacao padrao do backend. `mvn test` sem `clean` 
 
 Ultima validacao em 2026-07-20:
 
-- Branch `feature/eai-008-notas-tags-historico-lead`.
-- Backend `mvn clean verify` via Docker passou com 76 testes, 0 falhas.
-- Frontend `npm run build` via Docker passou.
+- Branch `feature/eai-009-importacao-email-duplicidade-loja`.
+- Backend `mvn clean verify` via Docker passou com 80 testes, 0 falhas, 0 erros e 0 skips.
+- Frontend nao foi alterado nesta tarefa.
 - Avisos conhecidos:
 - Flyway reporta H2 2.4.240 mais novo que a versao verificada.
 - SpringDoc `/v3/api-docs` e `/swagger-ui.html` habilitados por default.
