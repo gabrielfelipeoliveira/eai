@@ -82,7 +82,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-019`: backlog. Adicionar validacao de contrato OpenAPI.
 - `EAI-020`: backlog. Padronizar uso seguro de Lombok no backend.
 - `EAI-021`: concluido. Reforcar obrigatoriedade de branch e PR para qualquer mudanca.
-- `EAI-022`: em andamento. Registrar novos problemas no Trello e atribuir cards movimentados.
+- `EAI-022`: concluido. Registrar novos problemas no Trello e atribuir cards movimentados.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -90,12 +90,12 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- `EAI-022`: documentar regra de registro de novos itens/problemas no Trello e atribuicao de cards movimentados ao membro operacional.
+- Nenhum card em andamento registrado neste arquivo. Antes de iniciar o proximo desenvolvimento, confirme a ordem atualizada no Trello.
 
 Branch sugerida:
 
 ```text
-docs/eai-022-trello-itens-atribuicao
+feature/eai-###-slug-curto
 ```
 
 ## Validacao Padrao
