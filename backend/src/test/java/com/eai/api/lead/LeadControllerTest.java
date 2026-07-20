@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -125,12 +126,13 @@ class LeadControllerTest {
                 .andExpect(jsonPath("$[0].note").value("Cliente pediu proposta por WhatsApp"));
 
         mockMvc.perform(get("/api/leads/{id}/history", leadId)
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].newStatus").value("PROPOSAL_APPROVED"))
-                .andExpect(jsonPath("$[0].description").value("Proposta aprovada pela financeira"))
-                .andExpect(jsonPath("$[1].newStatus").value("SIMULATING"))
-                .andExpect(jsonPath("$[2].newStatus").value("FIRST_CONTACT"));
+                .header("Authorization", "Bearer " + token))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].description").value("Observacao criada"))
+        .andExpect(jsonPath("$[1].newStatus").value("PROPOSAL_APPROVED"))
+        .andExpect(jsonPath("$[1].description").value("Proposta aprovada pela financeira"))
+        .andExpect(jsonPath("$[2].newStatus").value("SIMULATING"))
+        .andExpect(jsonPath("$[3].newStatus").value("FIRST_CONTACT"));
 
         mockMvc.perform(get("/api/templates/active")
                         .header("Authorization", "Bearer " + token))
@@ -364,6 +366,115 @@ class LeadControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id").value(olderLeadId))
                 .andExpect(jsonPath("$.content[1].id").value(newerLeadId));
+    }
+
+    @DisplayName("Edicao de observacao atualiza texto e registra historico")
+    @Test
+    void updateLeadNoteUpdatesTextAndCreatesHistory() throws Exception {
+        String token = login();
+        String leadId = createManualLead(token, "Cliente Observacao EAI008", "11999770201");
+        String response = mockMvc.perform(post("/api/leads/{id}/notes", leadId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+
+                                {"note":"Observacao inicial EAI008"}
+
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.note").value("Observacao inicial EAI008"))
+                .andExpect(jsonPath("$.updatedAt", not(blankOrNullString())))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        String noteId = objectMapper.readTree(response).get("id").asText();
+
+        mockMvc.perform(put("/api/leads/{id}/notes/{noteId}", leadId, noteId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+
+                                {"note":"Observacao editada EAI008"}
+
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.note").value("Observacao editada EAI008"))
+                .andExpect(jsonPath("$.updatedAt", not(blankOrNullString())));
+
+        mockMvc.perform(get("/api/leads/{id}/notes", leadId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].note").value("Observacao editada EAI008"));
+
+        mockMvc.perform(get("/api/leads/{id}/history", leadId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].description").value("Observacao atualizada"))
+                .andExpect(jsonPath("$[1].description").value("Observacao criada"));
+    }
+
+    @DisplayName("Tags de lead usam catalogo global e bloqueiam duplicidade por tipo")
+    @Test
+    void leadTagsUseGlobalCatalogAndBlockDuplicateType() throws Exception {
+        String token = login();
+        String leadId = createManualLead(token, "Cliente Tags EAI008", "11999770202");
+        String firstTagResponse = mockMvc.perform(post("/api/leads/tags/catalog")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+
+                                {"name":"VIP EAI008","type":"PRIORITY"}
+
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("VIP EAI008"))
+                .andExpect(jsonPath("$.type").value("PRIORITY"))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        String firstTagId = objectMapper.readTree(firstTagResponse).get("id").asText();
+        String secondTagResponse = mockMvc.perform(post("/api/leads/tags/catalog")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+
+                                {"name":"Prioridade Alta EAI008","type":"PRIORITY"}
+
+                                """))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        String secondTagId = objectMapper.readTree(secondTagResponse).get("id").asText();
+
+        mockMvc.perform(post("/api/leads/{id}/tags", leadId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+
+                                {"tagId":"%s"}
+
+                                """.formatted(firstTagId)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tagId").value(firstTagId))
+                .andExpect(jsonPath("$.name").value("VIP EAI008"))
+                .andExpect(jsonPath("$.type").value("PRIORITY"));
+
+        mockMvc.perform(post("/api/leads/{id}/tags", leadId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+
+                                {"tagId":"%s"}
+
+                                """.formatted(secondTagId)))
+                .andExpect(status().isConflict());
+
+        mockMvc.perform(get("/api/leads/{id}/tags", leadId)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].tagId").value(firstTagId))
+                .andExpect(jsonPath("$[0].type").value("PRIORITY"));
     }
 
     private String login() throws Exception {

@@ -12,6 +12,10 @@ public interface LeadTagRepository {
 
     Optional<LeadTag> findById(UUID id);
 
+    boolean existsByLeadIdAndTagId(UUID leadId, UUID tagId);
+
+    boolean existsByLeadIdAndType(UUID leadId, String type);
+
     LeadTag save(LeadTag tag);
 
     void deleteById(UUID id);

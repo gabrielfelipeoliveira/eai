@@ -119,7 +119,7 @@ class LeadServiceTest {
     }
 
     private LeadService service(LeadRepository leadRepository) {
-        return new LeadService(leadRepository, null, null, null, null, null, null, null);
+        return new LeadService(leadRepository, null, null, null, null, null, null, null, null);
     }
 
     private LeadSearchCriteria emptyCriteria() {

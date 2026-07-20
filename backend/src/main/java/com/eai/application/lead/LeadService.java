@@ -16,6 +16,7 @@ import com.eai.domain.lead.LeadNote;
 import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
 import com.eai.domain.lead.LeadTag;
+import com.eai.domain.lead.LeadTagDefinition;
 import com.eai.domain.tenant.Store;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
@@ -36,6 +37,7 @@ public class LeadService {
     private final LeadHistoryRepository historyRepository;
     private final LeadNoteRepository noteRepository;
     private final LeadTagRepository tagRepository;
+    private final LeadTagDefinitionRepository tagDefinitionRepository;
     private final CompanyService companyService;
     private final StoreService storeService;
     private final UserRepository userRepository;
@@ -46,6 +48,7 @@ public class LeadService {
             LeadHistoryRepository historyRepository,
             LeadNoteRepository noteRepository,
             LeadTagRepository tagRepository,
+            LeadTagDefinitionRepository tagDefinitionRepository,
             CompanyService companyService,
             StoreService storeService,
             UserRepository userRepository,
@@ -55,6 +58,7 @@ public class LeadService {
         this.historyRepository = historyRepository;
         this.noteRepository = noteRepository;
         this.tagRepository = tagRepository;
+        this.tagDefinitionRepository = tagDefinitionRepository;
         this.companyService = companyService;
         this.storeService = storeService;
         this.userRepository = userRepository;
@@ -197,7 +201,22 @@ public class LeadService {
     @Transactional
     public LeadNote addNote(UUID leadId, String note, AuthenticatedUser authenticatedUser) {
         Lead lead = getLead(leadId, authenticatedUser);
-        return noteRepository.save(LeadNote.create(lead.getId(), authenticatedUser.id(), note));
+        LeadNote savedNote = noteRepository.save(LeadNote.create(lead.getId(), authenticatedUser.id(), note));
+        historyRepository.save(LeadHistory.create(lead.getId(), authenticatedUser.id(), lead.getStatus(), lead.getStatus(), "Observacao criada"));
+        return savedNote;
+    }
+
+    @Transactional
+    public LeadNote updateNote(UUID leadId, UUID noteId, String note, AuthenticatedUser authenticatedUser) {
+        Lead lead = getLead(leadId, authenticatedUser);
+        LeadNote existingNote = noteRepository.findById(noteId)
+                .orElseThrow(() -> new NotFoundException("Lead note not found"));
+        if (!existingNote.getLeadId().equals(lead.getId())) {
+            throw new NotFoundException("Lead note not found");
+        }
+        LeadNote updatedNote = noteRepository.save(existingNote.update(note));
+        historyRepository.save(LeadHistory.create(lead.getId(), authenticatedUser.id(), lead.getStatus(), lead.getStatus(), "Observacao atualizada"));
+        return updatedNote;
     }
 
     @Transactional(readOnly = true)
@@ -213,9 +232,32 @@ public class LeadService {
     }
 
     @Transactional
-    public LeadTag addTag(UUID leadId, String name, AuthenticatedUser authenticatedUser) {
+    public LeadTag addTag(UUID leadId, UUID tagId, String name, AuthenticatedUser authenticatedUser) {
         Lead lead = getLead(leadId, authenticatedUser);
-        return tagRepository.save(LeadTag.create(lead.getId(), name));
+        LeadTagDefinition tagDefinition = findTagDefinition(tagId, name);
+        if (!tagDefinition.isActive()) {
+            throw new ConflictException("Lead tag is inactive");
+        }
+        if (tagRepository.existsByLeadIdAndTagId(lead.getId(), tagDefinition.getId())) {
+            throw new ConflictException("Lead already has this tag");
+        }
+        if (tagRepository.existsByLeadIdAndType(lead.getId(), tagDefinition.getType())) {
+            throw new ConflictException("Lead already has a tag of this type");
+        }
+        return tagRepository.save(LeadTag.create(lead.getId(), tagDefinition));
+    }
+
+    @Transactional(readOnly = true)
+    public List<LeadTagDefinition> listTagDefinitions() {
+        return tagDefinitionRepository.findAllActive();
+    }
+
+    @Transactional
+    public LeadTagDefinition createTagDefinition(String name, String type) {
+        if (tagDefinitionRepository.existsByNameIgnoreCase(name)) {
+            throw new ConflictException("Lead tag name already exists");
+        }
+        return tagDefinitionRepository.save(LeadTagDefinition.create(name, type));
     }
 
     @Transactional(readOnly = true)
@@ -264,6 +306,18 @@ public class LeadService {
     private Lead findRequired(UUID id) {
         return leadRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Lead not found"));
+    }
+
+    private LeadTagDefinition findTagDefinition(UUID tagId, String name) {
+        if (tagId != null) {
+            return tagDefinitionRepository.findById(tagId)
+                    .orElseThrow(() -> new NotFoundException("Lead tag definition not found"));
+        }
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("tagId is required");
+        }
+        return tagDefinitionRepository.findActiveByName(name)
+                .orElseThrow(() -> new NotFoundException("Lead tag definition not found"));
     }
 
     private ItemRepository.ItemWithVehicle createItemWithVehicle(UUID ownerUserId, LeadItemCommand itemCommand) {
