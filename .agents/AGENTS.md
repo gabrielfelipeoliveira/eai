@@ -42,6 +42,8 @@ Quando documentacao e codigo entrarem em conflito, nao escolha um lado silencios
 - Use `docs/tecnico/contexto-atual.md` como handoff operacional entre pessoas e agentes.
 - Use cards `EAI-###` do Trello para nomear branches, PRs e referencias de commits.
 - Toda mudanca deve seguir o fluxo de Trello, branch e PR descrito em `docs/tecnico/trello-workflow.md`, inclusive documentacao, processo e ajustes pequenos. Nao commite direto na `main`.
+- Todo novo problema, warning, risco, melhoria ou item identificado deve ser registrado no Trello, como card novo ou comentario em card existente, antes de decidir se sera tratado agora ou apenas mantido no backlog.
+- Sempre que mover ou atualizar um card no Trello, atribua o card ao membro operacional do workspace/token usado na execucao, mantendo o responsavel visivel no historico.
 
 ## Fluxo De Desenvolvimento
 

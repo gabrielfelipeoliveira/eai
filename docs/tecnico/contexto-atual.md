@@ -22,6 +22,10 @@ Se documentacao, Trello e codigo estiverem em conflito, nao escolha um lado sile
 
 Toda mudanca versionada deve seguir o fluxo de card `EAI-###`, branch, commit, push, PR, comentario no Trello e fechamento rastreavel. Isso inclui documentacao, processo e ajustes pequenos. Nao commite direto na `main`.
 
+Todo novo problema, warning, vulnerabilidade, risco, melhoria ou item observado deve ser registrado no Trello como card novo ou comentario em card existente. Registrar no Trello nao significa tratar imediatamente; significa preservar historico para decisao posterior.
+
+Sempre que um agente ou desenvolvedor mover, comentar, concluir, cancelar ou alterar status de um card no Trello, o card deve ficar atribuido ao membro responsavel pela execucao no workspace atual. Quando a acao for feita por IA usando o token do Lucas Reiter, atribua o card ao membro `Lucas Reiter`.
+
 ## Fontes De Verdade
 
 - Git e documentacao versionada: memoria permanente de arquitetura, regras e contexto tecnico.
@@ -78,6 +82,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-019`: backlog. Adicionar validacao de contrato OpenAPI.
 - `EAI-020`: backlog. Padronizar uso seguro de Lombok no backend.
 - `EAI-021`: concluido. Reforcar obrigatoriedade de branch e PR para qualquer mudanca.
+- `EAI-022`: concluido. Registrar novos problemas no Trello e atribuir cards movimentados.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 

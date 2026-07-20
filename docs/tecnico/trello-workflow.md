@@ -57,6 +57,9 @@ Regras de uso:
 - UX nao deve decidir regra de negocio nova. Se surgir regra ausente durante UX, crie ou reabra card no board de negocio.
 - Desenvolvimento nao deve iniciar regra de produto sem documentacao oficial ou link para decisao aprovada.
 - Cards cancelados nao devem ser deletados. Mova para `Cancelado ou descartado` e registre o motivo em comentario.
+- Todo novo problema, warning, vulnerabilidade, risco, melhoria ou item observado durante analise, build, teste, review ou execucao deve ser registrado no Trello antes de ser esquecido. Use comentario em card existente quando o item pertencer claramente ao escopo daquele card; caso contrario, crie um novo card no board adequado.
+- Registrar um item no Trello nao obriga implementacao imediata. A decisao posterior pode ser tratar agora, manter no backlog, mover para futuro ou cancelar com justificativa.
+- Sempre que um agente ou desenvolvedor mover um card, adicionar comentario operacional, abrir PR, concluir, cancelar ou alterar status, o card deve ficar atribuido ao membro responsavel pela execucao no workspace atual. Quando o trabalho for executado por IA usando o token do Lucas Reiter, atribua o card ao membro `Lucas Reiter`.
 
 ## Ligacao Entre Cards
 
@@ -132,10 +135,11 @@ Esta regra nao tem excecao para mudancas pequenas, documentais ou de processo. T
 4. Consulte o Trello e confirme que o card `EAI-###` ainda esta livre.
 5. Se o card ja estiver `Em andamento`, nao inicie trabalho paralelo sem alinhamento explicito.
 6. Se o card estiver livre, mova para `Em andamento`.
-7. Crie a branch seguindo o padrao deste documento.
-8. Atualize `docs/tecnico/contexto-atual.md` com o card em andamento e a branch.
-9. Adicione comentario de inicio no card.
-10. Faca commit e push dessa reserva/handoff antes de iniciar a analise tecnica ou implementacao.
+7. Atribua o card ao membro responsavel pela execucao no workspace atual.
+8. Crie a branch seguindo o padrao deste documento.
+9. Atualize `docs/tecnico/contexto-atual.md` com o card em andamento e a branch.
+10. Adicione comentario de inicio no card.
+11. Faca commit e push dessa reserva/handoff antes de iniciar a analise tecnica ou implementacao.
 
 O commit inicial de reserva deve ser documental e pequeno. Exemplo:
 
