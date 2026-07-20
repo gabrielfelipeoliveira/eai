@@ -44,10 +44,10 @@ export const router = createBrowserRouter([
             path: 'follow-ups',
             element: <FollowUpsPage />,
           },
-          {
-            path: 'conversations',
-            element: <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SELLER']} />,
-            children: [
+        {
+          path: 'conversations',
+          element: <ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER']} />,
+          children: [
               {
                 index: true,
                 element: <ConversationsPage />,

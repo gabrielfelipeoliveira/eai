@@ -40,7 +40,7 @@ public class Conversation {
             this.leadId = leadId;
             changed = true;
         }
-        if (responsibleUserId != null && !responsibleUserId.equals(this.responsibleUserId)) {
+        if (!Objects.equals(responsibleUserId, this.responsibleUserId)) {
             this.responsibleUserId = responsibleUserId;
             changed = true;
         }

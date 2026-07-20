@@ -3,6 +3,7 @@ package com.eai.application.conversation;
 import com.eai.application.lead.LeadHistoryRepository;
 import com.eai.application.lead.LeadRepository;
 import com.eai.application.security.AuthenticatedUser;
+import com.eai.application.common.ForbiddenException;
 import com.eai.domain.conversation.Conversation;
 import com.eai.domain.conversation.ConversationMessage;
 import com.eai.domain.conversation.ConversationMessageDirection;
@@ -23,6 +24,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -34,6 +37,7 @@ class ConversationServiceTest {
     private static final UUID STORE_ID = UUID.fromString("00000000-0000-0000-0000-000000000201");
     private static final UUID SELLER_ID = UUID.fromString("00000000-0000-0000-0000-000000000301");
     private static final UUID OTHER_SELLER_ID = UUID.fromString("00000000-0000-0000-0000-000000000302");
+    private static final UUID MANAGER_ID = UUID.fromString("00000000-0000-0000-0000-000000000701");
 
     private final WhatsAppContactRepository contactRepository = mock(WhatsAppContactRepository.class);
     private final ConversationRepository conversationRepository = mock(ConversationRepository.class);
@@ -73,6 +77,17 @@ class ConversationServiceTest {
         ));
 
         assertThat(service.listConversations(seller())).isEmpty();
+    }
+
+    @DisplayName("Gerente de loja enxerga conversa sem responsavel na fila da loja")
+    @Test
+    void storeManagerSeesUnassignedStoreQueueConversation() {
+        Conversation queued = conversation("00000000-0000-0000-0000-000000000409", "00000000-0000-0000-0000-000000000509", "00000000-0000-0000-0000-000000000609", null);
+        when(conversationRepository.findByStoreId(STORE_ID)).thenReturn(List.of(queued));
+
+        List<Conversation> conversations = service.listConversations(storeManager());
+
+        assertThat(conversations).containsExactly(queued);
     }
 
     @DisplayName("Gerente filtra conversas por vendedor, status e periodo")
@@ -144,6 +159,46 @@ class ConversationServiceTest {
                         && audit.getActorUserId().equals(manager().id())
                         && audit.getActorRole() == UserRole.MANAGER
                         && "LIST_MESSAGES".equals(audit.getAccessType())
+        ));
+    }
+
+    @DisplayName("Gerente nao responde conversa enquanto nao for o responsavel")
+    @Test
+    void managerCannotSendMessageWithoutOwningConversation() {
+        Conversation conversation = conversation("00000000-0000-0000-0000-000000000410", "00000000-0000-0000-0000-000000000510", "00000000-0000-0000-0000-000000000610", SELLER_ID);
+
+        assertThatThrownBy(() -> service.assertCanSendMessage(conversation, manager()))
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessageContaining("assigned to the authenticated user");
+    }
+
+    @DisplayName("Gerente responde conversa depois de assumir o lead")
+    @Test
+    void managerCanSendMessageAfterOwningConversation() {
+        Conversation conversation = conversation("00000000-0000-0000-0000-000000000411", "00000000-0000-0000-0000-000000000511", "00000000-0000-0000-0000-000000000611", MANAGER_ID);
+
+        service.assertCanSendMessage(conversation, manager());
+    }
+
+    @DisplayName("Mensagem de saida sincroniza conversa para fila quando lead nao tem responsavel")
+    @Test
+    void outboundMessageClearsConversationOwnerWhenLeadIsUnassigned() {
+        UUID leadId = UUID.fromString("00000000-0000-0000-0000-000000000612");
+        Conversation existing = conversation("00000000-0000-0000-0000-000000000412", "00000000-0000-0000-0000-000000000512", leadId.toString(), SELLER_ID);
+        WhatsAppContact contact = new WhatsAppContact(existing.getContactId(), COMPANY_ID, STORE_ID, leadId, "5511999990000", "Cliente", Instant.parse("2026-07-08T10:00:00Z"), Instant.parse("2026-07-08T10:00:00Z"));
+        Lead lead = lead(leadId, null);
+
+        when(leadRepository.findAll(org.mockito.ArgumentMatchers.any())).thenReturn(List.of(lead));
+        when(contactRepository.findByStoreIdAndPhone(STORE_ID, "5511999990000")).thenReturn(Optional.of(contact));
+        when(contactRepository.save(contact)).thenReturn(contact);
+        when(conversationRepository.findByContactId(existing.getContactId())).thenReturn(Optional.of(existing));
+        when(conversationRepository.save(org.mockito.ArgumentMatchers.any(Conversation.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(messageRepository.save(org.mockito.ArgumentMatchers.any(ConversationMessage.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        service.recordOutboundMessage(lead, ConversationMessageType.TEXT, ConversationMessageStatus.SENT, "wamid.123", "Bom dia", "{}");
+
+        verify(conversationRepository, atLeastOnce()).save(org.mockito.ArgumentMatchers.argThat(conversation ->
+                existing.getId().equals(conversation.getId()) && conversation.getResponsibleUserId() == null
         ));
     }
 
@@ -287,6 +342,31 @@ class ConversationServiceTest {
         );
     }
 
+    private Lead lead(UUID id, UUID assignedToUserId) {
+        Instant now = Instant.parse("2026-07-08T10:00:00Z");
+        return new Lead(
+                id,
+                COMPANY_ID,
+                STORE_ID,
+                "Cliente",
+                "5511999990000",
+                null,
+                null,
+                "Honda Civic",
+                LeadSource.MANUAL,
+                null,
+                assignedToUserId == null ? LeadStatus.AVAILABLE : LeadStatus.ASSIGNED,
+                assignedToUserId,
+                assignedToUserId == null ? null : now,
+                now,
+                now,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
     private ConversationMessage message(UUID conversationId, ConversationMessageDirection direction, ConversationMessageStatus status, String content, String createdAt) {
         return new ConversationMessage(
                 UUID.randomUUID(),
@@ -309,6 +389,10 @@ class ConversationServiceTest {
     }
 
     private AuthenticatedUser manager() {
-        return new AuthenticatedUser(UUID.fromString("00000000-0000-0000-0000-000000000701"), "manager@eai.com", COMPANY_ID, STORE_ID, Set.of(UserRole.MANAGER));
+        return new AuthenticatedUser(MANAGER_ID, "manager@eai.com", COMPANY_ID, STORE_ID, Set.of(UserRole.MANAGER));
+    }
+
+    private AuthenticatedUser storeManager() {
+        return new AuthenticatedUser(UUID.fromString("00000000-0000-0000-0000-000000000702"), "store.manager@eai.com", COMPANY_ID, STORE_ID, Set.of(UserRole.STORE_MANAGER));
     }
 }

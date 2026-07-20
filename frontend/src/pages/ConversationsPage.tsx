@@ -31,6 +31,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
 import { apiErrorCode, apiErrorMessage } from '../services/api';
 import { listConversationMessages, listConversations, sendConversationTextMessage } from '../services/conversationService';
+import { assignLeadToMe } from '../services/leadService';
 import { listActiveTemplates, sendWhatsappTemplate } from '../services/templateService';
 import { listUsers } from '../services/userService';
 import type { ConversationMessage, ConversationMessageStatus, ConversationSummary } from '../types/message';
@@ -124,7 +125,7 @@ function dayEnd(value: string) {
 
 export function ConversationsPage() {
   const metadata = useMetadata();
-  const { hasAnyRole } = useAuth();
+  const { hasAnyRole, user } = useAuth();
   const queryClient = useQueryClient();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [composerText, setComposerText] = useState('');
@@ -216,9 +217,18 @@ export function ConversationsPage() {
     },
   });
 
+  const assignToMeMutation = useMutation({
+    mutationFn: (leadId: string) => assignLeadToMe(leadId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['conversations'] });
+    },
+  });
+
   const sendTextErrorBelongsToSelectedConversation = sendTextMutation.variables?.conversationId === selectedConversationId;
   const freeTextWindowExpired = sendTextErrorBelongsToSelectedConversation && apiErrorCode(sendTextMutation.error) === 'WHATSAPP_FREE_TEXT_WINDOW_EXPIRED';
-  const canSendText = Boolean(selectedConversationId && composerText.trim()) && !sendTextMutation.isPending;
+  const currentUserOwnsConversation = Boolean(selectedConversation?.responsibleUserId && selectedConversation.responsibleUserId === user?.id);
+  const canAssumeConversation = Boolean(selectedConversation?.leadId && !currentUserOwnsConversation && !assignToMeMutation.isPending);
+  const canSendText = Boolean(selectedConversationId && currentUserOwnsConversation && composerText.trim()) && !sendTextMutation.isPending;
 
   useEffect(() => {
     if (!selectedConversationId && conversations.length > 0) {
@@ -532,6 +542,29 @@ export function ConversationsPage() {
                   )}
                   {sendTemplateMutation.isError && (
                     <Alert severity="error">{apiErrorMessage(sendTemplateMutation.error) ?? 'Nao foi possivel enviar o template.'}</Alert>
+                  )}
+                  {assignToMeMutation.isError && (
+                    <Alert severity="error">{apiErrorMessage(assignToMeMutation.error) ?? 'Nao foi possivel assumir o lead.'}</Alert>
+                  )}
+
+                  {!currentUserOwnsConversation && (
+                    <Alert
+                      severity="info"
+                      action={
+                        selectedConversation.leadId ? (
+                          <Button
+                            color="inherit"
+                            disabled={!canAssumeConversation}
+                            size="small"
+                            onClick={() => assignToMeMutation.mutate(selectedConversation.leadId as string)}
+                          >
+                            Assumir lead
+                          </Button>
+                        ) : undefined
+                      }
+                    >
+                      Assuma o lead para responder esta conversa.
+                    </Alert>
                   )}
 
                   {freeTextWindowExpired && selectedConversation.leadId && (

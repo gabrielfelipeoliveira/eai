@@ -70,8 +70,8 @@ Cards de desenvolvimento conhecidos:
 - `EAI-007`: concluido. Ajustar visibilidade, ordenacao e busca normalizada de leads.
 - `EAI-008`: concluido. Ajustar notas, observacoes, tags globais e historico de lead.
 - `EAI-009`: concluido. Ajustar importacao de leads por e-mail, historico persistente e duplicidade por telefone+loja.
-- `EAI-010`: em andamento. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
-- `EAI-011`: backlog. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
+- `EAI-010`: concluido. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
+- `EAI-011`: em andamento. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
 - `EAI-012`: backlog. Implementar armazenamento de midias WhatsApp em bucket.
 - `EAI-013`: backlog. Separar seeds obrigatorios de dados demonstrativos e bloquear demo em producao.
 - `EAI-014`: backlog. Implementar fluxo LGPD basico manual por ADMIN.
@@ -85,6 +85,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-022`: concluido. Registrar novos problemas no Trello e atribuir cards movimentados.
 - `EAI-023`: concluido. Ajustar atribuicao de membros apenas em cards puxados.
 - `EAI-024`: backlog. Notificar administradores sobre falhas de e-mail quando houver infraestrutura de notificacao.
+- `EAI-025`: backlog. Atualizar Vite/esbuild por vulnerabilidades npm audit.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -92,12 +93,12 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- `EAI-010`: ajustar templates WhatsApp, placeholders, soft delete e status Meta.
+- `EAI-011`: ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
 
 Branch sugerida:
 
 ```text
-feature/eai-010-templates-whatsapp-placeholders-soft-delete
+feature/eai-011-conversas-whatsapp-fila-supervisao
 ```
 
 ## Validacao Padrao
@@ -127,14 +128,16 @@ Use `mvn clean verify` como validacao padrao do backend. `mvn test` sem `clean` 
 
 Ultima validacao em 2026-07-20:
 
-- Branch `feature/eai-010-templates-whatsapp-placeholders-soft-delete`.
-- Backend `mvn clean verify` via Docker passou com 86 testes, 0 falhas, 0 erros e 0 skips.
-- Frontend `npm run build` via Docker passou.
+- Branch `feature/eai-011-conversas-whatsapp-fila-supervisao`.
+- Backend `mvn clean verify` via Docker passou com 91 testes, 0 falhas, 0 erros e 0 skips.
+- Frontend `npm run build` passou.
+- Frontend `npm run lint` passou com 0 erros e 1 warning ja comentado no card `EAI-015`.
 - Avisos conhecidos:
 - Flyway reporta H2 2.4.240 mais novo que a versao verificada.
 - SpringDoc `/v3/api-docs` e `/swagger-ui.html` habilitados por default.
 - Mockito usa self-attaching inline mock maker; JDK futuro pode exigir agente configurado.
 - Vite reporta chunk JS acima de 500 kB apos minificacao.
+- `npm audit` reporta vulnerabilidades em Vite/esbuild; registrado no card `EAI-025`.
 
 ## Lacunas Ja Registradas Em Cards
 
@@ -149,6 +152,7 @@ Nao crie novos cards duplicados sem antes verificar o Trello:
 - LGPD ADMIN manual: `EAI-014`.
 - Qualidade automatizada, CI, Testcontainers, frontend tests, E2E e OpenAPI: `EAI-015` a `EAI-019`.
 - Padronizacao segura de Lombok no backend: `EAI-020`.
+- Vulnerabilidades npm audit em Vite/esbuild: `EAI-025`.
 
 ## Encerramento De Sessao
 
