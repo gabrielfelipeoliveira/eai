@@ -30,6 +30,8 @@ import java.util.UUID;
 @Service
 public class LeadService {
 
+    private static final List<LeadStatus> SELLER_AVAILABLE_STATUSES = List.of(LeadStatus.NEW, LeadStatus.AVAILABLE);
+
     private final LeadRepository leadRepository;
     private final LeadHistoryRepository historyRepository;
     private final LeadNoteRepository noteRepository;
@@ -284,9 +286,18 @@ public class LeadService {
     private LeadSearchCriteria applyScope(LeadSearchCriteria criteria, AuthenticatedUser authenticatedUser) {
         UUID scopeCompanyId = null;
         UUID scopeStoreId = null;
-        if (!hasRole(authenticatedUser, UserRole.ADMIN)) {
+        UUID visibleToSellerUserId = null;
+        if (hasRole(authenticatedUser, UserRole.ADMIN)) {
+            scopeCompanyId = null;
+            scopeStoreId = null;
+        } else if (hasRole(authenticatedUser, UserRole.MANAGER)) {
+            scopeCompanyId = requireCompany(authenticatedUser);
+        } else {
             scopeCompanyId = requireCompany(authenticatedUser);
             scopeStoreId = requireStore(authenticatedUser);
+            if (hasRole(authenticatedUser, UserRole.SELLER) && !hasRole(authenticatedUser, UserRole.STORE_MANAGER)) {
+                visibleToSellerUserId = authenticatedUser.id();
+            }
         }
         return new LeadSearchCriteria(
                 criteria.status(),
@@ -299,7 +310,8 @@ public class LeadService {
                 criteria.vehicle(),
                 criteria.phone(),
                 scopeCompanyId,
-                scopeStoreId
+                scopeStoreId,
+                visibleToSellerUserId
         );
     }
 
@@ -318,7 +330,18 @@ public class LeadService {
         if (hasRole(authenticatedUser, UserRole.ADMIN)) {
             return;
         }
-        if (lead.getCompanyId().equals(requireCompany(authenticatedUser)) && lead.getStoreId().equals(requireStore(authenticatedUser))) {
+        if (hasRole(authenticatedUser, UserRole.MANAGER) && lead.getCompanyId().equals(requireCompany(authenticatedUser))) {
+            return;
+        }
+        if (hasRole(authenticatedUser, UserRole.STORE_MANAGER)
+                && lead.getCompanyId().equals(requireCompany(authenticatedUser))
+                && lead.getStoreId().equals(requireStore(authenticatedUser))) {
+            return;
+        }
+        if (hasRole(authenticatedUser, UserRole.SELLER)
+                && lead.getCompanyId().equals(requireCompany(authenticatedUser))
+                && lead.getStoreId().equals(requireStore(authenticatedUser))
+                && isVisibleToSeller(lead, authenticatedUser.id())) {
             return;
         }
         throw new ForbiddenException("Access denied for lead");
@@ -326,6 +349,9 @@ public class LeadService {
 
     private void assertCanUseTenant(UUID companyId, UUID storeId, AuthenticatedUser authenticatedUser) {
         if (hasRole(authenticatedUser, UserRole.ADMIN)) {
+            return;
+        }
+        if (hasRole(authenticatedUser, UserRole.MANAGER) && companyId.equals(requireCompany(authenticatedUser))) {
             return;
         }
         if (companyId.equals(requireCompany(authenticatedUser)) && storeId.equals(requireStore(authenticatedUser))) {
@@ -343,10 +369,20 @@ public class LeadService {
         if (hasRole(authenticatedUser, UserRole.ADMIN) || userId.equals(authenticatedUser.id())) {
             return;
         }
-        if (hasRole(authenticatedUser, UserRole.MANAGER) && companyId.equals(requireCompany(authenticatedUser)) && storeId.equals(requireStore(authenticatedUser))) {
+        if (hasRole(authenticatedUser, UserRole.MANAGER) && companyId.equals(requireCompany(authenticatedUser))) {
+            return;
+        }
+        if (hasRole(authenticatedUser, UserRole.STORE_MANAGER)
+                && companyId.equals(requireCompany(authenticatedUser))
+                && storeId.equals(requireStore(authenticatedUser))) {
             return;
         }
         throw new ForbiddenException("Access denied for assignment");
+    }
+
+    private boolean isVisibleToSeller(Lead lead, UUID sellerId) {
+        return sellerId.equals(lead.getAssignedToUserId())
+                || (lead.getAssignedToUserId() == null && SELLER_AVAILABLE_STATUSES.contains(lead.getStatus()));
     }
 
     private UUID requireCompany(AuthenticatedUser authenticatedUser) {
