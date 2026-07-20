@@ -25,6 +25,7 @@ Regras:
 - `V4__lead_items_vehicles_money_phone.sql`, adiciona `items`, `vehicles`, `leads.item_id`, `leads.sale_currency`, normalizacao E.164 dos telefones demo e constraints de moeda/telefone.
 - `V5__lead_recontact_duplicates_phones.sql`, adiciona telefones adicionais, relacao de duplicidade/recontato e indices de busca por telefone.
 - `V6__lead_notes_editable_global_tags.java`, adiciona `lead_notes.updated_at`, cria catalogo global `lead_tag_definitions` e vincula `lead_tags` por `tag_id` e `type`.
+- `V7__email_import_history.sql`, cria historico persistente de importacoes de e-mail por conta, loja, status e data, preservado quando a conta e removida.
 
 Observacao:
 

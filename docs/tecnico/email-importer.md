@@ -80,11 +80,16 @@ Durante a importacao, se existir um lead com o mesmo telefone/WhatsApp na mesma 
 
 Se nenhuma duplicidade for encontrada, o lead importado e criado com origem `EMAIL` e status `NEW`.
 
-Cada chegada deve ficar registrada no historico. Entrada duplicada fica na mesma conversa anterior, mas gera novo lead marcado como duplicado. Entradas de historico criadas pelo scheduler usam um registro de sistema sem usuario quando aplicavel.
+Cada chegada deve ficar registrada no historico.
+Entrada duplicada referencia o lead anterior por `related_lead_id` e gera novo lead marcado como `DUPLICATED`.
+Entradas de historico criadas pelo scheduler usam usuario nulo quando nao houver usuario operacional associado.
 
-Mensagens importadas devem ser marcadas como lidas na conta original. Importacoes com falha devem ser tentadas novamente e testes com falha devem notificar administradores.
+Mensagens importadas pelo IMAP sao marcadas como lidas na conta original apos o sucesso transacional da importacao.
+Cada execucao salva um registro em `email_import_history` com status, quantidade de mensagens lidas, leads criados, duplicados marcados, mensagem de resultado e timestamps de inicio/fim.
+Importacoes com falha retornam status `FAILED`, atualizam o ultimo status da conta e registram a falha em `email_import_history`, permitindo nova tentativa posterior.
+Testes de conexao com falha ainda propagam o erro para a API apos atualizar o ultimo status da conta; notificacao explicita de administradores depende de infraestrutura futura.
 
-Excluir uma conta de e-mail deve preservar o historico de importacao.
+Excluir uma conta de e-mail preserva o historico de importacao; nesse caso o identificador da conta pode ficar nulo no historico fisico.
 
 ## Seguranca De Senhas
 

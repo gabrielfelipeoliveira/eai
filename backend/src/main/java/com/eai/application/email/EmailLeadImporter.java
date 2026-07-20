@@ -4,12 +4,15 @@ import com.eai.application.lead.LeadHistoryRepository;
 import com.eai.application.lead.LeadRepository;
 import com.eai.application.lead.PhoneNormalizer;
 import com.eai.domain.email.EmailAccount;
+import com.eai.domain.email.EmailImportHistory;
 import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadHistory;
 import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.Instant;
 import java.util.List;
@@ -25,6 +28,7 @@ public class EmailLeadImporter {
     private final DuplicateLeadChecker duplicateLeadChecker;
     private final LeadRepository leadRepository;
     private final LeadHistoryRepository historyRepository;
+    private final EmailImportHistoryRepository importHistoryRepository;
     private final EncryptionService encryptionService;
 
     public EmailLeadImporter(
@@ -34,6 +38,7 @@ public class EmailLeadImporter {
             DuplicateLeadChecker duplicateLeadChecker,
             LeadRepository leadRepository,
             LeadHistoryRepository historyRepository,
+            EmailImportHistoryRepository importHistoryRepository,
             EncryptionService encryptionService
     ) {
         this.emailAccountRepository = emailAccountRepository;
@@ -42,16 +47,20 @@ public class EmailLeadImporter {
         this.duplicateLeadChecker = duplicateLeadChecker;
         this.leadRepository = leadRepository;
         this.historyRepository = historyRepository;
+        this.importHistoryRepository = importHistoryRepository;
         this.encryptionService = encryptionService;
     }
 
     @Transactional
     public EmailImportResult importAccount(EmailAccount account, UUID userId) {
+        Instant startedAt = Instant.now();
+        Instant previousReadAt = account.getLastReadAt();
         try {
-            var messages = emailReader.readMessages(account, encryptionService.decrypt(account.getEncryptedPassword()), account.getLastReadAt());
+            String password = encryptionService.decrypt(account.getEncryptedPassword());
+            var messages = emailReader.readMessages(account, password, previousReadAt);
             int created = 0;
             int duplicated = 0;
-            Instant newestReadAt = account.getLastReadAt();
+            Instant newestReadAt = previousReadAt;
             for (EmailMessage message : messages) {
                 ParsedEmailLead parsedLead = leadExtractor.extract(message);
                 if (parsedLead == null) {
@@ -80,11 +89,17 @@ public class EmailLeadImporter {
             String resultMessage = "Mensagens lidas: " + messages.size() + ", leads criados: " + created + ", possiveis duplicados: " + duplicated;
             account.recordSuccess(newestReadAt == null ? Instant.now() : newestReadAt, resultMessage);
             emailAccountRepository.save(account);
+            importHistoryRepository.save(EmailImportHistory.success(account, messages.size(), created, duplicated, resultMessage, startedAt));
+            if (!messages.isEmpty()) {
+                markMessagesAsReadAfterCommit(account, password, previousReadAt, newestReadAt);
+            }
             return new EmailImportResult(messages.size(), created, duplicated, "SUCCESS", resultMessage);
         } catch (RuntimeException exception) {
-            account.recordFailure(exception.getMessage());
+            String failureMessage = exception.getMessage();
+            account.recordFailure(failureMessage);
             emailAccountRepository.save(account);
-            throw exception;
+            importHistoryRepository.save(EmailImportHistory.failure(account, failureMessage, startedAt));
+            return new EmailImportResult(0, 0, 0, "FAILED", failureMessage);
         }
     }
 
@@ -124,5 +139,22 @@ public class EmailLeadImporter {
                 null,
                 relatedLeadId
         );
+    }
+
+    private void markMessagesAsReadAfterCommit(EmailAccount account, String password, Instant since, Instant until) {
+        if (until == null) {
+            return;
+        }
+        Runnable markAsRead = () -> emailReader.markMessagesAsRead(account, password, since, until);
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            markAsRead.run();
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                markAsRead.run();
+            }
+        });
     }
 }
