@@ -1,6 +1,6 @@
 # Contexto Atual Do Projeto
 
-Ultima atualizacao: 2026-07-19.
+Ultima atualizacao: 2026-07-20.
 
 Este arquivo e o handoff operacional do projeto EAI. Ele existe para que qualquer desenvolvedor ou agente de IA consiga retomar o trabalho sem depender do historico de uma conversa especifica.
 
@@ -68,7 +68,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-005`: concluido. Modelar Item, Veiculo, telefone E.164 e moeda de venda.
 - `EAI-006`: concluido. Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
 - `EAI-007`: concluido. Ajustar visibilidade, ordenacao e busca normalizada de leads.
-- `EAI-008`: backlog. Ajustar notas, observacoes, tags globais e historico de lead.
+- `EAI-008`: em andamento. Ajustar notas, observacoes, tags globais e historico de lead.
 - `EAI-009`: backlog. Ajustar importacao de leads por e-mail e duplicidade por telefone+loja.
 - `EAI-010`: backlog. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
 - `EAI-011`: backlog. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
@@ -91,12 +91,12 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- Nenhum card em andamento registrado neste arquivo. Antes de iniciar o proximo desenvolvimento, confirme a ordem atualizada no Trello.
+- `EAI-008`: ajustar notas, observacoes, tags globais e historico de lead.
 
 Branch sugerida:
 
 ```text
-feature/eai-###-slug-curto
+feature/eai-008-notas-tags-historico-lead
 ```
 
 ## Validacao Padrao
