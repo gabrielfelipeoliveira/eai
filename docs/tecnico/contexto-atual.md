@@ -69,7 +69,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-006`: concluido. Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
 - `EAI-007`: concluido. Ajustar visibilidade, ordenacao e busca normalizada de leads.
 - `EAI-008`: concluido. Ajustar notas, observacoes, tags globais e historico de lead.
-- `EAI-009`: backlog. Ajustar importacao de leads por e-mail e duplicidade por telefone+loja.
+- `EAI-009`: em andamento. Ajustar importacao de leads por e-mail e duplicidade por telefone+loja.
 - `EAI-010`: backlog. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
 - `EAI-011`: backlog. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
 - `EAI-012`: backlog. Implementar armazenamento de midias WhatsApp em bucket.
@@ -91,12 +91,12 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- Nenhum card em andamento registrado neste arquivo. Antes de iniciar o proximo desenvolvimento, confirme a ordem atualizada no Trello.
+- `EAI-009`: ajustar importacao de leads por e-mail e duplicidade por telefone/WhatsApp + loja.
 
 Branch sugerida:
 
 ```text
-feature/eai-###-slug-curto
+feature/eai-009-importacao-email-duplicidade-loja
 ```
 
 ## Validacao Padrao
