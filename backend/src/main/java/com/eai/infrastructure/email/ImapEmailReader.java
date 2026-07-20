@@ -47,7 +47,7 @@ public class ImapEmailReader implements EmailReader {
         try {
             store = openStore(account, password);
             inbox = store.getFolder("INBOX");
-            inbox.open(Folder.READ_WRITE);
+            inbox.open(Folder.READ_ONLY);
             Message[] messages = inbox.search(searchTerm(since));
             List<EmailMessage> result = new ArrayList<>();
             for (Message message : messages) {
@@ -57,11 +57,32 @@ public class ImapEmailReader implements EmailReader {
                         extractText(message),
                         receivedAt(message)
                 ));
-                message.setFlag(Flags.Flag.SEEN, true);
             }
             return result;
         } catch (MessagingException | IOException exception) {
             throw new IllegalStateException("Falha ao ler e-mails via IMAP: " + exception.getMessage(), exception);
+        } finally {
+            close(inbox);
+            close(store);
+        }
+    }
+
+    @Override
+    public void markMessagesAsRead(EmailAccount account, String password, Instant since, Instant until) {
+        Store store = null;
+        Folder inbox = null;
+        try {
+            store = openStore(account, password);
+            inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_WRITE);
+            Message[] messages = inbox.search(searchTerm(since));
+            for (Message message : messages) {
+                if (!receivedAt(message).isAfter(until)) {
+                    message.setFlag(Flags.Flag.SEEN, true);
+                }
+            }
+        } catch (MessagingException exception) {
+            throw new IllegalStateException("Falha ao marcar e-mails IMAP como lidos: " + exception.getMessage(), exception);
         } finally {
             close(inbox);
             close(store);

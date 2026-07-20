@@ -94,6 +94,7 @@ class EmailLeadImporterTest {
         assertThat(historyCaptor.getAllValues())
                 .extracting(LeadHistory::getNewStatus)
                 .containsExactly(LeadStatus.NEW, LeadStatus.DUPLICATED);
+        verify(emailReader).markMessagesAsRead(account, "plain-password", null, Instant.parse("2026-07-07T12:05:00Z"));
 
         ArgumentCaptor<EmailImportHistory> importHistoryCaptor = ArgumentCaptor.forClass(EmailImportHistory.class);
         verify(importHistoryRepository).save(importHistoryCaptor.capture());
@@ -122,6 +123,7 @@ class EmailLeadImporterTest {
         assertThat(account.getLastReadAt()).isEqualTo(Instant.parse("2026-07-07T11:00:00Z"));
         verify(emailAccountRepository).save(account);
         verify(leadRepository, never()).save(any());
+        verify(emailReader, never()).markMessagesAsRead(any(), any(), any(), any());
 
         ArgumentCaptor<EmailImportHistory> importHistoryCaptor = ArgumentCaptor.forClass(EmailImportHistory.class);
         verify(importHistoryRepository).save(importHistoryCaptor.capture());

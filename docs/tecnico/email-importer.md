@@ -84,7 +84,7 @@ Cada chegada deve ficar registrada no historico.
 Entrada duplicada referencia o lead anterior por `related_lead_id` e gera novo lead marcado como `DUPLICATED`.
 Entradas de historico criadas pelo scheduler usam usuario nulo quando nao houver usuario operacional associado.
 
-Mensagens importadas pelo IMAP sao marcadas como lidas na conta original apos leitura.
+Mensagens importadas pelo IMAP sao marcadas como lidas na conta original apos o sucesso transacional da importacao.
 Cada execucao salva um registro em `email_import_history` com status, quantidade de mensagens lidas, leads criados, duplicados marcados, mensagem de resultado e timestamps de inicio/fim.
 Importacoes com falha retornam status `FAILED`, atualizam o ultimo status da conta e registram a falha em `email_import_history`, permitindo nova tentativa posterior.
 Testes de conexao com falha ainda propagam o erro para a API apos atualizar o ultimo status da conta; notificacao explicita de administradores depende de infraestrutura futura.
