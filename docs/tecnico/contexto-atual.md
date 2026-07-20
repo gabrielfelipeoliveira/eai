@@ -24,7 +24,7 @@ Toda mudanca versionada deve seguir o fluxo de card `EAI-###`, branch, commit, p
 
 Todo novo problema, warning, vulnerabilidade, risco, melhoria ou item observado deve ser registrado no Trello como card novo ou comentario em card existente. Registrar no Trello nao significa tratar imediatamente; significa preservar historico para decisao posterior.
 
-Sempre que um agente ou desenvolvedor mover, comentar, concluir, cancelar ou alterar status de um card no Trello, o card deve ficar atribuido ao membro responsavel pela execucao no workspace atual. Quando a acao for feita por IA usando o token do Lucas Reiter, atribua o card ao membro `Lucas Reiter`.
+Cards em backlog, prontos ou apenas comentados/triados devem ficar sem membro por padrao. Atribua membro somente quando o card for efetivamente puxado para execucao pelo responsavel operacional. Quando a execucao for feita por IA usando o token do Lucas Reiter, atribua o card puxado ao membro `Lucas Reiter`.
 
 ## Fontes De Verdade
 
@@ -83,6 +83,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-020`: backlog. Padronizar uso seguro de Lombok no backend.
 - `EAI-021`: concluido. Reforcar obrigatoriedade de branch e PR para qualquer mudanca.
 - `EAI-022`: concluido. Registrar novos problemas no Trello e atribuir cards movimentados.
+- `EAI-023`: em andamento. Ajustar atribuicao de membros apenas em cards puxados.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -90,12 +91,12 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- Nenhum card em andamento registrado neste arquivo. Antes de iniciar o proximo desenvolvimento, confirme a ordem atualizada no Trello.
+- `EAI-023`: documentar que backlog e cards apenas triados ficam sem membro; atribuir membro apenas quando o card for puxado para execucao.
 
 Branch sugerida:
 
 ```text
-feature/eai-###-slug-curto
+docs/eai-023-atribuicao-cards-puxados
 ```
 
 ## Validacao Padrao
