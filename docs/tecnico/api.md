@@ -296,13 +296,16 @@ Convencoes:
 - `POST /api/conversations/{id}/messages` envia texto livre pela WhatsApp Cloud API quando a conversa possui mensagem recebida do cliente nos ultimos 24 horas.
 - Fora da janela de 24 horas, `POST /api/conversations/{id}/messages` retorna erro de negocio `WHATSAPP_FREE_TEXT_WINDOW_EXPIRED` e o cliente deve orientar uso de template aprovado.
 - O disparo de template exige autenticacao e acesso ao lead.
-- O disparo de template usa o template ativo da mesma loja do lead, envia o nome do template para a WhatsApp Cloud API e registra a resposta bruta do provedor na mensagem da conversa.
+- O disparo de template usa template ativo e aprovado na Meta, especifico da loja do lead ou global da empresa do lead.
+- O disparo envia para a WhatsApp Cloud API o `name` tecnico exatamente como aprovado na Meta e o `languageCode` do request, do template ou `pt-BR` como default.
 - Eventos de status recebidos pelo webhook atualizam mensagens enviadas pelo `externalMessageId` retornado pela Meta.
 - Dados de status de mensagem recebidos da Meta devem ser salvos pelo sistema.
 - Midias de WhatsApp devem ser armazenadas em S3 ou bucket equivalente, com metadados/referencia persistidos.
 - Placeholders/componentes de templates da Meta devem ser preenchidos automaticamente com dados disponiveis.
 - O idioma padrao para template sem `languageCode` e `pt-BR`.
 - O nome do template no EAI deve ser exatamente o nome aprovado na Meta.
+- Templates expostos por `GET /api/templates` e `GET /api/templates/active` ignoram registros com exclusao logica.
+- `GET /api/templates/active` retorna apenas templates `active=true` com `metaStatus=APPROVED`.
 - DTOs de conversa e mensagem nao expoem entidades de persistencia.
 - Direcao, tipo e status usam codigos tecnicos expostos tambem por `GET /api/metadata`.
 

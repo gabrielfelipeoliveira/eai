@@ -2,6 +2,7 @@ package com.eai.infrastructure.persistence.message;
 
 import com.eai.application.message.MessageTemplateRepository;
 import com.eai.domain.message.MessageTemplate;
+import com.eai.domain.message.MessageTemplateMetaStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,37 +20,37 @@ public class MessageTemplatePersistenceAdapter implements MessageTemplateReposit
 
     @Override
     public List<MessageTemplate> findAll() {
-        return repository.findAllByOrderByNameAsc().stream().map(this::toDomain).toList();
+        return repository.findByDeletedAtIsNullOrderByNameAsc().stream().map(this::toDomain).toList();
     }
 
     @Override
     public List<MessageTemplate> findByCompanyId(UUID companyId) {
-        return repository.findByCompanyIdOrderByNameAsc(companyId).stream().map(this::toDomain).toList();
+        return repository.findByCompanyIdAndDeletedAtIsNullOrderByNameAsc(companyId).stream().map(this::toDomain).toList();
     }
 
     @Override
-    public List<MessageTemplate> findByStoreId(UUID storeId) {
-        return repository.findByStoreIdOrderByNameAsc(storeId).stream().map(this::toDomain).toList();
+    public List<MessageTemplate> findByStoreScope(UUID companyId, UUID storeId) {
+        return repository.findByStoreScopeOrderByNameAsc(companyId, storeId).stream().map(this::toDomain).toList();
     }
 
     @Override
     public List<MessageTemplate> findActive() {
-        return repository.findByActiveTrueOrderByNameAsc().stream().map(this::toDomain).toList();
+        return repository.findByActiveTrueAndMetaStatusAndDeletedAtIsNullOrderByNameAsc(MessageTemplateMetaStatus.APPROVED).stream().map(this::toDomain).toList();
     }
 
     @Override
     public List<MessageTemplate> findActiveByCompanyId(UUID companyId) {
-        return repository.findByCompanyIdAndActiveTrueOrderByNameAsc(companyId).stream().map(this::toDomain).toList();
+        return repository.findByCompanyIdAndActiveTrueAndMetaStatusAndDeletedAtIsNullOrderByNameAsc(companyId, MessageTemplateMetaStatus.APPROVED).stream().map(this::toDomain).toList();
     }
 
     @Override
-    public List<MessageTemplate> findActiveByStoreId(UUID storeId) {
-        return repository.findByStoreIdAndActiveTrueOrderByNameAsc(storeId).stream().map(this::toDomain).toList();
+    public List<MessageTemplate> findActiveByStoreScope(UUID companyId, UUID storeId) {
+        return repository.findActiveByStoreScopeOrderByNameAsc(companyId, storeId, MessageTemplateMetaStatus.APPROVED).stream().map(this::toDomain).toList();
     }
 
     @Override
     public Optional<MessageTemplate> findById(UUID id) {
-        return repository.findById(id).map(this::toDomain);
+        return repository.findById(id).filter(entity -> entity.getDeletedAt() == null).map(this::toDomain);
     }
 
     @Override
@@ -58,8 +59,8 @@ public class MessageTemplatePersistenceAdapter implements MessageTemplateReposit
     }
 
     @Override
-    public void deleteById(UUID id) {
-        repository.deleteById(id);
+    public void softDelete(MessageTemplate template) {
+        repository.save(toEntity(template));
     }
 
     private MessageTemplate toDomain(MessageTemplateJpaEntity entity) {
@@ -70,9 +71,12 @@ public class MessageTemplatePersistenceAdapter implements MessageTemplateReposit
                 entity.getName(),
                 entity.getType(),
                 entity.getContent(),
+                entity.getLanguageCode(),
+                entity.getMetaStatus(),
                 entity.isActive(),
                 entity.getCreatedAt(),
-                entity.getUpdatedAt()
+                entity.getUpdatedAt(),
+                entity.getDeletedAt()
         );
     }
 
@@ -84,9 +88,12 @@ public class MessageTemplatePersistenceAdapter implements MessageTemplateReposit
         entity.setName(template.getName());
         entity.setType(template.getType());
         entity.setContent(template.getContent());
+        entity.setLanguageCode(template.getLanguageCode());
+        entity.setMetaStatus(template.getMetaStatus());
         entity.setActive(template.isActive());
         entity.setCreatedAt(template.getCreatedAt());
         entity.setUpdatedAt(template.getUpdatedAt());
+        entity.setDeletedAt(template.getDeletedAt());
         return entity;
     }
 }

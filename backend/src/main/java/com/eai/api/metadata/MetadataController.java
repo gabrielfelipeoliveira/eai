@@ -10,6 +10,7 @@ import com.eai.domain.lead.FollowUpTaskStatus;
 import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
 import com.eai.domain.message.MessageTemplateType;
+import com.eai.domain.message.MessageTemplateMetaStatus;
 import com.eai.domain.tenant.TenantStatus;
 import com.eai.domain.user.UserRole;
 import com.eai.domain.user.UserStatus;
@@ -37,6 +38,7 @@ public class MetadataController {
                 userStatuses(),
                 tenantStatuses(),
                 messageTemplateTypes(),
+                messageTemplateMetaStatuses(),
                 leadDistributionModes(),
                 emailAccountStatuses(),
                 emailProtocols(),
@@ -128,6 +130,16 @@ public class MetadataController {
                 option(MessageTemplateType.NO_RESPONSE, "message_template.type.no_response", "Sem resposta", 5, "default"),
                 option(MessageTemplateType.SOLD, "message_template.type.sold", "Venda concluida", 6, "success"),
                 option(MessageTemplateType.LOST, "message_template.type.lost", "Lead perdido", 7, "error")
+        );
+    }
+
+    private List<MetadataOptionResponse> messageTemplateMetaStatuses() {
+        return List.of(
+                option(MessageTemplateMetaStatus.PENDING, "message_template.meta_status.pending", "Pendente na Meta", 1, "warning"),
+                option(MessageTemplateMetaStatus.APPROVED, "message_template.meta_status.approved", "Aprovado na Meta", 2, "success"),
+                option(MessageTemplateMetaStatus.REJECTED, "message_template.meta_status.rejected", "Rejeitado na Meta", 3, "error"),
+                option(MessageTemplateMetaStatus.PAUSED, "message_template.meta_status.paused", "Pausado na Meta", 4, "warning"),
+                option(MessageTemplateMetaStatus.DISABLED, "message_template.meta_status.disabled", "Desabilitado na Meta", 5, "default")
         );
     }
 

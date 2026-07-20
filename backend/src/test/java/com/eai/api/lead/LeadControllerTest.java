@@ -77,7 +77,7 @@ class LeadControllerTest {
                         .content("""
                                 {
                                   "status": "FIRST_CONTACT",
-                                  "description": "Primeiro contato realizado"
+                                  "description": "primeiro_contato realizado"
                                 }
                                 """))
                 .andExpect(status().isOk())
@@ -137,7 +137,7 @@ class LeadControllerTest {
         mockMvc.perform(get("/api/templates/active")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("Primeiro contato"));
+                .andExpect(jsonPath("$[0].name").value("primeiro_contato"));
 
         mockMvc.perform(post("/api/templates")
                         .header("Authorization", "Bearer " + token)
@@ -146,15 +146,17 @@ class LeadControllerTest {
                                 {
                                   "companyId": "%s",
                                   "storeId": "%s",
-                                  "name": "Follow up",
-                                  "type": "FOLLOW_UP",
-                                  "content": "Ola {cliente}, posso ajudar com o {veiculo}?",
-                                  "active": true
-                                }
-                                """.formatted(DEFAULT_COMPANY_ID, DEFAULT_STORE_ID)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Follow up"))
-                .andExpect(jsonPath("$.active").value(true));
+                "name": "follow_up",
+                "type": "FOLLOW_UP",
+                "content": "Ola {cliente}, posso ajudar com o {veiculo}?",
+                "active": true
+                }
+                """.formatted(DEFAULT_COMPANY_ID, DEFAULT_STORE_ID)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name").value("follow_up"))
+        .andExpect(jsonPath("$.languageCode").value("pt-BR"))
+        .andExpect(jsonPath("$.metaStatus").value("PENDING"))
+        .andExpect(jsonPath("$.active").value(true));
 
         mockMvc.perform(post("/api/leads/{id}/whatsapp-link", leadId)
                         .header("Authorization", "Bearer " + token)

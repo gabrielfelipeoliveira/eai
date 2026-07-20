@@ -13,6 +13,7 @@ import com.eai.domain.lead.Lead;
 import com.eai.domain.message.LeadCommunication;
 import com.eai.domain.message.LeadCommunicationChannel;
 import com.eai.domain.message.MessageTemplate;
+import com.eai.domain.message.MessageTemplateMetaStatus;
 import com.eai.domain.tenant.Store;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
@@ -59,7 +60,7 @@ public class MessageTemplateService {
         if (hasRole(authenticatedUser, UserRole.MANAGER) && authenticatedUser.storeId() == null) {
             return templateRepository.findByCompanyId(requireCompany(authenticatedUser));
         }
-        return templateRepository.findByStoreId(requireStore(authenticatedUser));
+        return templateRepository.findByStoreScope(requireCompany(authenticatedUser), requireStore(authenticatedUser));
     }
 
     @Transactional(readOnly = true)
@@ -70,7 +71,7 @@ public class MessageTemplateService {
         if (hasRole(authenticatedUser, UserRole.MANAGER) && authenticatedUser.storeId() == null) {
             return templateRepository.findActiveByCompanyId(requireCompany(authenticatedUser));
         }
-        return templateRepository.findActiveByStoreId(requireStore(authenticatedUser));
+        return templateRepository.findActiveByStoreScope(requireCompany(authenticatedUser), requireStore(authenticatedUser));
     }
 
     @Transactional(readOnly = true)
@@ -90,6 +91,8 @@ public class MessageTemplateService {
                 command.name(),
                 command.type(),
                 command.content(),
+                command.languageCode(),
+                command.metaStatus(),
                 command.active()
         ));
     }
@@ -100,7 +103,7 @@ public class MessageTemplateService {
         assertCanAccessTemplate(template, authenticatedUser);
         validateTenant(command.companyId(), command.storeId());
         assertCanManageTenant(command.companyId(), command.storeId(), authenticatedUser);
-        template.update(command.companyId(), command.storeId(), command.name(), command.type(), command.content(), command.active());
+        template.update(command.companyId(), command.storeId(), command.name(), command.type(), command.content(), command.languageCode(), command.metaStatus(), command.active());
         return templateRepository.save(template);
     }
 
@@ -108,28 +111,22 @@ public class MessageTemplateService {
     public void deleteTemplate(UUID id, AuthenticatedUser authenticatedUser) {
         MessageTemplate template = findRequired(id);
         assertCanAccessTemplate(template, authenticatedUser);
-        templateRepository.deleteById(id);
+        template.softDelete();
+        templateRepository.softDelete(template);
     }
 
     @Transactional
     public WhatsappLinkResult generateWhatsappLink(UUID leadId, UUID templateId, AuthenticatedUser authenticatedUser) {
         Lead lead = leadService.getLead(leadId, authenticatedUser);
         MessageTemplate template = findRequired(templateId);
-        if (!template.isActive() || !template.getCompanyId().equals(lead.getCompanyId()) || !template.getStoreId().equals(lead.getStoreId())) {
+        if (!canUseTemplateForLead(template, lead)) {
             throw new NotFoundException("Message template not found");
         }
 
         User seller = userRepository.findById(lead.getAssignedToUserId() == null ? authenticatedUser.id() : lead.getAssignedToUserId())
                 .orElseThrow(() -> new NotFoundException("Seller not found"));
         Store store = storeService.findRequired(lead.getStoreId());
-        String message = MessageTemplateRenderer.render(template.getContent(), Map.of(
-                "cliente", valueOrEmpty(lead.getCustomerName()),
-                "telefone", valueOrEmpty(lead.getCustomerPhone()),
-                "veiculo", valueOrEmpty(vehicleDescription(lead)),
-                "vendedor", valueOrEmpty(seller.getName()),
-                "loja", valueOrEmpty(store.getName()),
-                "cidade", valueOrEmpty(lead.getCustomerCity())
-        ));
+        String message = MessageTemplateRenderer.render(template.getContent(), placeholders(lead, seller, store));
         String phone = toWhatsappPhone(lead.getCustomerPhone());
         String url = "https://wa.me/" + phone + "?text=" + UriUtils.encode(message, StandardCharsets.UTF_8);
 
@@ -156,8 +153,11 @@ public class MessageTemplateService {
     }
 
     private void validateTenant(UUID companyId, UUID storeId) {
-        if (companyId == null || storeId == null) {
-            throw new IllegalArgumentException("companyId and storeId are required");
+        if (companyId == null) {
+            throw new IllegalArgumentException("companyId is required");
+        }
+        if (storeId == null) {
+            return;
         }
         Store store = storeService.findRequired(storeId);
         if (!store.getCompanyId().equals(companyId)) {
@@ -170,11 +170,14 @@ public class MessageTemplateService {
             return;
         }
         if (hasRole(authenticatedUser, UserRole.MANAGER) && template.getCompanyId().equals(requireCompany(authenticatedUser))) {
-            if (authenticatedUser.storeId() == null || template.getStoreId().equals(authenticatedUser.storeId())) {
+            if (authenticatedUser.storeId() == null || template.getStoreId() == null || template.getStoreId().equals(authenticatedUser.storeId())) {
                 return;
             }
         }
-        if (template.getStoreId().equals(requireStore(authenticatedUser))) {
+        if (template.getStoreId() == null && template.getCompanyId().equals(requireCompany(authenticatedUser))) {
+            return;
+        }
+        if (template.getStoreId() != null && template.getStoreId().equals(requireStore(authenticatedUser))) {
             return;
         }
         throw new ForbiddenException("Access denied for message template");
@@ -185,7 +188,7 @@ public class MessageTemplateService {
             return;
         }
         if (hasRole(authenticatedUser, UserRole.MANAGER) && companyId.equals(requireCompany(authenticatedUser))) {
-            if (authenticatedUser.storeId() == null || storeId.equals(authenticatedUser.storeId())) {
+            if (authenticatedUser.storeId() == null || storeId == null || storeId.equals(authenticatedUser.storeId())) {
                 return;
             }
         }
@@ -212,6 +215,25 @@ public class MessageTemplateService {
 
     private String valueOrEmpty(String value) {
         return value == null ? "" : value;
+    }
+
+    private boolean canUseTemplateForLead(MessageTemplate template, Lead lead) {
+        return template.isActive()
+                && !template.isDeleted()
+                && template.getMetaStatus() == MessageTemplateMetaStatus.APPROVED
+                && template.getCompanyId().equals(lead.getCompanyId())
+                && (template.getStoreId() == null || template.getStoreId().equals(lead.getStoreId()));
+    }
+
+    private Map<String, String> placeholders(Lead lead, User seller, Store store) {
+        return Map.of(
+                "cliente", valueOrEmpty(lead.getCustomerName()),
+                "telefone", valueOrEmpty(lead.getCustomerPhone()),
+                "veiculo", valueOrEmpty(vehicleDescription(lead)),
+                "vendedor", valueOrEmpty(seller.getName()),
+                "loja", valueOrEmpty(store.getName()),
+                "cidade", valueOrEmpty(lead.getCustomerCity())
+        );
     }
 
     private String toWhatsappPhone(String phone) {

@@ -127,9 +127,9 @@ Use `mvn clean verify` como validacao padrao do backend. `mvn test` sem `clean` 
 
 Ultima validacao em 2026-07-20:
 
-- Branch `feature/eai-009-importacao-email-duplicidade-loja`.
-- Backend `mvn clean verify` via Docker passou com 80 testes, 0 falhas, 0 erros e 0 skips.
-- Frontend nao foi alterado nesta tarefa.
+- Branch `feature/eai-010-templates-whatsapp-placeholders-soft-delete`.
+- Backend `mvn clean verify` via Docker passou com 85 testes, 0 falhas, 0 erros e 0 skips.
+- Frontend `npm run build` via Docker passou.
 - Avisos conhecidos:
 - Flyway reporta H2 2.4.240 mais novo que a versao verificada.
 - SpringDoc `/v3/api-docs` e `/swagger-ui.html` habilitados por default.
