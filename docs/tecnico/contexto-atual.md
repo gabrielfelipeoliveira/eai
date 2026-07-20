@@ -83,7 +83,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-020`: backlog. Padronizar uso seguro de Lombok no backend.
 - `EAI-021`: concluido. Reforcar obrigatoriedade de branch e PR para qualquer mudanca.
 - `EAI-022`: concluido. Registrar novos problemas no Trello e atribuir cards movimentados.
-- `EAI-023`: em andamento. Ajustar atribuicao de membros apenas em cards puxados.
+- `EAI-023`: concluido. Ajustar atribuicao de membros apenas em cards puxados.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -91,12 +91,12 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- `EAI-023`: documentar que backlog e cards apenas triados ficam sem membro; atribuir membro apenas quando o card for puxado para execucao.
+- Nenhum card em andamento registrado neste arquivo. Antes de iniciar o proximo desenvolvimento, confirme a ordem atualizada no Trello.
 
 Branch sugerida:
 
 ```text
-docs/eai-023-atribuicao-cards-puxados
+feature/eai-###-slug-curto
 ```
 
 ## Validacao Padrao
