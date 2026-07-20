@@ -7,12 +7,16 @@ import com.eai.application.lead.PageResult;
 import com.eai.domain.item.Item;
 import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadStatus;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -23,6 +27,7 @@ import java.util.UUID;
 public class LeadPersistenceAdapter implements LeadRepository {
 
     private static final List<LeadStatus> PENDING_STATUSES = List.of(LeadStatus.NEW, LeadStatus.AVAILABLE);
+    private static final List<LeadStatus> SELLER_AVAILABLE_STATUSES = List.of(LeadStatus.NEW, LeadStatus.AVAILABLE);
     private static final List<LeadStatus> OPEN_STATUSES = List.of(
             LeadStatus.ASSIGNED,
             LeadStatus.FIRST_CONTACT,
@@ -54,7 +59,7 @@ public class LeadPersistenceAdapter implements LeadRepository {
 
     @Override
     public PageResult<Lead> search(LeadSearchCriteria criteria, int page, int size) {
-        var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
         var result = repository.findAll(toSpecification(criteria), pageable);
         return new PageResult<>(
                 result.getContent().stream().map(this::toDomain).toList(),
@@ -67,7 +72,7 @@ public class LeadPersistenceAdapter implements LeadRepository {
 
     @Override
     public List<Lead> findAll(LeadSearchCriteria criteria) {
-        return repository.findAll(toSpecification(criteria), Sort.by(Sort.Direction.ASC, "updatedAt")).stream()
+        return repository.findAll(toSpecification(criteria), Sort.by(Sort.Direction.ASC, "createdAt")).stream()
                 .map(this::toDomain)
                 .toList();
     }
@@ -125,6 +130,7 @@ public class LeadPersistenceAdapter implements LeadRepository {
     private Specification<LeadJpaEntity> toSpecification(LeadSearchCriteria criteria) {
         return (root, query, builder) -> {
             var predicates = new ArrayList<Predicate>();
+            Join<LeadJpaEntity, String> additionalPhones = null;
             if (criteria.scopeCompanyId() != null) {
                 predicates.add(builder.equal(root.get("companyId"), criteria.scopeCompanyId()));
             }
@@ -142,6 +148,15 @@ public class LeadPersistenceAdapter implements LeadRepository {
             if (criteria.assignedToUserId() != null) {
                 predicates.add(builder.equal(root.get("assignedToUserId"), criteria.assignedToUserId()));
             }
+            if (criteria.visibleToSellerUserId() != null) {
+                predicates.add(builder.or(
+                        builder.equal(root.get("assignedToUserId"), criteria.visibleToSellerUserId()),
+                        builder.and(
+                                builder.isNull(root.get("assignedToUserId")),
+                                root.get("status").in(SELLER_AVAILABLE_STATUSES)
+                        )
+                ));
+            }
             if (criteria.createdFrom() != null) {
                 predicates.add(builder.greaterThanOrEqualTo(root.get("createdAt"), criteria.createdFrom()));
             }
@@ -149,28 +164,100 @@ public class LeadPersistenceAdapter implements LeadRepository {
                 predicates.add(builder.lessThanOrEqualTo(root.get("createdAt"), criteria.createdTo()));
             }
             if (criteria.vehicle() != null && !criteria.vehicle().isBlank()) {
-                predicates.add(builder.like(builder.lower(root.get("vehicleInterest")), like(criteria.vehicle())));
+                predicates.add(builder.like(normalizedText(builder, root.get("vehicleInterest")), likeNormalized(criteria.vehicle())));
             }
             if (criteria.phone() != null && !criteria.phone().isBlank()) {
-                predicates.add(builder.like(builder.lower(root.get("customerPhone")), like(criteria.phone())));
+                additionalPhones = root.join("additionalPhones", JoinType.LEFT);
+                query.distinct(true);
+                String phoneValue = likePhone(criteria.phone());
+                predicates.add(phoneValue == null
+                        ? builder.disjunction()
+                        : builder.or(
+                                builder.like(normalizedPhone(builder, root.get("customerPhone")), phoneValue),
+                                builder.like(normalizedPhone(builder, additionalPhones), phoneValue)
+                        ));
             }
             if (criteria.text() != null && !criteria.text().isBlank()) {
-                String value = like(criteria.text());
+                if (additionalPhones == null) {
+                    additionalPhones = root.join("additionalPhones", JoinType.LEFT);
+                    query.distinct(true);
+                }
+                String value = likeNormalized(criteria.text());
+                String phoneValue = likePhone(criteria.text());
+                List<Predicate> textPredicates = new ArrayList<>();
+                textPredicates.add(builder.like(normalizedText(builder, root.get("customerName")), value));
+                textPredicates.add(builder.like(normalizedText(builder, root.get("customerEmail")), value));
+                textPredicates.add(builder.like(normalizedText(builder, root.get("customerCity")), value));
+                textPredicates.add(builder.like(normalizedText(builder, root.get("vehicleInterest")), value));
+                textPredicates.add(builder.like(normalizedText(builder, root.get("originalMessage")), value));
+                if (phoneValue != null) {
+                    textPredicates.add(builder.like(normalizedPhone(builder, root.get("customerPhone")), phoneValue));
+                    textPredicates.add(builder.like(normalizedPhone(builder, additionalPhones), phoneValue));
+                }
                 predicates.add(builder.or(
-                        builder.like(builder.lower(root.get("customerName")), value),
-                        builder.like(builder.lower(root.get("customerEmail")), value),
-                        builder.like(builder.lower(root.get("customerCity")), value),
-                        builder.like(builder.lower(root.get("vehicleInterest")), value),
-                        builder.like(builder.lower(root.get("customerPhone")), value),
-                        builder.like(builder.lower(root.get("originalMessage")), value)
+                        textPredicates.toArray(Predicate[]::new)
                 ));
             }
             return builder.and(predicates.toArray(Predicate[]::new));
         };
     }
 
-    private String like(String value) {
-        return "%" + value.trim().toLowerCase(Locale.ROOT) + "%";
+    private String likeNormalized(String value) {
+        return "%" + normalizeText(value) + "%";
+    }
+
+    private String likePhone(String value) {
+        String digits = value.replaceAll("\\D", "");
+        return digits.isEmpty() ? null : "%" + digits + "%";
+    }
+
+    private String normalizeText(String value) {
+        String withoutAccents = Normalizer.normalize(value.trim().toLowerCase(Locale.ROOT), Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+        return withoutAccents;
+    }
+
+    private Expression<String> normalizedText(jakarta.persistence.criteria.CriteriaBuilder builder, Expression<String> expression) {
+        Expression<String> normalized = builder.lower(builder.coalesce(expression, ""));
+        normalized = replace(builder, normalized, "á", "a");
+        normalized = replace(builder, normalized, "à", "a");
+        normalized = replace(builder, normalized, "ã", "a");
+        normalized = replace(builder, normalized, "â", "a");
+        normalized = replace(builder, normalized, "ä", "a");
+        normalized = replace(builder, normalized, "é", "e");
+        normalized = replace(builder, normalized, "è", "e");
+        normalized = replace(builder, normalized, "ê", "e");
+        normalized = replace(builder, normalized, "ë", "e");
+        normalized = replace(builder, normalized, "í", "i");
+        normalized = replace(builder, normalized, "ì", "i");
+        normalized = replace(builder, normalized, "î", "i");
+        normalized = replace(builder, normalized, "ï", "i");
+        normalized = replace(builder, normalized, "ó", "o");
+        normalized = replace(builder, normalized, "ò", "o");
+        normalized = replace(builder, normalized, "õ", "o");
+        normalized = replace(builder, normalized, "ô", "o");
+        normalized = replace(builder, normalized, "ö", "o");
+        normalized = replace(builder, normalized, "ú", "u");
+        normalized = replace(builder, normalized, "ù", "u");
+        normalized = replace(builder, normalized, "û", "u");
+        normalized = replace(builder, normalized, "ü", "u");
+        normalized = replace(builder, normalized, "ç", "c");
+        return normalized;
+    }
+
+    private Expression<String> normalizedPhone(jakarta.persistence.criteria.CriteriaBuilder builder, Expression<String> expression) {
+        Expression<String> normalized = builder.coalesce(expression, "");
+        normalized = replace(builder, normalized, "+", "");
+        normalized = replace(builder, normalized, " ", "");
+        normalized = replace(builder, normalized, "-", "");
+        normalized = replace(builder, normalized, "(", "");
+        normalized = replace(builder, normalized, ")", "");
+        normalized = replace(builder, normalized, ".", "");
+        return normalized;
+    }
+
+    private Expression<String> replace(jakarta.persistence.criteria.CriteriaBuilder builder, Expression<String> expression, String target, String replacement) {
+        return builder.function("replace", String.class, expression, builder.literal(target), builder.literal(replacement));
     }
 
     private Lead toDomain(LeadJpaEntity entity) {

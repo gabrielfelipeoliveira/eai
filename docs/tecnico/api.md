@@ -153,6 +153,7 @@ Perguntas para o Software Architect:
 - Filtros de data/hora devem usar ISO 8601.
 - Busca textual de leads deve ser normalizada.
 - Ordenacao padrao da listagem de leads deve ser por chegada.
+- A listagem de leads aplica escopo antes da paginacao: `ADMIN` visualiza todos os leads, `MANAGER` visualiza leads da empresa, `STORE_MANAGER` visualiza leads da loja e `SELLER` visualiza leads disponiveis sem dono ou sob sua responsabilidade.
 - Filtros obrigatorios de tela nao sao relevantes para o MVP neste momento.
 
 Status:

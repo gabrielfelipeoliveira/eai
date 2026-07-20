@@ -63,7 +63,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-004`: concluido. Alinhar status de lead e pipeline com etapas opcionais de F&I.
 - `EAI-005`: concluido. Modelar Item, Veiculo, telefone E.164 e moeda de venda.
 - `EAI-006`: concluido. Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
-- `EAI-007`: backlog. Ajustar visibilidade, ordenacao e busca normalizada de leads.
+- `EAI-007`: concluido. Ajustar visibilidade, ordenacao e busca normalizada de leads.
 - `EAI-008`: backlog. Ajustar notas, observacoes, tags globais e historico de lead.
 - `EAI-009`: backlog. Ajustar importacao de leads por e-mail e duplicidade por telefone+loja.
 - `EAI-010`: backlog. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
@@ -120,8 +120,8 @@ Use `mvn clean verify` como validacao padrao do backend. `mvn test` sem `clean` 
 
 Ultima validacao em 2026-07-19:
 
-- Branch `feature/eai-006-ciclo-vida-recontato-duplicidade-telefones`.
-- Backend `mvn clean verify` via Docker passou com 64 testes, 0 falhas.
+- Branch `feature/eai-007-visibilidade-ordenacao-busca-leads`.
+- Backend `mvn clean verify` via Docker passou com 74 testes, 0 falhas.
 - Frontend `npm run build` via Docker passou.
 - Avisos conhecidos:
 - Flyway reporta H2 2.4.240 mais novo que a versao verificada.

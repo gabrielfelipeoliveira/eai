@@ -46,11 +46,17 @@ public class PipelineService {
     private LeadSearchCriteria pipelineScope(AuthenticatedUser authenticatedUser) {
         UUID scopeCompanyId = null;
         UUID scopeStoreId = null;
+        UUID visibleToSellerUserId = null;
         if (!hasRole(authenticatedUser, UserRole.ADMIN)) {
             scopeCompanyId = authenticatedUser.companyId();
             scopeStoreId = authenticatedUser.storeId();
+            if (hasRole(authenticatedUser, UserRole.SELLER)
+                    && !hasRole(authenticatedUser, UserRole.MANAGER)
+                    && !hasRole(authenticatedUser, UserRole.STORE_MANAGER)) {
+                visibleToSellerUserId = authenticatedUser.id();
+            }
         }
-        return new LeadSearchCriteria(null, null, null, null, null, null, null, null, null, scopeCompanyId, scopeStoreId);
+        return new LeadSearchCriteria(null, null, null, null, null, null, null, null, null, scopeCompanyId, scopeStoreId, visibleToSellerUserId);
     }
 
     private boolean hasRole(AuthenticatedUser authenticatedUser, UserRole role) {

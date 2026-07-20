@@ -335,6 +335,37 @@ class LeadControllerTest {
                 .andExpect(jsonPath("$.additionalPhones[0]").value("+5511999770002"));
     }
 
+    @DisplayName("Listagem de leads usa busca textual normalizada sem acentos")
+    @Test
+    void listLeadsUsesNormalizedTextSearch() throws Exception {
+        String token = login();
+        String leadId = createManualLead(token, "Joao Agil EAI007", "11999770101");
+
+        mockMvc.perform(get("/api/leads")
+                        .header("Authorization", "Bearer " + token)
+                        .param("text", "joão ágil eai007"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[*].id", hasItem(leadId)));
+    }
+
+    @DisplayName("Listagem de leads ordena por chegada do mais antigo para o mais recente")
+    @Test
+    void listLeadsOrdersByArrivalAscending() throws Exception {
+        String token = login();
+        String suffix = UUID.randomUUID().toString();
+        String olderLeadId = createManualLead(token, "Cliente Ordem EAI007 Antigo " + suffix, "11999770102");
+        Thread.sleep(5);
+        String newerLeadId = createManualLead(token, "Cliente Ordem EAI007 Novo " + suffix, "11999770103");
+
+        mockMvc.perform(get("/api/leads")
+                        .header("Authorization", "Bearer " + token)
+                        .param("text", suffix)
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(olderLeadId))
+                .andExpect(jsonPath("$.content[1].id").value(newerLeadId));
+    }
+
     private String login() throws Exception {
         String response = mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)

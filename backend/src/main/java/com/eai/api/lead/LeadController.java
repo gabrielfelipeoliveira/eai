@@ -43,7 +43,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/leads")
-@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SELLER')")
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER')")
 public class LeadController {
 
     private final LeadService leadService;
@@ -167,7 +167,7 @@ public class LeadController {
     }
 
     @PostMapping("/distribute-pending")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STORE_MANAGER')")
     public List<LeadResponse> distributePending(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
         return distributionService.distributePending(authenticatedUser).stream()
                 .map(this::toResponse)
