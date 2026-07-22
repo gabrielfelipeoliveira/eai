@@ -13,6 +13,7 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.List;
 
 @Component
 public class AesGcmEmailCredentialEncryptionService implements EncryptionService {
@@ -22,11 +23,15 @@ public class AesGcmEmailCredentialEncryptionService implements EncryptionService
     private static final int GCM_TAG_BITS = 128;
     private static final int IV_BYTES = 12;
 
-    private final SecretKeySpec keySpec;
+    private final SecretKeySpec currentKeySpec;
+    private final List<SecretKeySpec> previousKeySpecs;
     private final SecureRandom secureRandom = new SecureRandom();
 
     public AesGcmEmailCredentialEncryptionService(EmailCredentialEncryptionProperties properties) {
-        this.keySpec = new SecretKeySpec(sha256(properties.effectiveSecret()), "AES");
+        this.currentKeySpec = keySpec(properties.effectiveSecret());
+        this.previousKeySpecs = properties.effectivePreviousSecrets().stream()
+                .map(AesGcmEmailCredentialEncryptionService::keySpec)
+                .toList();
     }
 
     @Override
@@ -39,7 +44,7 @@ public class AesGcmEmailCredentialEncryptionService implements EncryptionService
 
         try {
             Cipher cipher = Cipher.getInstance(ALGORITHM);
-            cipher.init(Cipher.ENCRYPT_MODE, keySpec, new GCMParameterSpec(GCM_TAG_BITS, iv));
+            cipher.init(Cipher.ENCRYPT_MODE, currentKeySpec, new GCMParameterSpec(GCM_TAG_BITS, iv));
             byte[] cipherText = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
             return VERSION_PREFIX + base64(iv) + ":" + base64(cipherText);
         } catch (GeneralSecurityException exception) {
@@ -55,24 +60,77 @@ public class AesGcmEmailCredentialEncryptionService implements EncryptionService
         if (!encryptedText.startsWith(VERSION_PREFIX)) {
             return decryptLegacyBase64(encryptedText);
         }
+        return decryptWithKeyring(parseVersionedCredential(encryptedText));
+    }
 
+    @Override
+    public boolean requiresReencryption(String encryptedText) {
+        if (encryptedText == null || encryptedText.isBlank()) {
+            throw new IllegalArgumentException("encrypted password required");
+        }
+        if (!encryptedText.startsWith(VERSION_PREFIX)) {
+            decryptLegacyBase64(encryptedText);
+            return true;
+        }
+
+        VersionedCredential credential = parseVersionedCredential(encryptedText);
+        if (canDecryptWith(credential, currentKeySpec)) {
+            return false;
+        }
+        if (previousKeySpecs.stream().anyMatch(previousKeySpec -> canDecryptWith(credential, previousKeySpec))) {
+            return true;
+        }
+        throw new IllegalArgumentException("Invalid encrypted email credential");
+    }
+
+    private VersionedCredential parseVersionedCredential(String encryptedText) {
         String payload = encryptedText.substring(VERSION_PREFIX.length());
         String[] parts = payload.split(":", 2);
         if (parts.length != 2) {
             throw new IllegalArgumentException("Invalid encrypted email credential format");
         }
-
         try {
-            byte[] iv = Base64.getDecoder().decode(parts[0]);
-            byte[] cipherText = Base64.getDecoder().decode(parts[1]);
-            Cipher cipher = Cipher.getInstance(ALGORITHM);
-            cipher.init(Cipher.DECRYPT_MODE, keySpec, new GCMParameterSpec(GCM_TAG_BITS, iv));
-            return new String(cipher.doFinal(cipherText), StandardCharsets.UTF_8);
-        } catch (AEADBadTagException exception) {
-            throw new IllegalArgumentException("Invalid encrypted email credential", exception);
-        } catch (GeneralSecurityException | IllegalArgumentException exception) {
+            return new VersionedCredential(
+                    Base64.getDecoder().decode(parts[0]),
+                    Base64.getDecoder().decode(parts[1])
+            );
+        } catch (IllegalArgumentException exception) {
             throw new IllegalArgumentException("Could not decrypt email credential", exception);
         }
+    }
+
+    private String decryptWithKeyring(VersionedCredential credential) {
+        try {
+            return decryptWith(credential, currentKeySpec);
+        } catch (AEADBadTagException exception) {
+            for (SecretKeySpec previousKeySpec : previousKeySpecs) {
+                try {
+                    return decryptWith(credential, previousKeySpec);
+                } catch (AEADBadTagException ignored) {
+                    // Try the next configured previous key.
+                } catch (GeneralSecurityException failure) {
+                    throw new IllegalArgumentException("Could not decrypt email credential", failure);
+                }
+            }
+            throw new IllegalArgumentException("Invalid encrypted email credential", exception);
+        } catch (GeneralSecurityException exception) {
+            throw new IllegalArgumentException("Could not decrypt email credential", exception);
+        }
+    }
+
+    private boolean canDecryptWith(VersionedCredential credential, SecretKeySpec keySpec) {
+        try {
+            decryptWith(credential, keySpec);
+            return true;
+        } catch (GeneralSecurityException exception) {
+            return false;
+        }
+    }
+
+    private String decryptWith(VersionedCredential credential, SecretKeySpec keySpec) throws GeneralSecurityException {
+        Cipher cipher = Cipher.getInstance(ALGORITHM);
+        cipher.init(Cipher.DECRYPT_MODE, keySpec, new GCMParameterSpec(GCM_TAG_BITS, credential.iv()));
+        return new String(cipher.doFinal(credential.cipherText()), StandardCharsets.UTF_8);
     }
 
     private String decryptLegacyBase64(String encryptedText) {
@@ -81,6 +139,10 @@ public class AesGcmEmailCredentialEncryptionService implements EncryptionService
         } catch (IllegalArgumentException exception) {
             throw new IllegalArgumentException("Invalid legacy email credential format", exception);
         }
+    }
+
+    private static SecretKeySpec keySpec(String secret) {
+        return new SecretKeySpec(sha256(secret), "AES");
     }
 
     private static byte[] sha256(String secret) {
@@ -93,5 +155,8 @@ public class AesGcmEmailCredentialEncryptionService implements EncryptionService
 
     private static String base64(byte[] value) {
         return Base64.getEncoder().encodeToString(value);
+    }
+
+    private record VersionedCredential(byte[] iv, byte[] cipherText) {
     }
 }

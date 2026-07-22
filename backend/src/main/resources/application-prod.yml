@@ -27,6 +27,8 @@ eai:
   email:
     credentials:
       secret: ${EAI_EMAIL_CREDENTIALS_SECRET}
+      previous-secrets: ${EAI_EMAIL_CREDENTIALS_PREVIOUS_SECRETS:}
+      reencrypt-on-startup: ${EAI_EMAIL_CREDENTIALS_REENCRYPT_ON_STARTUP:false}
     importer:
       enabled: ${EAI_EMAIL_IMPORTER_ENABLED:false}
       fixed-delay: ${EAI_EMAIL_IMPORTER_FIXED_DELAY:60000}

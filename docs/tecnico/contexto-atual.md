@@ -153,6 +153,16 @@ Reserva operacional EAI-036 em 2026-07-22:
 - Escopo: implementar keyring para credenciais IMAP com chave atual e chaves anteriores, permitindo recriptografia idempotente de credenciais legadas ou cifradas com chave anterior sem expor segredos em logs.
 - UX dispensado: hardening backend sem impacto visual.
 
+Implementacao EAI-036 em 2026-07-22:
+
+- `EncryptionService` passou a indicar quando uma credencial precisa de recriptografia.
+- AES/GCM de credenciais IMAP passou a aceitar chave atual e chaves anteriores via `EAI_EMAIL_CREDENTIALS_PREVIOUS_SECRETS`.
+- Novas gravacoes seguem usando apenas `EAI_EMAIL_CREDENTIALS_SECRET`.
+- Criado servico transacional e job administrativo opt-in por `EAI_EMAIL_CREDENTIALS_REENCRYPT_ON_STARTUP=true` para recriptografar credenciais legadas Base64 ou cifradas com chave anterior.
+- A recriptografia e idempotente, registra apenas metricas agregadas e preserva o valor original em falha parcial.
+- Validacao focada: Docker `mvn -Dtest=AesGcmEmailCredentialEncryptionServiceTest,EmailCredentialReencryptionServiceTest,EmailCredentialReencryptionJobTest test` passou com 11 testes.
+- Validacao backend completa: Docker `mvn clean verify` passou com 145 testes unitarios no Surefire e 2 testes de integracao no Failsafe/Testcontainers.
+
 Reserva operacional EAI-033 em 2026-07-22:
 
 - Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
