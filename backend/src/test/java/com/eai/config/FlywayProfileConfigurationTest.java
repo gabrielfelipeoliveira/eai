@@ -24,6 +24,26 @@ class FlywayProfileConfigurationTest {
         assertThat(locations).doesNotContain("db/seed/mandatory", "db/seed/demo");
     }
 
+    @DisplayName("Perfil prod desabilita OpenAPI publico por padrao")
+    @Test
+    void prodProfileDisablesPublicOpenApiByDefault() throws IOException {
+        PropertySource<?> propertySource = yamlProperties("application-prod.yml");
+
+        assertThat(propertySource.getProperty("springdoc.api-docs.enabled"))
+                .isEqualTo("${SPRINGDOC_API_DOCS_ENABLED:false}");
+        assertThat(propertySource.getProperty("springdoc.swagger-ui.enabled"))
+                .isEqualTo("${SPRINGDOC_SWAGGER_UI_ENABLED:false}");
+    }
+
+    @DisplayName("Perfil prod exige origens CORS configuradas por ambiente")
+    @Test
+    void prodProfileRequiresCorsOriginsFromEnvironment() throws IOException {
+        PropertySource<?> propertySource = yamlProperties("application-prod.yml");
+
+        assertThat(propertySource.getProperty("eai.security.cors.allowed-origins"))
+                .isEqualTo("${EAI_CORS_ALLOWED_ORIGINS}");
+    }
+
     @DisplayName("Perfil demo habilita seed obrigatorio e massa demonstrativa explicitamente")
     @Test
     void demoFlywayLocationsIncludeMandatoryAndDemoSeeds() throws IOException {
@@ -36,10 +56,14 @@ class FlywayProfileConfigurationTest {
     }
 
     private String flywayLocations(String resourceName) throws IOException {
-        PropertySource<?> propertySource = loader.load(
+        PropertySource<?> propertySource = yamlProperties(resourceName);
+        return (String) propertySource.getProperty("spring.flyway.locations");
+    }
+
+    private PropertySource<?> yamlProperties(String resourceName) throws IOException {
+        return loader.load(
                 resourceName,
                 resourceLoader.getResource("classpath:" + resourceName)
         ).getFirst();
-        return (String) propertySource.getProperty("spring.flyway.locations");
     }
 }
