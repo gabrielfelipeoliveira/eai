@@ -28,7 +28,7 @@ Se documentacao, Trello e codigo estiverem em conflito, nao escolha um lado sile
 
 ## Registro Operacional EAI-013
 
-- Status em 2026-07-22: em desenvolvimento na branch `feature/eai-013-seeds-demo-producao`.
+- Status em 2026-07-22: aguardando Code Review no PR `https://github.com/gabrielfelipeoliveira/eai/pull/19`, branch `feature/eai-013-seeds-demo-producao`.
 - Escopo planejado: separar migrations de schema, seed tecnico obrigatorio e massa demonstrativa; garantir que producao execute apenas `classpath:db/migration`; atualizar testes e documentacao relacionados.
 - Validacoes: backend `rtk mvn clean verify` passou com 99 testes; frontend `rtk npm run build` passou com warning conhecido de chunk JS acima de 500 kB apos minificacao.
 
@@ -85,7 +85,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-010`: concluido. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
 - `EAI-011`: concluido. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
 - `EAI-012`: implementado em 2026-07-21. Armazenamento local/dev de midias WhatsApp via porta de storage, contrato preparado para bucket equivalente, webhook com download/storage de midias recebidas, envio autenticado de midia e download autenticado.
-- `EAI-013`: em andamento em 2026-07-22. Separar seeds obrigatorios de dados demonstrativos e bloquear demo em producao.
+- `EAI-013`: aguardando Code Review em 2026-07-22 no PR `#19`. Separar seeds obrigatorios de dados demonstrativos e bloquear demo em producao.
 - `EAI-014`: backlog. Implementar fluxo LGPD basico manual por ADMIN.
 - `EAI-015`: concluido. Padronizar validacao CI com backend clean verify e frontend build.
 - `EAI-016`: backlog. Adicionar testes de integracao com Postgres via Testcontainers.
@@ -105,7 +105,7 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- `EAI-013`: separar seeds obrigatorios de dados demonstrativos e bloquear demo em producao.
+- Nenhum card em desenvolvimento ativo. `EAI-013` esta aguardando Code Review no PR `#19`.
 
 Branch sugerida:
 
