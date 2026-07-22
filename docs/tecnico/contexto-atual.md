@@ -129,6 +129,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-031`: concluido em 2026-07-22 no PR `#35`. Limitar e validar upload/download de midias WhatsApp. UX dispensado: hardening backend sem impacto visual.
 - `EAI-033`: concluido em 2026-07-22 no PR `#36`. Endurecer implementacao de JWT. UX dispensado: hardening backend sem impacto visual.
 - `EAI-036`: concluido em 2026-07-22 no PR `#37`. Implementar keyring e recriptografia de credenciais IMAP. UX dispensado: hardening backend sem impacto visual.
+- `EAI-037`: em andamento com Lucas Reiter. Corrigir lint local com artefatos Playwright ignorados.
 - `EAI-030`: concluido em 2026-07-22 no PR `#38`. Reduzir exposicao de tokens no frontend e fluxo de refresh. UX dispensado: hardening de autenticacao sem mudanca visual planejada.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
@@ -137,13 +138,13 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello.
+- Lucas Reiter: `EAI-037` - corrigir lint local com artefatos Playwright ignorados.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida.
+Lucas Reiter: bugfix/eai-037-eslint-playwright-ignore
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
@@ -178,6 +179,13 @@ Implementacao EAI-018 em 2026-07-22:
 - E2E cobre redirecionamento de rota protegida sem login, login de administrador, bloqueio de tela administrativa para vendedor, listagem/filtro de leads e criacao manual de lead.
 - API dos E2E e mockada nas fronteiras HTTP para manter a suite independente de backend/banco no CI.
 - Status operacional: concluido no PR `https://github.com/gabrielfelipeoliveira/eai/pull/40`.
+
+Reserva operacional EAI-037 em 2026-07-22:
+
+- Card criado em `Em andamento` e atribuido a `Lucas Reiter`.
+- Branch `bugfix/eai-037-eslint-playwright-ignore`.
+- Escopo: corrigir `npm run lint` quando artefatos ignorados do Playwright nao existem localmente.
+- UX dispensado: ajuste de ferramenta sem impacto visual.
 
 Reserva operacional EAI-030 em 2026-07-22:
 
