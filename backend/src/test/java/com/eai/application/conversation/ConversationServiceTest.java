@@ -185,11 +185,11 @@ class ConversationServiceTest {
     void outboundMessageClearsConversationOwnerWhenLeadIsUnassigned() {
         UUID leadId = UUID.fromString("00000000-0000-0000-0000-000000000612");
         Conversation existing = conversation("00000000-0000-0000-0000-000000000412", "00000000-0000-0000-0000-000000000512", leadId.toString(), SELLER_ID);
-        WhatsAppContact contact = new WhatsAppContact(existing.getContactId(), COMPANY_ID, STORE_ID, leadId, "5511999990000", "Cliente", Instant.parse("2026-07-08T10:00:00Z"), Instant.parse("2026-07-08T10:00:00Z"));
+        WhatsAppContact contact = new WhatsAppContact(existing.getContactId(), COMPANY_ID, STORE_ID, leadId, "+5511999990000", "Cliente", Instant.parse("2026-07-08T10:00:00Z"), Instant.parse("2026-07-08T10:00:00Z"));
         Lead lead = lead(leadId, null);
 
         when(leadRepository.findAll(org.mockito.ArgumentMatchers.any())).thenReturn(List.of(lead));
-        when(contactRepository.findByStoreIdAndPhone(STORE_ID, "5511999990000")).thenReturn(Optional.of(contact));
+        when(contactRepository.findByStoreIdAndPhone(STORE_ID, "+5511999990000")).thenReturn(Optional.of(contact));
         when(contactRepository.save(contact)).thenReturn(contact);
         when(conversationRepository.findByContactId(existing.getContactId())).thenReturn(Optional.of(existing));
         when(conversationRepository.save(org.mockito.ArgumentMatchers.any(Conversation.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -349,7 +349,7 @@ class ConversationServiceTest {
                 COMPANY_ID,
                 STORE_ID,
                 "Cliente",
-                "5511999990000",
+                "+5511999990000",
                 null,
                 null,
                 "Honda Civic",
