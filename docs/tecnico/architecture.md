@@ -421,7 +421,7 @@ Estado atual:
 Riscos conhecidos:
 
 - Armazenamento de tokens em `localStorage` e conveniente, mas aumenta exposicao a roubo de tokens por XSS.
-- Rotacao automatica de chave e migracao em lote de credenciais IMAP legadas ainda dependem de definicao operacional.
+- Rotacao automatica de chave e migracao em lote de credenciais IMAP legadas tem politica operacional definida em `docs/tecnico/email-importer.md`, mas dependem de card tecnico para keyring ou job de recriptografia.
 
 Status:
 PENDENTE DE DEFINIÇÃO
@@ -429,7 +429,7 @@ PENDENTE DE DEFINIÇÃO
 Perguntas para o Software Architect:
 
 - Refresh tokens devem migrar para cookies HttpOnly?
-- Qual e a politica de rotacao de chave e migracao em lote para credenciais IMAP?
+- Qual mecanismo tecnico deve ser adotado para keyring ou recriptografia em lote de credenciais IMAP?
 - Quais origens oficiais devem compor `EAI_CORS_ALLOWED_ORIGINS` em cada ambiente produtivo?
 
 ## Arquitetura de Testes

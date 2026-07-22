@@ -99,7 +99,36 @@ A implementacao atual usa a interface `EncryptionService` com AES/GCM e payload 
 
 Valores antigos gravados como Base64 simples continuam sendo lidos para compatibilidade. Ao atualizar a senha de uma conta IMAP, o novo valor passa a ser salvo no formato criptografado versionado.
 
-Para producao, o segredo deve vir de um gerenciador externo ou variavel protegida fora do banco. Rotacao automatica de chave e migracao em lote de credenciais legadas ainda devem ser tratadas em card especifico quando houver definicao operacional.
+Para producao, o segredo deve vir de um gerenciador externo ou variavel protegida fora do banco.
+
+## Politica De Rotacao E Migracao De Credenciais
+
+Estado atual:
+
+- Novas credenciais IMAP sao gravadas com AES/GCM em payload versionado `v1`.
+- Credenciais legadas em Base64 simples continuam sendo lidas apenas para compatibilidade.
+- Atualizar manualmente a senha de uma conta IMAP regrava a credencial no formato `v1`.
+- A implementacao atual usa uma unica chave efetiva derivada de `EAI_EMAIL_CREDENTIALS_SECRET`.
+
+Politica operacional vigente:
+
+- `EAI_EMAIL_CREDENTIALS_SECRET` deve ser tratado como segredo critico de producao.
+- O segredo nao deve ser trocado diretamente em producao sem uma janela operacional planejada, porque credenciais `v1` gravadas com a chave anterior deixarao de ser descriptografadas pela implementacao atual.
+- Rotacao emergencial por suspeita de vazamento deve considerar indisponibilidade temporaria da importacao IMAP ate que as contas sejam regravadas com o novo segredo.
+- A rotacao planejada deve ser feita somente apos existir suporte tecnico para descriptografar com chave anterior e criptografar com chave atual, ou apos uma migracao manual controlada de todas as senhas IMAP.
+
+Migracao de credenciais legadas:
+
+- A estrategia segura preferencial e migrar de forma online: ler a credencial legada ou cifrada antiga, validar a conexao IMAP e regravar a senha no formato `v1` com a chave atual dentro de transacao.
+- A migracao em lote deve registrar quantidade de contas avaliadas, migradas, ignoradas e com falha, sem registrar senhas ou payloads sensiveis.
+- Falhas de migracao devem preservar o valor original para permitir nova tentativa.
+- Enquanto nao houver job/script aprovado, a migracao acontece apenas quando um administrador atualiza a senha da conta.
+
+Proximo card tecnico:
+
+- `EAI-036`: implementar suporte a `EAI_EMAIL_CREDENTIALS_PREVIOUS_SECRETS` ou mecanismo equivalente de keyring.
+- Adicionar job/script administrativo idempotente para recriptografar credenciais IMAP legadas e credenciais cifradas com chave anterior.
+- Testar rollback, falha parcial e ausencia de vazamento de segredo em logs.
 
 ## Limitacoes
 
