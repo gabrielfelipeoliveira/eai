@@ -5,6 +5,7 @@ import com.eai.application.common.NotFoundException;
 import com.eai.application.media.MediaObject;
 import com.eai.application.media.MediaStoragePort;
 import com.eai.application.security.AuthenticatedUser;
+import com.eai.application.whatsapp.WhatsAppMediaValidator;
 import com.eai.domain.conversation.Conversation;
 import com.eai.domain.conversation.ConversationMessage;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class ConversationMediaService {
     private final ConversationService conversationService;
     private final ConversationMessageRepository messageRepository;
     private final MediaStoragePort mediaStorage;
+    private final WhatsAppMediaValidator mediaValidator;
 
     @Transactional
     public ConversationMediaDownload download(UUID conversationId, UUID messageId, AuthenticatedUser authenticatedUser) {
@@ -32,7 +34,11 @@ public class ConversationMediaService {
         if (message.getMediaStorageProvider() == null || message.getMediaStorageKey() == null) {
             throw new ApplicationException("CONVERSATION_MESSAGE_MEDIA_NOT_FOUND", "Conversation message has no stored media");
         }
+        if (message.getMediaSizeBytes() != null) {
+            mediaValidator.validateDownload(message.getMediaMimeType(), message.getMediaSizeBytes());
+        }
         MediaObject media = mediaStorage.read(message.getMediaStorageProvider(), message.getMediaStorageKey());
+        mediaValidator.validateDownload(firstNonBlank(message.getMediaMimeType(), media.mimeType()), media.sizeBytes());
         return new ConversationMediaDownload(
                 firstNonBlank(message.getMediaFileName(), media.fileName(), "media.bin"),
                 firstNonBlank(message.getMediaMimeType(), media.mimeType(), "application/octet-stream"),

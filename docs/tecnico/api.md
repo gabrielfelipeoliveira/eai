@@ -336,7 +336,9 @@ Convencoes:
 - `GET /api/conversations/{id}`, `GET /api/conversations/{id}/messages` e `GET /api/leads/{id}/conversation-messages` registram acesso de `ADMIN` e `MANAGER` para auditoria.
 - `POST /api/conversations/{id}/messages` envia texto livre pela WhatsApp Cloud API quando a conversa possui mensagem recebida do cliente nos ultimos 24 horas.
 - `POST /api/conversations/{id}/media` envia midia por `multipart/form-data` com campo `file` e `caption` opcional, usando a mesma janela de 24 horas do texto livre.
+- `POST /api/conversations/{id}/media` rejeita arquivo vazio, MIME type fora da lista permitida e arquivo acima do limite configurado antes de carregar o conteudo em memoria para envio.
 - `GET /api/conversations/{conversationId}/messages/{messageId}/media` baixa a midia armazenada de forma autenticada, respeitando o mesmo escopo de acesso da conversa.
+- `GET /api/conversations/{conversationId}/messages/{messageId}/media` valida MIME type e tamanho da midia armazenada antes de responder o arquivo.
 - Fora da janela de 24 horas, `POST /api/conversations/{id}/messages` retorna erro de negocio `WHATSAPP_FREE_TEXT_WINDOW_EXPIRED` e o cliente deve orientar uso de template aprovado.
 - O disparo de template exige autenticacao e acesso ao lead.
 - O disparo de template usa template ativo e aprovado na Meta, especifico da loja do lead ou global da empresa do lead.
@@ -344,6 +346,7 @@ Convencoes:
 - Eventos de status recebidos pelo webhook atualizam mensagens enviadas pelo `externalMessageId` retornado pela Meta.
 - Dados de status de mensagem recebidos da Meta devem ser salvos pelo sistema.
 - Midias de WhatsApp devem ser armazenadas em S3 ou bucket equivalente, com metadados/referencia persistidos.
+- Limites padrao para midias WhatsApp seguem o suporte da Cloud API para os tipos usados pelo MVP: imagem 5 MB, audio 16 MB e documento 100 MB.
 - `ConversationMessageResponse` retorna campos nullable de midia armazenada: `mediaStorageProvider`, `mediaStorageKey`, `mediaFileName`, `mediaSizeBytes` e `mediaSha256`.
 - Placeholders/componentes de templates da Meta devem ser preenchidos automaticamente com dados disponiveis.
 - O idioma padrao para template sem `languageCode` e `pt-BR`.
