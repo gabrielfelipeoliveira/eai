@@ -49,7 +49,7 @@ Se documentacao, Trello e codigo estiverem em conflito, nao escolha um lado sile
 
 ## Registro Operacional EAI-020
 
-- Status em 2026-07-22: implementado localmente na branch `chore/eai-020-lombok-seguro`.
+- Status em 2026-07-22: aguardando Code Review no PR `https://github.com/gabrielfelipeoliveira/eai/pull/22`, branch `chore/eai-020-lombok-seguro`.
 - Escopo entregue: services, controllers, adapters e configuracoes com construtores triviais equivalentes passaram a usar `@RequiredArgsConstructor`; dominio manteve `@Getter`; entidades JPA mantiveram `@Getter/@Setter`; DTOs `record` preservados.
 - Validacoes: backend `rtk mvn clean verify` passou com 106 testes unitarios no Surefire e 2 testes de integracao no Failsafe/Testcontainers.
 
@@ -113,7 +113,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-017`: backlog. Adicionar testes unitarios e de componentes no frontend.
 - `EAI-018`: backlog. Criar testes E2E dos fluxos criticos do MVP.
 - `EAI-019`: backlog. Adicionar validacao de contrato OpenAPI.
-- `EAI-020`: em andamento em 2026-07-22. Padronizar uso seguro de Lombok no backend. UX dispensado: ajuste tecnico sem impacto visual.
+- `EAI-020`: aguardando Code Review em 2026-07-22 no PR `#22`. Padronizar uso seguro de Lombok no backend. UX dispensado: ajuste tecnico sem impacto visual.
 - `EAI-021`: concluido. Reforcar obrigatoriedade de branch e PR para qualquer mudanca.
 - `EAI-022`: concluido. Registrar novos problemas no Trello e atribuir cards movimentados.
 - `EAI-023`: concluido. Ajustar atribuicao de membros apenas em cards puxados.
@@ -126,12 +126,12 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- `EAI-020`: padronizar uso seguro de Lombok no backend sem alterar comportamento.
+- Nenhum card em desenvolvimento ativo. `EAI-020` esta aguardando Code Review no PR `#22`.
 
 Branch sugerida:
 
 ```text
-chore/eai-020-lombok-seguro
+test/eai-019-openapi-contract-validation
 ```
 
 ## Validacao Padrao
