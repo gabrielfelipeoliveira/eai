@@ -450,7 +450,8 @@ Estado atual:
 - Testes unitarios e de API leves usam H2 no profile de teste em modo de compatibilidade com PostgreSQL.
 - Testes de integracao backend com sufixo `*IT` ou `*IntegrationTest` rodam pelo Maven Failsafe contra PostgreSQL real via Testcontainers.
 - Testes frontend usam Vitest com ambiente `jsdom`, Testing Library, `@testing-library/jest-dom` e `@testing-library/user-event`.
-- CI executa testes frontend antes do build.
+- Testes E2E frontend usam Playwright com Chromium, Vite local e API mockada nas rotas HTTP para validar fluxos criticos do navegador sem depender de backend/banco no CI.
+- CI executa testes unitarios/componentes frontend, build e testes E2E.
 
 Regras:
 
@@ -461,6 +462,8 @@ Regras:
 - Todo teste backend com JUnit deve ter `@DisplayName` em PT-BR descrevendo o comportamento validado.
 - Todo teste frontend deve usar descricoes em PT-BR no `describe`/`it`, cobrindo comportamento observavel pelo usuario ou contrato de componente.
 - Novos fluxos frontend devem ter testes de componente quando alterarem autenticacao, autorizacao, formularios criticos, listagens ou hooks compartilhados.
+- Novos testes E2E devem ficar em `frontend/e2e`, usar descricoes em PT-BR e cobrir jornadas criticas completas do usuario quando houver mudanca em login, autorizacao, navegacao, cadastro ou listagem principal.
+- E2E deve mockar somente fronteiras HTTP necessarias ao fluxo e manter payloads compativeis com os contratos TypeScript/HTTP documentados.
 - Nao pular testes falhando sem documentar o motivo.
 
 Status:

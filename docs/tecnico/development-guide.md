@@ -51,6 +51,16 @@ npm test
 
 Use `npm run test:watch` durante desenvolvimento local quando quiser rerodar os testes a cada alteracao. Novos testes frontend devem descrever o comportamento em PT-BR e priorizar fluxos observaveis pelo usuario, validacoes de formulario, autorizacao por papel e hooks compartilhados.
 
+Executar testes E2E do frontend:
+
+```bash
+cd frontend
+npx playwright install chromium
+npm run test:e2e
+```
+
+A suite E2E sobe o Vite local automaticamente e usa API mockada nos testes para validar os fluxos criticos no navegador sem exigir backend ou banco locais.
+
 Credenciais seed de desenvolvimento:
 
 - Admin: `admin@eai.com`
