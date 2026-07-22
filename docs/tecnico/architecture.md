@@ -422,7 +422,8 @@ Estado atual:
 - Access tokens JWT sao usados para autenticacao da API.
 - Refresh tokens sao persistidos.
 - Frontend armazena tokens no browser storage por meio de `tokenStorage`.
-- Producao exige `JWT_SECRET`.
+- Producao exige `JWT_SECRET`; fora de perfis locais (`dev`, `test`, `demo`), o segredo JWT deve ter ao menos 32 bytes e nao pode usar defaults locais conhecidos.
+- JWT aceita apenas `HS256` com `typ=JWT`, valida claims obrigatorias e compara assinatura HMAC de forma resistente a timing.
 - Producao exige `EAI_CORS_ALLOWED_ORIGINS`; defaults locais de CORS ficam restritos aos perfis nao produtivos.
 - SpringDoc OpenAPI/Swagger fica desabilitado por padrao em producao por `SPRINGDOC_API_DOCS_ENABLED=false` e `SPRINGDOC_SWAGGER_UI_ENABLED=false`.
 
