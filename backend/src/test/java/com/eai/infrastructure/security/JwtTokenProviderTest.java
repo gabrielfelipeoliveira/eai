@@ -47,10 +47,11 @@ class JwtTokenProviderTest {
 
     @DisplayName("Rejeita token com assinatura adulterada")
     @Test
-    void rejectsTokenWithTamperedSignature() {
+    void rejectsTokenWithTamperedSignature() throws Exception {
         JwtTokenProvider provider = provider(STRONG_SECRET, "prod");
         String token = provider.createAccessToken(user());
-        String tamperedToken = token.substring(0, token.length() - 1) + (token.endsWith("a") ? "b" : "a");
+        String[] parts = token.split("\\.", -1);
+        String tamperedToken = parts[0] + "." + encode(validPayload()) + "." + parts[2];
 
         assertThatThrownBy(() -> provider.parseAccessToken(tamperedToken))
                 .isInstanceOf(UnauthorizedException.class)
