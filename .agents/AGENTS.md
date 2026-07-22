@@ -39,6 +39,8 @@ Quando documentacao e codigo entrarem em conflito, nao escolha um lado silencios
 - Nao modifique migrations Flyway existentes depois que forem aplicadas fora de experimentacao local.
 - Sempre reporte as validacoes executadas.
 - Sempre reporte vulnerabilidades apontadas por build, auditoria de dependencias, Mend/SCA ou alertas de CVE do Java.
+- Antes de aprovar, mergear ou concluir uma PR, faca Code Review objetivo do diff contra `main`: escopo do card, aderencia a arquitetura, testes, validacoes, vulnerabilidades/warnings e impactos no handoff.
+- Em todo card, registre achados e debitos tecnicos percebidos durante implementacao, validacao ou review; se nao forem tratados no escopo, comente no Trello e sugira card futuro quando aplicavel.
 - Use `docs/tecnico/contexto-atual.md` como handoff operacional entre pessoas e agentes.
 - Quando houver mais de um dev/agente trabalhando em paralelo, registre cards e branches em andamento por responsavel em `docs/tecnico/contexto-atual.md`; nao substitua o trabalho ativo de outra pessoa por um unico "card em andamento" global.
 - Use o Trello como lock operacional imediato: antes de puxar card, consulte o board; se o card estiver `Em andamento` ou atribuido a outra pessoa, nao assuma pelo que esta na `main`. O handoff versionado pode estar atrasado ate o PR ser mergeado.
@@ -59,8 +61,9 @@ Quando documentacao e codigo entrarem em conflito, nao escolha um lado silencios
 7. Adicione ou atualize testes quando comportamento ou logica compartilhada mudar.
 8. Atualize documentacao quando arquitetura, API, setup, workflow ou regras de produto mudarem.
 9. Execute validacoes relevantes.
-10. Atualize Trello e `docs/tecnico/contexto-atual.md` quando o status operacional mudar.
-11. Resuma mudancas, validacoes, vulnerabilidades, riscos e pendencias.
+10. Antes de mergear ou concluir, revise o diff da PR contra `main` e registre achados de Code Review.
+11. Atualize Trello e `docs/tecnico/contexto-atual.md` quando o status operacional mudar.
+12. Resuma mudancas, validacoes, vulnerabilidades, riscos, debitos tecnicos e pendencias.
 
 Este fluxo tambem vale para mudancas somente documentais ou de processo. Nao ha excecao para commit direto na `main`.
 
@@ -87,6 +90,7 @@ Uma tarefa so esta concluida quando:
 - Nenhuma regra de negocio fica em controllers.
 - Nenhuma duplicacao desnecessaria e introduzida.
 - Mudancas de configuracao sao documentadas.
+- Code Review foi executado antes do merge/conclusao e achados foram registrados ou explicitamente dispensados.
 - A resposta final lista as validacoes executadas.
 
 ## Nota Historica Da Fase Inicial

@@ -186,6 +186,50 @@ Validacoes executadas:
 - ...
 ```
 
+## Code Review
+
+Antes de aprovar, mergear ou concluir uma PR, faca revisao objetiva do diff contra `main`.
+
+Checklist minimo:
+
+- Escopo: o diff corresponde ao card `EAI-###`, documentacao oficial e criterios de aceite.
+- Arquitetura: dominio permanece sem Spring/JPA, controllers nao concentram regra de negocio e ports/adapters seguem a arquitetura hexagonal.
+- Testes: cobertura adicionada ou atualizada e proporcional ao risco; quando teste nao for aplicavel, registre justificativa.
+- Validacoes: comandos relevantes foram executados localmente e checks remotos foram verificados quando houver PR.
+- Vulnerabilidades e warnings: itens de build, auditoria, Mend/SCA, CVE Java ou runtime foram corrigidos ou registrados.
+- Handoff: `docs/tecnico/contexto-atual.md` e Trello refletem o estado real, preservando cards, branches e responsaveis em trabalho paralelo.
+- Debitos tecnicos: achados fora do escopo foram comentados no Trello e, quando necessario, viraram sugestao de card futuro.
+
+Modelo de comentario de Code Review:
+
+```text
+## Code Review
+
+PR: ...
+Base revisada: main
+
+Escopo:
+- ...
+
+Arquitetura:
+- ...
+
+Testes e validacoes:
+- ...
+
+Vulnerabilidades/avisos:
+- ...
+
+Handoff/Trello:
+- ...
+
+Debitos tecnicos e proximos cards:
+- Nenhum, ou listar sugestoes.
+
+Decisao:
+- Aprovado para merge, ou listar bloqueios.
+```
+
 Depois do merge e validacao final, comente o fechamento e mova o card para `Concluido`.
 
 Modelo de comentario de conclusao:
@@ -212,8 +256,11 @@ Vulnerabilidades/avisos:
 - Nenhuma nova vulnerabilidade encontrada.
 - Avisos conhecidos: ...
 
+Debitos tecnicos e proximos cards sugeridos:
+- Nenhum, ou listar itens registrados no Trello.
+
 Pendencias:
-- Nenhuma, ou listar proximos cards/decisoes.
+- Nenhuma, ou listar bloqueios/decisoes abertas.
 ```
 
 Commits devem manter o identificador do card no assunto ou corpo. Exemplos:
