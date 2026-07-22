@@ -32,6 +32,7 @@ public class EmailLeadImporter {
     private final LeadHistoryRepository historyRepository;
     private final EmailImportHistoryRepository importHistoryRepository;
     private final EncryptionService encryptionService;
+    private final EmailAccountFailureNotifier emailAccountFailureNotifier;
 
     @Transactional
     public EmailImportResult importAccount(EmailAccount account, UUID userId) {
@@ -81,6 +82,7 @@ public class EmailLeadImporter {
             account.recordFailure(failureMessage);
             emailAccountRepository.save(account);
             importHistoryRepository.save(EmailImportHistory.failure(account, failureMessage, startedAt));
+            emailAccountFailureNotifier.notifyEmailAccountFailure(account, "Importacao de leads por e-mail", exception);
             return new EmailImportResult(0, 0, 0, "FAILED", failureMessage);
         }
     }

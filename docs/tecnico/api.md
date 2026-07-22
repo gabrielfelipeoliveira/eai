@@ -357,3 +357,14 @@ Perguntas para o Software Architect:
 
 - O OpenAPI deve ser gerado somente a partir dos controllers ou enriquecido com anotacoes explicitas?
 - Exemplos de API devem ser mantidos manualmente?
+
+## Notificacoes
+
+Endpoints protegidos:
+
+- `GET /api/notifications?unreadOnly=true&limit=20`
+- `GET /api/notifications/unread-count`
+- `POST /api/notifications/{id}/read`
+- `POST /api/notifications/read-all`
+
+Cada usuario autenticado acessa apenas as proprias notificacoes. O uso inicial cria notificacoes para `ADMIN` ativo quando uma conta de e-mail falha em teste de conexao ou importacao.

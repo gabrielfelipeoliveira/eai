@@ -28,6 +28,7 @@ public class EmailAccountService {
     private final CompanyService companyService;
     private final StoreService storeService;
     private final StoreRepository storeRepository;
+    private final EmailAccountFailureNotifier emailAccountFailureNotifier;
 
     @Transactional(readOnly = true)
     public List<EmailAccount> listAccounts(AuthenticatedUser authenticatedUser) {
@@ -100,7 +101,7 @@ public class EmailAccountService {
         emailAccountRepository.deleteById(account.getId());
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = RuntimeException.class)
     public EmailImportResult testConnection(UUID id, AuthenticatedUser authenticatedUser) {
         EmailAccount account = getAccount(id, authenticatedUser);
         try {
@@ -111,6 +112,7 @@ public class EmailAccountService {
         } catch (RuntimeException exception) {
             account.recordFailure(exception.getMessage());
             emailAccountRepository.save(account);
+            emailAccountFailureNotifier.notifyEmailAccountFailure(account, "Teste de conexao IMAP", exception);
             throw exception;
         }
     }

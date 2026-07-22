@@ -50,6 +50,7 @@ Grupos atuais e alvo:
 - Mensageria: `message_templates` e comunicacoes de lead.
 - WhatsApp: contatos, conversas, mensagens, eventos de status, midias e auditoria tecnica.
 - E-mail: contas de e-mail e historico de importacao.
+- Notificacoes: `notifications` com notificacoes internas por destinatario e status de entrega externa pendente.
 - LGPD: solicitacoes e acoes aplicadas.
 - SLA e follow-ups: estruturas existentes ou futuras de apoio, sem regra operacional obrigatoria no MVP.
 

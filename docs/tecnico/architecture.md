@@ -194,6 +194,14 @@ Contas de e-mail pertencem ao escopo de uma loja, usam IMAP e armazenam senhas c
 
 Leads importados usam origem `EMAIL`; possiveis duplicidades sao marcadas com status `DUPLICATED`.
 
+Falhas de teste de conexao e importacao de contas de e-mail criam notificacoes internas para usuarios ativos com papel `ADMIN`. O envio externo futuro deve implementar a porta generica `NotificationDeliveryPort`; a implementacao atual `NoOpNotificationDeliveryPort` nao envia e-mail externo e mantem `externalDeliveryStatus` como `PENDING_EXTERNAL_DELIVERY`.
+
+## Notificacoes Internas
+
+Notificacoes internas sao implementadas em `com.eai.domain.notification`, `com.eai.application.notification`, `com.eai.infrastructure.persistence.notification` e `com.eai.api.notification`.
+
+O modulo persiste notificacoes por destinatario, tipo, severidade, titulo, mensagem, entidade relacionada, leitura e status de entrega externa. O tipo inicial e `EMAIL_ACCOUNT_FAILURE`; as severidades iniciais sao `INFO`, `WARNING` e `ERROR`.
+
 ## Conversas De WhatsApp
 
 A persistencia de conversas de WhatsApp e implementada em `com.eai.domain.conversation`, `com.eai.application.conversation`, `com.eai.infrastructure.persistence.conversation` e `com.eai.api.conversation`.
