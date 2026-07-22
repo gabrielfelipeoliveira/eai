@@ -121,7 +121,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-025`: concluido em 2026-07-22 no PR `#27`. Atualizar Vite/esbuild por vulnerabilidades npm audit.
 - `EAI-026`: concluido em 2026-07-22 no PR `#24`. Formalizar checklist de Code Review e registro de debitos por card. UX dispensado: ajuste de processo/documentacao sem impacto visual.
 - `EAI-027`: concluido em 2026-07-22 no PR `#28`. Registrar comportamentos de qualidade e otimizacao do agente. UX dispensado: ajuste de processo/documentacao sem impacto visual.
-- `EAI-029`: em andamento com Lucas Reiter. Substituir criptografia Base64 de credenciais IMAP. UX dispensado: hardening backend sem impacto visual esperado.
+- `EAI-029`: concluido em 2026-07-22 no PR `#30`. Substituir criptografia Base64 de credenciais IMAP. UX dispensado: hardening backend sem impacto visual.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -129,13 +129,13 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-029` - substituir criptografia Base64 de credenciais IMAP.
+- Lucas Reiter: nenhum card ativo conhecido no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: chore/eai-029-imap-credential-encryption
+Lucas Reiter: sem branch ativa conhecida.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
@@ -152,6 +152,7 @@ Implementacao EAI-029 em 2026-07-22:
 - Adicionada configuracao `eai.email.credentials.secret` via `EAI_EMAIL_CREDENTIALS_SECRET`; producao exige a variavel sem fallback local.
 - Atualizada documentacao tecnica de importador de e-mail e arquitetura para refletir o hardening.
 - Validacao backend: Docker `mvn clean verify` passou com 117 testes unitarios no Surefire e 2 testes de integracao no Failsafe/Testcontainers.
+- PR `https://github.com/gabrielfelipeoliveira/eai/pull/30` aprovado por Code Review operacional e CI remoto.
 
 Reserva operacional EAI-027 em 2026-07-22:
 
