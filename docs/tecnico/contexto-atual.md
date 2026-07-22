@@ -122,7 +122,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-026`: concluido em 2026-07-22 no PR `#24`. Formalizar checklist de Code Review e registro de debitos por card. UX dispensado: ajuste de processo/documentacao sem impacto visual.
 - `EAI-027`: concluido em 2026-07-22 no PR `#28`. Registrar comportamentos de qualidade e otimizacao do agente. UX dispensado: ajuste de processo/documentacao sem impacto visual.
 - `EAI-029`: concluido em 2026-07-22 no PR `#30`. Substituir criptografia Base64 de credenciais IMAP. UX dispensado: hardening backend sem impacto visual.
-- `EAI-034`: em andamento com Lucas Reiter. Atualizar GitHub Actions para remover warning de Node.js 20 deprecated. UX dispensado: ajuste de CI sem impacto visual.
+- `EAI-034`: concluido em 2026-07-22 no PR `#31`. Atualizar GitHub Actions para remover warning de Node.js 20 deprecated. UX dispensado: ajuste de CI sem impacto visual.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -130,13 +130,13 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-034` - atualizar actions por Node.js 20 deprecated.
+- Lucas Reiter: nenhum card ativo conhecido no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: chore/eai-034-update-actions-node24
+Lucas Reiter: sem branch ativa conhecida.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
@@ -154,6 +154,7 @@ Implementacao EAI-034 em 2026-07-22:
 - Atualizado `actions/setup-node` de `v4` para `v6`.
 - Mantido `node-version: "20"` no build frontend para nao alterar runtime da aplicacao neste card.
 - Validacao local: parse YAML de `.github/workflows/ci.yml` passou.
+- CI remoto no PR `#31`: Backend e Frontend passaram sem annotation de Node.js 20 deprecated no output do run.
 
 Reserva operacional EAI-029 em 2026-07-22:
 
