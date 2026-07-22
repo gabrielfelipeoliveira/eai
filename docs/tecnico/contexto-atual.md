@@ -138,20 +138,20 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-038` em andamento no Trello.
+- Lucas Reiter: `EAI-039` em andamento no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `chore/eai-038-ci-frontend-lint-audit`.
+Lucas Reiter: `chore/eai-039-auth-fast-refresh`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Cards tecnicos criados em 2026-07-22:
 
-- `EAI-038`: em andamento. Adicionar `npm audit --audit-level=moderate` e `npm run lint` no CI frontend.
-- `EAI-039`: backlog. Separar `AuthProvider` e `useAuth` para remover warning Fast Refresh.
+- `EAI-038`: concluido em 2026-07-22 no PR `#44`. Adicionar `npm audit --audit-level=moderate` e `npm run lint` no CI frontend.
+- `EAI-039`: em andamento. Separar `AuthProvider` e `useAuth` para remover warning Fast Refresh.
 - `EAI-040`: backlog. Corrigir selects MUI indefinidos nos E2E de leads.
 - `EAI-041`: backlog. Reduzir chunk principal do build frontend.
 - `EAI-042`: backlog. Limpar historico operacional truncado do contexto atual.
@@ -162,6 +162,18 @@ Reserva operacional EAI-038 em 2026-07-22:
 - Branch `chore/eai-038-ci-frontend-lint-audit`.
 - Escopo: adicionar auditoria npm em nivel moderate e lint frontend como gates do CI.
 - UX dispensado: ajuste de qualidade automatizada sem impacto visual.
+
+Implementacao EAI-038 em 2026-07-22:
+
+- CI frontend passou a executar `npm audit --audit-level=moderate` e `npm run lint`.
+- PR `https://github.com/gabrielfelipeoliveira/eai/pull/44` mergeado com CI remoto verde em `main`.
+
+Reserva operacional EAI-039 em 2026-07-22:
+
+- Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
+- Branch `chore/eai-039-auth-fast-refresh`.
+- Escopo: separar `AuthProvider`, contexto e hook `useAuth` para remover warning `react-refresh/only-export-components`.
+- UX dispensado: refatoracao interna sem mudanca visual.
 
 Reserva operacional EAI-017 em 2026-07-22:
 
