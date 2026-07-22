@@ -12,11 +12,17 @@ O EAI precisa de acesso autenticado a API para usuarios no navegador. A implemen
 
 Usar access tokens JWT para chamadas autenticadas da API e persistir refresh tokens para permitir renovacao de sessao e revogacao logica.
 
+Refresh tokens devem trafegar em cookie `HttpOnly` emitido pelo backend, com `SameSite=Strict` por padrao e `Secure=true` em producao. O frontend nao deve persistir refresh tokens em `localStorage` ou outro storage acessivel por JavaScript.
+
+O access token pode ficar em memoria no frontend e ser reenviado em `Authorization: Bearer <token>`. Ao recarregar a pagina ou receber `401`, o frontend tenta renovar a sessao usando o cookie HttpOnly no endpoint de refresh.
+
 ## Consequencias
 
 - Chamadas de API podem ser autenticadas sem sessoes server-side para access tokens.
 - Persistencia de refresh tokens suporta logout e comportamento de revogacao.
-- Hardening de seguranca deve tratar armazenamento de tokens, tempo de vida e gestao de segredos em producao.
+- XSS deixa de expor refresh tokens diretamente, reduzindo o risco de roubo de sessao de longa duracao.
+- Requisicoes autenticadas de navegador para login, refresh e logout devem usar credenciais CORS para envio do cookie.
+- Access tokens em memoria podem ser perdidos ao recarregar a pagina; nesse caso o refresh via cookie reconstroi a sessao quando o refresh token ainda for valido.
 
 ## Decisoes Futuras
 
@@ -25,6 +31,4 @@ PENDENTE DE DEFINIÇÃO
 
 Perguntas para o Software Architect:
 
-- Refresh tokens devem migrar para cookies HttpOnly?
-- O armazenamento de tokens no frontend deve continuar em `localStorage` no MVP?
 - O TTL dos tokens deve variar por papel de usuario ou ambiente?

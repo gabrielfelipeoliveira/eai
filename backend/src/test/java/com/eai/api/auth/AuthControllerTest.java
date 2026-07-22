@@ -1,5 +1,6 @@
 package com.eai.api.auth;
 
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +10,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.blankOrNullString;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -34,20 +38,35 @@ class AuthControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @DisplayName("Login do admin seed retorna tokens")
+    @DisplayName("Login do admin seed retorna access token e refresh token em cookie HttpOnly")
     @Test
-    void loginReturnsTokensForSeedAdmin() throws Exception {
+    void loginReturnsAccessTokenAndHttpOnlyRefreshCookieForSeedAdmin() throws Exception {
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "email": "admin@eai.com",
-                                  "password": "admin123"
-                                }
+                                {"email":"admin@eai.com","password":"admin123"}
                                 """))
                 .andExpect(status().isOk())
+                .andExpect(header().string("Set-Cookie", containsString("eai.refreshToken=")))
+                .andExpect(header().string("Set-Cookie", containsString("HttpOnly")))
+                .andExpect(header().string("Set-Cookie", containsString("SameSite=Strict")))
                 .andExpect(jsonPath("$.accessToken", not(blankOrNullString())))
-                .andExpect(jsonPath("$.refreshToken", not(blankOrNullString())))
+                .andExpect(jsonPath("$.refreshToken", nullValue()))
+                .andExpect(jsonPath("$.tokenType").value("Bearer"));
+    }
+
+    @DisplayName("Refresh usa cookie HttpOnly e rotaciona token sem expor refresh token no corpo")
+    @Test
+    void refreshUsesHttpOnlyCookieAndRotatesTokenWithoutBodyExposure() throws Exception {
+        Cookie refreshCookie = loginRefreshCookie("admin@eai.com");
+
+        mockMvc.perform(post("/api/auth/refresh")
+                        .cookie(refreshCookie))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Set-Cookie", containsString("eai.refreshToken=")))
+                .andExpect(header().string("Set-Cookie", containsString("HttpOnly")))
+                .andExpect(jsonPath("$.accessToken", not(blankOrNullString())))
+                .andExpect(jsonPath("$.refreshToken", nullValue()))
                 .andExpect(jsonPath("$.tokenType").value("Bearer"));
     }
 
@@ -57,7 +76,7 @@ class AuthControllerTest {
         String token = login("avaliador@eai.com");
 
         mockMvc.perform(get("/api/auth/me")
-                .header("Authorization", "Bearer " + token))
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("avaliador@eai.com"))
                 .andExpect(jsonPath("$.roles[*]", hasItem("AVALIADOR")));
@@ -87,16 +106,11 @@ class AuthControllerTest {
     @DisplayName("Segundo login invalida refresh token anterior")
     @Test
     void secondLoginInvalidatesRefreshTokenIssuedByFirstLogin() throws Exception {
-        JsonNode firstLogin = loginTokens("admin@eai.com");
+        Cookie firstRefreshCookie = loginRefreshCookie("admin@eai.com");
         loginTokens("admin@eai.com");
 
         mockMvc.perform(post("/api/auth/refresh")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "refreshToken": "%s"
-                                }
-                                """.formatted(firstLogin.get("refreshToken").asText())))
+                        .cookie(firstRefreshCookie))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -105,6 +119,7 @@ class AuthControllerTest {
     @DirtiesContext
     void deactivatedUserCannotUseAccessOrRefreshToken() throws Exception {
         JsonNode avaliadorLogin = loginTokens("avaliador@eai.com");
+        Cookie avaliadorRefreshCookie = loginRefreshCookie("avaliador@eai.com");
         String adminAccessToken = login("admin@eai.com");
 
         mockMvc.perform(patch("/api/users/00000000-0000-0000-0000-000000000031/deactivate")
@@ -116,43 +131,45 @@ class AuthControllerTest {
                 .andExpect(status().isUnauthorized());
 
         mockMvc.perform(post("/api/auth/refresh")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "refreshToken": "%s"
-                                }
-                                """.formatted(avaliadorLogin.get("refreshToken").asText())))
+                        .cookie(avaliadorRefreshCookie))
                 .andExpect(status().isUnauthorized());
     }
 
-    @DisplayName("Login aceita preflight CORS do frontend")
+    @DisplayName("Login aceita preflight CORS do frontend com credenciais")
     @Test
-    void loginAllowsFrontendCorsPreflight() throws Exception {
+    void loginAllowsFrontendCorsPreflightWithCredentials() throws Exception {
         mockMvc.perform(options("/api/auth/login")
                         .header("Origin", "http://localhost:5173")
                         .header("Access-Control-Request-Method", "POST")
                         .header("Access-Control-Request-Headers", "content-type"))
                 .andExpect(status().isOk())
-                .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:5173"));
+                .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:5173"))
+                .andExpect(header().string("Access-Control-Allow-Credentials", "true"));
     }
 
     private String login(String email) throws Exception {
         return loginTokens(email).get("accessToken").asText();
     }
 
+    private Cookie loginRefreshCookie(String email) throws Exception {
+        Cookie cookie = loginResult(email).getResponse().getCookie("eai.refreshToken");
+        if (cookie == null) {
+            throw new AssertionError("Refresh cookie was not set");
+        }
+        return cookie;
+    }
+
     private JsonNode loginTokens(String email) throws Exception {
-        String response = mockMvc.perform(post("/api/auth/login")
+        return objectMapper.readTree(loginResult(email).getResponse().getContentAsString());
+    }
+
+    private MvcResult loginResult(String email) throws Exception {
+        return mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "email": "%s",
-                                  "password": "admin123"
-                                }
+                                {"email":"%s","password":"admin123"}
                                 """.formatted(email)))
                 .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-        return objectMapper.readTree(response);
+                .andReturn();
     }
 }

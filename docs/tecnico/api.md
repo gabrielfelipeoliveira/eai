@@ -37,7 +37,9 @@ Padrao conhecido:
 - A autenticacao usa access tokens JWT.
 - Access tokens JWT usam `HS256`, `typ=JWT`, assinatura HMAC comparada de forma resistente a timing e claims obrigatorias `sub`, `email`, `roles` e `exp`.
 - Tokens com algoritmo inesperado, assinatura invalida, expirados ou sem claims obrigatorias sao rejeitados como acesso nao autorizado.
-- Refresh tokens sao persistidos.
+- Refresh tokens sao persistidos no backend e enviados ao navegador por cookie `HttpOnly`.
+- Respostas de login e refresh retornam access token no corpo e renovam o cookie do refresh token; o valor do refresh token nao deve ser exposto no JSON de resposta.
+- O endpoint de refresh aceita o refresh token pelo cookie `eai.refreshToken`. O corpo com `refreshToken` e mantido apenas como compatibilidade tecnica temporaria.
 - Requisicoes protegidas usam `Authorization: Bearer <token>`.
 - Login e refresh sao publicos.
 - Health check e metadados de apresentacao sao publicos. OpenAPI/Swagger e publico em perfis locais/teste, mas fica desabilitado por padrao em producao.
@@ -54,7 +56,6 @@ PARCIALMENTE DEFINIDO
 
 Perguntas para o Software Architect:
 
-- Refresh tokens devem continuar no corpo da resposta ou migrar para cookies HttpOnly?
 - Swagger UI e OpenAPI devem permanecer desabilitados por padrao em producao e so podem ser reabilitados por configuracao explicita de ambiente.
 
 ## Metadados De Apresentacao

@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { getMe, login as loginRequest, logout as logoutRequest } from '../services/authService';
+import { getMe, login as loginRequest, logout as logoutRequest, refreshAuthSession } from '../services/authService';
 import { clearTokens, getAccessToken } from '../services/tokenStorage';
 import type { AuthUser, UserRole } from '../types/auth';
 
@@ -19,12 +19,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const loadUser = useCallback(async () => {
-    if (!getAccessToken()) {
-      setIsLoading(false);
-      return;
-    }
-
     try {
+      if (!getAccessToken()) {
+        await refreshAuthSession();
+      }
       setUser(await getMe());
     } catch {
       clearTokens();
