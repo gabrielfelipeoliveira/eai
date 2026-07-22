@@ -39,6 +39,12 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 O backend roda em `http://localhost:8080`.
 
+Para carregar tambem dados demonstrativos locais, use:
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=dev,demo
+```
+
 Swagger UI:
 
 ```text
@@ -68,8 +74,11 @@ Usuarios seed de desenvolvimento:
 
 - Admin: `admin@eai.com`
 - Gerente: `gerente@eai.com`
-- Vendedores: `ana@eai.com`, `bruno@eai.com`, `carla@eai.com`
-- Auditoria: `auditor@eai.com`
+- Gerente de loja: `gerente.loja@eai.com`
+- Pre-venda: `pre.venda@eai.com`
+- F&I: `fi@eai.com`
+- Vendedor: `ana@eai.com`
+- Avaliador: `avaliador@eai.com`
 - Senha: `admin123`
 
 Endpoints de autenticacao:
@@ -153,7 +162,7 @@ O job importador IMAP fica desabilitado por padrao com `eai.email.importer.enabl
 Os perfis sao `ADMIN`, `MANAGER`, `STORE_MANAGER`, `SELLER`, `PRE_SALES`, `F_AND_I` e `AVALIADOR`.
 `ADMIN` pode gerenciar empresas, lojas, usuarios, vinculos de tenant e todos os leads. `MANAGER` pode visualizar usuarios e gerenciar lojas no escopo de sua empresa, e o acesso a leads e limitado a propria loja. `SELLER` fica limitado a propria loja.
 
-O seed de desenvolvimento cria uma empresa padrao, uma loja padrao, usuarios por perfil, templates de mensagem, configuracoes de distribuicao/SLA, conta IMAP de exemplo inativa, leads em diferentes etapas do funil, historico, notas, tags, comunicacoes e follow-ups.
+O perfil `dev` carrega apenas seed tecnico: empresa padrao, loja padrao e usuarios por perfil MVP. Dados demonstrativos como templates, configuracoes de distribuicao/SLA, conta IMAP de exemplo, leads, historico, notas, tags, comunicacoes e follow-ups exigem o perfil adicional `demo`. O perfil `prod` executa somente migrations de schema e nao habilita seed ou demo automaticamente.
 
 ## Subir Frontend
 

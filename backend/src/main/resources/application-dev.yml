@@ -10,6 +10,8 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
+  flyway:
+    locations: classpath:db/migration,classpath:db/seed/mandatory
 
 eai:
   security:
