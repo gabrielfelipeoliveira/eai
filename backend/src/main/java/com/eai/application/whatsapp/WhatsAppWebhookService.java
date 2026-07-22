@@ -4,6 +4,9 @@ import com.eai.application.common.ApplicationException;
 import com.eai.application.common.ForbiddenException;
 import com.eai.application.conversation.ConversationService;
 import com.eai.application.conversation.IncomingWhatsAppMessage;
+import com.eai.application.media.MediaStoragePort;
+import com.eai.application.media.StoreMediaCommand;
+import com.eai.application.media.StoredMedia;
 import com.eai.domain.conversation.ConversationMessageStatus;
 import com.eai.domain.conversation.ConversationMessageType;
 import org.slf4j.Logger;
@@ -24,11 +27,21 @@ public class WhatsAppWebhookService {
 
     private final WhatsAppChannelSettings settings;
     private final ConversationService conversationService;
+    private final WhatsAppMediaClient mediaClient;
+    private final MediaStoragePort mediaStorage;
     private final ObjectMapper objectMapper;
 
-    public WhatsAppWebhookService(WhatsAppChannelSettings settings, ConversationService conversationService, ObjectMapper objectMapper) {
+    public WhatsAppWebhookService(
+            WhatsAppChannelSettings settings,
+            ConversationService conversationService,
+            WhatsAppMediaClient mediaClient,
+            MediaStoragePort mediaStorage,
+            ObjectMapper objectMapper
+    ) {
         this.settings = settings;
         this.conversationService = conversationService;
+        this.mediaClient = mediaClient;
+        this.mediaStorage = mediaStorage;
         this.objectMapper = objectMapper;
     }
 
@@ -62,8 +75,42 @@ public class WhatsAppWebhookService {
         }
         UUID companyId = UUID.fromString(settings.companyId());
         UUID storeId = UUID.fromString(settings.storeId());
-        messages.forEach(message -> conversationService.recordIncomingMessage(companyId, storeId, message));
+        messages.forEach(message -> conversationService.recordIncomingMessage(companyId, storeId, storeMediaIfNeeded(companyId, storeId, message)));
         logger.info("WhatsApp webhook persisted {} incoming message(s) and processed {} status update(s)", messages.size(), statuses.size());
+    }
+
+    private IncomingWhatsAppMessage storeMediaIfNeeded(UUID companyId, UUID storeId, IncomingWhatsAppMessage message) {
+        if (!hasMedia(message) || conversationService.incomingMessageAlreadyRecorded(message.externalMessageId())) {
+            return message;
+        }
+        WhatsAppMediaMetadata metadata = mediaClient.fetchMediaMetadata(message.mediaId());
+        WhatsAppMediaDownload download = mediaClient.downloadMedia(metadata);
+        String mimeType = firstNonBlank(metadata.mimeType(), message.mediaMimeType(), "application/octet-stream");
+        StoredMedia storedMedia = mediaStorage.store(new StoreMediaCommand(
+                companyId,
+                storeId,
+                "whatsapp-inbound",
+                message.mediaId(),
+                extractMediaFileName(message),
+                mimeType,
+                download.content(),
+                metadata.sha256()
+        ));
+        return new IncomingWhatsAppMessage(
+                message.phone(),
+                message.contactName(),
+                message.type(),
+                message.externalMessageId(),
+                message.content(),
+                message.mediaId(),
+                mimeType,
+                storedMedia.provider(),
+                storedMedia.key(),
+                storedMedia.fileName(),
+                storedMedia.sizeBytes(),
+                storedMedia.sha256(),
+                message.rawPayload()
+        );
     }
 
     private List<IncomingWhatsAppMessage> parseIncomingMessages(String payload) {
@@ -89,6 +136,11 @@ public class WhatsAppWebhookService {
                                 extractContent(message, typeCode),
                                 extractMediaId(message, typeCode),
                                 extractMediaMimeType(message, typeCode),
+                                null,
+                                null,
+                                extractMediaFileName(message, typeCode),
+                                null,
+                                extractMediaSha256(message, typeCode),
                                 message.toString()
                         ));
                     }
@@ -185,6 +237,59 @@ public class WhatsAppWebhookService {
             case "document" -> text(message.path("document").path("mime_type"));
             default -> null;
         };
+    }
+
+    private String extractMediaFileName(JsonNode message, String type) {
+        return switch (type == null ? "" : type) {
+            case "document" -> text(message.path("document").path("filename"));
+            default -> null;
+        };
+    }
+
+    private String extractMediaSha256(JsonNode message, String type) {
+        return switch (type == null ? "" : type) {
+            case "image" -> text(message.path("image").path("sha256"));
+            case "audio", "voice" -> text(message.path("audio").path("sha256"));
+            case "document" -> text(message.path("document").path("sha256"));
+            default -> null;
+        };
+    }
+
+    private boolean hasMedia(IncomingWhatsAppMessage message) {
+        return message.mediaId() != null && switch (message.type()) {
+            case IMAGE, AUDIO, DOCUMENT -> true;
+            default -> false;
+        };
+    }
+
+    private String extractMediaFileName(IncomingWhatsAppMessage message) {
+        if (message.mediaFileName() != null) {
+            return message.mediaFileName();
+        }
+        String extension = switch (message.type()) {
+            case IMAGE -> extensionFor(message.mediaMimeType(), "jpg");
+            case AUDIO -> extensionFor(message.mediaMimeType(), "ogg");
+            case DOCUMENT -> "bin";
+            default -> "bin";
+        };
+        return message.mediaId() + "." + extension;
+    }
+
+    private String extensionFor(String mimeType, String fallback) {
+        if (mimeType == null || !mimeType.contains("/")) {
+            return fallback;
+        }
+        String extension = mimeType.substring(mimeType.indexOf('/') + 1).replaceAll("[^A-Za-z0-9]", "");
+        return extension.isBlank() ? fallback : extension;
+    }
+
+    private String firstNonBlank(String... values) {
+        for (String value : values) {
+            if (value != null && !value.isBlank()) {
+                return value;
+            }
+        }
+        return null;
     }
 
     private Instant extractTimestamp(JsonNode status) {

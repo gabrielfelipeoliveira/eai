@@ -1,21 +1,33 @@
 package com.eai.application.whatsapp;
 
 import com.eai.application.conversation.ConversationService;
+import com.eai.application.conversation.IncomingWhatsAppMessage;
+import com.eai.application.media.MediaStoragePort;
+import com.eai.application.media.StoreMediaCommand;
+import com.eai.application.media.StoredMedia;
 import com.eai.domain.conversation.ConversationMessageStatus;
+import com.eai.domain.conversation.ConversationMessageType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
+import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class WhatsAppWebhookServiceTest {
 
     private final WhatsAppChannelSettings settings = mock(WhatsAppChannelSettings.class);
     private final ConversationService conversationService = mock(ConversationService.class);
-    private final WhatsAppWebhookService service = new WhatsAppWebhookService(settings, conversationService, new ObjectMapper());
+    private final WhatsAppMediaClient mediaClient = mock(WhatsAppMediaClient.class);
+    private final MediaStoragePort mediaStorage = mock(MediaStoragePort.class);
+    private final WhatsAppWebhookService service = new WhatsAppWebhookService(settings, conversationService, mediaClient, mediaStorage, new ObjectMapper());
 
     @DisplayName("Atualiza status da mensagem a partir do webhook do provedor")
     @Test
@@ -65,5 +77,54 @@ class WhatsAppWebhookServiceTest {
                 "{\"id\":\"wamid.text-004\",\"status\":\"failed\",\"timestamp\":\"1783526403\",\"errors\":[{\"code\":131026,\"title\":\"Message undeliverable\",\"message\":\"Message undeliverable\",\"error_data\":{\"details\":\"Recipient phone number is invalid\"}}]}",
                 Instant.parse("2026-07-08T16:00:03Z")
         );
+    }
+
+    @Test
+    void storesInboundMediaBeforeRecordingMessage() {
+        UUID companyId = UUID.fromString("00000000-0000-0000-0000-000000000101");
+        UUID storeId = UUID.fromString("00000000-0000-0000-0000-000000000201");
+        when(settings.inboundPersistenceConfigured()).thenReturn(true);
+        when(settings.companyId()).thenReturn(companyId.toString());
+        when(settings.storeId()).thenReturn(storeId.toString());
+        when(conversationService.incomingMessageAlreadyRecorded("wamid.image-001")).thenReturn(false);
+        when(mediaClient.fetchMediaMetadata("media-001"))
+                .thenReturn(new WhatsAppMediaMetadata("media-001", "https://graph.example/media", "image/jpeg", 3L, "abc123", "{\"id\":\"media-001\"}"));
+        when(mediaClient.downloadMedia(any(WhatsAppMediaMetadata.class)))
+                .thenReturn(new WhatsAppMediaDownload(new byte[]{1, 2, 3}, "{\"id\":\"media-001\"}"));
+        when(mediaStorage.store(any(StoreMediaCommand.class)))
+                .thenReturn(new StoredMedia("local", "company/store/media.jpg", "media-001.jpeg", "image/jpeg", 3, "abc123"));
+
+        service.receiveEvent("""
+                {"object":"whatsapp_business_account","entry":[{"changes":[{"value":{"contacts":[{"profile":{"name":"Cliente"}}],"messages":[{"from":"5511999990000","id":"wamid.image-001","type":"image","image":{"id":"media-001","mime_type":"image/jpeg","sha256":"abc123","caption":"Foto"}}]}}]}]}
+                """);
+
+        verify(mediaClient).fetchMediaMetadata("media-001");
+        verify(mediaStorage).store(argThat(command ->
+                companyId.equals(command.companyId())
+                        && storeId.equals(command.storeId())
+                        && "whatsapp-inbound".equals(command.source())
+                        && "media-001".equals(command.externalMediaId())
+        ));
+        verify(conversationService).recordIncomingMessage(org.mockito.ArgumentMatchers.eq(companyId), org.mockito.ArgumentMatchers.eq(storeId), argThat((IncomingWhatsAppMessage message) ->
+                message.type() == ConversationMessageType.IMAGE
+                        && "local".equals(message.mediaStorageProvider())
+                        && "company/store/media.jpg".equals(message.mediaStorageKey())
+                        && "abc123".equals(message.mediaSha256())
+        ));
+    }
+
+    @Test
+    void doesNotDownloadMediaForDuplicateInboundMessage() {
+        when(settings.inboundPersistenceConfigured()).thenReturn(true);
+        when(settings.companyId()).thenReturn("00000000-0000-0000-0000-000000000101");
+        when(settings.storeId()).thenReturn("00000000-0000-0000-0000-000000000201");
+        when(conversationService.incomingMessageAlreadyRecorded("wamid.image-001")).thenReturn(true);
+
+        service.receiveEvent("""
+                {"object":"whatsapp_business_account","entry":[{"changes":[{"value":{"messages":[{"from":"5511999990000","id":"wamid.image-001","type":"image","image":{"id":"media-001","mime_type":"image/jpeg"}}]}}]}]}
+                """);
+
+        verify(mediaClient, never()).fetchMediaMetadata(any());
+        verify(mediaStorage, never()).store(any());
     }
 }

@@ -1,6 +1,7 @@
 package com.eai.api.conversation;
 
 import com.eai.application.whatsapp.WhatsAppTextSendResult;
+import com.eai.application.whatsapp.WhatsAppMediaMessageSendResult;
 import com.eai.domain.conversation.ConversationMessage;
 import com.eai.domain.conversation.ConversationMessageDirection;
 import com.eai.domain.conversation.ConversationMessageStatus;
@@ -19,6 +20,11 @@ public record ConversationMessageResponse(
         String content,
         String mediaId,
         String mediaMimeType,
+        String mediaStorageProvider,
+        String mediaStorageKey,
+        String mediaFileName,
+        Long mediaSizeBytes,
+        String mediaSha256,
         Instant createdAt,
         Instant updatedAt
 ) {
@@ -34,6 +40,11 @@ public record ConversationMessageResponse(
                 message.getContent(),
                 message.getMediaId(),
                 message.getMediaMimeType(),
+                message.getMediaStorageProvider(),
+                message.getMediaStorageKey(),
+                message.getMediaFileName(),
+                message.getMediaSizeBytes(),
+                message.getMediaSha256(),
                 message.getCreatedAt(),
                 message.getUpdatedAt()
         );
@@ -50,6 +61,32 @@ public record ConversationMessageResponse(
                 result.message(),
                 null,
                 null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                result.createdAt(),
+                result.updatedAt()
+        );
+    }
+
+    public static ConversationMessageResponse fromMediaSendResult(WhatsAppMediaMessageSendResult result) {
+        return new ConversationMessageResponse(
+                result.conversationMessageId(),
+                result.conversationId(),
+                ConversationMessageDirection.OUTBOUND,
+                result.type(),
+                result.status(),
+                result.externalMessageId(),
+                result.caption(),
+                result.mediaId(),
+                result.mediaMimeType(),
+                result.mediaStorageProvider(),
+                result.mediaStorageKey(),
+                result.mediaFileName(),
+                result.mediaSizeBytes(),
+                result.mediaSha256(),
                 result.createdAt(),
                 result.updatedAt()
         );

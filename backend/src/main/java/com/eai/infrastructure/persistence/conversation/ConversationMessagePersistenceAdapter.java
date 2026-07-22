@@ -82,6 +82,11 @@ public class ConversationMessagePersistenceAdapter implements ConversationMessag
                 entity.getContent(),
                 entity.getMediaId(),
                 entity.getMediaMimeType(),
+                entity.getMediaStorageProvider(),
+                entity.getMediaStorageKey(),
+                entity.getMediaFileName(),
+                entity.getMediaSizeBytes(),
+                entity.getMediaSha256(),
                 entity.getRawPayload(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
@@ -99,6 +104,11 @@ public class ConversationMessagePersistenceAdapter implements ConversationMessag
         entity.setContent(message.getContent());
         entity.setMediaId(message.getMediaId());
         entity.setMediaMimeType(message.getMediaMimeType());
+        entity.setMediaStorageProvider(message.getMediaStorageProvider());
+        entity.setMediaStorageKey(message.getMediaStorageKey());
+        entity.setMediaFileName(message.getMediaFileName());
+        entity.setMediaSizeBytes(message.getMediaSizeBytes());
+        entity.setMediaSha256(message.getMediaSha256());
         entity.setRawPayload(message.getRawPayload());
         entity.setCreatedAt(message.getCreatedAt());
         entity.setUpdatedAt(message.getUpdatedAt());

@@ -20,6 +20,12 @@ Antes de implementar qualquer mudanca, leia:
 
 Se documentacao, Trello e codigo estiverem em conflito, nao escolha um lado silenciosamente. Registre o conflito no card ou na documentacao apropriada antes de implementar.
 
+## Registro Operacional EAI-012
+
+- Status em 2026-07-21: implementado em branch `feature/eai-012-whatsapp-media-storage`.
+- Escopo entregue: porta de storage de midia, adapter local/dev, metadados persistidos em `conversation_messages`, webhook com download/storage de midias recebidas, envio autenticado de midia e download autenticado.
+- Validacoes: backend `rtk mvn clean verify` passou com 68 testes; frontend `rtk npm run build` passou com aviso existente de chunk JS acima de 500 kB apos minificacao. Teste HTTP local validou login, `POST /api/conversations/{id}/media` e `GET /api/conversations/{conversationId}/messages/{messageId}/media` contra backend em `8080`.
+
 Toda mudanca versionada deve seguir o fluxo de card `EAI-###`, branch, commit, push, PR, comentario no Trello e fechamento rastreavel. Isso inclui documentacao, processo e ajustes pequenos. Nao commite direto na `main`.
 
 Todo novo problema, warning, vulnerabilidade, risco, melhoria ou item observado deve ser registrado no Trello como card novo ou comentario em card existente. Registrar no Trello nao significa tratar imediatamente; significa preservar historico para decisao posterior.
@@ -72,7 +78,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-009`: concluido. Ajustar importacao de leads por e-mail, historico persistente e duplicidade por telefone+loja.
 - `EAI-010`: concluido. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
 - `EAI-011`: concluido. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
-- `EAI-012`: backlog. Implementar armazenamento de midias WhatsApp em bucket.
+- `EAI-012`: implementado em 2026-07-21. Armazenamento local/dev de midias WhatsApp via porta de storage, contrato preparado para bucket equivalente, webhook com download/storage de midias recebidas, envio autenticado de midia e download autenticado.
 - `EAI-013`: backlog. Separar seeds obrigatorios de dados demonstrativos e bloquear demo em producao.
 - `EAI-014`: backlog. Implementar fluxo LGPD basico manual por ADMIN.
 - `EAI-015`: concluido. Padronizar validacao CI com backend clean verify e frontend build.

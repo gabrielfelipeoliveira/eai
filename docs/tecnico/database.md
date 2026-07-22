@@ -27,6 +27,7 @@ Regras:
 - `V6__lead_notes_editable_global_tags.java`, adiciona `lead_notes.updated_at`, cria catalogo global `lead_tag_definitions` e vincula `lead_tags` por `tag_id` e `type`.
 - `V7__email_import_history.sql`, cria historico persistente de importacoes de e-mail por conta, loja, status e data, preservado quando a conta e removida.
 - `V8__message_templates_meta_soft_delete.sql`, permite template global de empresa com `store_id` nulo, adiciona `language_code`, `meta_status`, `deleted_at` e normaliza nomes demo para o padrao tecnico da Meta.
+- `V9__conversation_message_media_storage.sql`, adiciona metadados/referencia de storage de midias em `conversation_messages`.
 
 Observacao:
 
