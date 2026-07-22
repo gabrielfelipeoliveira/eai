@@ -112,7 +112,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-016`: concluido em 2026-07-22 no PR `#21`. Adicionar testes de integracao com Postgres via Testcontainers. UX dispensado: ajuste tecnico sem impacto visual.
 - `EAI-017`: backlog. Adicionar testes unitarios e de componentes no frontend.
 - `EAI-018`: backlog. Criar testes E2E dos fluxos criticos do MVP.
-- `EAI-019`: backlog. Adicionar validacao de contrato OpenAPI.
+- `EAI-019`: aguardando Code Review em 2026-07-22 no PR `#23`. Adicionar validacao de contrato OpenAPI. UX dispensado: ajuste tecnico sem impacto visual.
 - `EAI-020`: aguardando Code Review em 2026-07-22 no PR `#22`. Padronizar uso seguro de Lombok no backend. UX dispensado: ajuste tecnico sem impacto visual.
 - `EAI-021`: concluido. Reforcar obrigatoriedade de branch e PR para qualquer mudanca.
 - `EAI-022`: concluido. Registrar novos problemas no Trello e atribuir cards movimentados.
@@ -124,15 +124,30 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 ## Proximo Desenvolvimento
 
-Card em andamento:
+Cards em andamento por responsavel:
 
-- Nenhum card em desenvolvimento ativo. `EAI-020` esta aguardando Code Review no PR `#22`.
+- Nenhum card em desenvolvimento ativo.
+- Lucas Reiter: `EAI-019` esta aguardando Code Review no PR `#23`.
+- Gabriel: confirmar card atual no Trello antes de iniciar ou assumir trabalho local. `EAI-020` esta aguardando Code Review no PR `#22`.
 
-Branch sugerida:
+Branches atuais:
 
 ```text
-test/eai-019-openapi-contract-validation
+Lucas Reiter: test/eai-019-openapi-contract-validation
+Gabriel: chore/eai-020-lombok-seguro
 ```
+
+Reserva operacional em 2026-07-22:
+
+- Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
+- Validacao inicial frontend: `rtk npm run build` passou com warning conhecido de chunk JS acima de 500 kB apos minificacao.
+- Validacao inicial backend: `rtk mvn clean verify` nao executou porque `mvn` nao esta disponivel no PATH local; alternativa via Docker exigiu permissao de acesso ao socket Docker e foi interrompida antes da execucao.
+
+Implementacao em 2026-07-22:
+
+- Adicionado teste automatizado `OpenApiContractTest` para validar que `/v3/api-docs` e publico, possui metadados e security scheme esperados, cobre endpoints Spring MVC em `com.eai.api`, declara responses e nao gera `operationId` duplicado.
+- Atualizada documentacao de API para registrar a validacao automatizada do contrato OpenAPI.
+- Validacoes: backend Docker `mvn clean verify` passou com 107 testes unitarios no Surefire e 2 testes de integracao no Failsafe/Testcontainers; frontend `rtk npm run build` passou com warning conhecido de chunk JS acima de 500 kB apos minificacao.
 
 ## Validacao Padrao
 
