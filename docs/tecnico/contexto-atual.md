@@ -118,14 +118,15 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 ## Proximo Desenvolvimento
 
-Card em andamento:
+Cards em andamento por responsavel:
 
-- `EAI-019`: validacao de contrato OpenAPI.
+- Lucas Reiter: `EAI-019` - validacao de contrato OpenAPI.
+- Gabriel: confirmar card atual no Trello antes de iniciar ou assumir trabalho local.
 
-Branch atual:
+Branches atuais:
 
 ```text
-test/eai-019-openapi-contract-validation
+Lucas Reiter: test/eai-019-openapi-contract-validation
 ```
 
 Reserva operacional em 2026-07-22:
