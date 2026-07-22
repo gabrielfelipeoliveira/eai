@@ -32,6 +32,14 @@ Se documentacao, Trello e codigo estiverem em conflito, nao escolha um lado sile
 - Escopo planejado: separar migrations de schema, seed tecnico obrigatorio e massa demonstrativa; garantir que producao execute apenas `classpath:db/migration`; atualizar testes e documentacao relacionados.
 - Validacoes: backend `rtk mvn clean verify` passou com 99 testes; frontend `rtk npm run build` passou com warning conhecido de chunk JS acima de 500 kB apos minificacao.
 
+## Registro Operacional EAI-014
+
+- Status em 2026-07-22: implementado backend/API para fluxo LGPD basico manual por `ADMIN`.
+- Escopo entregue: migration `V10__lgpd_requests.sql`, dominio/aplicacao LGPD, adapters JPA, API `/api/lgpd-requests` e testes de servico/MockMvc.
+- Fora do escopo entregue: frontend/tela administrativa de LGPD, navegacao e cliente TypeScript. Criar card separado para interface administrativa consumindo `/api/lgpd-requests`.
+- Regra do MVP: registrar acoes manuais nao altera automaticamente dados pessoais em leads, conversas, mensagens, usuarios ou midias.
+- Validacoes: backend `rtk test mvn test` passou.
+
 Toda mudanca versionada deve seguir o fluxo de card `EAI-###`, branch, commit, push, PR, comentario no Trello e fechamento rastreavel. Isso inclui documentacao, processo e ajustes pequenos. Nao commite direto na `main`.
 
 Todo novo problema, warning, vulnerabilidade, risco, melhoria ou item observado deve ser registrado no Trello como card novo ou comentario em card existente. Registrar no Trello nao significa tratar imediatamente; significa preservar historico para decisao posterior.
@@ -86,7 +94,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-011`: concluido. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
 - `EAI-012`: implementado em 2026-07-21. Armazenamento local/dev de midias WhatsApp via porta de storage, contrato preparado para bucket equivalente, webhook com download/storage de midias recebidas, envio autenticado de midia e download autenticado.
 - `EAI-013`: aguardando Code Review em 2026-07-22 no PR `#19`. Separar seeds obrigatorios de dados demonstrativos e bloquear demo em producao.
-- `EAI-014`: backlog. Implementar fluxo LGPD basico manual por ADMIN.
+- `EAI-014`: implementado em 2026-07-22. Implementar fluxo LGPD basico manual por ADMIN.
 - `EAI-015`: concluido. Padronizar validacao CI com backend clean verify e frontend build.
 - `EAI-016`: backlog. Adicionar testes de integracao com Postgres via Testcontainers.
 - `EAI-017`: backlog. Adicionar testes unitarios e de componentes no frontend.
