@@ -327,6 +327,8 @@ Endpoints atuais:
 Convencoes:
 
 - O webhook de WhatsApp e publico para validacao e recebimento da Meta.
+- `POST /api/webhooks/whatsapp` exige assinatura valida no header `X-Hub-Signature-256`, no formato `sha256=<hmac>`, calculada pela Meta sobre o corpo bruto da requisicao usando `META_WHATSAPP_APP_SECRET`.
+- Requisicoes de webhook WhatsApp sem assinatura, com assinatura malformada ou divergente retornam erro de autenticacao sem processar o payload.
 - Consultas de conversas exigem autenticacao e seguem escopo de tenant.
 - `GET /api/conversations` retorna um resumo operacional com ids da conversa, lead/contato, vendedor responsavel, nome do lead ou contato, telefone, ultima mensagem, data/hora da ultima interacao e quantidade de mensagens nao lidas.
 - `GET /api/conversations` aceita filtros opcionais `sellerId`, `messageStatus`, `startAt` e `endAt`. `messageStatus` filtra pelo status da ultima mensagem enquanto o dominio nao possuir status proprio de conversa.

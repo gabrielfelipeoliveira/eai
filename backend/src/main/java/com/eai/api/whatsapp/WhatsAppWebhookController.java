@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,8 +29,11 @@ public class WhatsAppWebhookController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> receiveEvent(@RequestBody String payload) {
-        webhookService.receiveEvent(payload);
+    public ResponseEntity<Void> receiveEvent(
+            @RequestHeader(value = "X-Hub-Signature-256", required = false) String signature,
+            @RequestBody String payload
+    ) {
+        webhookService.receiveEvent(signature, payload);
         return ResponseEntity.accepted().build();
     }
 }

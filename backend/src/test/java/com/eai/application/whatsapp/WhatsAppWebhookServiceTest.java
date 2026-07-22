@@ -11,7 +11,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.HexFormat;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -23,6 +27,8 @@ import static org.mockito.Mockito.when;
 
 class WhatsAppWebhookServiceTest {
 
+    private static final String APP_SECRET = "test-secret";
+
     private final WhatsAppChannelSettings settings = mock(WhatsAppChannelSettings.class);
     private final ConversationService conversationService = mock(ConversationService.class);
     private final WhatsAppMediaClient mediaClient = mock(WhatsAppMediaClient.class);
@@ -31,10 +37,12 @@ class WhatsAppWebhookServiceTest {
 
     @DisplayName("Atualiza status da mensagem a partir do webhook do provedor")
     @Test
-    void updatesMessageStatusFromProviderWebhookEvent() {
-        service.receiveEvent("""
+    void updatesMessageStatusFromProviderWebhookEvent() throws Exception {
+        String payload = """
                 {"object":"whatsapp_business_account","entry":[{"changes":[{"value":{"statuses":[{"id":"wamid.text-001","status":"delivered","timestamp":"1783526400"}]}}]}]}
-                """);
+                """;
+
+        receiveSignedEvent(payload);
 
         verify(conversationService).recordMessageStatusEvent(
                 "wamid.text-001",
@@ -47,14 +55,12 @@ class WhatsAppWebhookServiceTest {
 
     @DisplayName("Interpreta eventos de status enviado, lido e falha do provedor")
     @Test
-    void parsesSentReadAndFailedStatusEventsFromProviderWebhookEvent() {
-        service.receiveEvent("""
-                {"object":"whatsapp_business_account","entry":[{"changes":[{"value":{"statuses":[
-                  {"id":"wamid.text-002","status":"sent","timestamp":"1783526401"},
-                  {"id":"wamid.text-003","status":"read","timestamp":"1783526402"},
-                  {"id":"wamid.text-004","status":"failed","timestamp":"1783526403","errors":[{"code":131026,"title":"Message undeliverable","message":"Message undeliverable","error_data":{"details":"Recipient phone number is invalid"}}]}
-                ]}}]}]}
-                """);
+    void parsesSentReadAndFailedStatusEventsFromProviderWebhookEvent() throws Exception {
+        String payload = """
+                {"object":"whatsapp_business_account","entry":[{"changes":[{"value":{"statuses":[{"id":"wamid.text-002","status":"sent","timestamp":"1783526401"},{"id":"wamid.text-003","status":"read","timestamp":"1783526402"},{"id":"wamid.text-004","status":"failed","timestamp":"1783526403","errors":[{"code":131026,"title":"Message undeliverable","message":"Message undeliverable","error_data":{"details":"Recipient phone number is invalid"}}]}]}}]}]}
+                """;
+
+        receiveSignedEvent(payload);
 
         verify(conversationService).recordMessageStatusEvent(
                 "wamid.text-002",
@@ -79,8 +85,9 @@ class WhatsAppWebhookServiceTest {
         );
     }
 
+    @DisplayName("Armazena midia recebida antes de registrar a mensagem")
     @Test
-    void storesInboundMediaBeforeRecordingMessage() {
+    void storesInboundMediaBeforeRecordingMessage() throws Exception {
         UUID companyId = UUID.fromString("00000000-0000-0000-0000-000000000101");
         UUID storeId = UUID.fromString("00000000-0000-0000-0000-000000000201");
         when(settings.inboundPersistenceConfigured()).thenReturn(true);
@@ -93,10 +100,11 @@ class WhatsAppWebhookServiceTest {
                 .thenReturn(new WhatsAppMediaDownload(new byte[]{1, 2, 3}, "{\"id\":\"media-001\"}"));
         when(mediaStorage.store(any(StoreMediaCommand.class)))
                 .thenReturn(new StoredMedia("local", "company/store/media.jpg", "media-001.jpeg", "image/jpeg", 3, "abc123"));
-
-        service.receiveEvent("""
+        String payload = """
                 {"object":"whatsapp_business_account","entry":[{"changes":[{"value":{"contacts":[{"profile":{"name":"Cliente"}}],"messages":[{"from":"5511999990000","id":"wamid.image-001","type":"image","image":{"id":"media-001","mime_type":"image/jpeg","sha256":"abc123","caption":"Foto"}}]}}]}]}
-                """);
+                """;
+
+        receiveSignedEvent(payload);
 
         verify(mediaClient).fetchMediaMetadata("media-001");
         verify(mediaStorage).store(argThat(command ->
@@ -113,18 +121,31 @@ class WhatsAppWebhookServiceTest {
         ));
     }
 
+    @DisplayName("Nao baixa midia de mensagem recebida duplicada")
     @Test
-    void doesNotDownloadMediaForDuplicateInboundMessage() {
+    void doesNotDownloadMediaForDuplicateInboundMessage() throws Exception {
         when(settings.inboundPersistenceConfigured()).thenReturn(true);
         when(settings.companyId()).thenReturn("00000000-0000-0000-0000-000000000101");
         when(settings.storeId()).thenReturn("00000000-0000-0000-0000-000000000201");
         when(conversationService.incomingMessageAlreadyRecorded("wamid.image-001")).thenReturn(true);
-
-        service.receiveEvent("""
+        String payload = """
                 {"object":"whatsapp_business_account","entry":[{"changes":[{"value":{"messages":[{"from":"5511999990000","id":"wamid.image-001","type":"image","image":{"id":"media-001","mime_type":"image/jpeg"}}]}}]}]}
-                """);
+                """;
+
+        receiveSignedEvent(payload);
 
         verify(mediaClient, never()).fetchMediaMetadata(any());
         verify(mediaStorage, never()).store(any());
+    }
+
+    private void receiveSignedEvent(String payload) throws Exception {
+        when(settings.appSecret()).thenReturn(APP_SECRET);
+        service.receiveEvent(signatureFor(payload), payload);
+    }
+
+    private String signatureFor(String payload) throws Exception {
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(new SecretKeySpec(APP_SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+        return "sha256=" + HexFormat.of().formatHex(mac.doFinal(payload.getBytes(StandardCharsets.UTF_8)));
     }
 }

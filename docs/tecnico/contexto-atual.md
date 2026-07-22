@@ -124,7 +124,8 @@ Cards de desenvolvimento conhecidos:
 - `EAI-029`: concluido em 2026-07-22 no PR `#30`. Substituir criptografia Base64 de credenciais IMAP. UX dispensado: hardening backend sem impacto visual.
 - `EAI-032`: concluido em 2026-07-22 no PR `#32`. Parametrizar CORS, Swagger e defaults locais por ambiente. UX dispensado: hardening backend/config sem impacto visual.
 - `EAI-034`: concluido em 2026-07-22 no PR `#31`. Atualizar GitHub Actions para remover warning de Node.js 20 deprecated. UX dispensado: ajuste de CI sem impacto visual.
-- `EAI-035`: em andamento com Lucas Reiter. Definir rotacao e migracao de credenciais IMAP legadas. UX dispensado: hardening operacional sem impacto visual.
+- `EAI-035`: concluido em 2026-07-22 no PR `#33`. Definir rotacao e migracao de credenciais IMAP legadas. UX dispensado: hardening operacional sem impacto visual.
+- `EAI-028`: em andamento com Lucas Reiter. Validar assinatura do webhook publico do WhatsApp. UX dispensado: hardening backend sem impacto visual.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -132,15 +133,22 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-035` - definir rotacao e migracao de credenciais IMAP legadas.
+- Lucas Reiter: `EAI-028` - validar assinatura do webhook publico do WhatsApp.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: docs/eai-035-imap-credential-rotation
+Lucas Reiter: chore/eai-028-whatsapp-webhook-signature
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
+
+Reserva operacional EAI-028 em 2026-07-22:
+
+- Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
+- Branch `chore/eai-028-whatsapp-webhook-signature`.
+- Escopo: validar a assinatura do payload publico do WhatsApp usando `META_WHATSAPP_APP_SECRET` e o header oficial do provedor antes de processar eventos.
+- UX dispensado: hardening backend sem impacto visual.
 
 Reserva operacional EAI-035 em 2026-07-22:
 

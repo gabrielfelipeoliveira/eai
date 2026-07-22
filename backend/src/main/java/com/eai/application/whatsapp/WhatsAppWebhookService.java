@@ -2,6 +2,7 @@ package com.eai.application.whatsapp;
 
 import com.eai.application.common.ApplicationException;
 import com.eai.application.common.ForbiddenException;
+import com.eai.application.common.UnauthorizedException;
 import com.eai.application.conversation.ConversationService;
 import com.eai.application.conversation.IncomingWhatsAppMessage;
 import com.eai.application.media.MediaStoragePort;
@@ -16,8 +17,13 @@ import org.springframework.stereotype.Service;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,7 +50,8 @@ public class WhatsAppWebhookService {
         return challenge;
     }
 
-    public void receiveEvent(String payload) {
+    public void receiveEvent(String signature, String payload) {
+        validateSignature(signature, payload);
         List<IncomingWhatsAppMessage> messages = parseIncomingMessages(payload);
         List<WhatsAppMessageStatusEvent> statuses = parseStatusEvents(payload);
         statuses.forEach(status -> conversationService.recordMessageStatusEvent(
@@ -65,6 +72,43 @@ public class WhatsAppWebhookService {
         UUID storeId = UUID.fromString(settings.storeId());
         messages.forEach(message -> conversationService.recordIncomingMessage(companyId, storeId, storeMediaIfNeeded(companyId, storeId, message)));
         logger.info("WhatsApp webhook persisted {} incoming message(s) and processed {} status update(s)", messages.size(), statuses.size());
+    }
+
+    private void validateSignature(String signature, String payload) {
+        String appSecret = settings.appSecret();
+        if (appSecret == null || appSecret.isBlank()) {
+            throw new ApplicationException(
+                    "WHATSAPP_WEBHOOK_SIGNATURE_NOT_CONFIGURED",
+                    "WhatsApp webhook signature validation secret is not configured"
+            );
+        }
+        if (signature == null || signature.isBlank() || !signature.startsWith("sha256=")) {
+            throw invalidSignature();
+        }
+        byte[] expected = signatureFor(appSecret, payload);
+        byte[] received;
+        try {
+            received = HexFormat.of().parseHex(signature.substring("sha256=".length()));
+        } catch (IllegalArgumentException exception) {
+            throw invalidSignature();
+        }
+        if (!MessageDigest.isEqual(expected, received)) {
+            throw invalidSignature();
+        }
+    }
+
+    private byte[] signatureFor(String appSecret, String payload) {
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(appSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+            return mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception exception) {
+            throw new ApplicationException("WHATSAPP_WEBHOOK_SIGNATURE_ERROR", "WhatsApp webhook signature validation failed");
+        }
+    }
+
+    private UnauthorizedException invalidSignature() {
+        return new UnauthorizedException("Invalid WhatsApp webhook signature");
     }
 
     private IncomingWhatsAppMessage storeMediaIfNeeded(UUID companyId, UUID storeId, IncomingWhatsAppMessage message) {

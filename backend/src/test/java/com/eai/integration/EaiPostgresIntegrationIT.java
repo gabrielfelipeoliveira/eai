@@ -9,6 +9,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.util.HexFormat;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.blankOrNullString;
@@ -17,7 +21,6 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -25,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class EaiPostgresIntegrationIT extends AbstractPostgresIntegrationTest {
 
+    private static final String APP_SECRET = "test-secret";
     private static final UUID DEFAULT_COMPANY_ID = UUID.fromString("00000000-0000-0000-0000-000000000101");
     private static final UUID DEFAULT_STORE_ID = UUID.fromString("00000000-0000-0000-0000-000000000201");
 
@@ -40,22 +44,20 @@ class EaiPostgresIntegrationIT extends AbstractPostgresIntegrationTest {
     @DisplayName("Flyway executa migrations e seeds em PostgreSQL real")
     @Test
     void flywayRunsMigrationsAndSeedsOnPostgres() {
-        Integer flywayRows = jdbcTemplate.queryForObject("select count(*) from flyway_schema_history where success = true", Integer.class);
+        Integer flywayRows = jdbcTemplate.queryForObject("select count(*) from flyway_schema_history", Integer.class);
         Integer users = jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
         Integer companies = jdbcTemplate.queryForObject("select count(*) from companies", Integer.class);
 
-        assertNotNull(flywayRows);
-        assertNotNull(users);
-        assertNotNull(companies);
-        assertTrue(flywayRows >= 9);
-        assertTrue(users >= 7);
-        assertTrue(companies >= 1);
+        assertEquals(13, flywayRows);
+        assertEquals(9, users);
+        assertEquals(1, companies);
     }
 
-    @DisplayName("Autenticacao, tenancy, leads e conversas funcionam com PostgreSQL real")
+    @DisplayName("Autenticacao, leads e webhook funcionam em PostgreSQL real")
     @Test
     void criticalHttpFlowsWorkOnPostgres() throws Exception {
         String token = login();
+        String leadId = createLead(token);
 
         mockMvc.perform(get("/api/auth/me")
                         .header("Authorization", "Bearer " + token))
@@ -63,9 +65,7 @@ class EaiPostgresIntegrationIT extends AbstractPostgresIntegrationTest {
                 .andExpect(jsonPath("$.email").value("admin@eai.com"))
                 .andExpect(jsonPath("$.companyId").value(DEFAULT_COMPANY_ID.toString()))
                 .andExpect(jsonPath("$.storeId").value(DEFAULT_STORE_ID.toString()))
-                .andExpect(jsonPath("$.roles[*]", hasItem("ADMIN")));
-
-        String leadId = createLead(token);
+                .andExpect(jsonPath("$.roles", hasItem("ADMIN")));
 
         mockMvc.perform(get("/api/leads")
                         .header("Authorization", "Bearer " + token)
@@ -74,11 +74,14 @@ class EaiPostgresIntegrationIT extends AbstractPostgresIntegrationTest {
                 .andExpect(jsonPath("$.totalElements", greaterThanOrEqualTo(1)))
                 .andExpect(jsonPath("$.content[*].id", hasItem(leadId)));
 
+        String payload = """
+                {"object":"whatsapp_business_account","entry":[{"changes":[{"value":{"contacts":[{"profile":{"name":"Cliente Postgres"},"wa_id":"5511999880016"}],"messages":[{"from":"5511999880016","id":"wamid.eai016-postgres","timestamp":"1710000000","type":"text","text":{"body":"Quero falar sobre o Civic"}}]}}]}]}
+                """;
+
         mockMvc.perform(post("/api/webhooks/whatsapp")
+                        .header("X-Hub-Signature-256", signatureFor(payload))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"object":"whatsapp_business_account","entry":[{"changes":[{"value":{"contacts":[{"profile":{"name":"Cliente Postgres"},"wa_id":"5511999880016"}],"messages":[{"from":"5511999880016","id":"wamid.eai016-postgres","timestamp":"1710000000","type":"text","text":{"body":"Quero falar sobre o Civic"}}]}}]}]}
-                                """))
+                        .content(payload))
                 .andExpect(status().isAccepted());
 
         String conversationsResponse = mockMvc.perform(get("/api/conversations")
@@ -87,7 +90,6 @@ class EaiPostgresIntegrationIT extends AbstractPostgresIntegrationTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-
         JsonNode conversations = objectMapper.readTree(conversationsResponse);
         String conversationId = findConversationId(conversations, leadId);
         assertNotNull(conversationId);
@@ -139,5 +141,11 @@ class EaiPostgresIntegrationIT extends AbstractPostgresIntegrationTest {
             }
         }
         return null;
+    }
+
+    private String signatureFor(String payload) throws Exception {
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(new SecretKeySpec(APP_SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+        return "sha256=" + HexFormat.of().formatHex(mac.doFinal(payload.getBytes(StandardCharsets.UTF_8)));
     }
 }

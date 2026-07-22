@@ -6,6 +6,8 @@ public interface WhatsAppChannelSettings {
 
     String accessToken();
 
+    String appSecret();
+
     String graphApiVersion();
 
     String verifyToken();

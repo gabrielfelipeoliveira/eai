@@ -9,7 +9,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-@SpringBootTest(properties = "eai.whatsapp.cloud-api.verify-token=test-token")
+@SpringBootTest(properties = {
+        "eai.whatsapp.cloud-api.verify-token=test-token",
+        "eai.whatsapp.cloud-api.app-secret=test-secret"
+})
 @AutoConfigureMockMvc
 @ActiveProfiles({"test", "demo"})
 @Testcontainers
