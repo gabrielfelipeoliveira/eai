@@ -420,8 +420,9 @@ Estado atual:
 
 - Spring Security protege rotas do backend.
 - Access tokens JWT sao usados para autenticacao da API.
-- Refresh tokens sao persistidos.
-- Frontend armazena tokens no browser storage por meio de `tokenStorage`.
+- Refresh tokens sao persistidos e entregues ao navegador por cookie `HttpOnly`, `SameSite=Strict` por padrao e `Secure=true` em producao.
+- Frontend mantem access token apenas em memoria por meio de `tokenStorage`; refresh tokens nao sao persistidos em `localStorage`.
+- CORS permite credenciais para origens explicitamente configuradas, necessario para envio do cookie de refresh.
 - Producao exige `JWT_SECRET`; fora de perfis locais (`dev`, `test`, `demo`), o segredo JWT deve ter ao menos 32 bytes e nao pode usar defaults locais conhecidos.
 - JWT aceita apenas `HS256` com `typ=JWT`, valida claims obrigatorias e compara assinatura HMAC de forma resistente a timing.
 - Producao exige `EAI_CORS_ALLOWED_ORIGINS`; defaults locais de CORS ficam restritos aos perfis nao produtivos.
@@ -431,7 +432,7 @@ Estado atual:
 
 Riscos conhecidos:
 
-- Armazenamento de tokens em `localStorage` e conveniente, mas aumenta exposicao a roubo de tokens por XSS.
+- Access tokens em memoria ainda podem ser abusados por XSS durante a vida util curta do token, mas refresh tokens de longa duracao nao ficam acessiveis por JavaScript.
 - Rotacao de chave IMAP depende de janela operacional planejada para configurar keyring e executar recriptografia; falhas parciais preservam o valor original para nova tentativa.
 
 Status:
@@ -439,7 +440,6 @@ PENDENTE DE DEFINIÇÃO
 
 Perguntas para o Software Architect:
 
-- Refresh tokens devem migrar para cookies HttpOnly?
 - Quais origens oficiais devem compor `EAI_CORS_ALLOWED_ORIGINS` em cada ambiente produtivo?
 
 ## Arquitetura de Testes

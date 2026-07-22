@@ -18,6 +18,6 @@ export interface AuthUser {
 
 export interface AuthTokens {
   accessToken: string;
-  refreshToken: string;
+  refreshToken?: string | null;
   tokenType: 'Bearer';
 }

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { clearTokens, getAccessToken, getRefreshToken, saveTokens } from './tokenStorage';
+import { clearTokens, getAccessToken, saveTokens } from './tokenStorage';
 import type { AuthTokens } from '../types/auth';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api';
@@ -16,6 +16,7 @@ export function apiErrorMessage(error: unknown) {
 export const api = axios.create({
   baseURL,
   timeout: 15000,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -24,6 +25,7 @@ export const api = axios.create({
 export const publicApi = axios.create({
   baseURL,
   timeout: 15000,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -42,18 +44,17 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    const refreshToken = getRefreshToken();
     const isAuthEndpoint =
       originalRequest?.url?.startsWith('/auth/login') || originalRequest?.url?.startsWith('/auth/refresh');
 
-    if (error.response?.status !== 401 || !refreshToken || originalRequest?._retry || isAuthEndpoint) {
+    if (error.response?.status !== 401 || originalRequest?._retry || isAuthEndpoint) {
       return Promise.reject(error);
     }
 
     originalRequest._retry = true;
 
     try {
-      const response = await publicApi.post<AuthTokens>('/auth/refresh', { refreshToken });
+      const response = await refreshSession();
       saveTokens(response.data);
       originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
       return api(originalRequest);
@@ -65,3 +66,7 @@ api.interceptors.response.use(
     }
   },
 );
+
+export function refreshSession() {
+  return publicApi.post<AuthTokens>('/auth/refresh');
+}

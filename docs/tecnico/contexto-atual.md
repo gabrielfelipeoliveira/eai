@@ -154,6 +154,20 @@ Reserva operacional EAI-030 em 2026-07-22:
 - Escopo: avaliar e implementar reducao de exposicao de tokens no frontend, priorizando refresh token fora do JavaScript em ambiente compartilhado/producao e mantendo sessao unica/rotacao de refresh token.
 - UX dispensado: hardening de autenticacao sem mudanca visual planejada.
 
+Implementacao EAI-030 em 2026-07-22:
+
+- Backend passou a emitir refresh token em cookie `HttpOnly`, `SameSite=Strict` e `Secure=true` por padrao em producao.
+- Respostas de login/refresh retornam access token no JSON e nao expõem o valor do refresh token no corpo.
+- Refresh aceita cookie `eai.refreshToken`; corpo com `refreshToken` foi mantido apenas como compatibilidade tecnica temporaria.
+- Logout remove o cookie de refresh e revoga as sessoes do usuario.
+- CORS passou a permitir credenciais para origens explicitamente configuradas.
+- Frontend passou a manter access token apenas em memoria e a usar `withCredentials` para login, refresh, logout e chamadas autenticadas.
+- `tokenStorage` remove chaves legadas `eai.accessToken` e `eai.refreshToken` do `localStorage`.
+- Documentacao atualizada em ADR 0004, API e arquitetura.
+- Validacao backend focada: Docker `mvn -Dtest=AuthControllerTest,AuthServiceTest test` passou com 13 testes.
+- Validacao backend completa: Docker `mvn clean verify` passou com 146 testes unitarios no Surefire e 2 testes de integracao no Failsafe/Testcontainers.
+- Validacoes frontend: `npm run lint` passou com 1 warning conhecido de Fast Refresh em `useAuth.tsx`; `npm run build` passou com warning conhecido de chunk acima de 500 kB.
+
 Reserva operacional EAI-036 em 2026-07-22:
 
 - Card movido para `Em andamento` e atribuido a `Lucas Reiter`.

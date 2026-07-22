@@ -1,22 +1,24 @@
 import type { AuthTokens } from '../types/auth';
 
-const accessTokenKey = 'eai.accessToken';
-const refreshTokenKey = 'eai.refreshToken';
+let accessToken: string | null = null;
+const legacyAccessTokenKey = 'eai.accessToken';
+const legacyRefreshTokenKey = 'eai.refreshToken';
 
 export function getAccessToken() {
-  return localStorage.getItem(accessTokenKey);
-}
-
-export function getRefreshToken() {
-  return localStorage.getItem(refreshTokenKey);
+  return accessToken;
 }
 
 export function saveTokens(tokens: AuthTokens) {
-  localStorage.setItem(accessTokenKey, tokens.accessToken);
-  localStorage.setItem(refreshTokenKey, tokens.refreshToken);
+  accessToken = tokens.accessToken;
+  clearLegacyStoredTokens();
 }
 
 export function clearTokens() {
-  localStorage.removeItem(accessTokenKey);
-  localStorage.removeItem(refreshTokenKey);
+  accessToken = null;
+  clearLegacyStoredTokens();
+}
+
+function clearLegacyStoredTokens() {
+  localStorage.removeItem(legacyAccessTokenKey);
+  localStorage.removeItem(legacyRefreshTokenKey);
 }
