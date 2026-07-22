@@ -449,7 +449,8 @@ Estado atual:
 - Testes de backend usam JUnit e suporte de testes do Spring Boot.
 - Testes unitarios e de API leves usam H2 no profile de teste em modo de compatibilidade com PostgreSQL.
 - Testes de integracao backend com sufixo `*IT` ou `*IntegrationTest` rodam pelo Maven Failsafe contra PostgreSQL real via Testcontainers.
-- Frontend possui checks de build e lint, mas nenhum test runner configurado.
+- Testes frontend usam Vitest com ambiente `jsdom`, Testing Library, `@testing-library/jest-dom` e `@testing-library/user-event`.
+- CI executa testes frontend antes do build.
 
 Regras:
 
@@ -458,14 +459,12 @@ Regras:
 - Usar testes de integracao quando o comportamento depender de Spring, persistencia ou fronteiras HTTP.
 - Usar Testcontainers/PostgreSQL para smoke de migrations Flyway, constraints reais e fluxos HTTP criticos.
 - Todo teste backend com JUnit deve ter `@DisplayName` em PT-BR descrevendo o comportamento validado.
+- Todo teste frontend deve usar descricoes em PT-BR no `describe`/`it`, cobrindo comportamento observavel pelo usuario ou contrato de componente.
+- Novos fluxos frontend devem ter testes de componente quando alterarem autenticacao, autorizacao, formularios criticos, listagens ou hooks compartilhados.
 - Nao pular testes falhando sem documentar o motivo.
 
 Status:
-PARCIALMENTE DEFINIDO
-
-Perguntas para o Software Architect:
-
-- Qual stack de testes frontend deve ser adotada?
+DEFINIDO PARA O MVP
 
 ## Decisoes Arquiteturais
 

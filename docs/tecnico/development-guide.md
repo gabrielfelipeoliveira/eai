@@ -42,6 +42,15 @@ npm install
 npm run dev
 ```
 
+Executar testes unitarios e de componentes do frontend:
+
+```bash
+cd frontend
+npm test
+```
+
+Use `npm run test:watch` durante desenvolvimento local quando quiser rerodar os testes a cada alteracao. Novos testes frontend devem descrever o comportamento em PT-BR e priorizar fluxos observaveis pelo usuario, validacoes de formulario, autorizacao por papel e hooks compartilhados.
+
 Credenciais seed de desenvolvimento:
 
 - Admin: `admin@eai.com`
