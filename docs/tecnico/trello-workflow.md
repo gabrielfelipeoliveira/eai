@@ -144,6 +144,8 @@ Esta regra nao tem excecao para mudancas pequenas, documentais ou de processo. T
 
 O lock operacional imediato e o Trello. `docs/tecnico/contexto-atual.md` e handoff versionado e pode ficar atrasado na `main` ate o PR de reserva ser mergeado. Por isso, todo agente deve consultar o Trello antes de escolher ou assumir um card, mesmo quando o handoff da `main` parecer livre.
 
+Quando houver conflito de merge em `docs/tecnico/contexto-atual.md` por trabalho paralelo, a branch que esta sendo integrada depois deve reconciliar os dois lados. Preserve os cards/branches/responsaveis ja presentes na `main`, mantenha o estado do proprio card da branch e ajuste qualquer trecho operacional que tenha ficado atrasado apos a resolucao do conflito.
+
 O commit inicial de reserva deve ser documental e pequeno. Exemplo:
 
 ```text

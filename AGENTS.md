@@ -35,6 +35,7 @@ Regras importantes:
 - Use `docs/tecnico/contexto-atual.md` como handoff operacional entre pessoas e agentes.
 - Em trabalho paralelo, registre cards e branches em andamento por responsavel no handoff; nao trate o projeto como se houvesse apenas um card ativo global.
 - Use o Trello como lock operacional imediato antes de puxar card; `contexto-atual.md` na `main` pode estar atrasado ate o PR de reserva ser mergeado.
+- Ao resolver conflito no handoff, preserve tanto o estado ja presente na `main` quanto o estado da branch que esta sendo integrada.
 - Use cards `EAI-###` do Trello para nomear branches, PRs e referencias de commits.
 - Toda mudanca deve seguir o fluxo de Trello, branch e PR descrito em `docs/tecnico/trello-workflow.md`, inclusive documentacao, processo e ajustes pequenos. Nao commite direto na `main`.
 
