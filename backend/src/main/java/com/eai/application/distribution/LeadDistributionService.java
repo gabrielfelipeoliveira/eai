@@ -16,6 +16,7 @@ import com.eai.domain.lead.LeadStatus;
 import com.eai.domain.tenant.Store;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class LeadDistributionService {
 
     private static final int DEFAULT_MINUTES_TO_ASSIGN = 15;
@@ -39,28 +41,6 @@ public class LeadDistributionService {
     private final RoundRobinAssignmentStrategy roundRobinAssignmentStrategy;
     private final LeastBusySellerAssignmentStrategy leastBusySellerAssignmentStrategy;
     private final LeadSlaEvaluator slaEvaluator = new LeadSlaEvaluator();
-
-    public LeadDistributionService(
-            LeadDistributionConfigRepository configRepository,
-            LeadSlaPolicyRepository slaPolicyRepository,
-            LeadRepository leadRepository,
-            LeadHistoryRepository historyRepository,
-            UserRepository userRepository,
-            StoreService storeService,
-            ManualAssignmentStrategy manualAssignmentStrategy,
-            RoundRobinAssignmentStrategy roundRobinAssignmentStrategy,
-            LeastBusySellerAssignmentStrategy leastBusySellerAssignmentStrategy
-    ) {
-        this.configRepository = configRepository;
-        this.slaPolicyRepository = slaPolicyRepository;
-        this.leadRepository = leadRepository;
-        this.historyRepository = historyRepository;
-        this.userRepository = userRepository;
-        this.storeService = storeService;
-        this.manualAssignmentStrategy = manualAssignmentStrategy;
-        this.roundRobinAssignmentStrategy = roundRobinAssignmentStrategy;
-        this.leastBusySellerAssignmentStrategy = leastBusySellerAssignmentStrategy;
-    }
 
     @Transactional(readOnly = true)
     public LeadDistributionSettings getSettings(UUID companyId, UUID storeId, AuthenticatedUser authenticatedUser) {

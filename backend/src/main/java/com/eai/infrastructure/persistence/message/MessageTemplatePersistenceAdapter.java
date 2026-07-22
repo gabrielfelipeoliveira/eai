@@ -3,6 +3,7 @@ package com.eai.infrastructure.persistence.message;
 import com.eai.application.message.MessageTemplateRepository;
 import com.eai.domain.message.MessageTemplate;
 import com.eai.domain.message.MessageTemplateMetaStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -10,13 +11,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class MessageTemplatePersistenceAdapter implements MessageTemplateRepository {
 
     private final SpringDataMessageTemplateRepository repository;
-
-    public MessageTemplatePersistenceAdapter(SpringDataMessageTemplateRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public List<MessageTemplate> findAll() {

@@ -15,6 +15,7 @@ import com.eai.domain.conversation.ConversationMessageDirection;
 import com.eai.domain.conversation.ConversationMessageStatus;
 import com.eai.domain.conversation.ConversationMessageType;
 import com.eai.domain.conversation.WhatsAppContact;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class WhatsAppMediaSenderService {
 
     private static final Duration FREE_TEXT_WINDOW = Duration.ofHours(24);
@@ -33,22 +35,6 @@ public class WhatsAppMediaSenderService {
     private final WhatsAppChannelSettings settings;
     private final WhatsAppMediaClient mediaClient;
     private final MediaStoragePort mediaStorage;
-
-    public WhatsAppMediaSenderService(
-            ConversationService conversationService,
-            WhatsAppContactRepository contactRepository,
-            ConversationMessageRepository messageRepository,
-            WhatsAppChannelSettings settings,
-            WhatsAppMediaClient mediaClient,
-            MediaStoragePort mediaStorage
-    ) {
-        this.conversationService = conversationService;
-        this.contactRepository = contactRepository;
-        this.messageRepository = messageRepository;
-        this.settings = settings;
-        this.mediaClient = mediaClient;
-        this.mediaStorage = mediaStorage;
-    }
 
     @Transactional
     public WhatsAppMediaMessageSendResult sendMedia(

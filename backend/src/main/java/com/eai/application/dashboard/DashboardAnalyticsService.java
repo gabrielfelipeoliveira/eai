@@ -13,6 +13,7 @@ import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DashboardAnalyticsService {
 
     private static final int DEFAULT_MINUTES_TO_ASSIGN = 15;
@@ -41,16 +43,6 @@ public class DashboardAnalyticsService {
     private final UserRepository userRepository;
     private final LeadSlaPolicyRepository slaPolicyRepository;
     private final LeadSlaEvaluator slaEvaluator = new LeadSlaEvaluator();
-
-    public DashboardAnalyticsService(
-            LeadRepository leadRepository,
-            UserRepository userRepository,
-            LeadSlaPolicyRepository slaPolicyRepository
-    ) {
-        this.leadRepository = leadRepository;
-        this.userRepository = userRepository;
-        this.slaPolicyRepository = slaPolicyRepository;
-    }
 
     @Transactional(readOnly = true)
     public DashboardSummary summary(DashboardFilters filters, AuthenticatedUser authenticatedUser) {

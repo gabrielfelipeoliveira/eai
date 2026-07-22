@@ -21,6 +21,7 @@ import com.eai.domain.lead.LeadTagDefinition;
 import com.eai.domain.tenant.Store;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class LeadService {
 
     private static final List<LeadStatus> SELLER_AVAILABLE_STATUSES = List.of(LeadStatus.NEW, LeadStatus.AVAILABLE);
@@ -44,30 +46,6 @@ public class LeadService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final ConversationRepository conversationRepository;
-
-    public LeadService(
-            LeadRepository leadRepository,
-            LeadHistoryRepository historyRepository,
-            LeadNoteRepository noteRepository,
-            LeadTagRepository tagRepository,
-            LeadTagDefinitionRepository tagDefinitionRepository,
-            CompanyService companyService,
-            StoreService storeService,
-            UserRepository userRepository,
-            ItemRepository itemRepository,
-            ConversationRepository conversationRepository
-    ) {
-        this.leadRepository = leadRepository;
-        this.historyRepository = historyRepository;
-        this.noteRepository = noteRepository;
-        this.tagRepository = tagRepository;
-        this.tagDefinitionRepository = tagDefinitionRepository;
-        this.companyService = companyService;
-        this.storeService = storeService;
-        this.userRepository = userRepository;
-        this.itemRepository = itemRepository;
-        this.conversationRepository = conversationRepository;
-    }
 
     @Transactional(readOnly = true)
     public PageResult<Lead> listLeads(LeadSearchCriteria criteria, int page, int size, AuthenticatedUser authenticatedUser) {

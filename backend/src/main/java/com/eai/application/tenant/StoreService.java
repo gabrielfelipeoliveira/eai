@@ -10,6 +10,7 @@ import com.eai.domain.tenant.Store;
 import com.eai.domain.tenant.TenantStatus;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,17 +18,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class StoreService {
 
     private final StoreRepository storeRepository;
     private final CompanyService companyService;
     private final UserRepository userRepository;
-
-    public StoreService(StoreRepository storeRepository, CompanyService companyService, UserRepository userRepository) {
-        this.storeRepository = storeRepository;
-        this.companyService = companyService;
-        this.userRepository = userRepository;
-    }
 
     @Transactional(readOnly = true)
     public List<Store> listStores(AuthenticatedUser authenticatedUser) {

@@ -3,6 +3,7 @@ package com.eai.api.tenant;
 import com.eai.application.tenant.CompanyService;
 import com.eai.application.tenant.CreateCompanyCommand;
 import com.eai.application.tenant.UpdateCompanyCommand;
+import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,13 +20,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/companies")
 @PreAuthorize("hasRole('ADMIN')")
+@RequiredArgsConstructor
 public class CompanyController {
 
     private final CompanyService companyService;
-
-    public CompanyController(CompanyService companyService) {
-        this.companyService = companyService;
-    }
 
     @GetMapping
     public List<CompanyResponse> listCompanies() {

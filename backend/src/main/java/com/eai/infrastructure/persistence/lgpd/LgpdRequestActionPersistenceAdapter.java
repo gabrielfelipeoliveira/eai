@@ -2,19 +2,17 @@ package com.eai.infrastructure.persistence.lgpd;
 
 import com.eai.application.lgpd.LgpdRequestActionRepository;
 import com.eai.domain.lgpd.LgpdRequestAction;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class LgpdRequestActionPersistenceAdapter implements LgpdRequestActionRepository {
 
     private final SpringDataLgpdRequestActionRepository repository;
-
-    public LgpdRequestActionPersistenceAdapter(SpringDataLgpdRequestActionRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public List<LgpdRequestAction> findByRequestId(UUID requestId) {

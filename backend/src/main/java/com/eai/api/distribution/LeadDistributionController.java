@@ -3,6 +3,7 @@ package com.eai.api.distribution;
 import com.eai.application.distribution.LeadDistributionService;
 import com.eai.application.distribution.UpdateLeadDistributionSettingsCommand;
 import com.eai.application.security.AuthenticatedUser;
+import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,13 +19,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/distribution")
 @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+@RequiredArgsConstructor
 public class LeadDistributionController {
 
     private final LeadDistributionService distributionService;
-
-    public LeadDistributionController(LeadDistributionService distributionService) {
-        this.distributionService = distributionService;
-    }
 
     @GetMapping("/config")
     public LeadDistributionConfigResponse getConfig(

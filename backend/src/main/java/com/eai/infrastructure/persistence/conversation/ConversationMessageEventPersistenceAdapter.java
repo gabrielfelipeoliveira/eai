@@ -2,16 +2,14 @@ package com.eai.infrastructure.persistence.conversation;
 
 import com.eai.application.conversation.ConversationMessageEventRepository;
 import com.eai.domain.conversation.ConversationMessageEvent;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class ConversationMessageEventPersistenceAdapter implements ConversationMessageEventRepository {
 
     private final SpringDataConversationMessageEventRepository repository;
-
-    public ConversationMessageEventPersistenceAdapter(SpringDataConversationMessageEventRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public ConversationMessageEvent save(ConversationMessageEvent event) {

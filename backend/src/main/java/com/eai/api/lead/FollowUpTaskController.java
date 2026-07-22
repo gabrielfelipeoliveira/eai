@@ -3,6 +3,7 @@ package com.eai.api.lead;
 import com.eai.application.lead.CreateFollowUpTaskCommand;
 import com.eai.application.lead.FollowUpTaskService;
 import com.eai.application.security.AuthenticatedUser;
+import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,13 +21,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api")
 @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SELLER')")
+@RequiredArgsConstructor
 public class FollowUpTaskController {
 
     private final FollowUpTaskService service;
-
-    public FollowUpTaskController(FollowUpTaskService service) {
-        this.service = service;
-    }
 
     @PostMapping("/leads/{id}/follow-ups")
     public FollowUpTaskResponse create(

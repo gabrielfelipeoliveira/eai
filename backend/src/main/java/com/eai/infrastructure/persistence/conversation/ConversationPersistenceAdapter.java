@@ -2,6 +2,7 @@ package com.eai.infrastructure.persistence.conversation;
 
 import com.eai.application.conversation.ConversationRepository;
 import com.eai.domain.conversation.Conversation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -9,13 +10,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class ConversationPersistenceAdapter implements ConversationRepository {
 
     private final SpringDataConversationRepository repository;
-
-    public ConversationPersistenceAdapter(SpringDataConversationRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public Optional<Conversation> findById(UUID id) {

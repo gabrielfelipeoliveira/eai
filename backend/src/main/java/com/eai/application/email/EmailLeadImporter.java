@@ -9,6 +9,7 @@ import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadHistory;
 import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -20,6 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class EmailLeadImporter {
 
     private final EmailAccountRepository emailAccountRepository;
@@ -30,26 +32,6 @@ public class EmailLeadImporter {
     private final LeadHistoryRepository historyRepository;
     private final EmailImportHistoryRepository importHistoryRepository;
     private final EncryptionService encryptionService;
-
-    public EmailLeadImporter(
-            EmailAccountRepository emailAccountRepository,
-            EmailReader emailReader,
-            LeadExtractor leadExtractor,
-            DuplicateLeadChecker duplicateLeadChecker,
-            LeadRepository leadRepository,
-            LeadHistoryRepository historyRepository,
-            EmailImportHistoryRepository importHistoryRepository,
-            EncryptionService encryptionService
-    ) {
-        this.emailAccountRepository = emailAccountRepository;
-        this.emailReader = emailReader;
-        this.leadExtractor = leadExtractor;
-        this.duplicateLeadChecker = duplicateLeadChecker;
-        this.leadRepository = leadRepository;
-        this.historyRepository = historyRepository;
-        this.importHistoryRepository = importHistoryRepository;
-        this.encryptionService = encryptionService;
-    }
 
     @Transactional
     public EmailImportResult importAccount(EmailAccount account, UUID userId) {

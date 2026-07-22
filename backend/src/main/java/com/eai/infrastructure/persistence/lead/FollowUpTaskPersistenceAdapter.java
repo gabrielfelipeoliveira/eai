@@ -2,6 +2,7 @@ package com.eai.infrastructure.persistence.lead;
 
 import com.eai.application.lead.FollowUpTaskRepository;
 import com.eai.domain.lead.FollowUpTask;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -9,13 +10,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class FollowUpTaskPersistenceAdapter implements FollowUpTaskRepository {
 
     private final SpringDataFollowUpTaskRepository repository;
-
-    public FollowUpTaskPersistenceAdapter(SpringDataFollowUpTaskRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public FollowUpTask save(FollowUpTask task) {

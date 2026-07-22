@@ -2,19 +2,17 @@ package com.eai.infrastructure.persistence.message;
 
 import com.eai.application.message.LeadCommunicationRepository;
 import com.eai.domain.message.LeadCommunication;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class LeadCommunicationPersistenceAdapter implements LeadCommunicationRepository {
 
     private final SpringDataLeadCommunicationRepository repository;
-
-    public LeadCommunicationPersistenceAdapter(SpringDataLeadCommunicationRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public List<LeadCommunication> findByLeadId(UUID leadId) {

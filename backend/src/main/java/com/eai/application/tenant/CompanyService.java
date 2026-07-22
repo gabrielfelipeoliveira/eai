@@ -4,6 +4,7 @@ import com.eai.application.common.NotFoundException;
 import com.eai.application.user.UserRepository;
 import com.eai.domain.tenant.Company;
 import com.eai.domain.tenant.TenantStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,15 +12,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
-
-    public CompanyService(CompanyRepository companyRepository, UserRepository userRepository) {
-        this.companyRepository = companyRepository;
-        this.userRepository = userRepository;
-    }
 
     @Transactional(readOnly = true)
     public List<Company> listCompanies() {

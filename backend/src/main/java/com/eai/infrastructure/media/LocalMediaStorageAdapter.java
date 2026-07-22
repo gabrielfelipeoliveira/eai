@@ -6,6 +6,7 @@ import com.eai.application.media.MediaStoragePort;
 import com.eai.application.media.StoreMediaCommand;
 import com.eai.application.media.StoredMedia;
 import com.eai.infrastructure.config.MediaStorageProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -16,15 +17,12 @@ import java.util.HexFormat;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class LocalMediaStorageAdapter implements MediaStoragePort {
 
     private static final String PROVIDER = "local";
 
     private final MediaStorageProperties properties;
-
-    public LocalMediaStorageAdapter(MediaStorageProperties properties) {
-        this.properties = properties;
-    }
 
     @Override
     public StoredMedia store(StoreMediaCommand command) {

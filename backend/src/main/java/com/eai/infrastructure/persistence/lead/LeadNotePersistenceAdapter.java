@@ -2,19 +2,17 @@ package com.eai.infrastructure.persistence.lead;
 
 import com.eai.application.lead.LeadNoteRepository;
 import com.eai.domain.lead.LeadNote;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class LeadNotePersistenceAdapter implements LeadNoteRepository {
 
     private final SpringDataLeadNoteRepository repository;
-
-    public LeadNotePersistenceAdapter(SpringDataLeadNoteRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public List<LeadNote> findByLeadId(UUID leadId) {

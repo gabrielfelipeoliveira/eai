@@ -3,15 +3,13 @@ package com.eai.application.email;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class DefaultLeadExtractor implements LeadExtractor {
 
     private final List<EmailParser> parsers;
-
-    public DefaultLeadExtractor(List<EmailParser> parsers) {
-        this.parsers = parsers;
-    }
 
     @Override
     public ParsedEmailLead extract(EmailMessage message) {

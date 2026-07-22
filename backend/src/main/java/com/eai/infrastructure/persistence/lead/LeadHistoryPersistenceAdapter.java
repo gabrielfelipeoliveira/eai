@@ -2,19 +2,17 @@ package com.eai.infrastructure.persistence.lead;
 
 import com.eai.application.lead.LeadHistoryRepository;
 import com.eai.domain.lead.LeadHistory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class LeadHistoryPersistenceAdapter implements LeadHistoryRepository {
 
     private final SpringDataLeadHistoryRepository repository;
-
-    public LeadHistoryPersistenceAdapter(SpringDataLeadHistoryRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public List<LeadHistory> findByLeadId(UUID leadId) {

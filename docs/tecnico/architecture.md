@@ -132,6 +132,7 @@ Lombok faz parte da stack do backend e pode ser usado para reduzir boilerplate, 
 
 Regras:
 
+- Novas classes backend devem nascer seguindo este padrao de Lombok seguro quando aplicavel, em vez de introduzir boilerplate para ser corrigido depois.
 - Classes de dominio usam no maximo `@Getter` por padrao. Nao use `@Setter` amplo nem `@Data` em dominio.
 - Entidades JPA podem usar `@Getter` e `@Setter`, mas nao devem usar `@Data`.
 - Services, controllers, adapters e configuracoes podem usar `@RequiredArgsConstructor` quando todos os campos injetados forem `final` e o construtor gerado for equivalente ao atual.

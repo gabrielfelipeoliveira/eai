@@ -6,6 +6,7 @@ import com.eai.application.security.AuthenticatedUser;
 import com.eai.domain.distribution.LeadSlaPolicy;
 import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,15 +21,11 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/pipeline")
 @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER')")
+@RequiredArgsConstructor
 public class PipelineController {
 
     private final PipelineService pipelineService;
     private final LeadDistributionService distributionService;
-
-    public PipelineController(PipelineService pipelineService, LeadDistributionService distributionService) {
-        this.pipelineService = pipelineService;
-        this.distributionService = distributionService;
-    }
 
     @GetMapping
     public Map<LeadStatus, List<LeadResponse>> getPipeline(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
