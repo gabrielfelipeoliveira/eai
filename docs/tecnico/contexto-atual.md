@@ -122,6 +122,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-026`: concluido em 2026-07-22 no PR `#24`. Formalizar checklist de Code Review e registro de debitos por card. UX dispensado: ajuste de processo/documentacao sem impacto visual.
 - `EAI-027`: concluido em 2026-07-22 no PR `#28`. Registrar comportamentos de qualidade e otimizacao do agente. UX dispensado: ajuste de processo/documentacao sem impacto visual.
 - `EAI-029`: concluido em 2026-07-22 no PR `#30`. Substituir criptografia Base64 de credenciais IMAP. UX dispensado: hardening backend sem impacto visual.
+- `EAI-034`: em andamento com Lucas Reiter. Atualizar GitHub Actions para remover warning de Node.js 20 deprecated. UX dispensado: ajuste de CI sem impacto visual.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -129,15 +130,22 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello.
+- Lucas Reiter: `EAI-034` - atualizar actions por Node.js 20 deprecated.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida.
+Lucas Reiter: chore/eai-034-update-actions-node24
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
+
+Reserva operacional EAI-034 em 2026-07-22:
+
+- Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
+- Branch `chore/eai-034-update-actions-node24`.
+- Escopo: atualizar actions oficiais do GitHub Actions para versoes com runtime Node 24, removendo warning de Node.js 20 deprecated no CI.
+- UX dispensado: ajuste tecnico de CI sem impacto visual.
 
 Reserva operacional EAI-029 em 2026-07-22:
 
