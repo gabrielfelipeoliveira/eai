@@ -122,6 +122,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-026`: concluido em 2026-07-22 no PR `#24`. Formalizar checklist de Code Review e registro de debitos por card. UX dispensado: ajuste de processo/documentacao sem impacto visual.
 - `EAI-027`: concluido em 2026-07-22 no PR `#28`. Registrar comportamentos de qualidade e otimizacao do agente. UX dispensado: ajuste de processo/documentacao sem impacto visual.
 - `EAI-029`: concluido em 2026-07-22 no PR `#30`. Substituir criptografia Base64 de credenciais IMAP. UX dispensado: hardening backend sem impacto visual.
+- `EAI-032`: em andamento com Lucas Reiter. Parametrizar CORS, Swagger e defaults locais por ambiente. UX dispensado: hardening backend/config sem impacto visual.
 - `EAI-034`: concluido em 2026-07-22 no PR `#31`. Atualizar GitHub Actions para remover warning de Node.js 20 deprecated. UX dispensado: ajuste de CI sem impacto visual.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
@@ -130,15 +131,22 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello.
+- Lucas Reiter: `EAI-032` - parametrizar CORS, Swagger e defaults locais por ambiente.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida.
+Lucas Reiter: chore/eai-032-env-hardening
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
+
+Reserva operacional EAI-032 em 2026-07-22:
+
+- Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
+- Branch `chore/eai-032-env-hardening`.
+- Escopo: parametrizar CORS, Swagger e defaults locais por ambiente, removendo defaults inseguros de producao.
+- UX dispensado: hardening backend/config sem impacto visual.
 
 Reserva operacional EAI-034 em 2026-07-22:
 
