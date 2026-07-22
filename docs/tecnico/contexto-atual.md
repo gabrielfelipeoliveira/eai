@@ -120,7 +120,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-024`: concluido. Notificar administradores sobre falhas de e-mail quando houver infraestrutura de notificacao.
 - `EAI-025`: concluido em 2026-07-22 no PR `#27`. Atualizar Vite/esbuild por vulnerabilidades npm audit.
 - `EAI-026`: concluido em 2026-07-22 no PR `#24`. Formalizar checklist de Code Review e registro de debitos por card. UX dispensado: ajuste de processo/documentacao sem impacto visual.
-- `EAI-027`: PR `#28` aberta em 2026-07-22; consultar Trello para status operacional. Registrar comportamentos de qualidade e otimizacao do agente. UX dispensado: ajuste de processo/documentacao sem impacto visual.
+- `EAI-027`: concluido em 2026-07-22 no PR `#28`. Registrar comportamentos de qualidade e otimizacao do agente. UX dispensado: ajuste de processo/documentacao sem impacto visual.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
