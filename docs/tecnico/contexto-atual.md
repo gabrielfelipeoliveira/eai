@@ -170,6 +170,14 @@ Reserva operacional EAI-018 em 2026-07-22:
 - Escopo: configurar stack E2E e cobrir fluxos criticos do MVP no navegador, priorizando login/autenticacao, autorizacao e jornada principal de lead/listagem.
 - UX dispensado: ajuste de qualidade automatizada sem mudanca visual planejada.
 
+Implementacao EAI-018 em 2026-07-22:
+
+- Frontend passou a usar Playwright com projeto Chromium para testes E2E.
+- Scripts `npm run test:e2e` e `npm run test:e2e:ui` adicionados ao frontend.
+- CI instala Chromium do Playwright e executa E2E apos testes unitarios/componentes e build frontend.
+- E2E cobre redirecionamento de rota protegida sem login, login de administrador, bloqueio de tela administrativa para vendedor, listagem/filtro de leads e criacao manual de lead.
+- API dos E2E e mockada nas fronteiras HTTP para manter a suite independente de backend/banco no CI.
+
 Reserva operacional EAI-030 em 2026-07-22:
 
 - Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
