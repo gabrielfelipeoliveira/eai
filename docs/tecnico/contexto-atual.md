@@ -118,7 +118,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-022`: concluido. Registrar novos problemas no Trello e atribuir cards movimentados.
 - `EAI-023`: concluido. Ajustar atribuicao de membros apenas em cards puxados.
 - `EAI-024`: em andamento com Gabriel Felipe Ferreira de Oliveira. Notificar administradores sobre falhas de e-mail quando houver infraestrutura de notificacao.
-- `EAI-025`: backlog. Atualizar Vite/esbuild por vulnerabilidades npm audit.
+- `EAI-025`: em andamento com Lucas Reiter. Atualizar Vite/esbuild por vulnerabilidades npm audit.
 - `EAI-026`: concluido em 2026-07-22 no PR `#24`. Formalizar checklist de Code Review e registro de debitos por card. UX dispensado: ajuste de processo/documentacao sem impacto visual.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
@@ -127,15 +127,21 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo.
+- Lucas Reiter: `EAI-025` - atualizar Vite/esbuild por vulnerabilidades npm audit.
 - Gabriel Felipe Ferreira de Oliveira: `EAI-024` - notificar administradores sobre falhas de e-mail.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa.
+Lucas Reiter: chore/eai-025-vite-esbuild
 Gabriel Felipe Ferreira de Oliveira: confirmar branch atual do `EAI-024` no Trello/PR antes de interagir com esse escopo.
 ```
+
+Reserva operacional EAI-025 em 2026-07-22:
+
+- Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
+- Branch `chore/eai-025-vite-esbuild`.
+- Escopo: atualizar Vite/esbuild para corrigir vulnerabilidades reportadas por `npm audit`, mantendo o build frontend funcional.
 
 Reserva operacional EAI-026 em 2026-07-22:
 
