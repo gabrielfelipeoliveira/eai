@@ -149,6 +149,13 @@ Reserva operacional EAI-035 em 2026-07-22:
 - Escopo: documentar politica operacional de rotacao do segredo IMAP e estrategia de migracao segura das credenciais legadas.
 - UX dispensado: hardening operacional sem impacto visual.
 
+Implementacao EAI-035 em 2026-07-22:
+
+- Documentada politica operacional de rotacao de `EAI_EMAIL_CREDENTIALS_SECRET`.
+- Documentada estrategia segura para migracao de credenciais IMAP legadas em Base64 e credenciais cifradas com chave anterior.
+- Registrado que a implementacao atual nao deve trocar segredo diretamente em producao sem keyring, job de recriptografia ou migracao manual controlada.
+- Criado card tecnico `EAI-036` para suporte a `EAI_EMAIL_CREDENTIALS_PREVIOUS_SECRETS` ou keyring equivalente e job/script idempotente de recriptografia.
+
 Reserva operacional EAI-032 em 2026-07-22:
 
 - Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
