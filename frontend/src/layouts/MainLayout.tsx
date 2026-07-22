@@ -12,9 +12,13 @@ import EmailIcon from '@mui/icons-material/Email';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import ChatIcon from '@mui/icons-material/Chat';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import {
   AppBar,
+  Badge,
   Box,
+  Button,
   Divider,
   Drawer,
   IconButton,
@@ -22,13 +26,23 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Menu,
+  MenuItem,
   Toolbar,
   Tooltip,
   Typography,
 } from '@mui/material';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
+import {
+  getUnreadNotificationCount,
+  listNotifications,
+  markAllNotificationsRead,
+  markNotificationRead,
+} from '../services/notificationService';
 
 const drawerWidth = 248;
 
@@ -36,6 +50,39 @@ export function MainLayout() {
   const { hasAnyRole, logout, user } = useAuth();
   const metadata = useMetadata();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [notificationsAnchor, setNotificationsAnchor] = useState<HTMLElement | null>(null);
+  const isAdmin = hasAnyRole(['ADMIN']);
+
+  const unreadCountQuery = useQuery({
+    queryKey: ['notifications', 'unread-count'],
+    queryFn: getUnreadNotificationCount,
+    enabled: isAdmin,
+    refetchInterval: 60000,
+  });
+
+  const notificationsQuery = useQuery({
+    queryKey: ['notifications', 'latest'],
+    queryFn: () => listNotifications(true, 20),
+    enabled: isAdmin && Boolean(notificationsAnchor),
+  });
+
+  const refreshNotifications = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['notifications', 'unread-count'] }),
+      queryClient.invalidateQueries({ queryKey: ['notifications', 'latest'] }),
+    ]);
+  };
+
+  const markReadMutation = useMutation({
+    mutationFn: markNotificationRead,
+    onSuccess: refreshNotifications,
+  });
+
+  const markAllReadMutation = useMutation({
+    mutationFn: markAllNotificationsRead,
+    onSuccess: refreshNotifications,
+  });
 
   const menuItems = [
     { label: 'Dashboard', path: '/', icon: <DashboardIcon /> },
@@ -60,6 +107,8 @@ export function MainLayout() {
     navigate('/login', { replace: true });
   }
 
+  const unreadCount = unreadCountQuery.data?.count ?? 0;
+
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex' }}>
       <AppBar
@@ -78,6 +127,84 @@ export function MainLayout() {
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            {isAdmin && (
+              <>
+                <Tooltip title="Notificacoes">
+                  <IconButton
+                    aria-label="Notificacoes"
+                    onClick={(event) => setNotificationsAnchor(event.currentTarget)}
+                  >
+                    <Badge badgeContent={unreadCount} color="error" max={99}>
+                      <NotificationsIcon />
+                    </Badge>
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  anchorEl={notificationsAnchor}
+                  open={Boolean(notificationsAnchor)}
+                  onClose={() => setNotificationsAnchor(null)}
+                  PaperProps={{ sx: { width: 380, maxWidth: 'calc(100vw - 32px)' } }}
+                >
+                  <Box sx={{ px: 2, py: 1.25, display: 'flex', justifyContent: 'space-between', gap: 1 }}>
+                    <Typography variant="subtitle2" fontWeight={700}>
+                      Notificacoes
+                    </Typography>
+                    <Tooltip title="Marcar todas como lidas">
+                      <span>
+                        <IconButton
+                          aria-label="Marcar todas como lidas"
+                          disabled={unreadCount === 0 || markAllReadMutation.isPending}
+                          onClick={() => markAllReadMutation.mutate()}
+                          size="small"
+                        >
+                          <DoneAllIcon fontSize="small" />
+                        </IconButton>
+                      </span>
+                    </Tooltip>
+                  </Box>
+                  <Divider />
+                  {notificationsQuery.data?.length ? (
+                    notificationsQuery.data.map((notification) => (
+                      <MenuItem
+                        key={notification.id}
+                        onClick={() => markReadMutation.mutate(notification.id)}
+                        sx={{ alignItems: 'flex-start', whiteSpace: 'normal', py: 1.25 }}
+                      >
+                        <Box sx={{ minWidth: 0 }}>
+                          <Typography variant="body2" fontWeight={700}>
+                            {notification.title}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {notification.message}
+                          </Typography>
+                        </Box>
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <Box sx={{ px: 2, py: 2 }}>
+                      <Typography variant="body2" color="text.secondary">
+                        Nenhuma notificacao pendente
+                      </Typography>
+                    </Box>
+                  )}
+                  {unreadCount > 0 && (
+                    <>
+                      <Divider />
+                      <Box sx={{ p: 1 }}>
+                        <Button
+                          fullWidth
+                          size="small"
+                          onClick={() => markAllReadMutation.mutate()}
+                          disabled={markAllReadMutation.isPending}
+                        >
+                          Marcar todas como lidas
+                        </Button>
+                      </Box>
+                    </>
+                  )}
+                </Menu>
+              </>
+            )}
             <PersonIcon color="action" />
             <Box sx={{ display: { xs: 'none', sm: 'block' }, minWidth: 0 }}>
               <Typography variant="body2" fontWeight={700} noWrap>

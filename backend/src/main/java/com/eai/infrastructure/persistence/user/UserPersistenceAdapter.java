@@ -2,6 +2,7 @@ package com.eai.infrastructure.persistence.user;
 
 import com.eai.application.user.UserRepository;
 import com.eai.domain.user.User;
+import com.eai.domain.user.UserRole;
 import com.eai.domain.user.UserStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -45,6 +46,13 @@ public class UserPersistenceAdapter implements UserRepository {
     @Override
     public List<User> findActiveByStoreId(UUID storeId) {
         return repository.findByStoreIdAndStatus(storeId, UserStatus.ACTIVE).stream()
+                .map(this::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<User> findActiveByRole(UserRole role) {
+        return repository.findByStatusAndRole(UserStatus.ACTIVE, role).stream()
                 .map(this::toDomain)
                 .toList();
     }

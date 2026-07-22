@@ -42,6 +42,7 @@ class EmailLeadImporterTest {
     private final LeadHistoryRepository historyRepository = mock(LeadHistoryRepository.class);
     private final EmailImportHistoryRepository importHistoryRepository = mock(EmailImportHistoryRepository.class);
     private final EncryptionService encryptionService = mock(EncryptionService.class);
+    private final EmailAccountFailureNotifier emailAccountFailureNotifier = mock(EmailAccountFailureNotifier.class);
     private final EmailLeadImporter importer = new EmailLeadImporter(
             emailAccountRepository,
             emailReader,
@@ -50,7 +51,8 @@ class EmailLeadImporterTest {
             leadRepository,
             historyRepository,
             importHistoryRepository,
-            encryptionService
+            encryptionService,
+            emailAccountFailureNotifier
     );
 
     @DisplayName("Importacao cria leads, marca duplicados e registra historicos")
@@ -129,6 +131,13 @@ class EmailLeadImporterTest {
         verify(importHistoryRepository).save(importHistoryCaptor.capture());
         assertThat(importHistoryCaptor.getValue().getStatus()).isEqualTo(EmailAccountStatus.FAILED);
         assertThat(importHistoryCaptor.getValue().getMessage()).isEqualTo("IMAP indisponivel");
+        ArgumentCaptor<RuntimeException> exceptionCaptor = ArgumentCaptor.forClass(RuntimeException.class);
+        verify(emailAccountFailureNotifier).notifyEmailAccountFailure(
+                org.mockito.ArgumentMatchers.same(account),
+                org.mockito.ArgumentMatchers.eq("Importacao de leads por e-mail"),
+                exceptionCaptor.capture()
+        );
+        assertThat(exceptionCaptor.getValue().getMessage()).isEqualTo("IMAP indisponivel");
     }
 
     private EmailAccount account(Instant lastReadAt) {
