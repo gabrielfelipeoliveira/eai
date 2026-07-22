@@ -135,6 +135,12 @@ Reserva operacional em 2026-07-22:
 - Validacao inicial frontend: `rtk npm run build` passou com warning conhecido de chunk JS acima de 500 kB apos minificacao.
 - Validacao inicial backend: `rtk mvn clean verify` nao executou porque `mvn` nao esta disponivel no PATH local; alternativa via Docker exigiu permissao de acesso ao socket Docker e foi interrompida antes da execucao.
 
+Implementacao em 2026-07-22:
+
+- Adicionado teste automatizado `OpenApiContractTest` para validar que `/v3/api-docs` e publico, possui metadados e security scheme esperados, cobre endpoints Spring MVC em `com.eai.api`, declara responses e nao gera `operationId` duplicado.
+- Atualizada documentacao de API para registrar a validacao automatizada do contrato OpenAPI.
+- Validacoes: backend Docker `mvn clean verify` passou com 107 testes unitarios no Surefire e 2 testes de integracao no Failsafe/Testcontainers; frontend `rtk npm run build` passou com warning conhecido de chunk JS acima de 500 kB apos minificacao.
+
 ## Validacao Padrao
 
 Backend:

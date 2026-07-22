@@ -213,9 +213,10 @@ Perguntas para o Software Architect:
 - OpenAPI/Swagger faz parte da stack do backend.
 - A documentacao de API deve ser atualizada quando contratos mudarem.
 - Exemplos publicos de API nao devem usar segredos reais ou dados pessoais.
+- A suite backend valida automaticamente que `/v3/api-docs` e publico, possui metadados e security scheme esperados, cobre os endpoints Spring MVC em `com.eai.api` e nao gera `operationId` duplicado.
 
 Status:
-PENDENTE DE DEFINIÃ‡ÃƒO
+PARCIALMENTE DEFINIDO
 
 Perguntas para o Software Architect:
 
