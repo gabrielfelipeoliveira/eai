@@ -120,13 +120,19 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- Nenhum card em desenvolvimento ativo. `EAI-016` esta aguardando Code Review no PR `#21`.
+- `EAI-019`: validacao de contrato OpenAPI.
 
-Branch sugerida:
+Branch atual:
 
 ```text
-chore/eai-020-lombok-seguro
+test/eai-019-openapi-contract-validation
 ```
+
+Reserva operacional em 2026-07-22:
+
+- Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
+- Validacao inicial frontend: `rtk npm run build` passou com warning conhecido de chunk JS acima de 500 kB apos minificacao.
+- Validacao inicial backend: `rtk mvn clean verify` nao executou porque `mvn` nao esta disponivel no PATH local; alternativa via Docker exigiu permissao de acesso ao socket Docker e foi interrompida antes da execucao.
 
 ## Validacao Padrao
 
