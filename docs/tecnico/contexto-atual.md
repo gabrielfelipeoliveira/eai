@@ -117,9 +117,10 @@ Cards de desenvolvimento conhecidos:
 - `EAI-021`: concluido. Reforcar obrigatoriedade de branch e PR para qualquer mudanca.
 - `EAI-022`: concluido. Registrar novos problemas no Trello e atribuir cards movimentados.
 - `EAI-023`: concluido. Ajustar atribuicao de membros apenas em cards puxados.
-- `EAI-024`: em andamento com Gabriel Felipe Ferreira de Oliveira. Notificar administradores sobre falhas de e-mail quando houver infraestrutura de notificacao.
-- `EAI-025`: PR `#27` aberta em 2026-07-22; consultar Trello para status operacional. Atualizar Vite/esbuild por vulnerabilidades npm audit.
+- `EAI-024`: concluido. Notificar administradores sobre falhas de e-mail quando houver infraestrutura de notificacao.
+- `EAI-025`: concluido em 2026-07-22 no PR `#27`. Atualizar Vite/esbuild por vulnerabilidades npm audit.
 - `EAI-026`: concluido em 2026-07-22 no PR `#24`. Formalizar checklist de Code Review e registro de debitos por card. UX dispensado: ajuste de processo/documentacao sem impacto visual.
+- `EAI-027`: PR `#28` aberta em 2026-07-22; consultar Trello para status operacional. Registrar comportamentos de qualidade e otimizacao do agente. UX dispensado: ajuste de processo/documentacao sem impacto visual.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -128,14 +129,20 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 Cards em andamento por responsavel:
 
 - Lucas Reiter: nenhum card com implementacao ativa.
-- Gabriel Felipe Ferreira de Oliveira: `EAI-024` - notificar administradores sobre falhas de e-mail.
+- Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
 Lucas Reiter: sem branch de implementacao ativa.
-Gabriel Felipe Ferreira de Oliveira: confirmar branch atual do `EAI-024` no Trello/PR antes de interagir com esse escopo.
+Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
+
+Reserva operacional EAI-027 em 2026-07-22:
+
+- Card criado em `Em andamento` e atribuido a `Lucas Reiter`.
+- Branch `docs/eai-027-agent-quality-behaviors`.
+- Escopo: documentar uso produtivo da espera de CI, gates de qualidade sugeridos por card, `@DisplayName` PT-BR em testes unitarios novos/alterados e handoff sem status transitorio enganoso.
 
 Reserva operacional EAI-025 em 2026-07-22:
 

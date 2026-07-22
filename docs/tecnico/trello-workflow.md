@@ -144,6 +144,8 @@ Esta regra nao tem excecao para mudancas pequenas, documentais ou de processo. T
 
 O lock operacional imediato e o Trello. `docs/tecnico/contexto-atual.md` e handoff versionado e pode ficar atrasado na `main` ate o PR de reserva ser mergeado. Por isso, todo agente deve consultar o Trello antes de escolher ou assumir um card, mesmo quando o handoff da `main` parecer livre.
 
+Quando a implementacao ja estiver em PR, nao mantenha esse card como "implementacao ativa" em `docs/tecnico/contexto-atual.md`. Registre a PR e deixe o Trello como fonte operacional imediata para o status transitorio de Code Review, teste e conclusao.
+
 Quando houver conflito de merge em `docs/tecnico/contexto-atual.md` por trabalho paralelo, a branch que esta sendo integrada depois deve reconciliar os dois lados. Preserve os cards/branches/responsaveis ja presentes na `main`, mantenha o estado do proprio card da branch e ajuste qualquer trecho operacional que tenha ficado atrasado apos a resolucao do conflito.
 
 O commit inicial de reserva deve ser documental e pequeno. Exemplo:
@@ -186,6 +188,16 @@ Validacoes executadas:
 - ...
 ```
 
+Enquanto checks remotos ou CI estiverem rodando, use o tempo para tarefas sem conflito no mesmo workspace:
+
+- revisar o diff e preparar o comentario de Code Review;
+- consultar logs e status de CI;
+- atualizar Trello com validacoes, avisos e vulnerabilidades;
+- registrar debitos tecnicos e proximos cards sugeridos;
+- planejar proximos passos ou pesquisar documentacao.
+
+Nao inicie implementacao de outro card na mesma working tree enquanto a PR atual ainda depende de CI, review ou merge. Se for necessario paralelizar implementacao real, use outro workspace/worktree e um card separado.
+
 ## Code Review
 
 Antes de aprovar, mergear ou concluir uma PR, faca revisao objetiva do diff contra `main`.
@@ -195,8 +207,10 @@ Checklist minimo:
 - Escopo: o diff corresponde ao card `EAI-###`, documentacao oficial e criterios de aceite.
 - Arquitetura: dominio permanece sem Spring/JPA, controllers nao concentram regra de negocio e ports/adapters seguem a arquitetura hexagonal.
 - Testes: cobertura adicionada ou atualizada e proporcional ao risco; quando teste nao for aplicavel, registre justificativa.
+- Testes unitarios novos ou alterados: `@DisplayName` em PT-BR descreve o comportamento validado quando a stack suportar.
 - Validacoes: comandos relevantes foram executados localmente e checks remotos foram verificados quando houver PR.
 - Vulnerabilidades e warnings: itens de build, auditoria, Mend/SCA, CVE Java ou runtime foram corrigidos ou registrados.
+- Gates de qualidade: avalie e registre oportunidades de coverage minimo, code smell/static analysis, Mend/SCA e auditoria de imagens, mesmo quando virarem card futuro.
 - Handoff: `docs/tecnico/contexto-atual.md` e Trello refletem o estado real, preservando cards, branches e responsaveis em trabalho paralelo.
 - Debitos tecnicos: achados fora do escopo foram comentados no Trello e, quando necessario, viraram sugestao de card futuro.
 
