@@ -80,20 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-043` em andamento no Trello.
+- Lucas Reiter: nenhum card ativo conhecido no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: chore/eai-043-react-router-future-flag
+Lucas Reiter: sem branch ativa conhecida.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Finalizar `EAI-043`, abrir PR, validar CI, fazer Code Review, mergear e concluir o card no Trello.
-- Depois do merge do `EAI-043`, revalidar se nao ha cards em `Em andamento`, `Aguardando Code Review` ou `Aguardando Teste`.
+- Revalidar Trello e GitHub antes de puxar o proximo card.
+- Nao ha card ativo conhecido para Lucas Reiter ou Gabriel Felipe Ferreira de Oliveira.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -141,7 +141,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-040`: concluido no PR `#46`. Corrigir selects MUI indefinidos nos E2E de leads.
 - `EAI-041`: concluido no PR `#47`. Reduzir chunk principal do build frontend.
 - `EAI-042`: concluido no PR `#48`. Limpar historico operacional truncado do contexto atual.
-- `EAI-043`: em andamento. Remover warning React Router future flag nos E2E.
+- `EAI-043`: concluido no PR `#49`. Remover warning React Router future flag nos E2E.
 
 ## Historico Operacional Recente
 
@@ -188,10 +188,10 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 ### EAI-043
 
 - Branch: `chore/eai-043-react-router-future-flag`.
-- Status: em andamento em 2026-07-22.
+- PR: `https://github.com/gabrielfelipeoliveira/eai/pull/49`.
 - Escopo: ativar `future.v7_startTransition` no React Router para remover warning nos E2E.
 - Implementacao: `RouterProvider` recebe `future={{ v7_startTransition: true }}` e `createBrowserRouter` recebe a mesma flag via cast isolado por lacuna de tipagem da versao atual.
-- Validacao: `npm run test:e2e` passou sem warning React Router future flag.
+- Validacao: `npm run test:e2e` passou sem warning React Router future flag; CI remoto da `main` passou.
 - UX: dispensado, ajuste tecnico de compatibilidade sem mudanca visual.
 
 ## Validacao Padrao
