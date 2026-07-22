@@ -80,20 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-044` - remover warning ambiental `NO_COLOR`/`FORCE_COLOR` dos E2E.
+- Lucas Reiter: nenhum card ativo conhecido no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: test/eai-044-remove-no-color-warning
+Lucas Reiter: sem branch ativa conhecida.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Implementar `EAI-044` na branch `test/eai-044-remove-no-color-warning`.
-- Reproduzir e remover warning ambiental dos E2E sem reduzir validacoes.
+- Revalidar Trello e GitHub antes de puxar o proximo card.
+- Nao ha card ativo conhecido para Lucas Reiter ou Gabriel Felipe Ferreira de Oliveira.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -142,7 +142,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-041`: concluido no PR `#47`. Reduzir chunk principal do build frontend.
 - `EAI-042`: concluido no PR `#48`. Limpar historico operacional truncado do contexto atual.
 - `EAI-043`: concluido no PR `#49`. Remover warning React Router future flag nos E2E.
-- `EAI-044`: em andamento. Remover warning ambiental `NO_COLOR`/`FORCE_COLOR` dos E2E.
+- `EAI-044`: concluido no PR `#51`. Remover warning ambiental `NO_COLOR`/`FORCE_COLOR` dos E2E.
 
 ## Historico Operacional Recente
 
@@ -195,6 +195,14 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Validacao: `npm run test:e2e` passou sem warning React Router future flag; CI remoto da `main` passou.
 - UX: dispensado, ajuste tecnico de compatibilidade sem mudanca visual.
 
+### EAI-044
+
+- Branch: `test/eai-044-remove-no-color-warning`.
+- PR: `https://github.com/gabrielfelipeoliveira/eai/pull/51`.
+- Entrega: script `test:e2e` remove `NO_COLOR` do ambiente antes de executar Playwright, evitando conflito com `FORCE_COLOR` em subprocessos Vite/Playwright.
+- Validacao: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build` e `npm run test:e2e` passaram; E2E local sem warning `NO_COLOR`/`FORCE_COLOR`; CI remoto do PR passou.
+- UX: dispensado, ajuste tecnico de ambiente/teste sem mudanca visual.
+
 ## Validacao Padrao
 
 Backend:
@@ -239,7 +247,6 @@ Avisos conhecidos nao bloqueantes:
 - Backend: Flyway reporta H2 2.4.240 mais novo que a versao verificada.
 - Backend: Mockito usa self-attaching inline mock maker; JDK futuro pode exigir agente configurado.
 - Backend: compilacao ainda pode reportar notas de uso deprecated/unchecked em alguns pontos.
-- Frontend E2E: ambiente pode reportar `NO_COLOR` ignorado por `FORCE_COLOR`.
 - Frontend E2E: warning React Router future flag `v7_startTransition` removido no `EAI-043`.
 
 ## Lacunas Ja Registradas Em Cards
