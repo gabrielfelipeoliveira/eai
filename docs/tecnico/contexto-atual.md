@@ -80,20 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello.
+- Lucas Reiter: `EAI-044` - remover warning ambiental `NO_COLOR`/`FORCE_COLOR` dos E2E.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida.
+Lucas Reiter: test/eai-044-remove-no-color-warning
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Revalidar Trello e GitHub antes de puxar o proximo card.
-- Nao ha card ativo conhecido para Lucas Reiter ou Gabriel Felipe Ferreira de Oliveira.
+- Implementar `EAI-044` na branch `test/eai-044-remove-no-color-warning`.
+- Reproduzir e remover warning ambiental dos E2E sem reduzir validacoes.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -142,6 +142,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-041`: concluido no PR `#47`. Reduzir chunk principal do build frontend.
 - `EAI-042`: concluido no PR `#48`. Limpar historico operacional truncado do contexto atual.
 - `EAI-043`: concluido no PR `#49`. Remover warning React Router future flag nos E2E.
+- `EAI-044`: em andamento. Remover warning ambiental `NO_COLOR`/`FORCE_COLOR` dos E2E.
 
 ## Historico Operacional Recente
 
