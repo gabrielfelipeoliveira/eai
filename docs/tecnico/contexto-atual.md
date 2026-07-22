@@ -147,6 +147,14 @@ Reserva operacional EAI-034 em 2026-07-22:
 - Escopo: atualizar actions oficiais do GitHub Actions para versoes com runtime Node 24, removendo warning de Node.js 20 deprecated no CI.
 - UX dispensado: ajuste tecnico de CI sem impacto visual.
 
+Implementacao EAI-034 em 2026-07-22:
+
+- Atualizado `actions/checkout` de `v4` para `v6`.
+- Atualizado `actions/setup-java` de `v4` para `v5`.
+- Atualizado `actions/setup-node` de `v4` para `v6`.
+- Mantido `node-version: "20"` no build frontend para nao alterar runtime da aplicacao neste card.
+- Validacao local: parse YAML de `.github/workflows/ci.yml` passou.
+
 Reserva operacional EAI-029 em 2026-07-22:
 
 - Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
