@@ -5,6 +5,9 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
@@ -17,6 +20,7 @@ public class Lead {
     private UUID storeId;
     private String customerName;
     private String customerPhone;
+    private List<String> additionalPhones;
     private String customerEmail;
     private String customerCity;
     private String vehicleInterest;
@@ -34,6 +38,7 @@ public class Lead {
     private String lostReason;
     private BigDecimal saleValue;
     private String saleCurrency;
+    private UUID relatedLeadId;
 
     public Lead(
             UUID id,
@@ -62,6 +67,7 @@ public class Lead {
                 storeId,
                 customerName,
                 customerPhone,
+                List.of(),
                 customerEmail,
                 customerCity,
                 vehicleInterest,
@@ -78,6 +84,7 @@ public class Lead {
                 lastContactAt,
                 lostReason,
                 saleValue,
+                null,
                 null
         );
     }
@@ -106,11 +113,66 @@ public class Lead {
             BigDecimal saleValue,
             String saleCurrency
     ) {
+        this(
+                id,
+                companyId,
+                storeId,
+                customerName,
+                customerPhone,
+                List.of(),
+                customerEmail,
+                customerCity,
+                vehicleInterest,
+                itemId,
+                item,
+                source,
+                originalMessage,
+                status,
+                assignedToUserId,
+                assignedAt,
+                createdAt,
+                updatedAt,
+                firstContactAt,
+                lastContactAt,
+                lostReason,
+                saleValue,
+                saleCurrency,
+                null
+        );
+    }
+
+    public Lead(
+            UUID id,
+            UUID companyId,
+            UUID storeId,
+            String customerName,
+            String customerPhone,
+            List<String> additionalPhones,
+            String customerEmail,
+            String customerCity,
+            String vehicleInterest,
+            UUID itemId,
+            Item item,
+            LeadSource source,
+            String originalMessage,
+            LeadStatus status,
+            UUID assignedToUserId,
+            Instant assignedAt,
+            Instant createdAt,
+            Instant updatedAt,
+            Instant firstContactAt,
+            Instant lastContactAt,
+            String lostReason,
+            BigDecimal saleValue,
+            String saleCurrency,
+            UUID relatedLeadId
+    ) {
         this.id = Objects.requireNonNull(id);
         this.companyId = Objects.requireNonNull(companyId);
         this.storeId = Objects.requireNonNull(storeId);
         this.customerName = requireText(customerName, "customerName");
         this.customerPhone = trimToNull(customerPhone);
+        this.additionalPhones = normalizeAdditionalPhones(additionalPhones, this.customerPhone);
         this.customerEmail = trimToNull(customerEmail);
         this.customerCity = trimToNull(customerCity);
         this.vehicleInterest = trimToNull(vehicleInterest);
@@ -128,6 +190,7 @@ public class Lead {
         this.lostReason = trimToNull(lostReason);
         this.saleValue = saleValue;
         this.saleCurrency = normalizeCurrency(saleCurrency);
+        this.relatedLeadId = relatedLeadId;
     }
 
     public static Lead create(
@@ -149,6 +212,7 @@ public class Lead {
                 storeId,
                 customerName,
                 customerPhone,
+                List.of(),
                 customerEmail,
                 customerCity,
                 vehicleInterest,
@@ -168,6 +232,7 @@ public class Lead {
             UUID storeId,
             String customerName,
             String customerPhone,
+            List<String> additionalPhones,
             String customerEmail,
             String customerCity,
             String vehicleInterest,
@@ -188,6 +253,7 @@ public class Lead {
                 storeId,
                 customerName,
                 customerPhone,
+                additionalPhones,
                 customerEmail,
                 customerCity,
                 vehicleInterest,
@@ -204,7 +270,8 @@ public class Lead {
                 null,
                 lostReason,
                 saleValue,
-                saleCurrency
+                saleCurrency,
+                null
         );
     }
 
@@ -231,6 +298,7 @@ public class Lead {
                 storeId,
                 customerName,
                 customerPhone,
+                additionalPhones,
                 customerEmail,
                 customerCity,
                 vehicleInterest,
@@ -254,6 +322,7 @@ public class Lead {
             UUID storeId,
             String customerName,
             String customerPhone,
+            List<String> additionalPhones,
             String customerEmail,
             String customerCity,
             String vehicleInterest,
@@ -274,6 +343,7 @@ public class Lead {
         this.storeId = Objects.requireNonNull(storeId);
         this.customerName = requireText(customerName, "customerName");
         this.customerPhone = trimToNull(customerPhone);
+        this.additionalPhones = normalizeAdditionalPhones(additionalPhones, this.customerPhone);
         this.customerEmail = trimToNull(customerEmail);
         this.customerCity = trimToNull(customerCity);
         this.vehicleInterest = trimToNull(vehicleInterest);
@@ -315,6 +385,18 @@ public class Lead {
         return changeStatus(LeadStatus.ASSIGNED);
     }
 
+    public LeadStatus markDuplicated(UUID relatedLeadId) {
+        if (relatedLeadId != null && relatedLeadId.equals(this.id)) {
+            throw new IllegalArgumentException("relatedLeadId cannot reference the same lead");
+        }
+        this.relatedLeadId = relatedLeadId;
+        return changeStatus(LeadStatus.DUPLICATED);
+    }
+
+    public List<String> getAdditionalPhones() {
+        return Collections.unmodifiableList(additionalPhones);
+    }
+
     private static String requireText(String value, String fieldName) {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException(fieldName + " is required");
@@ -327,6 +409,21 @@ public class Lead {
             return null;
         }
         return value.trim();
+    }
+
+    private static List<String> normalizeAdditionalPhones(List<String> values, String customerPhone) {
+        if (values == null || values.isEmpty()) {
+            return List.of();
+        }
+        List<String> normalized = new ArrayList<>();
+        for (String value : values) {
+            String phone = trimToNull(value);
+            if (phone == null || phone.equals(customerPhone) || normalized.contains(phone)) {
+                continue;
+            }
+            normalized.add(phone);
+        }
+        return List.copyOf(normalized);
     }
 
     private static String normalizeCurrency(String value) {

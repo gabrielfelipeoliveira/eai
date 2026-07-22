@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public record LeadRequest(
@@ -18,6 +19,7 @@ public record LeadRequest(
         @NotNull UUID storeId,
         @NotBlank @Size(max = 160) String customerName,
         @Size(max = 40) String customerPhone,
+        List<@Size(max = 40) String> additionalPhones,
         @Email @Size(max = 180) String customerEmail,
         @Size(max = 120) String customerCity,
         @Size(max = 180) String vehicleInterest,

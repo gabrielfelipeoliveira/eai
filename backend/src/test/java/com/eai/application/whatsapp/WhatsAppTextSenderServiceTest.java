@@ -1,6 +1,7 @@
 package com.eai.application.whatsapp;
 
 import com.eai.application.common.ApplicationException;
+import com.eai.application.common.ForbiddenException;
 import com.eai.application.conversation.ConversationMessageRepository;
 import com.eai.application.conversation.ConversationService;
 import com.eai.application.conversation.WhatsAppContactRepository;
@@ -12,6 +13,7 @@ import com.eai.domain.conversation.ConversationMessageStatus;
 import com.eai.domain.conversation.ConversationMessageType;
 import com.eai.domain.conversation.WhatsAppContact;
 import com.eai.domain.user.UserRole;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -22,6 +24,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -48,6 +51,7 @@ class WhatsAppTextSenderServiceTest {
             textClient
     );
 
+    @DisplayName("Envia texto livre dentro da janela de 24 horas")
     @Test
     void sendsFreeTextWhenLatestInboundMessageIsWithin24HourWindow() {
         Conversation conversation = conversation();
@@ -65,9 +69,28 @@ class WhatsAppTextSenderServiceTest {
         assertThat(result.status()).isEqualTo(ConversationMessageStatus.SENT);
         assertThat(result.externalMessageId()).isEqualTo("wamid.text-001");
         assertThat(result.message()).isEqualTo("Bom dia");
+        verify(conversationService).assertCanSendMessage(conversation, authenticatedUser());
         verify(textClient).sendText("5511999990000", "Bom dia");
     }
 
+    @DisplayName("Bloqueia envio quando conversa nao pertence ao usuario autenticado")
+    @Test
+    void blocksTextWhenAuthenticatedUserDoesNotOwnConversation() {
+        Conversation conversation = conversation();
+        when(settings.templateSendingConfigured()).thenReturn(true);
+        when(conversationService.getConversation(CONVERSATION_ID, authenticatedUser())).thenReturn(conversation);
+        doThrow(new ForbiddenException("Conversation must be assigned to the authenticated user before sending messages"))
+                .when(conversationService).assertCanSendMessage(conversation, authenticatedUser());
+
+        assertThatThrownBy(() -> service.sendText(CONVERSATION_ID, "Bom dia", authenticatedUser()))
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessageContaining("assigned to the authenticated user");
+
+        verify(textClient, never()).sendText(any(), any());
+        verify(messageRepository, never()).save(any());
+    }
+
+    @DisplayName("Bloqueia texto livre fora da janela de 24 horas")
     @Test
     void blocksFreeTextWhenLatestInboundMessageIsOutside24HourWindow() {
         when(settings.templateSendingConfigured()).thenReturn(true);

@@ -10,4 +10,6 @@ public interface EmailReader {
     void testConnection(EmailAccount account, String password);
 
     List<EmailMessage> readMessages(EmailAccount account, String password, Instant since);
+
+    void markMessagesAsRead(EmailAccount account, String password, Instant since, Instant until);
 }

@@ -5,6 +5,7 @@ import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
 import com.eai.domain.user.UserRole;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -23,6 +24,7 @@ class PipelineServiceTest {
     private static final UUID SELLER_ID = UUID.randomUUID();
     private static final UUID OTHER_SELLER_ID = UUID.randomUUID();
 
+    @DisplayName("Pipeline do vendedor inclui leads sem dono e seus proprios leads")
     @Test
     void sellerPipelineIncludesUnassignedAndOwnAssignedLeadsOnly() {
         Lead unassignedNew = lead(LeadStatus.NEW, null);
@@ -120,7 +122,12 @@ class PipelineServiceTest {
         }
 
         @Override
-        public boolean existsByStoreIdAndPhoneAndVehicleSince(UUID storeId, String phone, String vehicleInterest, Instant since) {
+        public Optional<Lead> findMostRecentByStoreIdAndAnyPhone(UUID storeId, List<String> phones) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean existsByStoreIdAndAnyPhone(UUID storeId, List<String> phones) {
             throw new UnsupportedOperationException();
         }
     }

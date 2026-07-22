@@ -1,11 +1,12 @@
 import { api } from './api';
-import type { FollowUpTask, Lead, LeadHistory, LeadNote, LeadSource, LeadStatus, LeadTag, PageResponse, PipelineResponse } from '../types/lead';
+import type { FollowUpTask, Lead, LeadHistory, LeadNote, LeadSource, LeadStatus, LeadTag, LeadTagDefinition, PageResponse, PipelineResponse } from '../types/lead';
 
 export interface LeadPayload {
   companyId: string;
   storeId: string;
   customerName: string;
   customerPhone?: string;
+  additionalPhones?: string[];
   customerEmail?: string;
   customerCity?: string;
   vehicleInterest?: string;
@@ -144,6 +145,11 @@ export async function addLeadNote(id: string, note: string) {
   return response.data;
 }
 
+export async function updateLeadNote(id: string, noteId: string, note: string) {
+  const response = await api.put<LeadNote>(`/leads/${id}/notes/${noteId}`, { note });
+  return response.data;
+}
+
 export async function listLeadHistory(id: string) {
   const response = await api.get<LeadHistory[]>(`/leads/${id}/history`);
   return response.data;
@@ -159,8 +165,18 @@ export async function listLeadTags(id: string) {
   return response.data;
 }
 
-export async function addLeadTag(id: string, name: string) {
-  const response = await api.post<LeadTag>(`/leads/${id}/tags`, { name });
+export async function listLeadTagDefinitions() {
+  const response = await api.get<LeadTagDefinition[]>('/leads/tags/catalog');
+  return response.data;
+}
+
+export async function createLeadTagDefinition(name: string, type: string) {
+  const response = await api.post<LeadTagDefinition>('/leads/tags/catalog', { name, type });
+  return response.data;
+}
+
+export async function addLeadTag(id: string, tagId: string) {
+  const response = await api.post<LeadTag>(`/leads/${id}/tags`, { tagId });
   return response.data;
 }
 

@@ -43,7 +43,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/leads")
-@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SELLER')")
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER')")
 public class LeadController {
 
     private final LeadService leadService;
@@ -73,6 +73,7 @@ public class LeadController {
                 request.storeId(),
                 request.customerName(),
                 request.customerPhone(),
+                request.additionalPhones(),
                 request.customerEmail(),
                 request.customerCity(),
                 request.vehicleInterest(),
@@ -128,6 +129,7 @@ public class LeadController {
                 request.storeId(),
                 request.customerName(),
                 request.customerPhone(),
+                request.additionalPhones(),
                 request.customerEmail(),
                 request.customerCity(),
                 request.vehicleInterest(),
@@ -165,7 +167,7 @@ public class LeadController {
     }
 
     @PostMapping("/distribute-pending")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STORE_MANAGER')")
     public List<LeadResponse> distributePending(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
         return distributionService.distributePending(authenticatedUser).stream()
                 .map(this::toResponse)
@@ -182,6 +184,11 @@ public class LeadController {
     @PostMapping("/{id}/notes")
     public LeadNoteResponse addNote(@PathVariable UUID id, @Valid @RequestBody LeadNoteRequest request, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
         return LeadNoteResponse.fromDomain(leadService.addNote(id, request.note(), authenticatedUser));
+    }
+
+    @PutMapping("/{id}/notes/{noteId}")
+    public LeadNoteResponse updateNote(@PathVariable UUID id, @PathVariable UUID noteId, @Valid @RequestBody LeadNoteRequest request, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+        return LeadNoteResponse.fromDomain(leadService.updateNote(id, noteId, request.note(), authenticatedUser));
     }
 
     @GetMapping("/{id}/history")
@@ -236,7 +243,7 @@ public class LeadController {
 
     @PostMapping("/{id}/tags")
     public LeadTagResponse addTag(@PathVariable UUID id, @Valid @RequestBody LeadTagRequest request, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
-        return LeadTagResponse.fromDomain(leadService.addTag(id, request.name(), authenticatedUser));
+        return LeadTagResponse.fromDomain(leadService.addTag(id, request.tagId(), request.name(), authenticatedUser));
     }
 
     @GetMapping("/{id}/tags")
@@ -249,6 +256,18 @@ public class LeadController {
     @DeleteMapping("/{id}/tags/{tagId}")
     public void deleteTag(@PathVariable UUID id, @PathVariable UUID tagId, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
         leadService.deleteTag(id, tagId, authenticatedUser);
+    }
+
+    @GetMapping("/tags/catalog")
+    public List<LeadTagDefinitionResponse> listTagDefinitions() {
+        return leadService.listTagDefinitions().stream()
+                .map(LeadTagDefinitionResponse::fromDomain)
+                .toList();
+    }
+
+    @PostMapping("/tags/catalog")
+    public LeadTagDefinitionResponse createTagDefinition(@Valid @RequestBody LeadTagDefinitionRequest request) {
+        return LeadTagDefinitionResponse.fromDomain(leadService.createTagDefinition(request.name(), request.type()));
     }
 
     private LeadResponse toResponse(Lead lead) {

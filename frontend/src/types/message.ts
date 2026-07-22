@@ -1,6 +1,8 @@
 export type MessageTemplateType = 'FIRST_CONTACT' | 'FOLLOW_UP' | 'VISIT_INVITE' | 'PROPOSAL' | 'NO_RESPONSE' | 'SOLD' | 'LOST';
 
-export type LeadCommunicationChannel = 'WHATSAPP_LINK';
+export type MessageTemplateMetaStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'PAUSED' | 'DISABLED';
+
+export type LeadCommunicationChannel = 'WHATSAPP_LINK' | 'WHATSAPP_TEMPLATE';
 
 export type ConversationMessageDirection = 'INBOUND' | 'OUTBOUND';
 
@@ -11,13 +13,16 @@ export type ConversationMessageStatus = 'RECEIVED' | 'SENT' | 'DELIVERED' | 'REA
 export interface MessageTemplate {
   id: string;
   companyId: string;
-  storeId: string;
+  storeId: string | null;
   name: string;
   type: MessageTemplateType;
   content: string;
+  languageCode: string;
+  metaStatus: MessageTemplateMetaStatus;
   active: boolean;
   createdAt: string;
   updatedAt: string;
+  deletedAt: string | null;
 }
 
 export interface LeadCommunication {

@@ -2,9 +2,10 @@ package com.eai.application.email;
 
 import com.eai.application.lead.LeadRepository;
 import com.eai.application.lead.PhoneNormalizer;
+import com.eai.domain.lead.Lead;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -18,11 +19,15 @@ public class DuplicateLeadChecker {
         this.leadRepository = leadRepository;
     }
 
-    public boolean isPossibleDuplicate(UUID storeId, String phone, String vehicleInterest) {
-        if (phone == null || phone.isBlank() || vehicleInterest == null || vehicleInterest.isBlank()) {
-            return false;
+    public Optional<Lead> findPossibleDuplicate(UUID storeId, String phone) {
+        String normalizedPhone = PhoneNormalizer.normalize(phone);
+        if (normalizedPhone == null) {
+            return Optional.empty();
         }
-        Instant since = Instant.now().minus(7, ChronoUnit.DAYS);
-        return leadRepository.existsByStoreIdAndPhoneAndVehicleSince(storeId, PhoneNormalizer.normalize(phone), vehicleInterest.trim(), since);
+        return leadRepository.findMostRecentByStoreIdAndAnyPhone(storeId, List.of(normalizedPhone));
+    }
+
+    public boolean isPossibleDuplicate(UUID storeId, String phone, String vehicleInterest) {
+        return findPossibleDuplicate(storeId, phone).isPresent();
     }
 }

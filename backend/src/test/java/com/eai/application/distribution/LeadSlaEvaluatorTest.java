@@ -4,6 +4,7 @@ import com.eai.domain.distribution.LeadSlaPolicy;
 import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -19,6 +20,7 @@ class LeadSlaEvaluatorTest {
 
     private final LeadSlaEvaluator evaluator = new LeadSlaEvaluator();
 
+    @DisplayName("Identifica lead atrasado para atribuicao")
     @Test
     void identifiesLeadOverdueToAssign() {
         Instant createdAt = Instant.parse("2026-07-07T10:00:00Z");
@@ -28,6 +30,7 @@ class LeadSlaEvaluatorTest {
         assertThat(evaluator.isOverdueToAssign(lead, policy, Instant.parse("2026-07-07T10:16:00Z"))).isTrue();
     }
 
+    @DisplayName("Identifica lead atrasado para primeiro contato")
     @Test
     void identifiesLeadOverdueToFirstContact() {
         Instant createdAt = Instant.parse("2026-07-07T10:00:00Z");
@@ -38,6 +41,7 @@ class LeadSlaEvaluatorTest {
         assertThat(evaluator.isOverdueToFirstContact(lead, policy, Instant.parse("2026-07-07T10:36:00Z"))).isTrue();
     }
 
+    @DisplayName("Nao marca atraso de primeiro contato apos contato realizado")
     @Test
     void doesNotMarkFirstContactOverdueAfterFirstContact() {
         Instant createdAt = Instant.parse("2026-07-07T10:00:00Z");

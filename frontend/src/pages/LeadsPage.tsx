@@ -103,8 +103,8 @@ export function LeadsPage() {
   const [draftFilters, setDraftFilters] = useState<LeadFilters>(defaultFilters);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [drawerMode, setDrawerMode] = useState<'create' | 'detail' | null>(null);
-  const canListUsers = hasAnyRole(['ADMIN', 'MANAGER']);
-  const canDistribute = hasAnyRole(['ADMIN', 'MANAGER']);
+  const canListUsers = hasAnyRole(['ADMIN', 'MANAGER', 'STORE_MANAGER']);
+  const canDistribute = hasAnyRole(['ADMIN', 'MANAGER', 'STORE_MANAGER']);
   const isAdmin = hasAnyRole(['ADMIN']);
 
   const emptyLeadValues = useMemo<LeadFormValues>(

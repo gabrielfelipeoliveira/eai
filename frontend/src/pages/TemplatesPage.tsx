@@ -36,36 +36,41 @@ import { apiErrorMessage } from '../services/api';
 import { listCompanies } from '../services/companyService';
 import { listStores } from '../services/storeService';
 import { createTemplate, deleteTemplate, listTemplates, updateTemplate } from '../services/templateService';
-import type { MessageTemplate, MessageTemplateType } from '../types/message';
+import type { MessageTemplate, MessageTemplateMetaStatus, MessageTemplateType } from '../types/message';
 
 const templateTypes: MessageTemplateType[] = ['FIRST_CONTACT', 'FOLLOW_UP', 'VISIT_INVITE', 'PROPOSAL', 'NO_RESPONSE', 'SOLD', 'LOST'];
+const metaStatuses: MessageTemplateMetaStatus[] = ['PENDING', 'APPROVED', 'REJECTED', 'PAUSED', 'DISABLED'];
 
 const templateSchema = z.object({
   companyId: z.string().min(1, 'Selecione a empresa'),
-  storeId: z.string().min(1, 'Selecione a loja'),
-  name: z.string().min(1, 'Informe o nome').max(120),
+  storeId: z.string().nullable(),
+  name: z.string().min(1, 'Informe o nome').max(120).regex(/^[a-z0-9_]+$/, 'Use o nome tecnico aprovado na Meta'),
   type: z.enum(['FIRST_CONTACT', 'FOLLOW_UP', 'VISIT_INVITE', 'PROPOSAL', 'NO_RESPONSE', 'SOLD', 'LOST']),
-  content: z.string().min(1, 'Informe a mensagem'),
+  content: z.string().min(1, 'Informe o conteudo'),
+  languageCode: z.string().min(1, 'Informe o idioma').max(20),
+  metaStatus: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'PAUSED', 'DISABLED']),
   active: z.boolean(),
 });
 
 type TemplateFormValues = z.infer<typeof templateSchema>;
 
 export function TemplatesPage() {
-  const { hasAnyRole, user } = useAuth();
   const queryClient = useQueryClient();
+  const { hasAnyRole, user } = useAuth();
   const metadata = useMetadata();
-  const [editingTemplate, setEditingTemplate] = useState<MessageTemplate | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingTemplate, setEditingTemplate] = useState<MessageTemplate | null>(null);
   const isAdmin = hasAnyRole(['ADMIN']);
 
   const defaultValues = useMemo<TemplateFormValues>(
     () => ({
       companyId: user?.companyId ?? '',
-      storeId: user?.storeId ?? '',
+      storeId: user?.storeId ?? null,
       name: '',
       type: 'FIRST_CONTACT',
       content: '',
+      languageCode: 'pt-BR',
+      metaStatus: 'PENDING',
       active: true,
     }),
     [user?.companyId, user?.storeId],
@@ -81,7 +86,6 @@ export function TemplatesPage() {
     handleSubmit,
     register,
     reset,
-    setValue,
   } = useForm<TemplateFormValues>({
     resolver: zodResolver(templateSchema),
     defaultValues,
@@ -90,12 +94,6 @@ export function TemplatesPage() {
   useEffect(() => {
     reset(defaultValues);
   }, [defaultValues, reset]);
-
-  useEffect(() => {
-    if (storesQuery.data?.length && !defaultValues.storeId) {
-      setValue('storeId', storesQuery.data[0].id);
-    }
-  }, [defaultValues.storeId, setValue, storesQuery.data]);
 
   const saveMutation = useMutation({
     mutationFn: (values: TemplateFormValues) => (editingTemplate ? updateTemplate(editingTemplate.id, values) : createTemplate(values)),
@@ -130,12 +128,17 @@ export function TemplatesPage() {
       name: template.name,
       type: template.type,
       content: template.content,
+      languageCode: template.languageCode,
+      metaStatus: template.metaStatus,
       active: template.active,
     });
     setDialogOpen(true);
   }
 
-  function storeName(storeId: string) {
+  function storeName(storeId: string | null) {
+    if (!storeId) {
+      return 'Empresa';
+    }
     return storesQuery.data?.find((store) => store.id === storeId)?.name ?? storeId;
   }
 
@@ -161,9 +164,10 @@ export function TemplatesPage() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Nome</TableCell>
+              <TableCell>Nome Meta</TableCell>
               <TableCell>Tipo</TableCell>
-              <TableCell>Loja</TableCell>
+              <TableCell>Escopo</TableCell>
+              <TableCell>Meta</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Mensagem</TableCell>
               <TableCell align="right">Acoes</TableCell>
@@ -174,9 +178,13 @@ export function TemplatesPage() {
               <TableRow hover key={template.id}>
                 <TableCell>
                   <Typography fontWeight={700}>{template.name}</Typography>
+                  <Typography color="text.secondary" variant="caption">
+                    {template.languageCode}
+                  </Typography>
                 </TableCell>
                 <TableCell>{metadata.label('messageTemplateTypes', template.type)}</TableCell>
                 <TableCell>{storeName(template.storeId)}</TableCell>
+                <TableCell>{metadata.label('messageTemplateMetaStatuses', template.metaStatus)}</TableCell>
                 <TableCell>{template.active ? 'Ativo' : 'Inativo'}</TableCell>
                 <TableCell sx={{ maxWidth: 420 }}>
                   <Typography noWrap variant="body2">
@@ -199,9 +207,10 @@ export function TemplatesPage() {
                 </TableCell>
               </TableRow>
             ))}
+
             {!templatesQuery.isLoading && templatesQuery.data?.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6}>Nenhum template encontrado.</TableCell>
+                <TableCell colSpan={7}>Nenhum template encontrado.</TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -216,9 +225,10 @@ export function TemplatesPage() {
               {saveMutation.isError && (
                 <Alert severity="error">{apiErrorMessage(saveMutation.error) ?? 'Nao foi possivel salvar o template.'}</Alert>
               )}
+
               <Grid2 container spacing={2}>
                 <Grid2 size={{ xs: 12, md: 6 }}>
-                  <TextField fullWidth label="Nome" error={Boolean(errors.name)} helperText={errors.name?.message} {...register('name')} />
+                  <TextField fullWidth label="Nome Meta" error={Boolean(errors.name)} helperText={errors.name?.message ?? 'Ex.: primeiro_contato'} {...register('name')} />
                 </Grid2>
                 <Grid2 size={{ xs: 12, md: 6 }}>
                   <TextField fullWidth select label="Tipo" error={Boolean(errors.type)} helperText={errors.type?.message} {...register('type')}>
@@ -229,6 +239,7 @@ export function TemplatesPage() {
                     ))}
                   </TextField>
                 </Grid2>
+
                 {isAdmin && (
                   <Grid2 size={{ xs: 12, md: 6 }}>
                     <TextField fullWidth select label="Empresa" error={Boolean(errors.companyId)} helperText={errors.companyId?.message} {...register('companyId')}>
@@ -240,27 +251,61 @@ export function TemplatesPage() {
                     </TextField>
                   </Grid2>
                 )}
+
                 {!isAdmin && (
                   <Grid2 size={{ xs: 12, md: 6 }}>
                     <TextField fullWidth label="Empresa" value={user?.companyId ?? ''} slotProps={{ input: { readOnly: true } }} {...register('companyId')} />
                   </Grid2>
                 )}
+
                 <Grid2 size={{ xs: 12, md: 6 }}>
-                  <TextField fullWidth select label="Loja" error={Boolean(errors.storeId)} helperText={errors.storeId?.message} {...register('storeId')}>
-                    {storesQuery.data?.map((store) => (
-                      <MenuItem key={store.id} value={store.id}>
-                        {store.name}
+                  <Controller
+                    control={control}
+                    name="storeId"
+                    render={({ field }) => (
+                      <TextField
+                        fullWidth
+                        select
+                        label="Escopo"
+                        error={Boolean(errors.storeId)}
+                        helperText={errors.storeId?.message}
+                        value={field.value ?? ''}
+                        onChange={(event) => field.onChange(event.target.value || null)}
+                      >
+                        <MenuItem value="">Empresa</MenuItem>
+                        {storesQuery.data?.map((store) => (
+                          <MenuItem key={store.id} value={store.id}>
+                            {store.name}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    )}
+                  />
+                </Grid2>
+
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField fullWidth label="Idioma Meta" error={Boolean(errors.languageCode)} helperText={errors.languageCode?.message} {...register('languageCode')} />
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 6 }}>
+                  <TextField fullWidth select label="Status Meta" error={Boolean(errors.metaStatus)} helperText={errors.metaStatus?.message} {...register('metaStatus')}>
+                    {metaStatuses.map((status) => (
+                      <MenuItem key={status} value={status}>
+                        {metadata.label('messageTemplateMetaStatuses', status)}
                       </MenuItem>
                     ))}
                   </TextField>
                 </Grid2>
               </Grid2>
+
               <TextField fullWidth label="Conteudo" minRows={5} multiline error={Boolean(errors.content)} helperText={errors.content?.message} {...register('content')} />
               <Controller
                 control={control}
                 name="active"
                 render={({ field }) => (
-                  <FormControlLabel control={<Checkbox checked={field.value} onChange={(event) => field.onChange(event.target.checked)} />} label="Ativo" />
+                  <FormControlLabel
+                    control={<Checkbox checked={field.value} onChange={(event) => field.onChange(event.target.checked)} />}
+                    label="Ativo"
+                  />
                 )}
               />
             </Stack>

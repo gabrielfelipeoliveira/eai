@@ -10,7 +10,7 @@ Este documento centraliza duvidas de negocio ainda abertas. Regras ja definidas 
 
 ## Pendencias Atuais
 
-Nao ha pendencias de produto bloqueantes registradas para o MVP apos a consolidacao das decisoes do Trello em 2026-07-15.
+- Definir qual permissao especifica permite que `SELLER` edite valor de venda ou motivo de perda do lead. A regra de negocio exige permissao especifica, mas ainda nao define nome, papel autorizador, escopo ou comportamento de excecao.
 
 ## Itens Planejados Para Fase Posterior
 

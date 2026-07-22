@@ -22,7 +22,13 @@ public class LeadTagJpaEntity {
     @Column(name = "lead_id", nullable = false)
     private UUID leadId;
 
+    @Column(name = "tag_id", nullable = false)
+    private UUID tagId;
+
     @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
+    private String type;
 
 }

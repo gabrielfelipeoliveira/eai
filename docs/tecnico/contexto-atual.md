@@ -1,6 +1,6 @@
 # Contexto Atual Do Projeto
 
-Ultima atualizacao: 2026-07-18.
+Ultima atualizacao: 2026-07-20.
 
 Este arquivo e o handoff operacional do projeto EAI. Ele existe para que qualquer desenvolvedor ou agente de IA consiga retomar o trabalho sem depender do historico de uma conversa especifica.
 
@@ -25,6 +25,12 @@ Se documentacao, Trello e codigo estiverem em conflito, nao escolha um lado sile
 - Status em 2026-07-21: implementado em branch `feature/eai-012-whatsapp-media-storage`.
 - Escopo entregue: porta de storage de midia, adapter local/dev, metadados persistidos em `conversation_messages`, webhook com download/storage de midias recebidas, envio autenticado de midia e download autenticado.
 - Validacoes: backend `rtk mvn clean verify` passou com 68 testes; frontend `rtk npm run build` passou com aviso existente de chunk JS acima de 500 kB apos minificacao. Teste HTTP local validou login, `POST /api/conversations/{id}/media` e `GET /api/conversations/{conversationId}/messages/{messageId}/media` contra backend em `8080`.
+
+Toda mudanca versionada deve seguir o fluxo de card `EAI-###`, branch, commit, push, PR, comentario no Trello e fechamento rastreavel. Isso inclui documentacao, processo e ajustes pequenos. Nao commite direto na `main`.
+
+Todo novo problema, warning, vulnerabilidade, risco, melhoria ou item observado deve ser registrado no Trello como card novo ou comentario em card existente. Registrar no Trello nao significa tratar imediatamente; significa preservar historico para decisao posterior.
+
+Cards em backlog, prontos ou apenas comentados/triados devem ficar sem membro por padrao. Atribua membro somente quando o card for efetivamente puxado para execucao pelo responsavel operacional. Quando a execucao for feita por IA usando o token do Lucas Reiter, atribua o card puxado ao membro `Lucas Reiter`.
 
 ## Fontes De Verdade
 
@@ -62,26 +68,44 @@ test/eai-003-slug-curto
 Cards de desenvolvimento conhecidos:
 
 - `EAI-001`: concluido. Alinhar papeis: remover `AUDITOR` do MVP e incluir `AVALIADOR`.
-- `EAI-002`: em andamento. Ajustar tenancy: empresa agrupadora, loja operacional e desativacao sem apagar historico.
-- `EAI-003`: concluido. Sessao unica por usuario, refresh token com TTL de 30 dias, rotacao, logout/revogacao por desativacao e access token recusado para usuario inativo.
-- `EAI-004`: implementado em 2026-07-18. Alinhar status de lead e pipeline com etapas opcionais de F&I.
-- `EAI-005`: implementado em 2026-07-18. Modelar Item, Veiculo, telefone E.164 e moeda de venda.
-- `EAI-006`: backlog. Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
-- `EAI-007`: backlog. Ajustar visibilidade, ordenacao e busca normalizada de leads.
-- `EAI-008`: backlog. Ajustar notas, observacoes, tags globais e historico de lead.
-- `EAI-009`: backlog. Ajustar importacao de leads por e-mail e duplicidade por telefone+loja.
-- `EAI-010`: backlog. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
-- `EAI-011`: backlog. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
+- `EAI-002`: concluido. Ajustar tenancy: empresa agrupadora, loja operacional e desativacao sem apagar historico.
+- `EAI-003`: concluido. Implementar sessao unica, TTL de 30 dias e revogacao por desativacao.
+- `EAI-004`: concluido. Alinhar status de lead e pipeline com etapas opcionais de F&I.
+- `EAI-005`: concluido. Modelar Item, Veiculo, telefone E.164 e moeda de venda.
+- `EAI-006`: concluido. Ajustar ciclo de vida, recontato, duplicidade e telefones de lead.
+- `EAI-007`: concluido. Ajustar visibilidade, ordenacao e busca normalizada de leads.
+- `EAI-008`: concluido. Ajustar notas, observacoes, tags globais e historico de lead.
+- `EAI-009`: concluido. Ajustar importacao de leads por e-mail, historico persistente e duplicidade por telefone+loja.
+- `EAI-010`: concluido. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
+- `EAI-011`: concluido. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
 - `EAI-012`: implementado em 2026-07-21. Armazenamento local/dev de midias WhatsApp via porta de storage, contrato preparado para bucket equivalente, webhook com download/storage de midias recebidas, envio autenticado de midia e download autenticado.
 - `EAI-013`: backlog. Separar seeds obrigatorios de dados demonstrativos e bloquear demo em producao.
 - `EAI-014`: backlog. Implementar fluxo LGPD basico manual por ADMIN.
-- `EAI-015`: backlog. Padronizar validacao CI com backend clean verify e frontend build.
+- `EAI-015`: concluido. Padronizar validacao CI com backend clean verify e frontend build.
 - `EAI-016`: backlog. Adicionar testes de integracao com Postgres via Testcontainers.
 - `EAI-017`: backlog. Adicionar testes unitarios e de componentes no frontend.
 - `EAI-018`: backlog. Criar testes E2E dos fluxos criticos do MVP.
 - `EAI-019`: backlog. Adicionar validacao de contrato OpenAPI.
+- `EAI-020`: backlog. Padronizar uso seguro de Lombok no backend.
+- `EAI-021`: concluido. Reforcar obrigatoriedade de branch e PR para qualquer mudanca.
+- `EAI-022`: concluido. Registrar novos problemas no Trello e atribuir cards movimentados.
+- `EAI-023`: concluido. Ajustar atribuicao de membros apenas em cards puxados.
+- `EAI-024`: backlog. Notificar administradores sobre falhas de e-mail quando houver infraestrutura de notificacao.
+- `EAI-025`: backlog. Atualizar Vite/esbuild por vulnerabilidades npm audit.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
+
+## Proximo Desenvolvimento
+
+Card em andamento:
+
+- `EAI-015`: padronizar validacao CI com backend clean verify e frontend build.
+
+Branch sugerida:
+
+```text
+feature/eai-015-validacao-ci-build
+```
 
 ## Validacao Padrao
 
@@ -108,43 +132,25 @@ Use `mvn clean verify` como validacao padrao do backend. `mvn test` sem `clean` 
 
 ## Estado Tecnico Validado
 
-Na ultima validacao:
+Ultima validacao em 2026-07-20:
 
-- `main` estava atualizada com o remoto.
-- Backend `mvn clean test` passou com 40 testes, 0 falhas.
+- Branch `feature/eai-015-validacao-ci-build`.
+- Backend `mvn clean verify` via Docker passou com 91 testes, 0 falhas, 0 erros e 0 skips.
 - Frontend `npm run build` passou.
-- Banco local Postgres do compose subiu saudavel apos reset de volume local de teste.
-- Backend subiu contra Postgres padrao do compose e aplicou Flyway do zero.
-- Smoke autenticado respondeu `200` para `/api/auth/me`, `/api/companies`, `/api/users`, `/api/leads?page=0&size=5` e `/api/pipeline`.
-
-Validacao EAI-003 em 2026-07-18:
-- Backend `rtk mvn clean verify` passou com 58 testes, 0 falhas.
-- Frontend `rtk npm run build` passou.
-- Cobertura adicionada para segundo login invalidar refresh anterior, refresh token rotacionado/revogado, TTL de 30 dias, usuario inativo sem login/refresh, desativacao revogando sessoes e access token rejeitado apos desativacao.
-
-Validacao EAI-004 em 2026-07-18:
-- Implementado `SIMULATING` e `PROPOSAL_APPROVED` como status oficiais de lead entre `VISIT_SCHEDULED` e `PROPOSAL_SENT`, sem vinculo/responsavel F&I neste card.
-- Backend atualizado em dominio, metadados, pipeline, contagens abertas, candidatos de SLA e migration Flyway Java `V3__expand_lead_status_checks`.
-- Frontend atualizado em tipos, fallback de metadados, Pipeline, Leads e drawer de detalhe.
-- Backend `rtk mvn clean verify` passou com 58 testes, 0 falhas.
-- Frontend `rtk npm run build` passou. O Vite manteve warning existente de chunk JS acima de 500 kB apos minificacao.
-- Validacao manual por codigo: filtros, chips, seletor de status, cards de contagem e colunas do pipeline usam a lista local atualizada e labels de `useMetadata`; drag/drop do pipeline continua chamando somente `changeLeadStatus` sem campos obrigatorios extras.
-
-Validacao EAI-005 em 2026-07-18:
-- Lead referencia somente `item_id`; veiculo estruturado fica em `item.vehicle`, nao como relacionamento direto do Lead.
-- Telefones de leads manuais e importados por e-mail sao normalizados para E.164.
-- `saleCurrency` usa `BRL` como padrao e aceita outros codigos ISO de 3 letras.
-- Backend `rtk mvn clean verify` passou com 62 testes, 0 falhas.
-- Frontend `rtk npm run build` passou. O Vite manteve warning existente de chunk JS acima de 500 kB apos minificacao.
+- Frontend `npm run lint` passou com 0 erros e 1 warning ja comentado no card `EAI-015`.
+- GitHub Actions PR `#17`: checks `Backend` e `Frontend` passaram com sucesso.
+- Avisos conhecidos:
+- Flyway reporta H2 2.4.240 mais novo que a versao verificada.
+- SpringDoc `/v3/api-docs` e `/swagger-ui.html` habilitados por default.
+- Mockito usa self-attaching inline mock maker; JDK futuro pode exigir agente configurado.
+- Vite reporta chunk JS acima de 500 kB apos minificacao.
+- `npm audit` reporta vulnerabilidades em Vite/esbuild; registrado no card `EAI-025`.
 
 ## Lacunas Ja Registradas Em Cards
 
 Nao crie novos cards duplicados sem antes verificar o Trello:
 
-- Sessao unica, TTL de 30 dias e revogacao por desativacao: `EAI-003`.
-- Status de lead/pipeline e etapas opcionais de F&I: `EAI-004`.
-- Item, Veiculo, telefone E.164 e moeda de venda: `EAI-005`.
-- Duplicidade, recontato e telefones de lead: `EAI-006`.
+- Duplicidade, recontato e telefones de lead: `EAI-006` concluido.
 - Visibilidade, ordenacao e busca normalizada de leads: `EAI-007`.
 - Notas, observacoes, tags globais e historico de lead: `EAI-008`.
 - Importacao de leads por e-mail e duplicidade por telefone+loja: `EAI-009`.
@@ -152,6 +158,8 @@ Nao crie novos cards duplicados sem antes verificar o Trello:
 - Seeds obrigatorios versus dados demonstrativos: `EAI-013`.
 - LGPD ADMIN manual: `EAI-014`.
 - Qualidade automatizada, CI, Testcontainers, frontend tests, E2E e OpenAPI: `EAI-015` a `EAI-019`.
+- Padronizacao segura de Lombok no backend: `EAI-020`.
+- Vulnerabilidades npm audit em Vite/esbuild: `EAI-025`.
 
 ## Encerramento De Sessao
 

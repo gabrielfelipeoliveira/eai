@@ -7,6 +7,7 @@ import com.eai.domain.lead.LeadStatus;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public record LeadResponse(
@@ -15,6 +16,7 @@ public record LeadResponse(
         UUID storeId,
         String customerName,
         String customerPhone,
+        List<String> additionalPhones,
         String customerEmail,
         String customerCity,
         String vehicleInterest,
@@ -32,6 +34,7 @@ public record LeadResponse(
         String lostReason,
         BigDecimal saleValue,
         String saleCurrency,
+        UUID relatedLeadId,
         boolean overdueToAssign,
         boolean overdueToFirstContact
 ) {
@@ -55,6 +58,7 @@ public record LeadResponse(
                 lead.getStoreId(),
                 lead.getCustomerName(),
                 lead.getCustomerPhone(),
+                lead.getAdditionalPhones(),
                 lead.getCustomerEmail(),
                 lead.getCustomerCity(),
                 lead.getVehicleInterest(),
@@ -72,6 +76,7 @@ public record LeadResponse(
                 lead.getLostReason(),
                 lead.getSaleValue(),
                 lead.getSaleCurrency(),
+                lead.getRelatedLeadId(),
                 overdueToAssign,
                 overdueToFirstContact
         );

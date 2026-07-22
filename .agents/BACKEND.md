@@ -61,6 +61,17 @@ O codigo backend fica abaixo de `com.eai`:
 - Enums tecnicos podem fazer parte dos contratos, mas labels para usuario devem passar pelo catalogo `GET /api/metadata`.
 - Ao introduzir novo enum visivel no frontend ou app, atualize o catalogo de metadados e os tipos do cliente.
 
+## Regras De Lombok
+
+- Lombok pode ser usado para reduzir boilerplate quando nao alterar comportamento, contrato publico ou logica de dominio.
+- Classes de dominio devem usar no maximo `@Getter` por padrao. Nao use `@Setter` amplo nem `@Data` em dominio.
+- Entidades JPA podem usar `@Getter` e `@Setter`, mas nao devem usar `@Data`.
+- Services, controllers, adapters e configuracoes podem usar `@RequiredArgsConstructor` quando o construtor gerado for equivalente ao atual.
+- Preserve o nivel de acesso de construtores existentes. Use `@RequiredArgsConstructor(access = AccessLevel.PACKAGE)` quando o construtor atual nao for publico.
+- DTOs, commands e responses que ja sao `record` devem continuar como `record`.
+- Evite `@Data` por padrao. So considere `@Data` em classe simples, sem JPA, sem dominio, sem dado sensivel, sem colecoes mutaveis relevantes e sem risco de `equals`, `hashCode` ou `toString`.
+- Nao substitua getters defensivos, normalizacao, validacao, transicoes de estado ou atualizacao de timestamps por setters gerados.
+
 ## Regras De Banco
 
 - PostgreSQL e o banco principal.
@@ -77,6 +88,7 @@ O codigo backend fica abaixo de `com.eai`:
 - Use testes de integracao para limites Spring, API e persistencia.
 - Nao ignore testes falhando sem documentar o motivo.
 - Mantenha testes focados em comportamento, nao em detalhes de implementacao.
+- Use `@DisplayName` em PT-BR em todos os testes JUnit novos ou alterados.
 
 ## Comandos De Validacao
 

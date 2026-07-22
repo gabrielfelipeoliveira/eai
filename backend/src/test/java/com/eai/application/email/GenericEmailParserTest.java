@@ -1,5 +1,6 @@
 package com.eai.application.email;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -10,6 +11,7 @@ class GenericEmailParserTest {
 
     private final GenericEmailParser parser = new GenericEmailParser();
 
+    @DisplayName("Parser extrai lead de e-mail com campos rotulados")
     @Test
     void shouldParseLabeledLeadEmail() {
         EmailMessage message = new EmailMessage(
@@ -36,6 +38,7 @@ class GenericEmailParserTest {
         assertThat(parsed.originalMessage()).contains("Tenho interesse");
     }
 
+    @DisplayName("Parser usa regex como fallback para telefone e e-mail")
     @Test
     void shouldFallbackToRegexForPhoneAndEmail() {
         EmailMessage message = new EmailMessage(

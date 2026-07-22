@@ -17,6 +17,22 @@ public record LeadSearchCriteria(
         String vehicle,
         String phone,
         UUID scopeCompanyId,
-        UUID scopeStoreId
+        UUID scopeStoreId,
+        UUID visibleToSellerUserId
 ) {
+    public LeadSearchCriteria(
+            LeadStatus status,
+            LeadSource source,
+            UUID assignedToUserId,
+            UUID storeId,
+            Instant createdFrom,
+            Instant createdTo,
+            String text,
+            String vehicle,
+            String phone,
+            UUID scopeCompanyId,
+            UUID scopeStoreId
+    ) {
+        this(status, source, assignedToUserId, storeId, createdFrom, createdTo, text, vehicle, phone, scopeCompanyId, scopeStoreId, null);
+    }
 }

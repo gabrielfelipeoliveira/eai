@@ -7,6 +7,7 @@ import com.eai.application.media.StoreMediaCommand;
 import com.eai.application.media.StoredMedia;
 import com.eai.domain.conversation.ConversationMessageStatus;
 import com.eai.domain.conversation.ConversationMessageType;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;
 
@@ -28,6 +29,7 @@ class WhatsAppWebhookServiceTest {
     private final MediaStoragePort mediaStorage = mock(MediaStoragePort.class);
     private final WhatsAppWebhookService service = new WhatsAppWebhookService(settings, conversationService, mediaClient, mediaStorage, new ObjectMapper());
 
+    @DisplayName("Atualiza status da mensagem a partir do webhook do provedor")
     @Test
     void updatesMessageStatusFromProviderWebhookEvent() {
         service.receiveEvent("""
@@ -43,6 +45,7 @@ class WhatsAppWebhookServiceTest {
         );
     }
 
+    @DisplayName("Interpreta eventos de status enviado, lido e falha do provedor")
     @Test
     void parsesSentReadAndFailedStatusEventsFromProviderWebhookEvent() {
         service.receiveEvent("""

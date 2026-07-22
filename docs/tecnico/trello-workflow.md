@@ -57,6 +57,10 @@ Regras de uso:
 - UX nao deve decidir regra de negocio nova. Se surgir regra ausente durante UX, crie ou reabra card no board de negocio.
 - Desenvolvimento nao deve iniciar regra de produto sem documentacao oficial ou link para decisao aprovada.
 - Cards cancelados nao devem ser deletados. Mova para `Cancelado ou descartado` e registre o motivo em comentario.
+- Todo novo problema, warning, vulnerabilidade, risco, melhoria ou item observado durante analise, build, teste, review ou execucao deve ser registrado no Trello antes de ser esquecido. Use comentario em card existente quando o item pertencer claramente ao escopo daquele card; caso contrario, crie um novo card no board adequado.
+- Registrar um item no Trello nao obriga implementacao imediata. A decisao posterior pode ser tratar agora, manter no backlog, mover para futuro ou cancelar com justificativa.
+- Cards em backlog, prontos ou apenas comentados/triados devem ficar sem membro por padrao. Atribua membro somente quando o card for efetivamente puxado para execucao pelo responsavel operacional.
+- Quando o trabalho for executado por IA usando o token do Lucas Reiter, atribua o card puxado ao membro `Lucas Reiter`. Cards concluidos por execucao real podem manter o membro como historico.
 
 ## Ligacao Entre Cards
 
@@ -119,6 +123,102 @@ Tipos recomendados:
 - `test`: cobertura de testes, E2E, contratos ou qualidade automatizada.
 
 Inclua o identificador no PR, commit principal e comentarios de fechamento quando aplicavel.
+
+## Branches, PRs E Comentarios De Desenvolvimento
+
+Antes de analisar ou codar um card, faca a reserva operacional do trabalho:
+
+Esta regra nao tem excecao para mudancas pequenas, documentais ou de processo. Toda alteracao versionada deve passar por card `EAI-###`, branch, commit, push, PR, comentario no Trello e fechamento rastreavel. Nao commite direto na `main`.
+
+1. Volte para `main`.
+2. Execute `git pull --ff-only`.
+3. Confirme que o workspace esta limpo.
+4. Consulte o Trello e confirme que o card `EAI-###` ainda esta livre.
+5. Se o card ja estiver `Em andamento`, nao inicie trabalho paralelo sem alinhamento explicito.
+6. Se o card estiver livre, mova para `Em andamento`.
+7. Atribua o card ao membro responsavel pela execucao no workspace atual, pois neste ponto o card foi puxado.
+8. Crie a branch seguindo o padrao deste documento.
+9. Atualize `docs/tecnico/contexto-atual.md` com o card em andamento e a branch.
+10. Adicione comentario de inicio no card.
+11. Faca commit e push dessa reserva/handoff antes de iniciar a analise tecnica ou implementacao.
+
+O commit inicial de reserva deve ser documental e pequeno. Exemplo:
+
+```text
+docs: EAI-006 inicia desenvolvimento
+```
+
+Modelo de comentario de inicio:
+
+```text
+## Inicio de desenvolvimento
+
+Branch: feature/eai-###-slug-curto
+
+Validacao inicial da main em AAAA-MM-DD:
+- Backend: mvn clean verify passou com N testes, 0 falhas.
+- Frontend: npm run build passou.
+
+Status:
+- Card reservado para desenvolvimento.
+- Handoff atualizado em docs/tecnico/contexto-atual.md.
+
+Proximo passo:
+- Analisar documentacao e codigo relacionados antes de implementar.
+```
+
+Ao abrir PR, mova o card para `Aguardando Code Review` e adicione comentario com o link:
+
+```text
+## Pull request
+
+PR: ...
+Branch: feature/eai-###-slug-curto
+
+Resumo:
+- ...
+
+Validacoes executadas:
+- ...
+```
+
+Depois do merge e validacao final, comente o fechamento e mova o card para `Concluido`.
+
+Modelo de comentario de conclusao:
+
+```text
+## Conclusao EAI-###
+
+Implementado em PR: ...
+Commit: ...
+Branch: feature/eai-###-slug-curto
+
+Resumo:
+- ...
+
+Documentacao atualizada:
+- ...
+
+Validacoes executadas:
+- mvn clean verify com N testes, 0 falhas.
+- npm run build passou.
+- Smoke runtime, quando aplicavel: ...
+
+Vulnerabilidades/avisos:
+- Nenhuma nova vulnerabilidade encontrada.
+- Avisos conhecidos: ...
+
+Pendencias:
+- Nenhuma, ou listar proximos cards/decisoes.
+```
+
+Commits devem manter o identificador do card no assunto ou corpo. Exemplos:
+
+```text
+feat: EAI-006 ajusta ciclo de vida e duplicidade de leads
+docs: EAI-006 atualiza handoff operacional
+test: EAI-016 adiciona integracao Postgres com Testcontainers
+```
 
 ## Modelo De Card De Negocio
 

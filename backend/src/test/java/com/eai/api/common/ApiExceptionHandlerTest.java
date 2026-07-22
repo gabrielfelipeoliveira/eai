@@ -1,5 +1,6 @@
 package com.eai.api.common;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ class ApiExceptionHandlerTest {
 
     private final ApiExceptionHandler handler = new ApiExceptionHandler(messageSource());
 
+    @DisplayName("Traduz mensagens conhecidas com acentos")
     @Test
     void translatesKnownMessagesWithAccents() {
         ResponseEntity<ErrorResponse> response = handler.handleIllegalArgumentException(
@@ -22,6 +24,7 @@ class ApiExceptionHandlerTest {
         assertThat(response.getBody().message()).isEqualTo("Não é possível inativar empresa com usuários ativos");
     }
 
+    @DisplayName("Traduz mensagens dinamicas de campo obrigatorio com acentos")
     @Test
     void translatesDynamicRequiredFieldMessagesWithAccents() {
         ResponseEntity<ErrorResponse> response = handler.handleIllegalArgumentException(

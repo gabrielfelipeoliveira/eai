@@ -3,6 +3,7 @@ package com.eai.application.lead;
 import com.eai.application.common.ConflictException;
 import com.eai.application.common.ForbiddenException;
 import com.eai.application.common.NotFoundException;
+import com.eai.application.conversation.ConversationRepository;
 import com.eai.application.item.ItemRepository;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.application.tenant.CompanyService;
@@ -16,6 +17,7 @@ import com.eai.domain.lead.LeadNote;
 import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
 import com.eai.domain.lead.LeadTag;
+import com.eai.domain.lead.LeadTagDefinition;
 import com.eai.domain.tenant.Store;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
@@ -23,39 +25,48 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class LeadService {
 
+    private static final List<LeadStatus> SELLER_AVAILABLE_STATUSES = List.of(LeadStatus.NEW, LeadStatus.AVAILABLE);
+
     private final LeadRepository leadRepository;
     private final LeadHistoryRepository historyRepository;
     private final LeadNoteRepository noteRepository;
     private final LeadTagRepository tagRepository;
+    private final LeadTagDefinitionRepository tagDefinitionRepository;
     private final CompanyService companyService;
     private final StoreService storeService;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
+    private final ConversationRepository conversationRepository;
 
     public LeadService(
             LeadRepository leadRepository,
             LeadHistoryRepository historyRepository,
             LeadNoteRepository noteRepository,
             LeadTagRepository tagRepository,
+            LeadTagDefinitionRepository tagDefinitionRepository,
             CompanyService companyService,
             StoreService storeService,
             UserRepository userRepository,
-            ItemRepository itemRepository
+            ItemRepository itemRepository,
+            ConversationRepository conversationRepository
     ) {
         this.leadRepository = leadRepository;
         this.historyRepository = historyRepository;
         this.noteRepository = noteRepository;
         this.tagRepository = tagRepository;
+        this.tagDefinitionRepository = tagDefinitionRepository;
         this.companyService = companyService;
         this.storeService = storeService;
         this.userRepository = userRepository;
         this.itemRepository = itemRepository;
+        this.conversationRepository = conversationRepository;
     }
 
     @Transactional(readOnly = true)
@@ -80,12 +91,14 @@ public class LeadService {
         }
         LeadSource source = command.source() == null ? LeadSource.MANUAL : command.source();
         String normalizedPhone = PhoneNormalizer.normalize(command.customerPhone());
+        List<String> normalizedAdditionalPhones = normalizeAdditionalPhones(command.additionalPhones(), normalizedPhone);
         ItemRepository.ItemWithVehicle itemWithVehicle = createItemWithVehicle(authenticatedUser.id(), command.item());
         Lead lead = Lead.create(
                 command.companyId(),
                 command.storeId(),
                 command.customerName(),
                 normalizedPhone,
+                normalizedAdditionalPhones,
                 command.customerEmail(),
                 command.customerCity(),
                 command.vehicleInterest(),
@@ -98,8 +111,18 @@ public class LeadService {
                 command.saleValue(),
                 command.saleCurrency()
         );
+        leadRepository.findMostRecentByStoreIdAndAnyPhone(command.storeId(), allPhones(normalizedPhone, normalizedAdditionalPhones))
+                .ifPresent(existingLead -> lead.markDuplicated(existingLead.getId()));
         Lead savedLead = leadRepository.save(lead);
-        historyRepository.save(LeadHistory.create(savedLead.getId(), authenticatedUser.id(), null, savedLead.getStatus(), "Lead created"));
+        historyRepository.save(LeadHistory.create(
+                savedLead.getId(),
+                authenticatedUser.id(),
+                null,
+                savedLead.getStatus(),
+                savedLead.getStatus() == LeadStatus.DUPLICATED
+                        ? "Lead criado como duplicado por telefone/WhatsApp na mesma loja"
+                        : "Lead created"
+        ));
         return savedLead;
     }
 
@@ -117,12 +140,14 @@ public class LeadService {
                 ? null
                 : command.assignedToUserId().equals(lead.getAssignedToUserId()) ? lead.getAssignedAt() : Instant.now();
         String normalizedPhone = PhoneNormalizer.normalize(command.customerPhone());
+        List<String> normalizedAdditionalPhones = normalizeAdditionalPhones(command.additionalPhones(), normalizedPhone);
         ItemRepository.ItemWithVehicle itemWithVehicle = createItemWithVehicle(authenticatedUser.id(), command.item());
         lead.update(
                 command.companyId(),
                 command.storeId(),
                 command.customerName(),
                 normalizedPhone,
+                normalizedAdditionalPhones,
                 command.customerEmail(),
                 command.customerCity(),
                 command.vehicleInterest(),
@@ -140,6 +165,7 @@ public class LeadService {
                 command.saleCurrency()
         );
         Lead savedLead = leadRepository.save(lead);
+        syncConversationOwner(savedLead);
         if (previousStatus != savedLead.getStatus()) {
             historyRepository.save(LeadHistory.create(savedLead.getId(), authenticatedUser.id(), previousStatus, savedLead.getStatus(), "Lead updated"));
         }
@@ -160,7 +186,9 @@ public class LeadService {
     public Lead assignToMe(UUID id, AuthenticatedUser authenticatedUser) {
         Lead lead = findRequired(id);
         assertCanAccessLead(lead, authenticatedUser);
-        if (lead.getAssignedToUserId() != null && !lead.getAssignedToUserId().equals(authenticatedUser.id())) {
+        if (lead.getAssignedToUserId() != null
+                && !lead.getAssignedToUserId().equals(authenticatedUser.id())
+                && !canTakeOverAssignment(authenticatedUser)) {
             throw new ConflictException("Lead already assigned");
         }
         return assign(id, authenticatedUser.id(), authenticatedUser);
@@ -173,14 +201,43 @@ public class LeadService {
         assertCanAssignUser(userId, lead.getCompanyId(), lead.getStoreId(), authenticatedUser);
         LeadStatus previousStatus = lead.assignTo(userId);
         Lead savedLead = leadRepository.save(lead);
+        syncConversationOwner(savedLead);
         historyRepository.save(LeadHistory.create(savedLead.getId(), authenticatedUser.id(), previousStatus, savedLead.getStatus(), "Lead assigned"));
         return savedLead;
+    }
+
+    private void syncConversationOwner(Lead lead) {
+        conversationRepository.findByLeadId(lead.getId()).ifPresent(conversation -> {
+            conversation.linkLead(lead.getId(), lead.getAssignedToUserId());
+            conversationRepository.save(conversation);
+        });
+    }
+
+    private boolean canTakeOverAssignment(AuthenticatedUser authenticatedUser) {
+        return hasRole(authenticatedUser, UserRole.ADMIN)
+                || hasRole(authenticatedUser, UserRole.MANAGER)
+                || hasRole(authenticatedUser, UserRole.STORE_MANAGER);
     }
 
     @Transactional
     public LeadNote addNote(UUID leadId, String note, AuthenticatedUser authenticatedUser) {
         Lead lead = getLead(leadId, authenticatedUser);
-        return noteRepository.save(LeadNote.create(lead.getId(), authenticatedUser.id(), note));
+        LeadNote savedNote = noteRepository.save(LeadNote.create(lead.getId(), authenticatedUser.id(), note));
+        historyRepository.save(LeadHistory.create(lead.getId(), authenticatedUser.id(), lead.getStatus(), lead.getStatus(), "Observacao criada"));
+        return savedNote;
+    }
+
+    @Transactional
+    public LeadNote updateNote(UUID leadId, UUID noteId, String note, AuthenticatedUser authenticatedUser) {
+        Lead lead = getLead(leadId, authenticatedUser);
+        LeadNote existingNote = noteRepository.findById(noteId)
+                .orElseThrow(() -> new NotFoundException("Lead note not found"));
+        if (!existingNote.getLeadId().equals(lead.getId())) {
+            throw new NotFoundException("Lead note not found");
+        }
+        LeadNote updatedNote = noteRepository.save(existingNote.update(note));
+        historyRepository.save(LeadHistory.create(lead.getId(), authenticatedUser.id(), lead.getStatus(), lead.getStatus(), "Observacao atualizada"));
+        return updatedNote;
     }
 
     @Transactional(readOnly = true)
@@ -196,9 +253,32 @@ public class LeadService {
     }
 
     @Transactional
-    public LeadTag addTag(UUID leadId, String name, AuthenticatedUser authenticatedUser) {
+    public LeadTag addTag(UUID leadId, UUID tagId, String name, AuthenticatedUser authenticatedUser) {
         Lead lead = getLead(leadId, authenticatedUser);
-        return tagRepository.save(LeadTag.create(lead.getId(), name));
+        LeadTagDefinition tagDefinition = findTagDefinition(tagId, name);
+        if (!tagDefinition.isActive()) {
+            throw new ConflictException("Lead tag is inactive");
+        }
+        if (tagRepository.existsByLeadIdAndTagId(lead.getId(), tagDefinition.getId())) {
+            throw new ConflictException("Lead already has this tag");
+        }
+        if (tagRepository.existsByLeadIdAndType(lead.getId(), tagDefinition.getType())) {
+            throw new ConflictException("Lead already has a tag of this type");
+        }
+        return tagRepository.save(LeadTag.create(lead.getId(), tagDefinition));
+    }
+
+    @Transactional(readOnly = true)
+    public List<LeadTagDefinition> listTagDefinitions() {
+        return tagDefinitionRepository.findAllActive();
+    }
+
+    @Transactional
+    public LeadTagDefinition createTagDefinition(String name, String type) {
+        if (tagDefinitionRepository.existsByNameIgnoreCase(name)) {
+            throw new ConflictException("Lead tag name already exists");
+        }
+        return tagDefinitionRepository.save(LeadTagDefinition.create(name, type));
     }
 
     @Transactional(readOnly = true)
@@ -218,9 +298,47 @@ public class LeadService {
         tagRepository.deleteById(tag.getId());
     }
 
+    private List<String> normalizeAdditionalPhones(List<String> additionalPhones, String primaryPhone) {
+        if (additionalPhones == null || additionalPhones.isEmpty()) {
+            return List.of();
+        }
+        List<String> normalized = new ArrayList<>();
+        for (String phone : additionalPhones) {
+            String normalizedPhone = PhoneNormalizer.normalize(phone);
+            if (normalizedPhone == null || normalizedPhone.equals(primaryPhone) || normalized.contains(normalizedPhone)) {
+                continue;
+            }
+            normalized.add(normalizedPhone);
+        }
+        return List.copyOf(normalized);
+    }
+
+    private List<String> allPhones(String primaryPhone, List<String> additionalPhones) {
+        List<String> phones = new ArrayList<>();
+        if (primaryPhone != null) {
+            phones.add(primaryPhone);
+        }
+        if (additionalPhones != null) {
+            phones.addAll(additionalPhones);
+        }
+        return List.copyOf(phones);
+    }
+
     private Lead findRequired(UUID id) {
         return leadRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Lead not found"));
+    }
+
+    private LeadTagDefinition findTagDefinition(UUID tagId, String name) {
+        if (tagId != null) {
+            return tagDefinitionRepository.findById(tagId)
+                    .orElseThrow(() -> new NotFoundException("Lead tag definition not found"));
+        }
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("tagId is required");
+        }
+        return tagDefinitionRepository.findActiveByName(name)
+                .orElseThrow(() -> new NotFoundException("Lead tag definition not found"));
     }
 
     private ItemRepository.ItemWithVehicle createItemWithVehicle(UUID ownerUserId, LeadItemCommand itemCommand) {
@@ -243,9 +361,18 @@ public class LeadService {
     private LeadSearchCriteria applyScope(LeadSearchCriteria criteria, AuthenticatedUser authenticatedUser) {
         UUID scopeCompanyId = null;
         UUID scopeStoreId = null;
-        if (!hasRole(authenticatedUser, UserRole.ADMIN)) {
+        UUID visibleToSellerUserId = null;
+        if (hasRole(authenticatedUser, UserRole.ADMIN)) {
+            scopeCompanyId = null;
+            scopeStoreId = null;
+        } else if (hasRole(authenticatedUser, UserRole.MANAGER)) {
+            scopeCompanyId = requireCompany(authenticatedUser);
+        } else {
             scopeCompanyId = requireCompany(authenticatedUser);
             scopeStoreId = requireStore(authenticatedUser);
+            if (hasRole(authenticatedUser, UserRole.SELLER) && !hasRole(authenticatedUser, UserRole.STORE_MANAGER)) {
+                visibleToSellerUserId = authenticatedUser.id();
+            }
         }
         return new LeadSearchCriteria(
                 criteria.status(),
@@ -258,7 +385,8 @@ public class LeadService {
                 criteria.vehicle(),
                 criteria.phone(),
                 scopeCompanyId,
-                scopeStoreId
+                scopeStoreId,
+                visibleToSellerUserId
         );
     }
 
@@ -277,7 +405,18 @@ public class LeadService {
         if (hasRole(authenticatedUser, UserRole.ADMIN)) {
             return;
         }
-        if (lead.getCompanyId().equals(requireCompany(authenticatedUser)) && lead.getStoreId().equals(requireStore(authenticatedUser))) {
+        if (hasRole(authenticatedUser, UserRole.MANAGER) && lead.getCompanyId().equals(requireCompany(authenticatedUser))) {
+            return;
+        }
+        if (hasRole(authenticatedUser, UserRole.STORE_MANAGER)
+                && lead.getCompanyId().equals(requireCompany(authenticatedUser))
+                && lead.getStoreId().equals(requireStore(authenticatedUser))) {
+            return;
+        }
+        if (hasRole(authenticatedUser, UserRole.SELLER)
+                && lead.getCompanyId().equals(requireCompany(authenticatedUser))
+                && lead.getStoreId().equals(requireStore(authenticatedUser))
+                && isVisibleToSeller(lead, authenticatedUser.id())) {
             return;
         }
         throw new ForbiddenException("Access denied for lead");
@@ -285,6 +424,9 @@ public class LeadService {
 
     private void assertCanUseTenant(UUID companyId, UUID storeId, AuthenticatedUser authenticatedUser) {
         if (hasRole(authenticatedUser, UserRole.ADMIN)) {
+            return;
+        }
+        if (hasRole(authenticatedUser, UserRole.MANAGER) && companyId.equals(requireCompany(authenticatedUser))) {
             return;
         }
         if (companyId.equals(requireCompany(authenticatedUser)) && storeId.equals(requireStore(authenticatedUser))) {
@@ -302,10 +444,20 @@ public class LeadService {
         if (hasRole(authenticatedUser, UserRole.ADMIN) || userId.equals(authenticatedUser.id())) {
             return;
         }
-        if (hasRole(authenticatedUser, UserRole.MANAGER) && companyId.equals(requireCompany(authenticatedUser)) && storeId.equals(requireStore(authenticatedUser))) {
+        if (hasRole(authenticatedUser, UserRole.MANAGER) && companyId.equals(requireCompany(authenticatedUser))) {
+            return;
+        }
+        if (hasRole(authenticatedUser, UserRole.STORE_MANAGER)
+                && companyId.equals(requireCompany(authenticatedUser))
+                && storeId.equals(requireStore(authenticatedUser))) {
             return;
         }
         throw new ForbiddenException("Access denied for assignment");
+    }
+
+    private boolean isVisibleToSeller(Lead lead, UUID sellerId) {
+        return sellerId.equals(lead.getAssignedToUserId())
+                || (lead.getAssignedToUserId() == null && SELLER_AVAILABLE_STATUSES.contains(lead.getStatus()));
     }
 
     private UUID requireCompany(AuthenticatedUser authenticatedUser) {

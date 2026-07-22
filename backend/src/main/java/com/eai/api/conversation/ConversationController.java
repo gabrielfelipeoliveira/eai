@@ -33,7 +33,7 @@ import java.time.Instant;
 
 @RestController
 @RequestMapping("/api/conversations")
-@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SELLER')")
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER')")
 public class ConversationController {
 
     private final ConversationService conversationService;

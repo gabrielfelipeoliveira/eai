@@ -67,6 +67,28 @@ public class ImapEmailReader implements EmailReader {
         }
     }
 
+    @Override
+    public void markMessagesAsRead(EmailAccount account, String password, Instant since, Instant until) {
+        Store store = null;
+        Folder inbox = null;
+        try {
+            store = openStore(account, password);
+            inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_WRITE);
+            Message[] messages = inbox.search(searchTerm(since));
+            for (Message message : messages) {
+                if (!receivedAt(message).isAfter(until)) {
+                    message.setFlag(Flags.Flag.SEEN, true);
+                }
+            }
+        } catch (MessagingException exception) {
+            throw new IllegalStateException("Falha ao marcar e-mails IMAP como lidos: " + exception.getMessage(), exception);
+        } finally {
+            close(inbox);
+            close(store);
+        }
+    }
+
     private Store openStore(EmailAccount account, String password) throws MessagingException {
         Properties properties = new Properties();
         properties.put("mail.store.protocol", "imap");

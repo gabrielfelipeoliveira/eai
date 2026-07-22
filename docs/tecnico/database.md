@@ -23,7 +23,11 @@ Regras:
 - `V1__initial_schema.sql`, consolidada com o schema completo e dados demo atuais.
 - `V2__adjust_tenancy_company_store_users.sql`, ajuste de tenancy entre empresa, loja e usuarios.
 - `V4__lead_items_vehicles_money_phone.sql`, adiciona `items`, `vehicles`, `leads.item_id`, `leads.sale_currency`, normalizacao E.164 dos telefones demo e constraints de moeda/telefone.
-- `V5__conversation_message_media_storage.sql`, adiciona metadados/referencia de storage de midias em `conversation_messages`.
+- `V5__lead_recontact_duplicates_phones.sql`, adiciona telefones adicionais, relacao de duplicidade/recontato e indices de busca por telefone.
+- `V6__lead_notes_editable_global_tags.java`, adiciona `lead_notes.updated_at`, cria catalogo global `lead_tag_definitions` e vincula `lead_tags` por `tag_id` e `type`.
+- `V7__email_import_history.sql`, cria historico persistente de importacoes de e-mail por conta, loja, status e data, preservado quando a conta e removida.
+- `V8__message_templates_meta_soft_delete.sql`, permite template global de empresa com `store_id` nulo, adiciona `language_code`, `meta_status`, `deleted_at` e normaliza nomes demo para o padrao tecnico da Meta.
+- `V9__conversation_message_media_storage.sql`, adiciona metadados/referencia de storage de midias em `conversation_messages`.
 
 Observacao:
 
@@ -37,7 +41,7 @@ Grupos atuais e alvo:
 
 - Identidade e autenticacao: `users`, `user_roles`, `refresh_tokens`.
 - Tenancy: `companies`, `stores`.
-- Leads: `leads`, `lead_history`, `lead_notes`, `lead_tags` e estruturas futuras para observacoes e telefones vinculados.
+- Leads: `leads`, `lead_history`, `lead_notes`, `lead_tags`, `lead_tag_definitions`, `lead_additional_phones` e estruturas futuras quando aprovadas.
 - Item e veiculo: `items` e `vehicles` ou equivalentes futuros.
 - Mensageria: `message_templates` e comunicacoes de lead.
 - WhatsApp: contatos, conversas, mensagens, eventos de status, midias e auditoria tecnica.
@@ -54,6 +58,9 @@ Grupos atuais e alvo:
 - Usuario possui um unico papel.
 - Lead pertence a empresa e loja.
 - Lead pode ter historico, notas, observacoes, tags e telefones vinculados.
+- Observacoes em `lead_notes` possuem `created_at` e `updated_at`; edicoes geram evento em `lead_history`.
+- Tags de lead usam catalogo global em `lead_tag_definitions`; `lead_tags` associa lead e tag cadastrada, preservando `name` e `type` para consulta.
+- Lead pode apontar `related_lead_id` para preservar relacao com lead anterior em duplicidade, recontato ou novo clique em anuncio.
 - Lead pode se relacionar a Item; Veiculo estruturado e filho de Item, nao relacionamento direto do Lead.
 - Item pertence ao usuario.
 - Veiculo e filho de Item.
@@ -61,8 +68,8 @@ Grupos atuais e alvo:
 - Uma conversa tem muitas mensagens.
 - Uma mensagem de conversa pode ter muitos eventos de status recebidos do provedor.
 - Uma mensagem de conversa pode ter metadados e referencia de midia armazenada em S3/bucket.
-- Um template de mensagem pertence a empresa ou loja.
-- Template usado deve suportar exclusao logica.
+- Um template de mensagem pertence a empresa e pode ser global da empresa ou especifico de uma loja.
+- Template usado deve suportar exclusao logica por `deleted_at`; listas operacionais nao retornam templates excluidos.
 - Uma comunicacao de lead pode referenciar um template.
 - Uma conta de e-mail pertence a empresa e loja.
 - Historico de importacao de e-mail deve ser preservado mesmo se a conta for excluida/desativada.
@@ -77,13 +84,14 @@ Constraints conhecidas ou desejadas:
 - Campos com comportamento de enum usam constraints `CHECK` ou tipo equivalente definido em migration.
 - Valor de venda deve ser nulo ou nao negativo.
 - Moeda deve aceitar valores alem de BRL; BRL e o default de negocio.
-- Telefone deve seguir E.164 quando aplicavel.
+- Telefone principal e telefones adicionais de lead devem seguir E.164 quando aplicavel.
 - Contatos de WhatsApp sao unicos por loja e telefone.
 - Conversas sao unicas por contato e por lead quando houver lead vinculado.
 - Tags devem impedir duplicidade do mesmo tipo no mesmo lead.
 - Refresh token anterior deve ser revogado quando houver rotacao.
 - Sessao ativa deve respeitar a regra de no maximo uma sessao por usuario.
 - Templates usados devem preservar historico por exclusao logica.
+- Templates ativos para uso operacional devem estar aprovados na Meta.
 - Auditorias de acesso de conversa registram acesso tecnico de perfis gerenciais e admins enquanto a tela de auditoria fica para fase posterior.
 
 Indices conhecidos ou desejados:

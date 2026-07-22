@@ -6,6 +6,7 @@ export type MetadataCollection =
   | 'userStatuses'
   | 'tenantStatuses'
   | 'messageTemplateTypes'
+  | 'messageTemplateMetaStatuses'
   | 'leadDistributionModes'
   | 'emailAccountStatuses'
   | 'emailProtocols'

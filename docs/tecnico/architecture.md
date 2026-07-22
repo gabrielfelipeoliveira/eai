@@ -126,6 +126,20 @@ Perguntas para o Software Architect:
 - Assemblers de resposta devem ficar na camada de API ou aplicacao?
 - Modelos de resposta especificos para consultas devem ser introduzidos?
 
+## Padrao De Lombok No Backend
+
+Lombok faz parte da stack do backend e pode ser usado para reduzir boilerplate, desde que a mudanca seja retrocompativel e nao altere logica de dominio, contrato publico, serializacao ou comportamento runtime.
+
+Regras:
+
+- Classes de dominio usam no maximo `@Getter` por padrao. Nao use `@Setter` amplo nem `@Data` em dominio.
+- Entidades JPA podem usar `@Getter` e `@Setter`, mas nao devem usar `@Data`.
+- Services, controllers, adapters e configuracoes podem usar `@RequiredArgsConstructor` quando todos os campos injetados forem `final` e o construtor gerado for equivalente ao atual.
+- Preserve o nivel de acesso do construtor existente. Se o construtor atual for package-private, use `@RequiredArgsConstructor(access = AccessLevel.PACKAGE)`.
+- DTOs, commands e responses que ja usam `record` devem continuar como `record`.
+- `@Data` nao e padrao do projeto. So considere em classe simples, sem JPA, sem dominio, sem dado sensivel, sem colecoes mutaveis relevantes e sem risco de `equals`, `hashCode` ou `toString`.
+- Getters defensivos, normalizacao, validacao, transicoes de estado e atualizacao de timestamps devem continuar explicitos.
+
 ## Relatorios Gerenciais
 
 Relatorios gerenciais sao implementados em `com.eai.application.report`, com DTOs HTTP e controllers em `com.eai.api.report` e adapters de exportacao em infraestrutura.
@@ -420,6 +434,7 @@ Regras:
 - Adicionar testes quando comportamento de negocio ou logica compartilhada mudar.
 - Preferir testes unitarios focados para dominio e aplicacao.
 - Usar testes de integracao quando o comportamento depender de Spring, persistencia ou fronteiras HTTP.
+- Todo teste backend com JUnit deve ter `@DisplayName` em PT-BR descrevendo o comportamento validado.
 - Nao pular testes falhando sem documentar o motivo.
 
 Status:

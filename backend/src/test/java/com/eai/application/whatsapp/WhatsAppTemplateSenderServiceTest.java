@@ -19,6 +19,7 @@ import com.eai.domain.message.MessageTemplateType;
 import com.eai.domain.tenant.Store;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -61,11 +62,12 @@ class WhatsAppTemplateSenderServiceTest {
             templateClient
     );
 
+    @DisplayName("Envia template e registra mensagem enviada com retorno do provedor")
     @Test
     @SuppressWarnings("unchecked")
     void sendsTemplateAndRecordsSentMessageWithProviderReturn() {
         Lead lead = arrangeBaseLead("+5511999990000");
-        when(templateClient.sendTemplate(eq("5511999990000"), eq("primeiro_contato"), eq("pt_BR"), any()))
+        when(templateClient.sendTemplate(eq("5511999990000"), eq("primeiro_contato"), eq("pt-BR"), any()))
                 .thenReturn(new WhatsAppTemplateProviderResult(true, 200, "wamid.123", "{\"messages\":[{\"id\":\"wamid.123\"}]}"));
         when(conversationService.recordOutboundMessage(eq(lead), eq(ConversationMessageType.TEMPLATE), eq(ConversationMessageStatus.SENT), eq("wamid.123"), any(), any()))
                 .thenReturn(ConversationMessage.outbound(UUID.randomUUID(), ConversationMessageType.TEMPLATE, ConversationMessageStatus.SENT, "wamid.123", "Ola Cliente Teste, veja Honda Civic", "{\"messages\":[{\"id\":\"wamid.123\"}]}"));
@@ -77,7 +79,7 @@ class WhatsAppTemplateSenderServiceTest {
         assertThat(result.providerResponse()).contains("wamid.123");
 
         ArgumentCaptor<List<String>> parameters = ArgumentCaptor.forClass(List.class);
-        verify(templateClient).sendTemplate(eq("5511999990000"), eq("primeiro_contato"), eq("pt_BR"), parameters.capture());
+        verify(templateClient).sendTemplate(eq("5511999990000"), eq("primeiro_contato"), eq("pt-BR"), parameters.capture());
         assertThat(parameters.getValue()).containsExactly("Cliente Teste", "Honda Civic");
 
         ArgumentCaptor<LeadCommunication> communication = ArgumentCaptor.forClass(LeadCommunication.class);
@@ -85,6 +87,7 @@ class WhatsAppTemplateSenderServiceTest {
         assertThat(communication.getValue().getChannel()).isEqualTo(LeadCommunicationChannel.WHATSAPP_TEMPLATE);
     }
 
+    @DisplayName("Registra mensagem com falha quando provedor rejeita envio")
     @Test
     void recordsFailedMessageWhenProviderRejectsSend() {
         Lead lead = arrangeBaseLead("+5511999990000");

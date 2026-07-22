@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/pipeline")
-@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SELLER')")
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER')")
 public class PipelineController {
 
     private final PipelineService pipelineService;

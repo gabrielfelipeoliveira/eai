@@ -1,12 +1,14 @@
 import { api } from './api';
-import type { LeadCommunication, MessageTemplate, MessageTemplateType, WhatsAppTemplateSendResponse, WhatsappLink } from '../types/message';
+import type { LeadCommunication, MessageTemplate, MessageTemplateMetaStatus, MessageTemplateType, WhatsAppTemplateSendResponse, WhatsappLink } from '../types/message';
 
 export interface MessageTemplatePayload {
   companyId: string;
-  storeId: string;
+  storeId: string | null;
   name: string;
   type: MessageTemplateType;
   content: string;
+  languageCode: string;
+  metaStatus: MessageTemplateMetaStatus;
   active: boolean;
 }
 
