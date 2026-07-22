@@ -112,13 +112,14 @@ Cards de desenvolvimento conhecidos:
 - `EAI-016`: concluido em 2026-07-22 no PR `#21`. Adicionar testes de integracao com Postgres via Testcontainers. UX dispensado: ajuste tecnico sem impacto visual.
 - `EAI-017`: backlog. Adicionar testes unitarios e de componentes no frontend.
 - `EAI-018`: backlog. Criar testes E2E dos fluxos criticos do MVP.
-- `EAI-019`: aguardando Code Review em 2026-07-22 no PR `#23`. Adicionar validacao de contrato OpenAPI. UX dispensado: ajuste tecnico sem impacto visual.
-- `EAI-020`: aguardando Code Review em 2026-07-22 no PR `#22`. Padronizar uso seguro de Lombok no backend. UX dispensado: ajuste tecnico sem impacto visual.
+- `EAI-019`: concluido em 2026-07-22 no PR `#23`. Adicionar validacao de contrato OpenAPI. UX dispensado: ajuste tecnico sem impacto visual.
+- `EAI-020`: concluido em 2026-07-22 no PR `#22`. Padronizar uso seguro de Lombok no backend. UX dispensado: ajuste tecnico sem impacto visual.
 - `EAI-021`: concluido. Reforcar obrigatoriedade de branch e PR para qualquer mudanca.
 - `EAI-022`: concluido. Registrar novos problemas no Trello e atribuir cards movimentados.
 - `EAI-023`: concluido. Ajustar atribuicao de membros apenas em cards puxados.
-- `EAI-024`: backlog. Notificar administradores sobre falhas de e-mail quando houver infraestrutura de notificacao.
+- `EAI-024`: em andamento com Gabriel Felipe Ferreira de Oliveira. Notificar administradores sobre falhas de e-mail quando houver infraestrutura de notificacao.
 - `EAI-025`: backlog. Atualizar Vite/esbuild por vulnerabilidades npm audit.
+- `EAI-026`: aguardando Code Review em 2026-07-22 no PR `#24`. Formalizar checklist de Code Review e registro de debitos por card. UX dispensado: ajuste de processo/documentacao sem impacto visual.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -126,18 +127,23 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Nenhum card em desenvolvimento ativo.
-- Lucas Reiter: `EAI-019` esta aguardando Code Review no PR `#23`.
-- Gabriel: confirmar card atual no Trello antes de iniciar ou assumir trabalho local. `EAI-020` esta aguardando Code Review no PR `#22`.
+- Lucas Reiter: `EAI-026` esta aguardando Code Review no PR `#24`.
+- Gabriel Felipe Ferreira de Oliveira: `EAI-024` - notificar administradores sobre falhas de e-mail.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: test/eai-019-openapi-contract-validation
-Gabriel: chore/eai-020-lombok-seguro
+Lucas Reiter: docs/eai-026-code-review-checklist
+Gabriel Felipe Ferreira de Oliveira: confirmar branch atual do `EAI-024` no Trello/PR antes de interagir com esse escopo.
 ```
 
-Reserva operacional em 2026-07-22:
+Reserva operacional EAI-026 em 2026-07-22:
+
+- Card criado em `Em andamento` e atribuido a `Lucas Reiter`.
+- Branch `docs/eai-026-code-review-checklist`.
+- Escopo: documentar checklist de Code Review, registro de debitos tecnicos/proximos cards e obrigacao de revisar handoff/Trello antes de merge/conclusao.
+
+Historico operacional EAI-019 em 2026-07-22:
 
 - Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
 - Validacao inicial frontend: `rtk npm run build` passou com warning conhecido de chunk JS acima de 500 kB apos minificacao.

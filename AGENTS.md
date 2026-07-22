@@ -32,6 +32,8 @@ Regras importantes:
 - Mantenha o dominio independente de Spring e JPA.
 - Nao modifique migrations Flyway existentes depois que forem aplicadas fora de experimentacao local.
 - Sempre reporte vulnerabilidades apontadas por build, auditoria de dependencias, Mend/SCA ou alertas de CVE do Java, mesmo quando a correcao ficar fora do escopo da tarefa.
+- Antes de aprovar, mergear ou concluir uma PR, faca Code Review objetivo do diff contra `main`: escopo do card, aderencia a arquitetura, testes, validacoes, vulnerabilidades/warnings e impactos no handoff.
+- Em todo card, registre achados e debitos tecnicos percebidos durante implementacao, validacao ou review; se nao forem tratados no escopo, comente no Trello e sugira card futuro quando aplicavel.
 - Use `docs/tecnico/contexto-atual.md` como handoff operacional entre pessoas e agentes.
 - Em trabalho paralelo, registre cards e branches em andamento por responsavel no handoff; nao trate o projeto como se houvesse apenas um card ativo global.
 - Use o Trello como lock operacional imediato antes de puxar card; `contexto-atual.md` na `main` pode estar atrasado ate o PR de reserva ser mergeado.
