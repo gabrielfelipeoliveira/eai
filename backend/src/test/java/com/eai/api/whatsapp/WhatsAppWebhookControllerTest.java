@@ -11,6 +11,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.util.HexFormat;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,10 +23,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(properties = "eai.whatsapp.cloud-api.verify-token=test-token")
+@SpringBootTest(properties = {
+        "eai.whatsapp.cloud-api.verify-token=test-token",
+        "eai.whatsapp.cloud-api.app-secret=test-secret"
+})
 @AutoConfigureMockMvc
 @ActiveProfiles({"test", "demo"})
 class WhatsAppWebhookControllerTest {
+
+    private static final String APP_SECRET = "test-secret";
 
     @Autowired
     private MockMvc mockMvc;
@@ -42,7 +52,7 @@ class WhatsAppWebhookControllerTest {
 
     @DisplayName("Webhook do WhatsApp rejeita token divergente")
     @Test
-    void rejectsWebhookVerificationWhenTokenDoesNotMatch() throws Exception {
+    void rejectsWebhookWhenTokenDoesNotMatch() throws Exception {
         mockMvc.perform(get("/api/webhooks/whatsapp")
                         .param("hub.mode", "subscribe")
                         .param("hub.verify_token", "wrong-token")
@@ -50,55 +60,66 @@ class WhatsAppWebhookControllerTest {
                 .andExpect(status().isForbidden());
     }
 
-    @DisplayName("Webhook do WhatsApp recebe eventos sem autenticacao")
+    @DisplayName("Webhook do WhatsApp aceita payload com assinatura valida")
     @Test
-    void receivesWebhookEventsWithoutAuthentication() throws Exception {
+    void receivesWebhookEventWhenSignatureMatches() throws Exception {
+        String payload = """
+                {"object":"whatsapp_business_account","entry":[]}
+                """;
+
+        mockMvc.perform(post("/api/webhooks/whatsapp")
+                        .header("X-Hub-Signature-256", signatureFor(payload))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload))
+                .andExpect(status().isAccepted());
+    }
+
+    @DisplayName("Webhook do WhatsApp rejeita payload sem assinatura")
+    @Test
+    void rejectsWebhookEventWithoutSignature() throws Exception {
         mockMvc.perform(post("/api/webhooks/whatsapp")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "object": "whatsapp_business_account",
-                                  "entry": []
-                                }
+                                {"object":"whatsapp_business_account","entry":[]}
                                 """))
-                .andExpect(status().isAccepted());
+                .andExpect(status().isUnauthorized());
+    }
+
+    @DisplayName("Webhook do WhatsApp rejeita payload com assinatura invalida")
+    @Test
+    void rejectsWebhookEventWithInvalidSignature() throws Exception {
+        mockMvc.perform(post("/api/webhooks/whatsapp")
+                        .header("X-Hub-Signature-256", "sha256=0000000000000000000000000000000000000000000000000000000000000000")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"object":"whatsapp_business_account","entry":[]}
+                                """))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @DisplayName("Webhook do WhatsApp rejeita payload com assinatura malformada")
+    @Test
+    void rejectsWebhookEventWithMalformedSignature() throws Exception {
+        mockMvc.perform(post("/api/webhooks/whatsapp")
+                        .header("X-Hub-Signature-256", "sha256=not-hex")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"object":"whatsapp_business_account","entry":[]}
+                                """))
+                .andExpect(status().isUnauthorized());
     }
 
     @DisplayName("Webhook persiste mensagem recebida e cria conversa por telefone")
     @Test
     void persistsIncomingMessageAndCreatesConversationByPhone() throws Exception {
+        String payload = """
+                {"object":"whatsapp_business_account","entry":[{"changes":[{"value":{"contacts":[{"profile":{"name":"Mariana Alves"},"wa_id":"5511988880001"}],"messages":[{"from":"5511988880001","id":"wamid.test-inbound-001","timestamp":"1710000000","type":"text","text":{"body":"Tenho interesse no Civic"}}]}}]}]}
+                """;
+
         mockMvc.perform(post("/api/webhooks/whatsapp")
+                        .header("X-Hub-Signature-256", signatureFor(payload))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "object": "whatsapp_business_account",
-                                  "entry": [
-                                    {
-                                      "changes": [
-                                        {
-                                          "value": {
-                                            "contacts": [
-                                              {
-                                                "profile": { "name": "Mariana Alves" },
-                                                "wa_id": "5511988880001"
-                                              }
-                                            ],
-                                            "messages": [
-                                              {
-                                                "from": "5511988880001",
-                                                "id": "wamid.test-inbound-001",
-                                                "timestamp": "1710000000",
-                                                "type": "text",
-                                                "text": { "body": "Tenho interesse no Civic" }
-                                              }
-                                            ]
-                                          }
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                                """))
+                        .content(payload))
                 .andExpect(status().isAccepted());
 
         String token = login();
@@ -108,6 +129,7 @@ class WhatsAppWebhookControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
+
         JsonNode conversations = objectMapper.readTree(conversationsResponse);
         String conversationId = null;
         for (JsonNode conversation : conversations) {
@@ -144,5 +166,11 @@ class WhatsAppWebhookControllerTest {
                 .getResponse()
                 .getContentAsString();
         return objectMapper.readTree(response).get("accessToken").asText();
+    }
+
+    private String signatureFor(String payload) throws Exception {
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(new SecretKeySpec(APP_SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+        return "sha256=" + HexFormat.of().formatHex(mac.doFinal(payload.getBytes(StandardCharsets.UTF_8)));
     }
 }

@@ -222,6 +222,7 @@ Configuracoes de envio:
 
 - `META_WHATSAPP_PHONE_NUMBER_ID`
 - `META_WHATSAPP_ACCESS_TOKEN`
+- `META_WHATSAPP_APP_SECRET`, obrigatoria para validar a assinatura `X-Hub-Signature-256` do webhook publico antes de processar eventos recebidos.
 - `META_WHATSAPP_GRAPH_API_VERSION`, com padrao local `v25.0`
 
 Configuracoes de storage de midia:
