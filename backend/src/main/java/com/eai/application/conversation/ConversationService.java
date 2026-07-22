@@ -70,9 +70,19 @@ public class ConversationService {
                 incomingMessage.content(),
                 incomingMessage.mediaId(),
                 incomingMessage.mediaMimeType(),
+                incomingMessage.mediaStorageProvider(),
+                incomingMessage.mediaStorageKey(),
+                incomingMessage.mediaFileName(),
+                incomingMessage.mediaSizeBytes(),
+                incomingMessage.mediaSha256(),
                 incomingMessage.rawPayload()
         );
         return Optional.of(messageRepository.save(message));
+    }
+
+    @Transactional(readOnly = true)
+    public boolean incomingMessageAlreadyRecorded(String externalMessageId) {
+        return externalMessageId != null && messageRepository.existsByExternalMessageId(externalMessageId);
     }
 
     @Transactional

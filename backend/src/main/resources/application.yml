@@ -29,6 +29,10 @@ eai:
     importer:
       enabled: false
       fixed-delay: 60000
+  media:
+    storage:
+      provider: ${EAI_MEDIA_STORAGE_PROVIDER:local}
+      local-directory: ${EAI_MEDIA_STORAGE_LOCAL_DIRECTORY:.run-logs/media-storage}
   whatsapp:
     cloud-api:
       phone-number-id: ${META_WHATSAPP_PHONE_NUMBER_ID:}

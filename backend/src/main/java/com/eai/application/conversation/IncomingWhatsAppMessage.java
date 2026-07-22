@@ -10,6 +10,11 @@ public record IncomingWhatsAppMessage(
         String content,
         String mediaId,
         String mediaMimeType,
+        String mediaStorageProvider,
+        String mediaStorageKey,
+        String mediaFileName,
+        Long mediaSizeBytes,
+        String mediaSha256,
         String rawPayload
 ) {
 }

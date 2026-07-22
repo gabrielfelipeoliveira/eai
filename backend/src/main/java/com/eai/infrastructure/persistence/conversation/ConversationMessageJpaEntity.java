@@ -52,6 +52,21 @@ public class ConversationMessageJpaEntity {
     @Column(name = "media_mime_type")
     private String mediaMimeType;
 
+    @Column(name = "media_storage_provider")
+    private String mediaStorageProvider;
+
+    @Column(name = "media_storage_key")
+    private String mediaStorageKey;
+
+    @Column(name = "media_file_name")
+    private String mediaFileName;
+
+    @Column(name = "media_size_bytes")
+    private Long mediaSizeBytes;
+
+    @Column(name = "media_sha256")
+    private String mediaSha256;
+
     @Column(name = "raw_payload", columnDefinition = "TEXT")
     private String rawPayload;
 

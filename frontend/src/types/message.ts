@@ -80,6 +80,11 @@ export interface ConversationMessage {
   content: string | null;
   mediaId: string | null;
   mediaMimeType: string | null;
+  mediaStorageProvider: string | null;
+  mediaStorageKey: string | null;
+  mediaFileName: string | null;
+  mediaSizeBytes: number | null;
+  mediaSha256: string | null;
   createdAt: string;
   updatedAt: string;
 }

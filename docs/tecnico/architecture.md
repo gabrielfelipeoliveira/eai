@@ -193,17 +193,26 @@ O envio ativo de templates aprovados pela WhatsApp Cloud API e implementado por 
 
 Midias de WhatsApp devem ser armazenadas em S3 ou bucket equivalente. O banco deve guardar metadados e referencia do arquivo armazenado, nao depender de payload bruto como unico registro da midia.
 
+No MVP de `EAI-012`, o contrato de storage fica na aplicacao por meio de uma porta de midia e a infraestrutura fornece adapter local/dev configurado por `eai.media.storage.provider=local` e `eai.media.storage.local-directory`. Esse adapter prepara a troca futura por S3 ou bucket equivalente sem acoplar casos de uso a SDK de provedor. Downloads passam sempre por endpoint autenticado, sem expor caminho local.
+
 Configuracoes de envio:
 
 - `META_WHATSAPP_PHONE_NUMBER_ID`
 - `META_WHATSAPP_ACCESS_TOKEN`
 - `META_WHATSAPP_GRAPH_API_VERSION`, com padrao local `v25.0`
 
+Configuracoes de storage de midia:
+
+- `EAI_MEDIA_STORAGE_PROVIDER`, com padrao local `local`
+- `EAI_MEDIA_STORAGE_LOCAL_DIRECTORY`, com padrao local `.run-logs/media-storage`
+
 Endpoints de consulta:
 
 - `GET /api/conversations`
 - `GET /api/conversations/{id}`
 - `GET /api/conversations/{id}/messages`
+- `POST /api/conversations/{id}/media`
+- `GET /api/conversations/{conversationId}/messages/{messageId}/media`
 - `GET /api/leads/{id}/conversation-messages`
 
 ## Regras de Dependencia

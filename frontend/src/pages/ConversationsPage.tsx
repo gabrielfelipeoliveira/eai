@@ -1,5 +1,7 @@
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import CheckIcon from '@mui/icons-material/Check';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
+import DownloadIcon from '@mui/icons-material/Download';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import MarkChatUnreadIcon from '@mui/icons-material/MarkChatUnread';
@@ -30,7 +32,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
 import { apiErrorCode, apiErrorMessage } from '../services/api';
-import { listConversationMessages, listConversations, sendConversationTextMessage } from '../services/conversationService';
+import {
+  downloadConversationMessageMedia,
+  listConversationMessages,
+  listConversations,
+  sendConversationMediaMessage,
+  sendConversationTextMessage,
+} from '../services/conversationService';
 import { listActiveTemplates, sendWhatsappTemplate } from '../services/templateService';
 import { listUsers } from '../services/userService';
 import type { ConversationMessage, ConversationMessageStatus, ConversationSummary } from '../types/message';
@@ -85,6 +93,20 @@ function messageText(message: ConversationMessage) {
   return 'Mensagem sem texto';
 }
 
+function formatFileSize(sizeBytes: number | null) {
+  if (!sizeBytes) {
+    return '';
+  }
+  if (sizeBytes < 1024 * 1024) {
+    return `${Math.ceil(sizeBytes / 1024)} KB`;
+  }
+  return `${(sizeBytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function hasStoredMedia(message: ConversationMessage) {
+  return Boolean(message.mediaStorageProvider && message.mediaStorageKey);
+}
+
 function lastMessage(conversation: ConversationSummary) {
   if (conversation.lastMessageContent) {
     return conversation.lastMessageContent;
@@ -128,6 +150,7 @@ export function ConversationsPage() {
   const queryClient = useQueryClient();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [composerText, setComposerText] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
   const [sellerId, setSellerId] = useState('');
   const [messageStatus, setMessageStatus] = useState('');
@@ -191,6 +214,17 @@ export function ConversationsPage() {
     },
   });
 
+  const sendMediaMutation = useMutation({
+    mutationFn: ({ conversationId, file, caption }: { conversationId: string; file: File; caption?: string }) =>
+      sendConversationMediaMessage(conversationId, file, caption),
+    onSuccess: (message) => {
+      queryClient.setQueryData<ConversationMessage[]>(['conversationMessages', message.conversationId], (current) => [...(current ?? []), message]);
+      setComposerText('');
+      setSelectedFile(null);
+      void queryClient.invalidateQueries({ queryKey: ['conversations'] });
+    },
+  });
+
   const sendTemplateMutation = useMutation({
     mutationFn: ({ leadId, templateId }: { leadId: string; templateId: string }) => sendWhatsappTemplate(leadId, templateId),
     onSuccess: (response) => {
@@ -206,6 +240,11 @@ export function ConversationsPage() {
           content: response.message,
           mediaId: null,
           mediaMimeType: null,
+          mediaStorageProvider: null,
+          mediaStorageKey: null,
+          mediaFileName: null,
+          mediaSizeBytes: null,
+          mediaSha256: null,
           createdAt: now,
           updatedAt: now,
         };
@@ -218,7 +257,7 @@ export function ConversationsPage() {
 
   const sendTextErrorBelongsToSelectedConversation = sendTextMutation.variables?.conversationId === selectedConversationId;
   const freeTextWindowExpired = sendTextErrorBelongsToSelectedConversation && apiErrorCode(sendTextMutation.error) === 'WHATSAPP_FREE_TEXT_WINDOW_EXPIRED';
-  const canSendText = Boolean(selectedConversationId && composerText.trim()) && !sendTextMutation.isPending;
+  const canSendText = Boolean(selectedConversationId && (composerText.trim() || selectedFile)) && !sendTextMutation.isPending && !sendMediaMutation.isPending;
 
   useEffect(() => {
     if (!selectedConversationId && conversations.length > 0) {
@@ -242,7 +281,11 @@ export function ConversationsPage() {
   }, [selectedConversationId]);
 
   function handleSendText() {
-    if (!selectedConversationId || !composerText.trim()) {
+    if (!selectedConversationId || (!composerText.trim() && !selectedFile)) {
+      return;
+    }
+    if (selectedFile) {
+      sendMediaMutation.mutate({ conversationId: selectedConversationId, file: selectedFile, caption: composerText });
       return;
     }
     sendTextMutation.mutate({ conversationId: selectedConversationId, content: composerText });
@@ -253,6 +296,16 @@ export function ConversationsPage() {
       return;
     }
     sendTemplateMutation.mutate({ leadId: selectedConversation.leadId, templateId: selectedTemplateId });
+  }
+
+  async function handleDownloadMedia(message: ConversationMessage) {
+    const blob = await downloadConversationMessageMedia(message.conversationId, message.id);
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = message.mediaFileName ?? 'midia-whatsapp';
+    link.click();
+    URL.revokeObjectURL(url);
   }
 
   return (
@@ -488,6 +541,22 @@ export function ConversationsPage() {
                         <Typography sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }} variant="body2">
                           {messageText(message)}
                         </Typography>
+                        {hasStoredMedia(message) && (
+                          <Button
+                            color={outbound ? 'inherit' : 'primary'}
+                            size="small"
+                            startIcon={<DownloadIcon />}
+                            onClick={() => void handleDownloadMedia(message)}
+                            sx={{
+                              justifyContent: 'flex-start',
+                              mt: 0.75,
+                              px: 0.75,
+                              textTransform: 'none',
+                            }}
+                          >
+                            {message.mediaFileName ?? 'Midia'} {formatFileSize(message.mediaSizeBytes)}
+                          </Button>
+                        )}
                         <Stack direction="row" spacing={0.75} alignItems="center" justifyContent="flex-end" sx={{ mt: 0.75 }}>
                           <Typography color={outbound ? 'primary.contrastText' : 'text.secondary'} sx={{ opacity: outbound ? 0.82 : 1 }} variant="caption">
                             {formatTime(message.createdAt)}
@@ -530,6 +599,9 @@ export function ConversationsPage() {
                   {sendTextMutation.isError && sendTextErrorBelongsToSelectedConversation && !freeTextWindowExpired && (
                     <Alert severity="error">{apiErrorMessage(sendTextMutation.error) ?? 'Nao foi possivel enviar a mensagem.'}</Alert>
                   )}
+                  {sendMediaMutation.isError && (
+                    <Alert severity="error">{apiErrorMessage(sendMediaMutation.error) ?? 'Nao foi possivel enviar a midia.'}</Alert>
+                  )}
                   {sendTemplateMutation.isError && (
                     <Alert severity="error">{apiErrorMessage(sendTemplateMutation.error) ?? 'Nao foi possivel enviar o template.'}</Alert>
                   )}
@@ -566,7 +638,29 @@ export function ConversationsPage() {
                     <Alert severity="info">Esta conversa nao possui lead vinculado para envio de template.</Alert>
                   )}
 
+                  {selectedFile && (
+                    <Chip
+                      icon={<AttachFileIcon />}
+                      label={`${selectedFile.name} ${formatFileSize(selectedFile.size)}`}
+                      onDelete={() => setSelectedFile(null)}
+                      sx={{ alignSelf: 'flex-start' }}
+                      variant="outlined"
+                    />
+                  )}
+
                   <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+                    <Button component="label" variant="outlined" startIcon={<AttachFileIcon />} sx={{ minWidth: 120 }}>
+                      Anexo
+                      <input
+                        hidden
+                        type="file"
+                        onChange={(event) => {
+                          setSelectedFile(event.target.files?.[0] ?? null);
+                          sendMediaMutation.reset();
+                          event.target.value = '';
+                        }}
+                      />
+                    </Button>
                     <TextField
                       fullWidth
                       multiline
@@ -589,7 +683,7 @@ export function ConversationsPage() {
                     />
                     <Button
                       variant="contained"
-                      endIcon={sendTextMutation.isPending ? <CircularProgress color="inherit" size={16} /> : <SendIcon />}
+                      endIcon={sendTextMutation.isPending || sendMediaMutation.isPending ? <CircularProgress color="inherit" size={16} /> : <SendIcon />}
                       disabled={!canSendText}
                       onClick={handleSendText}
                       sx={{ minWidth: 132 }}

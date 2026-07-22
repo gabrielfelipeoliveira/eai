@@ -23,6 +23,7 @@ Regras:
 - `V1__initial_schema.sql`, consolidada com o schema completo e dados demo atuais.
 - `V2__adjust_tenancy_company_store_users.sql`, ajuste de tenancy entre empresa, loja e usuarios.
 - `V4__lead_items_vehicles_money_phone.sql`, adiciona `items`, `vehicles`, `leads.item_id`, `leads.sale_currency`, normalizacao E.164 dos telefones demo e constraints de moeda/telefone.
+- `V5__conversation_message_media_storage.sql`, adiciona metadados/referencia de storage de midias em `conversation_messages`.
 
 Observacao:
 

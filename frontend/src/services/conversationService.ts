@@ -22,3 +22,22 @@ export async function sendConversationTextMessage(conversationId: string, conten
   const response = await api.post<ConversationMessage>(`/conversations/${conversationId}/messages`, { content });
   return response.data;
 }
+
+export async function sendConversationMediaMessage(conversationId: string, file: File, caption?: string) {
+  const formData = new FormData();
+  formData.append('file', file);
+  if (caption?.trim()) {
+    formData.append('caption', caption.trim());
+  }
+  const response = await api.post<ConversationMessage>(`/conversations/${conversationId}/media`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+}
+
+export async function downloadConversationMessageMedia(conversationId: string, messageId: string) {
+  const response = await api.get<Blob>(`/conversations/${conversationId}/messages/${messageId}/media`, {
+    responseType: 'blob',
+  });
+  return response.data;
+}
