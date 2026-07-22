@@ -129,7 +129,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-031`: concluido em 2026-07-22 no PR `#35`. Limitar e validar upload/download de midias WhatsApp. UX dispensado: hardening backend sem impacto visual.
 - `EAI-033`: concluido em 2026-07-22 no PR `#36`. Endurecer implementacao de JWT. UX dispensado: hardening backend sem impacto visual.
 - `EAI-036`: concluido em 2026-07-22 no PR `#37`. Implementar keyring e recriptografia de credenciais IMAP. UX dispensado: hardening backend sem impacto visual.
-- `EAI-037`: em andamento com Lucas Reiter. Corrigir lint local com artefatos Playwright ignorados.
+- `EAI-037`: concluido em 2026-07-22 no PR `#42`. Corrigir lint local com artefatos Playwright ignorados.
 - `EAI-030`: concluido em 2026-07-22 no PR `#38`. Reduzir exposicao de tokens no frontend e fluxo de refresh. UX dispensado: hardening de autenticacao sem mudanca visual planejada.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
@@ -138,13 +138,13 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-037` - corrigir lint local com artefatos Playwright ignorados.
+- Lucas Reiter: nenhum card ativo conhecido no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: bugfix/eai-037-eslint-playwright-ignore
+Lucas Reiter: sem branch ativa conhecida.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
@@ -186,6 +186,12 @@ Reserva operacional EAI-037 em 2026-07-22:
 - Branch `bugfix/eai-037-eslint-playwright-ignore`.
 - Escopo: corrigir `npm run lint` quando artefatos ignorados do Playwright nao existem localmente.
 - UX dispensado: ajuste de ferramenta sem impacto visual.
+
+Implementacao EAI-037 em 2026-07-22:
+
+- ESLint passou a ignorar `playwright-report` e `test-results`.
+- Validado `npm run lint` apos remover o diretorio ignorado `frontend/test-results`.
+- Status operacional: concluido no PR `https://github.com/gabrielfelipeoliveira/eai/pull/42`.
 
 Reserva operacional EAI-030 em 2026-07-22:
 
