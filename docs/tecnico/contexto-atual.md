@@ -138,15 +138,30 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello.
+- Lucas Reiter: `EAI-038` em andamento no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida.
+Lucas Reiter: `chore/eai-038-ci-frontend-lint-audit`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
+
+Cards tecnicos criados em 2026-07-22:
+
+- `EAI-038`: em andamento. Adicionar `npm audit --audit-level=moderate` e `npm run lint` no CI frontend.
+- `EAI-039`: backlog. Separar `AuthProvider` e `useAuth` para remover warning Fast Refresh.
+- `EAI-040`: backlog. Corrigir selects MUI indefinidos nos E2E de leads.
+- `EAI-041`: backlog. Reduzir chunk principal do build frontend.
+- `EAI-042`: backlog. Limpar historico operacional truncado do contexto atual.
+
+Reserva operacional EAI-038 em 2026-07-22:
+
+- Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
+- Branch `chore/eai-038-ci-frontend-lint-audit`.
+- Escopo: adicionar auditoria npm em nivel moderate e lint frontend como gates do CI.
+- UX dispensado: ajuste de qualidade automatizada sem impacto visual.
 
 Reserva operacional EAI-017 em 2026-07-22:
 
