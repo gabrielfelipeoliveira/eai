@@ -18,6 +18,7 @@ import com.eai.domain.message.MessageTemplateMetaStatus;
 import com.eai.domain.tenant.Store;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriUtils;
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class MessageTemplateService {
 
     private final MessageTemplateRepository templateRepository;
@@ -37,24 +39,6 @@ public class MessageTemplateService {
     private final StoreService storeService;
     private final UserRepository userRepository;
     private final ConversationService conversationService;
-
-    public MessageTemplateService(
-            MessageTemplateRepository templateRepository,
-            LeadCommunicationRepository communicationRepository,
-            LeadService leadService,
-            CompanyService companyService,
-            StoreService storeService,
-            UserRepository userRepository,
-            ConversationService conversationService
-    ) {
-        this.templateRepository = templateRepository;
-        this.communicationRepository = communicationRepository;
-        this.leadService = leadService;
-        this.companyService = companyService;
-        this.storeService = storeService;
-        this.userRepository = userRepository;
-        this.conversationService = conversationService;
-    }
 
     @Transactional(readOnly = true)
     public List<MessageTemplate> listTemplates(AuthenticatedUser authenticatedUser) {

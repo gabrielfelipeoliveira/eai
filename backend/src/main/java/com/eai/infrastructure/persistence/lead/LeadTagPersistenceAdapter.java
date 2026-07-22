@@ -2,6 +2,7 @@ package com.eai.infrastructure.persistence.lead;
 
 import com.eai.application.lead.LeadTagRepository;
 import com.eai.domain.lead.LeadTag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -9,13 +10,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class LeadTagPersistenceAdapter implements LeadTagRepository {
 
     private final SpringDataLeadTagRepository repository;
-
-    public LeadTagPersistenceAdapter(SpringDataLeadTagRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public List<LeadTag> findByLeadId(UUID leadId) {

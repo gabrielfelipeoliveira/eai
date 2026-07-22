@@ -10,6 +10,7 @@ import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadHistory;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,24 +19,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class FollowUpTaskService {
 
     private final FollowUpTaskRepository taskRepository;
     private final LeadRepository leadRepository;
     private final LeadHistoryRepository historyRepository;
     private final UserRepository userRepository;
-
-    public FollowUpTaskService(
-            FollowUpTaskRepository taskRepository,
-            LeadRepository leadRepository,
-            LeadHistoryRepository historyRepository,
-            UserRepository userRepository
-    ) {
-        this.taskRepository = taskRepository;
-        this.leadRepository = leadRepository;
-        this.historyRepository = historyRepository;
-        this.userRepository = userRepository;
-    }
 
     @Transactional
     public FollowUpTask create(UUID leadId, CreateFollowUpTaskCommand command, AuthenticatedUser authenticatedUser) {

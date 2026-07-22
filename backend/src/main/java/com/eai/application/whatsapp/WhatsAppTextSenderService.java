@@ -12,6 +12,7 @@ import com.eai.domain.conversation.ConversationMessageDirection;
 import com.eai.domain.conversation.ConversationMessageStatus;
 import com.eai.domain.conversation.ConversationMessageType;
 import com.eai.domain.conversation.WhatsAppContact;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class WhatsAppTextSenderService {
 
     private static final Duration FREE_TEXT_WINDOW = Duration.ofHours(24);
@@ -29,20 +31,6 @@ public class WhatsAppTextSenderService {
     private final ConversationMessageRepository messageRepository;
     private final WhatsAppChannelSettings settings;
     private final WhatsAppTextClient textClient;
-
-    public WhatsAppTextSenderService(
-            ConversationService conversationService,
-            WhatsAppContactRepository contactRepository,
-            ConversationMessageRepository messageRepository,
-            WhatsAppChannelSettings settings,
-            WhatsAppTextClient textClient
-    ) {
-        this.conversationService = conversationService;
-        this.contactRepository = contactRepository;
-        this.messageRepository = messageRepository;
-        this.settings = settings;
-        this.textClient = textClient;
-    }
 
     @Transactional
     public WhatsAppTextSendResult sendText(UUID conversationId, String content, AuthenticatedUser authenticatedUser) {

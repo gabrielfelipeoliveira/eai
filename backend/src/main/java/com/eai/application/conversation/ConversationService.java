@@ -20,6 +20,7 @@ import com.eai.domain.lead.LeadHistory;
 import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
 import com.eai.domain.user.UserRole;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ConversationService {
 
     private final WhatsAppContactRepository contactRepository;
@@ -39,24 +41,6 @@ public class ConversationService {
     private final ConversationAccessAuditRepository accessAuditRepository;
     private final LeadRepository leadRepository;
     private final LeadHistoryRepository leadHistoryRepository;
-
-    public ConversationService(
-            WhatsAppContactRepository contactRepository,
-            ConversationRepository conversationRepository,
-            ConversationMessageRepository messageRepository,
-            ConversationMessageEventRepository messageEventRepository,
-            ConversationAccessAuditRepository accessAuditRepository,
-            LeadRepository leadRepository,
-            LeadHistoryRepository leadHistoryRepository
-    ) {
-        this.contactRepository = contactRepository;
-        this.conversationRepository = conversationRepository;
-        this.messageRepository = messageRepository;
-        this.messageEventRepository = messageEventRepository;
-        this.accessAuditRepository = accessAuditRepository;
-        this.leadRepository = leadRepository;
-        this.leadHistoryRepository = leadHistoryRepository;
-    }
 
     @Transactional
     public Optional<ConversationMessage> recordIncomingMessage(UUID companyId, UUID storeId, IncomingWhatsAppMessage incomingMessage) {

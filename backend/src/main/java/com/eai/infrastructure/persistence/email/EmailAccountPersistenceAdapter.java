@@ -2,6 +2,7 @@ package com.eai.infrastructure.persistence.email;
 
 import com.eai.application.email.EmailAccountRepository;
 import com.eai.domain.email.EmailAccount;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -9,13 +10,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class EmailAccountPersistenceAdapter implements EmailAccountRepository {
 
     private final SpringDataEmailAccountRepository repository;
-
-    public EmailAccountPersistenceAdapter(SpringDataEmailAccountRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public List<EmailAccount> findAll() {

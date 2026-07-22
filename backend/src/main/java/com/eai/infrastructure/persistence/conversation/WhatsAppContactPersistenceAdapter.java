@@ -2,19 +2,17 @@ package com.eai.infrastructure.persistence.conversation;
 
 import com.eai.application.conversation.WhatsAppContactRepository;
 import com.eai.domain.conversation.WhatsAppContact;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class WhatsAppContactPersistenceAdapter implements WhatsAppContactRepository {
 
     private final SpringDataWhatsAppContactRepository repository;
-
-    public WhatsAppContactPersistenceAdapter(SpringDataWhatsAppContactRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public Optional<WhatsAppContact> findById(UUID id) {

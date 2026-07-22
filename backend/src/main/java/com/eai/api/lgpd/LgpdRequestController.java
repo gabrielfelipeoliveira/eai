@@ -6,6 +6,7 @@ import com.eai.application.lgpd.LgpdRequestService;
 import com.eai.application.lgpd.RegisterLgpdRequestActionCommand;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.domain.lgpd.LgpdRequestStatus;
+import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,13 +23,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/lgpd-requests")
 @PreAuthorize("hasRole('ADMIN')")
+@RequiredArgsConstructor
 public class LgpdRequestController {
 
     private final LgpdRequestService service;
-
-    public LgpdRequestController(LgpdRequestService service) {
-        this.service = service;
-    }
 
     @PostMapping
     public LgpdRequestResponse create(

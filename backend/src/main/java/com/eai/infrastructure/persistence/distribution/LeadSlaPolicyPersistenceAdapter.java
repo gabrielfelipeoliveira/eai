@@ -2,19 +2,17 @@ package com.eai.infrastructure.persistence.distribution;
 
 import com.eai.application.distribution.LeadSlaPolicyRepository;
 import com.eai.domain.distribution.LeadSlaPolicy;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class LeadSlaPolicyPersistenceAdapter implements LeadSlaPolicyRepository {
 
     private final SpringDataLeadSlaPolicyRepository repository;
-
-    public LeadSlaPolicyPersistenceAdapter(SpringDataLeadSlaPolicyRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public Optional<LeadSlaPolicy> findByCompanyIdAndStoreId(UUID companyId, UUID storeId) {

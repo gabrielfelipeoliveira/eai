@@ -4,6 +4,7 @@ import com.eai.application.email.CreateEmailAccountCommand;
 import com.eai.application.email.EmailAccountService;
 import com.eai.application.email.UpdateEmailAccountCommand;
 import com.eai.application.security.AuthenticatedUser;
+import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,13 +23,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/email-accounts")
 @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+@RequiredArgsConstructor
 public class EmailAccountController {
 
     private final EmailAccountService emailAccountService;
-
-    public EmailAccountController(EmailAccountService emailAccountService) {
-        this.emailAccountService = emailAccountService;
-    }
 
     @GetMapping
     public List<EmailAccountResponse> listAccounts(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {

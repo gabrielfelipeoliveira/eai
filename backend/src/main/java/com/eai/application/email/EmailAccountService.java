@@ -10,6 +10,7 @@ import com.eai.domain.email.EmailAccount;
 import com.eai.domain.email.EmailProtocol;
 import com.eai.domain.tenant.Store;
 import com.eai.domain.user.UserRole;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class EmailAccountService {
 
     private final EmailAccountRepository emailAccountRepository;
@@ -26,24 +28,6 @@ public class EmailAccountService {
     private final CompanyService companyService;
     private final StoreService storeService;
     private final StoreRepository storeRepository;
-
-    public EmailAccountService(
-            EmailAccountRepository emailAccountRepository,
-            EmailReader emailReader,
-            EmailLeadImporter emailLeadImporter,
-            EncryptionService encryptionService,
-            CompanyService companyService,
-            StoreService storeService,
-            StoreRepository storeRepository
-    ) {
-        this.emailAccountRepository = emailAccountRepository;
-        this.emailReader = emailReader;
-        this.emailLeadImporter = emailLeadImporter;
-        this.encryptionService = encryptionService;
-        this.companyService = companyService;
-        this.storeService = storeService;
-        this.storeRepository = storeRepository;
-    }
 
     @Transactional(readOnly = true)
     public List<EmailAccount> listAccounts(AuthenticatedUser authenticatedUser) {

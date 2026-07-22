@@ -5,6 +5,7 @@ import com.eai.application.report.ReportFilters;
 import com.eai.application.report.ReportService;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.domain.lead.LeadSource;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -26,13 +27,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/reports")
 @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SELLER')")
+@RequiredArgsConstructor
 public class ReportController {
 
     private final ReportService reportService;
-
-    public ReportController(ReportService reportService) {
-        this.reportService = reportService;
-    }
 
     @GetMapping("/leads")
     public List<ReportLeadPeriodResponse> leads(

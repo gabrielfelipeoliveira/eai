@@ -12,6 +12,7 @@ import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadStatus;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ReportService {
 
     private static final int DEFAULT_MINUTES_TO_ASSIGN = 15;
@@ -40,18 +42,6 @@ public class ReportService {
     private final LeadSlaPolicyRepository slaPolicyRepository;
     private final List<ReportExporter> exporters;
     private final LeadSlaEvaluator slaEvaluator = new LeadSlaEvaluator();
-
-    public ReportService(
-            LeadRepository leadRepository,
-            UserRepository userRepository,
-            LeadSlaPolicyRepository slaPolicyRepository,
-            List<ReportExporter> exporters
-    ) {
-        this.leadRepository = leadRepository;
-        this.userRepository = userRepository;
-        this.slaPolicyRepository = slaPolicyRepository;
-        this.exporters = exporters;
-    }
 
     @Transactional(readOnly = true)
     public List<ReportLeadPeriodItem> leadsByPeriod(ReportFilters filters, AuthenticatedUser authenticatedUser) {

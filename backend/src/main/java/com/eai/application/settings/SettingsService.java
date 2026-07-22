@@ -17,6 +17,7 @@ import com.eai.domain.tenant.Company;
 import com.eai.domain.tenant.Store;
 import com.eai.domain.tenant.TenantStatus;
 import com.eai.domain.user.UserRole;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class SettingsService {
 
     private final CompanyService companyService;
@@ -32,22 +34,6 @@ public class SettingsService {
     private final UserService userService;
     private final MessageTemplateService templateService;
     private final EmailAccountService emailAccountService;
-
-    public SettingsService(
-            CompanyService companyService,
-            StoreService storeService,
-            LeadDistributionService distributionService,
-            UserService userService,
-            MessageTemplateService templateService,
-            EmailAccountService emailAccountService
-    ) {
-        this.companyService = companyService;
-        this.storeService = storeService;
-        this.distributionService = distributionService;
-        this.userService = userService;
-        this.templateService = templateService;
-        this.emailAccountService = emailAccountService;
-    }
 
     @Transactional(readOnly = true)
     public SettingsSnapshot getSettings(UUID companyId, UUID storeId, AuthenticatedUser authenticatedUser) {

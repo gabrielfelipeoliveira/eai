@@ -5,6 +5,7 @@ import com.eai.application.security.AuthenticatedUser;
 import com.eai.application.user.AssignUserTenantCommand;
 import com.eai.application.user.UpdateUserCommand;
 import com.eai.application.user.UserService;
+import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,13 +23,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STORE_MANAGER')")

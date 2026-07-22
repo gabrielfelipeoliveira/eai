@@ -20,6 +20,7 @@ import com.eai.domain.message.MessageTemplate;
 import com.eai.domain.message.MessageTemplateMetaStatus;
 import com.eai.domain.tenant.Store;
 import com.eai.domain.user.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class WhatsAppTemplateSenderService {
 
     private static final String DEFAULT_LANGUAGE_CODE = "pt-BR";
@@ -40,26 +42,6 @@ public class WhatsAppTemplateSenderService {
     private final ConversationService conversationService;
     private final WhatsAppChannelSettings settings;
     private final WhatsAppTemplateClient templateClient;
-
-    public WhatsAppTemplateSenderService(
-            MessageTemplateRepository templateRepository,
-            LeadCommunicationRepository communicationRepository,
-            LeadService leadService,
-            StoreService storeService,
-            UserRepository userRepository,
-            ConversationService conversationService,
-            WhatsAppChannelSettings settings,
-            WhatsAppTemplateClient templateClient
-    ) {
-        this.templateRepository = templateRepository;
-        this.communicationRepository = communicationRepository;
-        this.leadService = leadService;
-        this.storeService = storeService;
-        this.userRepository = userRepository;
-        this.conversationService = conversationService;
-        this.settings = settings;
-        this.templateClient = templateClient;
-    }
 
     @Transactional
     public WhatsAppTemplateSendResult sendTemplate(UUID leadId, SendWhatsAppTemplateCommand command, AuthenticatedUser authenticatedUser) {
