@@ -1,25 +1,49 @@
+import { Box, CircularProgress } from '@mui/material';
+import { lazy, Suspense } from 'react';
+import type { ReactNode } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { MainLayout } from '../layouts/MainLayout';
-import { LoginPage } from '../pages/LoginPage';
-import { HomePage } from '../pages/HomePage';
-import { LeadsPage } from '../pages/LeadsPage';
-import { UsersPage } from '../pages/UsersPage';
-import { CompaniesPage } from '../pages/CompaniesPage';
-import { StoresPage } from '../pages/StoresPage';
-import { TemplatesPage } from '../pages/TemplatesPage';
-import { EmailAccountsPage } from '../pages/EmailAccountsPage';
-import { SettingsPage } from '../pages/SettingsPage';
-import { OverdueLeadsPage } from '../pages/OverdueLeadsPage';
-import { PipelinePage } from '../pages/PipelinePage';
-import { FollowUpsPage } from '../pages/FollowUpsPage';
-import { ReportsPage } from '../pages/ReportsPage';
-import { ConversationsPage } from '../pages/ConversationsPage';
+
+const LoginPage = lazy(() => import('../pages/LoginPage').then((module) => ({ default: module.LoginPage })));
+const HomePage = lazy(() => import('../pages/HomePage').then((module) => ({ default: module.HomePage })));
+const LeadsPage = lazy(() => import('../pages/LeadsPage').then((module) => ({ default: module.LeadsPage })));
+const UsersPage = lazy(() => import('../pages/UsersPage').then((module) => ({ default: module.UsersPage })));
+const CompaniesPage = lazy(() => import('../pages/CompaniesPage').then((module) => ({ default: module.CompaniesPage })));
+const StoresPage = lazy(() => import('../pages/StoresPage').then((module) => ({ default: module.StoresPage })));
+const TemplatesPage = lazy(() => import('../pages/TemplatesPage').then((module) => ({ default: module.TemplatesPage })));
+const EmailAccountsPage = lazy(() =>
+  import('../pages/EmailAccountsPage').then((module) => ({ default: module.EmailAccountsPage })),
+);
+const SettingsPage = lazy(() => import('../pages/SettingsPage').then((module) => ({ default: module.SettingsPage })));
+const OverdueLeadsPage = lazy(() =>
+  import('../pages/OverdueLeadsPage').then((module) => ({ default: module.OverdueLeadsPage })),
+);
+const PipelinePage = lazy(() => import('../pages/PipelinePage').then((module) => ({ default: module.PipelinePage })));
+const FollowUpsPage = lazy(() => import('../pages/FollowUpsPage').then((module) => ({ default: module.FollowUpsPage })));
+const ReportsPage = lazy(() => import('../pages/ReportsPage').then((module) => ({ default: module.ReportsPage })));
+const ConversationsPage = lazy(() =>
+  import('../pages/ConversationsPage').then((module) => ({ default: module.ConversationsPage })),
+);
+
+function page(element: ReactNode) {
+  return (
+    <Suspense
+      fallback={
+        <Box sx={{ display: 'grid', minHeight: 240, placeItems: 'center' }}>
+          <CircularProgress aria-label="Carregando" />
+        </Box>
+      }
+    >
+      {element}
+    </Suspense>
+  );
+}
 
 export const router = createBrowserRouter([
   {
     path: '/login',
-    element: <LoginPage />,
+    element: page(<LoginPage />),
   },
   {
     element: <ProtectedRoute />,
@@ -30,19 +54,19 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <HomePage />,
+            element: page(<HomePage />),
           },
           {
             path: 'leads',
-            element: <LeadsPage />,
+            element: page(<LeadsPage />),
           },
           {
             path: 'pipeline',
-            element: <PipelinePage />,
+            element: page(<PipelinePage />),
           },
           {
             path: 'follow-ups',
-            element: <FollowUpsPage />,
+            element: page(<FollowUpsPage />),
           },
         {
           path: 'conversations',
@@ -50,7 +74,7 @@ export const router = createBrowserRouter([
           children: [
               {
                 index: true,
-                element: <ConversationsPage />,
+                element: page(<ConversationsPage />),
               },
             ],
           },
@@ -60,7 +84,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <ReportsPage />,
+                element: page(<ReportsPage />),
               },
             ],
           },
@@ -70,7 +94,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <OverdueLeadsPage />,
+                element: page(<OverdueLeadsPage />),
               },
             ],
           },
@@ -80,7 +104,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <UsersPage />,
+                element: page(<UsersPage />),
               },
             ],
           },
@@ -90,7 +114,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <CompaniesPage />,
+                element: page(<CompaniesPage />),
               },
             ],
           },
@@ -100,7 +124,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <StoresPage />,
+                element: page(<StoresPage />),
               },
             ],
           },
@@ -110,7 +134,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <TemplatesPage />,
+                element: page(<TemplatesPage />),
               },
             ],
           },
@@ -120,7 +144,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <EmailAccountsPage />,
+                element: page(<EmailAccountsPage />),
               },
             ],
           },
@@ -130,7 +154,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <SettingsPage />,
+                element: page(<SettingsPage />),
               },
             ],
           },

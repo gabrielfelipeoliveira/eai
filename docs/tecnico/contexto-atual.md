@@ -138,13 +138,13 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-040` em andamento no Trello.
+- Lucas Reiter: `EAI-041` em andamento no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `bugfix/eai-040-leads-select-defaults`.
+Lucas Reiter: `chore/eai-041-frontend-code-splitting`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
@@ -152,8 +152,8 @@ Cards tecnicos criados em 2026-07-22:
 
 - `EAI-038`: concluido em 2026-07-22 no PR `#44`. Adicionar `npm audit --audit-level=moderate` e `npm run lint` no CI frontend.
 - `EAI-039`: concluido em 2026-07-22 no PR `#45`. Separar `AuthProvider` e `useAuth` para remover warning Fast Refresh.
-- `EAI-040`: em andamento. Corrigir selects MUI indefinidos nos E2E de leads.
-- `EAI-041`: backlog. Reduzir chunk principal do build frontend.
+- `EAI-040`: concluido em 2026-07-22 no PR `#46`. Corrigir selects MUI indefinidos nos E2E de leads.
+- `EAI-041`: em andamento. Reduzir chunk principal do build frontend.
 - `EAI-042`: backlog. Limpar historico operacional truncado do contexto atual.
 
 Reserva operacional EAI-038 em 2026-07-22:
@@ -188,6 +188,19 @@ Reserva operacional EAI-040 em 2026-07-22:
 - Branch `bugfix/eai-040-leads-select-defaults`.
 - Escopo: corrigir valores iniciais dos selects `source`, `companyId` e `storeId` no formulario de leads para remover warnings MUI em E2E.
 - UX dispensado: correcao de estado controlado sem mudanca planejada de layout.
+
+Implementacao EAI-040 em 2026-07-22:
+
+- Formulario de lead passou a definir `defaultValue` explicito nos selects `source`, `companyId` e `storeId`.
+- E2E passou sem warnings MUI de valores `undefined`.
+- PR `https://github.com/gabrielfelipeoliveira/eai/pull/46` mergeado com CI remoto verde em `main`.
+
+Reserva operacional EAI-041 em 2026-07-22:
+
+- Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
+- Branch `chore/eai-041-frontend-code-splitting`.
+- Escopo: reduzir chunk principal do frontend com lazy loading por rota e separacao de vendors no build.
+- UX: validacao visual indireta por E2E, sem novo fluxo ou layout planejado.
 
 Reserva operacional EAI-017 em 2026-07-22:
 
