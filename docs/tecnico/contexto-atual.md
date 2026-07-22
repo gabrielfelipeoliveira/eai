@@ -1,6 +1,6 @@
 # Contexto Atual Do Projeto
 
-Ultima atualizacao: 2026-07-20.
+Ultima atualizacao: 2026-07-22.
 
 Este arquivo e o handoff operacional do projeto EAI. Ele existe para que qualquer desenvolvedor ou agente de IA consiga retomar o trabalho sem depender do historico de uma conversa especifica.
 
@@ -25,6 +25,12 @@ Se documentacao, Trello e codigo estiverem em conflito, nao escolha um lado sile
 - Status em 2026-07-21: implementado em branch `feature/eai-012-whatsapp-media-storage`.
 - Escopo entregue: porta de storage de midia, adapter local/dev, metadados persistidos em `conversation_messages`, webhook com download/storage de midias recebidas, envio autenticado de midia e download autenticado.
 - Validacoes: backend `rtk mvn clean verify` passou com 68 testes; frontend `rtk npm run build` passou com aviso existente de chunk JS acima de 500 kB apos minificacao. Teste HTTP local validou login, `POST /api/conversations/{id}/media` e `GET /api/conversations/{conversationId}/messages/{messageId}/media` contra backend em `8080`.
+
+## Registro Operacional EAI-013
+
+- Status em 2026-07-22: em desenvolvimento na branch `feature/eai-013-seeds-demo-producao`.
+- Escopo planejado: separar migrations de schema, seed tecnico obrigatorio e massa demonstrativa; garantir que producao execute apenas `classpath:db/migration`; atualizar testes e documentacao relacionados.
+- Validacoes: backend `rtk mvn clean verify` passou com 99 testes; frontend `rtk npm run build` passou com warning conhecido de chunk JS acima de 500 kB apos minificacao.
 
 Toda mudanca versionada deve seguir o fluxo de card `EAI-###`, branch, commit, push, PR, comentario no Trello e fechamento rastreavel. Isso inclui documentacao, processo e ajustes pequenos. Nao commite direto na `main`.
 
@@ -79,7 +85,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-010`: concluido. Ajustar templates WhatsApp, placeholders, soft delete e status Meta.
 - `EAI-011`: concluido. Ajustar conversas WhatsApp: dono, fila da loja e supervisao gerencial.
 - `EAI-012`: implementado em 2026-07-21. Armazenamento local/dev de midias WhatsApp via porta de storage, contrato preparado para bucket equivalente, webhook com download/storage de midias recebidas, envio autenticado de midia e download autenticado.
-- `EAI-013`: backlog. Separar seeds obrigatorios de dados demonstrativos e bloquear demo em producao.
+- `EAI-013`: em andamento em 2026-07-22. Separar seeds obrigatorios de dados demonstrativos e bloquear demo em producao.
 - `EAI-014`: backlog. Implementar fluxo LGPD basico manual por ADMIN.
 - `EAI-015`: concluido. Padronizar validacao CI com backend clean verify e frontend build.
 - `EAI-016`: backlog. Adicionar testes de integracao com Postgres via Testcontainers.
@@ -99,12 +105,12 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Card em andamento:
 
-- `EAI-015`: padronizar validacao CI com backend clean verify e frontend build.
+- `EAI-013`: separar seeds obrigatorios de dados demonstrativos e bloquear demo em producao.
 
 Branch sugerida:
 
 ```text
-feature/eai-015-validacao-ci-build
+feature/eai-013-seeds-demo-producao
 ```
 
 ## Validacao Padrao

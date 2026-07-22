@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(properties = "eai.whatsapp.cloud-api.verify-token=test-token")
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+@ActiveProfiles({"test", "demo"})
 class WhatsAppWebhookControllerTest {
 
     @Autowired

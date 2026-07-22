@@ -20,9 +20,11 @@ Regras:
 
 ## Migrations Atuais
 
-- `V1__initial_schema.sql`, consolidada com o schema completo e dados demo atuais.
+- `V1__initial_schema.sql`, consolidada com o schema comum, sem seed tecnico ou dados demo.
+- `db/seed/mandatory/V900__mandatory_seed.sql`, seed tecnico local/teste com empresa, loja e usuarios dos papeis MVP.
+- `db/seed/demo/V901__demo_data.sql`, massa demonstrativa local opcional com templates, configuracoes, conta IMAP, leads, historico, notas, tags, comunicacoes e follow-ups.
 - `V2__adjust_tenancy_company_store_users.sql`, ajuste de tenancy entre empresa, loja e usuarios.
-- `V4__lead_items_vehicles_money_phone.sql`, adiciona `items`, `vehicles`, `leads.item_id`, `leads.sale_currency`, normalizacao E.164 dos telefones demo e constraints de moeda/telefone.
+- `V4__lead_items_vehicles_money_phone.sql`, adiciona `items`, `vehicles`, `leads.item_id`, `leads.sale_currency`, normalizacao E.164 de telefones existentes e constraints de moeda/telefone.
 - `V5__lead_recontact_duplicates_phones.sql`, adiciona telefones adicionais, relacao de duplicidade/recontato e indices de busca por telefone.
 - `V6__lead_notes_editable_global_tags.java`, adiciona `lead_notes.updated_at`, cria catalogo global `lead_tag_definitions` e vincula `lead_tags` por `tag_id` e `type`.
 - `V7__email_import_history.sql`, cria historico persistente de importacoes de e-mail por conta, loja, status e data, preservado quando a conta e removida.
@@ -111,6 +113,9 @@ Regras definidas:
 - Dados de seed nao devem existir em deploys de producao.
 - Dados de demonstracao devem ser separados de seeds obrigatorios.
 - Producao nao deve receber dados de seed/demonstracao automaticamente.
+- `application-prod.yml` declara explicitamente `spring.flyway.locations=classpath:db/migration`.
+- `application-dev.yml` e `application-test.yml` incluem `db/seed/mandatory`.
+- Dados demo exigem o perfil explicito `demo`, por exemplo `mvn spring-boot:run -Dspring-boot.run.profiles=dev,demo`.
 - Seeds/documentacao de papeis devem incluir `ADMIN`, `MANAGER`, `STORE_MANAGER`, `SELLER`, `PRE_SALES`, `F_AND_I` e `AVALIADOR`.
 - `AUDITOR` fica fora do MVP.
 - Templates padrao necessarios para o MVP serao definidos depois.

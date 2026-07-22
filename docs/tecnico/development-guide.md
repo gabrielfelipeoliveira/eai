@@ -27,6 +27,13 @@ cd backend
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
+Executar o backend com dados demonstrativos locais:
+
+```bash
+cd backend
+mvn spring-boot:run -Dspring-boot.run.profiles=dev,demo
+```
+
 Executar o frontend:
 
 ```bash
@@ -39,8 +46,11 @@ Credenciais seed de desenvolvimento:
 
 - Admin: `admin@eai.com`
 - Gerente: `gerente@eai.com`
-- Vendedores: `ana@eai.com`, `bruno@eai.com`, `carla@eai.com`
-- Auditoria: `auditor@eai.com`
+- Gerente de loja: `gerente.loja@eai.com`
+- Pre-venda: `pre.venda@eai.com`
+- F&I: `fi@eai.com`
+- Vendedor: `ana@eai.com`
+- Avaliador: `avaliador@eai.com`
 - Senha: `admin123`
 
 O frontend espera a API do backend em `http://localhost:8080/api`. Defina `VITE_API_BASE_URL` ao usar uma URL diferente para o backend.
@@ -69,13 +79,20 @@ As migrations do Flyway ficam em:
 backend/src/main/resources/db/migration
 ```
 
+Seeds locais ficam separados das migrations de schema:
+
+```text
+backend/src/main/resources/db/seed/mandatory
+backend/src/main/resources/db/seed/demo
+```
+
 Crie novas migrations com o padrao de nome:
 
 ```text
 V{numero}__descricao.sql
 ```
 
-Nao edite migrations ja aplicadas fora de experimentacao local. Como a base ainda e descartavel, o schema inicial esta consolidado em `V1__initial_schema.sql` com dados de demonstracao para exercitar autenticacao, tenants, usuarios, leads, pipeline, templates, comunicacoes, SLA, distribuicao, relatorios e follow-ups.
+Nao edite migrations ja aplicadas fora de experimentacao local. Como a base ainda e descartavel, o schema inicial esta consolidado em `V1__initial_schema.sql`; seeds obrigatorios rodam em `dev` e `test`, enquanto dados de demonstracao rodam somente quando o perfil `demo` esta ativo. Producao usa apenas `classpath:db/migration`.
 
 ## Smoke Test De Autenticacao
 
