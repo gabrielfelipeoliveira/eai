@@ -426,11 +426,13 @@ Estado atual:
 - JWT aceita apenas `HS256` com `typ=JWT`, valida claims obrigatorias e compara assinatura HMAC de forma resistente a timing.
 - Producao exige `EAI_CORS_ALLOWED_ORIGINS`; defaults locais de CORS ficam restritos aos perfis nao produtivos.
 - SpringDoc OpenAPI/Swagger fica desabilitado por padrao em producao por `SPRINGDOC_API_DOCS_ENABLED=false` e `SPRINGDOC_SWAGGER_UI_ENABLED=false`.
+- Credenciais IMAP usam AES/GCM versionado com chave atual em `EAI_EMAIL_CREDENTIALS_SECRET`; chaves anteriores podem ser configuradas em `EAI_EMAIL_CREDENTIALS_PREVIOUS_SECRETS` apenas para leitura e recriptografia idempotente.
+- O job administrativo de recriptografia IMAP so roda com `EAI_EMAIL_CREDENTIALS_REENCRYPT_ON_STARTUP=true` e registra apenas metricas agregadas.
 
 Riscos conhecidos:
 
 - Armazenamento de tokens em `localStorage` e conveniente, mas aumenta exposicao a roubo de tokens por XSS.
-- Rotacao automatica de chave e migracao em lote de credenciais IMAP legadas tem politica operacional definida em `docs/tecnico/email-importer.md`, mas dependem de card tecnico para keyring ou job de recriptografia.
+- Rotacao de chave IMAP depende de janela operacional planejada para configurar keyring e executar recriptografia; falhas parciais preservam o valor original para nova tentativa.
 
 Status:
 PENDENTE DE DEFINIÇÃO
@@ -438,7 +440,6 @@ PENDENTE DE DEFINIÇÃO
 Perguntas para o Software Architect:
 
 - Refresh tokens devem migrar para cookies HttpOnly?
-- Qual mecanismo tecnico deve ser adotado para keyring ou recriptografia em lote de credenciais IMAP?
 - Quais origens oficiais devem compor `EAI_CORS_ALLOWED_ORIGINS` em cada ambiente produtivo?
 
 ## Arquitetura de Testes

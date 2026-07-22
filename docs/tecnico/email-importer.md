@@ -97,7 +97,7 @@ Senhas nunca sao retornadas pela API e nao sao armazenadas como texto puro.
 
 A implementacao atual usa a interface `EncryptionService` com AES/GCM e payload versionado `v1`. A chave efetiva e derivada de `eai.email.credentials.secret`, configurada por `EAI_EMAIL_CREDENTIALS_SECRET`; o valor padrao existe apenas para desenvolvimento local e nao deve ser usado em producao.
 
-Valores antigos gravados como Base64 simples continuam sendo lidos para compatibilidade. Ao atualizar a senha de uma conta IMAP, o novo valor passa a ser salvo no formato criptografado versionado.
+Valores antigos gravados como Base64 simples continuam sendo lidos para compatibilidade. Credenciais `v1` cifradas com chaves anteriores configuradas em `EAI_EMAIL_CREDENTIALS_PREVIOUS_SECRETS` tambem podem ser lidas para rotacao planejada. Ao atualizar a senha de uma conta IMAP, o novo valor passa a ser salvo no formato criptografado versionado com a chave atual.
 
 Para producao, o segredo deve vir de um gerenciador externo ou variavel protegida fora do banco.
 
@@ -107,28 +107,30 @@ Estado atual:
 
 - Novas credenciais IMAP sao gravadas com AES/GCM em payload versionado `v1`.
 - Credenciais legadas em Base64 simples continuam sendo lidas apenas para compatibilidade.
+- Credenciais `v1` cifradas com chaves anteriores podem ser lidas quando `EAI_EMAIL_CREDENTIALS_PREVIOUS_SECRETS` estiver configurado.
 - Atualizar manualmente a senha de uma conta IMAP regrava a credencial no formato `v1`.
-- A implementacao atual usa uma unica chave efetiva derivada de `EAI_EMAIL_CREDENTIALS_SECRET`.
+- Novas gravacoes sempre usam a chave atual derivada de `EAI_EMAIL_CREDENTIALS_SECRET`.
 
 Politica operacional vigente:
 
 - `EAI_EMAIL_CREDENTIALS_SECRET` deve ser tratado como segredo critico de producao.
-- O segredo nao deve ser trocado diretamente em producao sem uma janela operacional planejada, porque credenciais `v1` gravadas com a chave anterior deixarao de ser descriptografadas pela implementacao atual.
+- O segredo nao deve ser trocado diretamente em producao sem uma janela operacional planejada. Primeiro configure o novo valor em `EAI_EMAIL_CREDENTIALS_SECRET`, mantenha a chave anterior em `EAI_EMAIL_CREDENTIALS_PREVIOUS_SECRETS` e execute a recriptografia administrativa.
 - Rotacao emergencial por suspeita de vazamento deve considerar indisponibilidade temporaria da importacao IMAP ate que as contas sejam regravadas com o novo segredo.
-- A rotacao planejada deve ser feita somente apos existir suporte tecnico para descriptografar com chave anterior e criptografar com chave atual, ou apos uma migracao manual controlada de todas as senhas IMAP.
+- A rotacao planejada deve usar o keyring para descriptografar com chave anterior e criptografar com chave atual.
 
 Migracao de credenciais legadas:
 
-- A estrategia segura preferencial e migrar de forma online: ler a credencial legada ou cifrada antiga, validar a conexao IMAP e regravar a senha no formato `v1` com a chave atual dentro de transacao.
+- A estrategia segura preferencial e migrar de forma online: ler a credencial legada ou cifrada antiga e regravar a senha no formato `v1` com a chave atual dentro de transacao.
 - A migracao em lote deve registrar quantidade de contas avaliadas, migradas, ignoradas e com falha, sem registrar senhas ou payloads sensiveis.
 - Falhas de migracao devem preservar o valor original para permitir nova tentativa.
-- Enquanto nao houver job/script aprovado, a migracao acontece apenas quando um administrador atualiza a senha da conta.
+- O job administrativo e opt-in por `EAI_EMAIL_CREDENTIALS_REENCRYPT_ON_STARTUP=true`; por padrao ele nao roda no startup.
+- A execucao e idempotente: credenciais ja cifradas com a chave atual sao ignoradas, enquanto Base64 legado e `v1` com chave anterior sao regravadas com a chave atual.
 
-Proximo card tecnico:
+Configuracao operacional:
 
-- `EAI-036`: implementar suporte a `EAI_EMAIL_CREDENTIALS_PREVIOUS_SECRETS` ou mecanismo equivalente de keyring.
-- Adicionar job/script administrativo idempotente para recriptografar credenciais IMAP legadas e credenciais cifradas com chave anterior.
-- Testar rollback, falha parcial e ausencia de vazamento de segredo em logs.
+- `EAI_EMAIL_CREDENTIALS_SECRET`: chave atual usada para novas gravacoes.
+- `EAI_EMAIL_CREDENTIALS_PREVIOUS_SECRETS`: lista separada por virgula com chaves anteriores aceitas apenas para leitura/migracao.
+- `EAI_EMAIL_CREDENTIALS_REENCRYPT_ON_STARTUP`: quando `true`, executa a recriptografia administrativa no startup e registra apenas metricas.
 
 ## Limitacoes
 

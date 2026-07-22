@@ -36,6 +36,8 @@ eai:
   email:
     credentials:
       secret: ${EAI_EMAIL_CREDENTIALS_SECRET:local-development-email-credential-secret}
+      previous-secrets: ${EAI_EMAIL_CREDENTIALS_PREVIOUS_SECRETS:}
+      reencrypt-on-startup: ${EAI_EMAIL_CREDENTIALS_REENCRYPT_ON_STARTUP:false}
     importer:
       enabled: false
       fixed-delay: 60000

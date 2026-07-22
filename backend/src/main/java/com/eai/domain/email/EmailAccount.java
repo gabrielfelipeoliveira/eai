@@ -124,6 +124,11 @@ public class EmailAccount {
         this.updatedAt = Instant.now();
     }
 
+    public void replaceEncryptedPassword(String encryptedPassword) {
+        this.encryptedPassword = requireText(encryptedPassword, "encryptedPassword");
+        this.updatedAt = Instant.now();
+    }
+
     public void recordSuccess(Instant readAt, String message) {
         this.lastReadAt = readAt;
         this.lastSyncStatus = EmailAccountStatus.SUCCESS;
