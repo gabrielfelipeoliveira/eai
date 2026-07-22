@@ -35,6 +35,8 @@ Perguntas para o Software Architect:
 Padrao conhecido:
 
 - A autenticacao usa access tokens JWT.
+- Access tokens JWT usam `HS256`, `typ=JWT`, assinatura HMAC comparada de forma resistente a timing e claims obrigatorias `sub`, `email`, `roles` e `exp`.
+- Tokens com algoritmo inesperado, assinatura invalida, expirados ou sem claims obrigatorias sao rejeitados como acesso nao autorizado.
 - Refresh tokens sao persistidos.
 - Requisicoes protegidas usam `Authorization: Bearer <token>`.
 - Login e refresh sao publicos.
