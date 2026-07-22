@@ -27,6 +27,8 @@ eai:
     access-token-ttl-minutes: 15
     refresh-token-ttl-hours: 720
   email:
+    credentials:
+      secret: ${EAI_EMAIL_CREDENTIALS_SECRET:local-development-email-credential-secret}
     importer:
       enabled: false
       fixed-delay: 60000

@@ -291,7 +291,7 @@ Exemplos de adapters:
 - Provedor de token JWT.
 - Hasher de senha BCrypt.
 - Leitor de e-mail IMAP.
-- Implementacao de criptografia de desenvolvimento.
+- Criptografia AES/GCM de credenciais IMAP.
 
 ## Fluxo de Requisicao
 
@@ -419,7 +419,7 @@ Estado atual:
 Riscos conhecidos:
 
 - Armazenamento de tokens em `localStorage` e conveniente, mas aumenta exposicao a roubo de tokens por XSS.
-- A criptografia de senha de e-mail atualmente usa uma implementacao Base64 de desenvolvimento e nao e adequada para producao.
+- Rotacao automatica de chave e migracao em lote de credenciais IMAP legadas ainda dependem de definicao operacional.
 
 Status:
 PENDENTE DE DEFINIÇÃO
@@ -427,7 +427,7 @@ PENDENTE DE DEFINIÇÃO
 Perguntas para o Software Architect:
 
 - Refresh tokens devem migrar para cookies HttpOnly?
-- Qual e a estrategia de criptografia de producao para credenciais IMAP?
+- Qual e a politica de rotacao de chave e migracao em lote para credenciais IMAP?
 - Qual e a politica de CORS para producao?
 
 ## Arquitetura de Testes
