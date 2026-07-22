@@ -272,6 +272,41 @@ Exemplo:
 }
 ```
 
+## LGPD
+
+Endpoints atuais, protegidos por `ADMIN`:
+
+- `POST /api/lgpd-requests`
+- `GET /api/lgpd-requests`
+- `GET /api/lgpd-requests/{id}`
+- `POST /api/lgpd-requests/{id}/actions`
+
+Contrato de criacao:
+
+- `companyId` obrigatorio.
+- `storeId` opcional.
+- `leadId` opcional.
+- `dataSubjectName` obrigatorio.
+- `dataSubjectPhone` opcional.
+- `dataSubjectEmail` opcional.
+- `requestType` obrigatorio: `ACCESS`, `CORRECTION`, `BLOCK`, `ANONYMIZATION` ou `DELETION`.
+- `description` obrigatorio.
+
+Contrato de acao manual:
+
+- `actionType` obrigatorio: `ACCESS`, `CORRECTION`, `BLOCK`, `ANONYMIZATION` ou `DELETION`.
+- `resolution` obrigatorio.
+- `finalStatus` opcional; quando informado, aceita apenas `COMPLETED` ou `REJECTED`.
+
+Regras do MVP:
+
+- Apenas `ADMIN` pode criar, listar, detalhar e registrar tratamento LGPD.
+- Registrar acao LGPD documenta o tratamento manual, executor e data.
+- Registrar acao nao anonimiza, elimina, corrige, bloqueia ou altera automaticamente leads, conversas, mensagens, usuarios ou midias.
+- Acao sem `finalStatus` move a solicitacao para `IN_PROGRESS`.
+- Acao com `finalStatus` fecha a solicitacao como `COMPLETED` ou `REJECTED`.
+- `GET /api/lgpd-requests` aceita filtros opcionais `status`, `companyId`, `storeId`, `leadId`, `page` e `size`.
+
 ## Conversas De WhatsApp
 
 Endpoints atuais:
