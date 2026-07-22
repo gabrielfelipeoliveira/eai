@@ -14,7 +14,7 @@ test.describe('Fluxos E2E de leads', () => {
   test('deve listar e filtrar leads criticos do MVP', async ({ page }) => {
     await page.getByRole('link', { name: /Leads/ }).click();
 
-    await expect(page.getByRole('heading', { name: 'Leads' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Leads', exact: true })).toBeVisible();
     await expect(page.getByText('Cliente Inicial')).toBeVisible();
 
     await page.getByLabel('Texto livre').fill('Cliente Inicial');

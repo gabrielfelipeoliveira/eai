@@ -40,6 +40,12 @@ function page(element: ReactNode) {
   );
 }
 
+const routerFuture = {
+  future: {
+    v7_startTransition: true,
+  },
+} as unknown as Parameters<typeof createBrowserRouter>[1];
+
 export const router = createBrowserRouter([
   {
     path: '/login',
@@ -162,4 +168,4 @@ export const router = createBrowserRouter([
       },
     ],
   },
-]);
+], routerFuture);
