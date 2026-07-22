@@ -128,7 +128,8 @@ Cards de desenvolvimento conhecidos:
 - `EAI-028`: concluido em 2026-07-22 no PR `#34`. Validar assinatura do webhook publico do WhatsApp. UX dispensado: hardening backend sem impacto visual.
 - `EAI-031`: concluido em 2026-07-22 no PR `#35`. Limitar e validar upload/download de midias WhatsApp. UX dispensado: hardening backend sem impacto visual.
 - `EAI-033`: concluido em 2026-07-22 no PR `#36`. Endurecer implementacao de JWT. UX dispensado: hardening backend sem impacto visual.
-- `EAI-036`: em andamento com Lucas Reiter. Implementar keyring e recriptografia de credenciais IMAP. UX dispensado: hardening backend sem impacto visual.
+- `EAI-036`: concluido em 2026-07-22 no PR `#37`. Implementar keyring e recriptografia de credenciais IMAP. UX dispensado: hardening backend sem impacto visual.
+- `EAI-030`: em andamento com Lucas Reiter. Reduzir exposicao de tokens no frontend e fluxo de refresh. UX dispensado: hardening de autenticacao sem mudanca visual planejada.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -136,15 +137,22 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-036` - implementar keyring e recriptografia de credenciais IMAP.
+- Lucas Reiter: `EAI-030` - reduzir exposicao de tokens no frontend.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: chore/eai-036-imap-keyring-reencryption
+Lucas Reiter: chore/eai-030-token-exposure-hardening
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
+
+Reserva operacional EAI-030 em 2026-07-22:
+
+- Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
+- Branch `chore/eai-030-token-exposure-hardening`.
+- Escopo: avaliar e implementar reducao de exposicao de tokens no frontend, priorizando refresh token fora do JavaScript em ambiente compartilhado/producao e mantendo sessao unica/rotacao de refresh token.
+- UX dispensado: hardening de autenticacao sem mudanca visual planejada.
 
 Reserva operacional EAI-036 em 2026-07-22:
 
