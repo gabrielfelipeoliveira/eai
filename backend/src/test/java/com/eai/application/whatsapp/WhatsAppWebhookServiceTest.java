@@ -1,5 +1,6 @@
 package com.eai.application.whatsapp;
 
+import com.eai.application.common.ApplicationException;
 import com.eai.application.conversation.ConversationService;
 import com.eai.application.conversation.IncomingWhatsAppMessage;
 import com.eai.application.media.MediaStoragePort;
@@ -20,6 +21,7 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -33,7 +35,9 @@ class WhatsAppWebhookServiceTest {
     private final ConversationService conversationService = mock(ConversationService.class);
     private final WhatsAppMediaClient mediaClient = mock(WhatsAppMediaClient.class);
     private final MediaStoragePort mediaStorage = mock(MediaStoragePort.class);
-    private final WhatsAppWebhookService service = new WhatsAppWebhookService(settings, conversationService, mediaClient, mediaStorage, new ObjectMapper());
+    private final WhatsAppMediaSettings mediaSettings = mock(WhatsAppMediaSettings.class);
+    private final WhatsAppMediaValidator mediaValidator = new WhatsAppMediaValidator(mediaSettings);
+    private final WhatsAppWebhookService service = new WhatsAppWebhookService(settings, conversationService, mediaClient, mediaStorage, new ObjectMapper(), mediaValidator);
 
     @DisplayName("Atualiza status da mensagem a partir do webhook do provedor")
     @Test
@@ -135,6 +139,29 @@ class WhatsAppWebhookServiceTest {
         receiveSignedEvent(payload);
 
         verify(mediaClient, never()).fetchMediaMetadata(any());
+        verify(mediaStorage, never()).store(any());
+    }
+
+    @DisplayName("Nao baixa midia recebida quando metadados excedem limite configurado")
+    @Test
+    void doesNotDownloadInboundMediaWhenMetadataExceedsConfiguredLimit() throws Exception {
+        when(settings.inboundPersistenceConfigured()).thenReturn(true);
+        when(settings.companyId()).thenReturn("00000000-0000-0000-0000-000000000101");
+        when(settings.storeId()).thenReturn("00000000-0000-0000-0000-000000000201");
+        when(conversationService.incomingMessageAlreadyRecorded("wamid.image-001")).thenReturn(false);
+        when(mediaSettings.maxImageSizeBytes()).thenReturn(2L);
+        when(mediaClient.fetchMediaMetadata("media-001"))
+                .thenReturn(new WhatsAppMediaMetadata("media-001", "https://graph.example/media", "image/jpeg", 3L, "abc123", "{\"id\":\"media-001\"}"));
+        String payload = """
+                {"object":"whatsapp_business_account","entry":[{"changes":[{"value":{"messages":[{"from":"5511999990000","id":"wamid.image-001","type":"image","image":{"id":"media-001","mime_type":"image/jpeg"}}]}}]}]}
+                """;
+
+        assertThatThrownBy(() -> receiveSignedEvent(payload))
+                .isInstanceOf(ApplicationException.class)
+                .hasMessageContaining("Media file exceeds the configured size limit");
+
+        verify(mediaClient).fetchMediaMetadata("media-001");
+        verify(mediaClient, never()).downloadMedia(any());
         verify(mediaStorage, never()).store(any());
     }
 

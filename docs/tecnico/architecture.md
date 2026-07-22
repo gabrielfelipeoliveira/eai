@@ -230,6 +230,13 @@ Configuracoes de storage de midia:
 - `EAI_MEDIA_STORAGE_PROVIDER`, com padrao local `local`
 - `EAI_MEDIA_STORAGE_LOCAL_DIRECTORY`, com padrao local `.run-logs/media-storage`
 
+Configuracoes de validacao de midia WhatsApp:
+
+- `EAI_WHATSAPP_MEDIA_MAX_IMAGE_SIZE_BYTES`, com padrao `5242880`
+- `EAI_WHATSAPP_MEDIA_MAX_AUDIO_SIZE_BYTES`, com padrao `16777216`
+- `EAI_WHATSAPP_MEDIA_MAX_DOCUMENT_SIZE_BYTES`, com padrao `104857600`
+- `EAI_WHATSAPP_MEDIA_ALLOWED_MIME_TYPES`, com padrao restrito aos MIME types suportados para imagem, audio e documentos do MVP.
+
 Endpoints de consulta:
 
 - `GET /api/conversations`

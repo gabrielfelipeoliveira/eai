@@ -125,7 +125,8 @@ Cards de desenvolvimento conhecidos:
 - `EAI-032`: concluido em 2026-07-22 no PR `#32`. Parametrizar CORS, Swagger e defaults locais por ambiente. UX dispensado: hardening backend/config sem impacto visual.
 - `EAI-034`: concluido em 2026-07-22 no PR `#31`. Atualizar GitHub Actions para remover warning de Node.js 20 deprecated. UX dispensado: ajuste de CI sem impacto visual.
 - `EAI-035`: concluido em 2026-07-22 no PR `#33`. Definir rotacao e migracao de credenciais IMAP legadas. UX dispensado: hardening operacional sem impacto visual.
-- `EAI-028`: em andamento com Lucas Reiter. Validar assinatura do webhook publico do WhatsApp. UX dispensado: hardening backend sem impacto visual.
+- `EAI-028`: concluido em 2026-07-22 no PR `#34`. Validar assinatura do webhook publico do WhatsApp. UX dispensado: hardening backend sem impacto visual.
+- `EAI-031`: em andamento com Lucas Reiter. Limitar e validar upload/download de midias WhatsApp. UX dispensado: hardening backend sem impacto visual.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -133,15 +134,22 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-028` - validar assinatura do webhook publico do WhatsApp.
+- Lucas Reiter: `EAI-031` - limitar e validar upload/download de midias WhatsApp.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: chore/eai-028-whatsapp-webhook-signature
+Lucas Reiter: chore/eai-031-whatsapp-media-limits
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
+
+Reserva operacional EAI-031 em 2026-07-22:
+
+- Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
+- Branch `chore/eai-031-whatsapp-media-limits`.
+- Escopo: definir limites parametrizados e validacoes para upload/download de midias WhatsApp no backend, cobrindo arquivo vazio, acima do limite, MIME proibido e fluxo valido.
+- UX dispensado: hardening backend sem impacto visual.
 
 Reserva operacional EAI-028 em 2026-07-22:
 

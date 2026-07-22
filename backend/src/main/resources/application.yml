@@ -44,6 +44,11 @@ eai:
       provider: ${EAI_MEDIA_STORAGE_PROVIDER:local}
       local-directory: ${EAI_MEDIA_STORAGE_LOCAL_DIRECTORY:.run-logs/media-storage}
   whatsapp:
+    media:
+      max-image-size-bytes: ${EAI_WHATSAPP_MEDIA_MAX_IMAGE_SIZE_BYTES:5242880}
+      max-audio-size-bytes: ${EAI_WHATSAPP_MEDIA_MAX_AUDIO_SIZE_BYTES:16777216}
+      max-document-size-bytes: ${EAI_WHATSAPP_MEDIA_MAX_DOCUMENT_SIZE_BYTES:104857600}
+      allowed-mime-types: ${EAI_WHATSAPP_MEDIA_ALLOWED_MIME_TYPES:image/jpeg,image/png,audio/aac,audio/mp4,audio/mpeg,audio/amr,audio/ogg,text/plain,application/pdf,application/vnd.ms-powerpoint,application/msword,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet}
     cloud-api:
       phone-number-id: ${META_WHATSAPP_PHONE_NUMBER_ID:}
       business-account-id: ${META_WHATSAPP_BUSINESS_ACCOUNT_ID:}

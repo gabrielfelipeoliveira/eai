@@ -6,6 +6,7 @@ import com.eai.application.conversation.ConversationMediaService;
 import com.eai.application.conversation.ConversationService;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.application.whatsapp.WhatsAppMediaSenderService;
+import com.eai.application.whatsapp.WhatsAppMediaValidator;
 import com.eai.application.whatsapp.WhatsAppTextSenderService;
 import com.eai.domain.conversation.ConversationMessageStatus;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ public class ConversationController {
     private final WhatsAppTextSenderService whatsAppTextSenderService;
     private final WhatsAppMediaSenderService whatsAppMediaSenderService;
     private final ConversationMediaService conversationMediaService;
+    private final WhatsAppMediaValidator whatsAppMediaValidator;
 
     @GetMapping
     public List<ConversationSummaryResponse> listConversations(
@@ -85,6 +87,7 @@ public class ConversationController {
             @RequestPart(value = "caption", required = false) String caption,
             @AuthenticationPrincipal AuthenticatedUser authenticatedUser
     ) throws IOException {
+        whatsAppMediaValidator.validateUpload(file.getContentType(), file.getSize());
         return ConversationMessageResponse.fromMediaSendResult(whatsAppMediaSenderService.sendMedia(
                 id,
                 file.getOriginalFilename(),

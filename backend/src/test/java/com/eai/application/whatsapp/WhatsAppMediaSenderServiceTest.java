@@ -15,6 +15,7 @@ import com.eai.domain.conversation.ConversationMessageStatus;
 import com.eai.domain.conversation.ConversationMessageType;
 import com.eai.domain.conversation.WhatsAppContact;
 import com.eai.domain.user.UserRole;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -45,15 +46,19 @@ class WhatsAppMediaSenderServiceTest {
     private final WhatsAppChannelSettings settings = mock(WhatsAppChannelSettings.class);
     private final WhatsAppMediaClient mediaClient = mock(WhatsAppMediaClient.class);
     private final MediaStoragePort mediaStorage = mock(MediaStoragePort.class);
+    private final WhatsAppMediaSettings mediaSettings = mock(WhatsAppMediaSettings.class);
+    private final WhatsAppMediaValidator mediaValidator = new WhatsAppMediaValidator(mediaSettings);
     private final WhatsAppMediaSenderService service = new WhatsAppMediaSenderService(
             conversationService,
             contactRepository,
             messageRepository,
             settings,
             mediaClient,
-            mediaStorage
+            mediaStorage,
+            mediaValidator
     );
 
+    @DisplayName("Envia midia quando ultima mensagem recebida esta dentro da janela de 24 horas")
     @Test
     void sendsMediaWhenLatestInboundMessageIsWithin24HourWindow() {
         when(settings.templateSendingConfigured()).thenReturn(true);
@@ -97,6 +102,7 @@ class WhatsAppMediaSenderServiceTest {
         ));
     }
 
+    @DisplayName("Bloqueia midia quando ultima mensagem recebida esta fora da janela de 24 horas")
     @Test
     void blocksMediaWhenLatestInboundMessageIsOutside24HourWindow() {
         when(settings.templateSendingConfigured()).thenReturn(true);
@@ -111,6 +117,46 @@ class WhatsAppMediaSenderServiceTest {
         verify(mediaStorage, never()).store(any());
         verify(mediaClient, never()).uploadMedia(any(), any(), any());
         verify(messageRepository, never()).save(any());
+    }
+
+    @DisplayName("Bloqueia midia vazia antes de carregar conversa")
+    @Test
+    void blocksEmptyMediaBeforeLoadingConversation() {
+        when(settings.templateSendingConfigured()).thenReturn(true);
+
+        assertThatThrownBy(() -> service.sendMedia(CONVERSATION_ID, "photo.jpg", "image/jpeg", new byte[0], null, authenticatedUser()))
+                .isInstanceOf(ApplicationException.class)
+                .hasMessageContaining("Media file is empty");
+
+        verify(conversationService, never()).getConversation(any(), any());
+        verify(mediaStorage, never()).store(any());
+    }
+
+    @DisplayName("Bloqueia MIME type nao suportado antes de armazenar midia")
+    @Test
+    void blocksUnsupportedMimeTypeBeforeStoringMedia() {
+        when(settings.templateSendingConfigured()).thenReturn(true);
+
+        assertThatThrownBy(() -> service.sendMedia(CONVERSATION_ID, "page.html", "text/html", new byte[]{1}, null, authenticatedUser()))
+                .isInstanceOf(ApplicationException.class)
+                .hasMessageContaining("Media MIME type is not supported");
+
+        verify(conversationService, never()).getConversation(any(), any());
+        verify(mediaStorage, never()).store(any());
+    }
+
+    @DisplayName("Bloqueia imagem acima do limite configurado antes de armazenar midia")
+    @Test
+    void blocksImageAboveConfiguredLimitBeforeStoringMedia() {
+        when(settings.templateSendingConfigured()).thenReturn(true);
+        when(mediaSettings.maxImageSizeBytes()).thenReturn(2L);
+
+        assertThatThrownBy(() -> service.sendMedia(CONVERSATION_ID, "photo.jpg", "image/jpeg", new byte[]{1, 2, 3}, null, authenticatedUser()))
+                .isInstanceOf(ApplicationException.class)
+                .hasMessageContaining("Media file exceeds the configured size limit");
+
+        verify(conversationService, never()).getConversation(any(), any());
+        verify(mediaStorage, never()).store(any());
     }
 
     private Conversation conversation() {

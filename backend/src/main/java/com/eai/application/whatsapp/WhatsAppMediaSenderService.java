@@ -35,6 +35,7 @@ public class WhatsAppMediaSenderService {
     private final WhatsAppChannelSettings settings;
     private final WhatsAppMediaClient mediaClient;
     private final MediaStoragePort mediaStorage;
+    private final WhatsAppMediaValidator mediaValidator;
 
     @Transactional
     public WhatsAppMediaMessageSendResult sendMedia(
@@ -48,9 +49,7 @@ public class WhatsAppMediaSenderService {
         if (!settings.templateSendingConfigured()) {
             throw new ApplicationException("WHATSAPP_MEDIA_SENDING_NOT_CONFIGURED", "WhatsApp media sending is not configured");
         }
-        if (content == null || content.length == 0) {
-            throw new ApplicationException("WHATSAPP_MEDIA_FILE_EMPTY", "Media file is empty");
-        }
+        mediaValidator.validateUpload(mimeType, content == null ? 0 : content.length);
         Conversation conversation = conversationService.getConversation(conversationId, authenticatedUser);
         assertWithinFreeTextWindow(conversation.getId());
         WhatsAppContact contact = contactRepository.findById(conversation.getContactId())

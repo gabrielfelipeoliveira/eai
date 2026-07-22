@@ -38,6 +38,7 @@ public class WhatsAppWebhookService {
     private final WhatsAppMediaClient mediaClient;
     private final MediaStoragePort mediaStorage;
     private final ObjectMapper objectMapper;
+    private final WhatsAppMediaValidator mediaValidator;
 
     public String verifyWebhook(String mode, String verifyToken, String challenge) {
         if (!settings.webhookConfigured()) {
@@ -116,8 +117,10 @@ public class WhatsAppWebhookService {
             return message;
         }
         WhatsAppMediaMetadata metadata = mediaClient.fetchMediaMetadata(message.mediaId());
+        mediaValidator.validateDownload(firstNonBlank(metadata.mimeType(), message.mediaMimeType()), metadata.fileSizeBytes());
         WhatsAppMediaDownload download = mediaClient.downloadMedia(metadata);
         String mimeType = firstNonBlank(metadata.mimeType(), message.mediaMimeType(), "application/octet-stream");
+        mediaValidator.validateDownload(mimeType, download.content() == null ? 0 : download.content().length);
         StoredMedia storedMedia = mediaStorage.store(new StoreMediaCommand(
                 companyId,
                 storeId,

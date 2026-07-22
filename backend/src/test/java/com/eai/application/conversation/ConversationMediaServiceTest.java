@@ -1,15 +1,18 @@
 package com.eai.application.conversation;
 
+import com.eai.application.common.ApplicationException;
 import com.eai.application.common.NotFoundException;
 import com.eai.application.media.MediaObject;
 import com.eai.application.media.MediaStoragePort;
 import com.eai.application.security.AuthenticatedUser;
+import com.eai.application.whatsapp.WhatsAppMediaValidator;
 import com.eai.domain.conversation.Conversation;
 import com.eai.domain.conversation.ConversationMessage;
 import com.eai.domain.conversation.ConversationMessageDirection;
 import com.eai.domain.conversation.ConversationMessageStatus;
 import com.eai.domain.conversation.ConversationMessageType;
 import com.eai.domain.user.UserRole;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -36,8 +39,10 @@ class ConversationMediaServiceTest {
     private final ConversationService conversationService = mock(ConversationService.class);
     private final ConversationMessageRepository messageRepository = mock(ConversationMessageRepository.class);
     private final MediaStoragePort mediaStorage = mock(MediaStoragePort.class);
-    private final ConversationMediaService service = new ConversationMediaService(conversationService, messageRepository, mediaStorage);
+    private final WhatsAppMediaValidator mediaValidator = mock(WhatsAppMediaValidator.class);
+    private final ConversationMediaService service = new ConversationMediaService(conversationService, messageRepository, mediaStorage, mediaValidator);
 
+    @DisplayName("Baixa midia armazenada apos validar acesso a conversa")
     @Test
     void downloadsStoredMediaAfterConversationAccessIsValidated() {
         when(conversationService.getConversation(CONVERSATION_ID, authenticatedUser())).thenReturn(conversation(CONVERSATION_ID));
@@ -52,9 +57,11 @@ class ConversationMediaServiceTest {
         assertThat(download.sizeBytes()).isEqualTo(3);
         assertThat(download.content()).containsExactly(1, 2, 3);
         verify(conversationService).getConversation(CONVERSATION_ID, authenticatedUser());
+        verify(mediaValidator).validateDownload("image/jpeg", 3L);
         verify(mediaStorage).read("local", "media/inbound/photo.jpg");
     }
 
+    @DisplayName("Rejeita mensagem de outra conversa antes de ler a midia")
     @Test
     void rejectsMessageFromAnotherConversation() {
         when(conversationService.getConversation(CONVERSATION_ID, authenticatedUser())).thenReturn(conversation(CONVERSATION_ID));
@@ -63,6 +70,21 @@ class ConversationMediaServiceTest {
         assertThatThrownBy(() -> service.download(CONVERSATION_ID, MESSAGE_ID, authenticatedUser()))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Conversation message not found");
+
+        verify(mediaStorage, never()).read(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any());
+    }
+
+    @DisplayName("Bloqueia download quando metadados da mensagem violam limite de midia")
+    @Test
+    void blocksDownloadWhenMessageMetadataViolatesMediaLimit() {
+        when(conversationService.getConversation(CONVERSATION_ID, authenticatedUser())).thenReturn(conversation(CONVERSATION_ID));
+        when(messageRepository.findById(MESSAGE_ID)).thenReturn(Optional.of(message(CONVERSATION_ID)));
+        org.mockito.Mockito.doThrow(new ApplicationException("WHATSAPP_MEDIA_FILE_TOO_LARGE", "Media file exceeds the configured size limit"))
+                .when(mediaValidator).validateDownload("image/jpeg", Long.valueOf(3L));
+
+        assertThatThrownBy(() -> service.download(CONVERSATION_ID, MESSAGE_ID, authenticatedUser()))
+                .isInstanceOf(ApplicationException.class)
+                .hasMessageContaining("Media file exceeds the configured size limit");
 
         verify(mediaStorage, never()).read(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any());
     }
