@@ -33,6 +33,7 @@ Regras importantes:
 - Nao modifique migrations Flyway existentes depois que forem aplicadas fora de experimentacao local.
 - Sempre reporte vulnerabilidades apontadas por build, auditoria de dependencias, Mend/SCA ou alertas de CVE do Java, mesmo quando a correcao ficar fora do escopo da tarefa.
 - Use `docs/tecnico/contexto-atual.md` como handoff operacional entre pessoas e agentes.
+- Em trabalho paralelo, registre cards e branches em andamento por responsavel no handoff; nao trate o projeto como se houvesse apenas um card ativo global.
 - Use cards `EAI-###` do Trello para nomear branches, PRs e referencias de commits.
 - Toda mudanca deve seguir o fluxo de Trello, branch e PR descrito em `docs/tecnico/trello-workflow.md`, inclusive documentacao, processo e ajustes pequenos. Nao commite direto na `main`.
 

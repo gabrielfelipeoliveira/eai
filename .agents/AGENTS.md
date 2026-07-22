@@ -40,6 +40,7 @@ Quando documentacao e codigo entrarem em conflito, nao escolha um lado silencios
 - Sempre reporte as validacoes executadas.
 - Sempre reporte vulnerabilidades apontadas por build, auditoria de dependencias, Mend/SCA ou alertas de CVE do Java.
 - Use `docs/tecnico/contexto-atual.md` como handoff operacional entre pessoas e agentes.
+- Quando houver mais de um dev/agente trabalhando em paralelo, registre cards e branches em andamento por responsavel em `docs/tecnico/contexto-atual.md`; nao substitua o trabalho ativo de outra pessoa por um unico "card em andamento" global.
 - Use cards `EAI-###` do Trello para nomear branches, PRs e referencias de commits.
 - Toda mudanca deve seguir o fluxo de Trello, branch e PR descrito em `docs/tecnico/trello-workflow.md`, inclusive documentacao, processo e ajustes pequenos. Nao commite direto na `main`.
 - Todo novo problema, warning, risco, melhoria ou item identificado deve ser registrado no Trello, como card novo ou comentario em card existente, antes de decidir se sera tratado agora ou apenas mantido no backlog.
