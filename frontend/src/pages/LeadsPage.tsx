@@ -602,7 +602,7 @@ export function LeadsPage() {
                   <TextField fullWidth label="Valor do veiculo" type="number" error={Boolean(errors.vehicleValue)} helperText={errors.vehicleValue?.message} {...register('vehicleValue')} />
                 </Grid2>
               </Grid2>
-              <TextField select label="Origem" error={Boolean(errors.source)} helperText={errors.source?.message} {...register('source')}>
+              <TextField select label="Origem" defaultValue={emptyLeadValues.source} error={Boolean(errors.source)} helperText={errors.source?.message} {...register('source')}>
                 {sources.map((source) => (
                   <MenuItem key={source} value={source}>
                     {metadata.label('leadSources', source)}
@@ -610,7 +610,10 @@ export function LeadsPage() {
                 ))}
               </TextField>
               {isAdmin && (
-                <TextField select label="Empresa" error={Boolean(errors.companyId)} helperText={errors.companyId?.message} {...register('companyId')}>
+                <TextField select label="Empresa" defaultValue={emptyLeadValues.companyId} error={Boolean(errors.companyId)} helperText={errors.companyId?.message} {...register('companyId')}>
+                  <MenuItem value="" disabled>
+                    Selecione uma empresa
+                  </MenuItem>
                   {companiesQuery.data?.map((company) => (
                     <MenuItem key={company.id} value={company.id}>
                       {company.name}
@@ -619,7 +622,10 @@ export function LeadsPage() {
                 </TextField>
               )}
               {!isAdmin && <TextField label="Empresa" value={user?.companyId ?? ''} slotProps={{ input: { readOnly: true } }} {...register('companyId')} />}
-              <TextField select label="Loja" error={Boolean(errors.storeId)} helperText={errors.storeId?.message} {...register('storeId')}>
+              <TextField select label="Loja" defaultValue={emptyLeadValues.storeId} error={Boolean(errors.storeId)} helperText={errors.storeId?.message} {...register('storeId')}>
+                <MenuItem value="" disabled>
+                  Selecione uma loja
+                </MenuItem>
                 {storesQuery.data?.map((store) => (
                   <MenuItem key={store.id} value={store.id}>
                     {store.name}
