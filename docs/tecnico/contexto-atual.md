@@ -118,7 +118,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-022`: concluido. Registrar novos problemas no Trello e atribuir cards movimentados.
 - `EAI-023`: concluido. Ajustar atribuicao de membros apenas em cards puxados.
 - `EAI-024`: em andamento com Gabriel Felipe Ferreira de Oliveira. Notificar administradores sobre falhas de e-mail quando houver infraestrutura de notificacao.
-- `EAI-025`: em andamento com Lucas Reiter. Atualizar Vite/esbuild por vulnerabilidades npm audit.
+- `EAI-025`: PR `#27` aberta em 2026-07-22; consultar Trello para status operacional. Atualizar Vite/esbuild por vulnerabilidades npm audit.
 - `EAI-026`: concluido em 2026-07-22 no PR `#24`. Formalizar checklist de Code Review e registro de debitos por card. UX dispensado: ajuste de processo/documentacao sem impacto visual.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
@@ -127,13 +127,13 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-025` - atualizar Vite/esbuild por vulnerabilidades npm audit.
+- Lucas Reiter: nenhum card com implementacao ativa.
 - Gabriel Felipe Ferreira de Oliveira: `EAI-024` - notificar administradores sobre falhas de e-mail.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: chore/eai-025-vite-esbuild
+Lucas Reiter: sem branch de implementacao ativa.
 Gabriel Felipe Ferreira de Oliveira: confirmar branch atual do `EAI-024` no Trello/PR antes de interagir com esse escopo.
 ```
 
@@ -142,6 +142,13 @@ Reserva operacional EAI-025 em 2026-07-22:
 - Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
 - Branch `chore/eai-025-vite-esbuild`.
 - Escopo: atualizar Vite/esbuild para corrigir vulnerabilidades reportadas por `npm audit`, mantendo o build frontend funcional.
+
+Implementacao EAI-025 em 2026-07-22:
+
+- Atualizado `vite` de `^5.4.10` para `^8.1.5` e `@vitejs/plugin-react` de `^4.3.3` para `^6.0.3`.
+- Executado `npm audit fix` para atualizar `brace-expansion` vulneravel.
+- Validacoes frontend: `rtk npm audit --audit-level=moderate` passou com 0 vulnerabilidades; `rtk npm run build` passou; `rtk npm run lint` passou com 0 erros e 1 warning conhecido em `src/hooks/useAuth.tsx`.
+- Avisos conhecidos: build ainda reporta chunk JS acima de 500 kB apos minificacao; npm reporta script de instalacao pendente para `fsevents@2.3.3`.
 
 Reserva operacional EAI-026 em 2026-07-22:
 
