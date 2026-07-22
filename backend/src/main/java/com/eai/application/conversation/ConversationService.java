@@ -3,6 +3,7 @@ package com.eai.application.conversation;
 import com.eai.application.common.ForbiddenException;
 import com.eai.application.common.NotFoundException;
 import com.eai.application.lead.LeadHistoryRepository;
+import com.eai.application.lead.PhoneNormalizer;
 import com.eai.application.lead.LeadRepository;
 import com.eai.application.lead.LeadSearchCriteria;
 import com.eai.application.security.AuthenticatedUser;
@@ -310,21 +311,18 @@ public class ConversationService {
     }
 
     private String stripBrazilCountryCode(String phone) {
-        if (phone != null && phone.startsWith("55") && phone.length() > 11) {
-            return phone.substring(2);
+        if (phone != null && phone.startsWith("+55") && phone.length() > 12) {
+            return phone.substring(3);
         }
         return phone;
     }
 
     private String normalizePhone(String phone) {
-        if (phone == null || phone.isBlank()) {
+        String normalizedPhone = PhoneNormalizer.normalize(phone);
+        if (normalizedPhone == null) {
             throw new IllegalArgumentException("phone is required");
         }
-        String digits = phone.replaceAll("\\D", "");
-        if (digits.isBlank()) {
-            throw new IllegalArgumentException("phone is required");
-        }
-        return digits;
+        return normalizedPhone;
     }
 
     private void assertCanAccess(Conversation conversation, AuthenticatedUser authenticatedUser) {

@@ -7,6 +7,7 @@ Este documento descreve o modelo conceitual do banco e as regras de ownership. E
 - PostgreSQL e o banco principal.
 - Flyway e dono das migrations de schema.
 - H2 e usado nos testes atuais em modo de compatibilidade com PostgreSQL.
+- Testes de integracao backend usam PostgreSQL real via Testcontainers para validar migrations, constraints e fluxos criticos.
 
 ## Ownership do Flyway
 
@@ -131,7 +132,6 @@ Regras definidas:
 
 Perguntas para o Software Architect:
 
-- Testes de integracao devem usar PostgreSQL/Testcontainers em vez de H2?
 - Convencoes de nomes de banco devem ser documentadas em detalhe?
 - Colunas de auditoria devem ser padronizadas em todas tabelas?
 - Soft delete deve ser introduzido como padrao para entidades historicas alem de templates?
