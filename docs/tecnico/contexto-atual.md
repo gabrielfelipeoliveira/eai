@@ -127,7 +127,8 @@ Cards de desenvolvimento conhecidos:
 - `EAI-035`: concluido em 2026-07-22 no PR `#33`. Definir rotacao e migracao de credenciais IMAP legadas. UX dispensado: hardening operacional sem impacto visual.
 - `EAI-028`: concluido em 2026-07-22 no PR `#34`. Validar assinatura do webhook publico do WhatsApp. UX dispensado: hardening backend sem impacto visual.
 - `EAI-031`: concluido em 2026-07-22 no PR `#35`. Limitar e validar upload/download de midias WhatsApp. UX dispensado: hardening backend sem impacto visual.
-- `EAI-033`: em andamento com Lucas Reiter. Endurecer implementacao de JWT. UX dispensado: hardening backend sem impacto visual.
+- `EAI-033`: concluido em 2026-07-22 no PR `#36`. Endurecer implementacao de JWT. UX dispensado: hardening backend sem impacto visual.
+- `EAI-036`: em andamento com Lucas Reiter. Implementar keyring e recriptografia de credenciais IMAP. UX dispensado: hardening backend sem impacto visual.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -135,15 +136,22 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-033` - endurecer implementacao de JWT.
+- Lucas Reiter: `EAI-036` - implementar keyring e recriptografia de credenciais IMAP.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: chore/eai-033-jwt-hardening
+Lucas Reiter: chore/eai-036-imap-keyring-reencryption
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
+
+Reserva operacional EAI-036 em 2026-07-22:
+
+- Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
+- Branch `chore/eai-036-imap-keyring-reencryption`.
+- Escopo: implementar keyring para credenciais IMAP com chave atual e chaves anteriores, permitindo recriptografia idempotente de credenciais legadas ou cifradas com chave anterior sem expor segredos em logs.
+- UX dispensado: hardening backend sem impacto visual.
 
 Reserva operacional EAI-033 em 2026-07-22:
 
