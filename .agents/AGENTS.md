@@ -48,6 +48,7 @@ Quando documentacao e codigo entrarem em conflito, nao escolha um lado silencios
 - Quando houver mais de um dev/agente trabalhando em paralelo, registre cards e branches em andamento por responsavel em `docs/tecnico/contexto-atual.md`; nao substitua o trabalho ativo de outra pessoa por um unico "card em andamento" global.
 - Use o Trello como lock operacional imediato: antes de puxar card, consulte o board; se o card estiver `Em andamento` ou atribuido a outra pessoa, nao assuma pelo que esta na `main`. O handoff versionado pode estar atrasado ate o PR ser mergeado.
 - Evite registrar status transitorio de Code Review como trabalho ativo no handoff. Para PR aberta, referencie a PR e use o Trello como fonte operacional imediata.
+- Evite commits que reiniciam CI apenas para trocar status transitorio no handoff, como `em andamento` para `concluido`. Registre conclusao e merge no Trello; atualize `docs/tecnico/contexto-atual.md` no proximo commit funcional/documental ou em batch de manutencao quando nao gerar rodada extra desnecessaria.
 - Ao resolver conflito de merge em `docs/tecnico/contexto-atual.md`, reconcilie os dois lados: preserve o estado ja presente na `main` e mantenha o estado da branch sendo integrada.
 - Use cards `EAI-###` do Trello para nomear branches, PRs e referencias de commits.
 - Toda mudanca deve seguir o fluxo de Trello, branch e PR descrito em `docs/tecnico/trello-workflow.md`, inclusive documentacao, processo e ajustes pequenos. Nao commite direto na `main`.
@@ -68,7 +69,7 @@ Quando documentacao e codigo entrarem em conflito, nao escolha um lado silencios
 10. Execute validacoes relevantes.
 11. Enquanto CI/checks rodam, avance apenas tarefas sem conflito no mesmo workspace.
 12. Antes de mergear ou concluir, revise o diff da PR contra `main` e registre achados de Code Review.
-13. Atualize Trello e `docs/tecnico/contexto-atual.md` quando o status operacional mudar.
+13. Atualize Trello quando o status operacional mudar. Atualize `docs/tecnico/contexto-atual.md` quando a informacao precisar ficar versionada e evite commit isolado que rode CI apenas por status transitorio.
 14. Resuma mudancas, validacoes, vulnerabilidades, riscos, debitos tecnicos e pendencias.
 
 Este fluxo tambem vale para mudancas somente documentais ou de processo. Nao ha excecao para commit direto na `main`.

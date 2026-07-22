@@ -415,3 +415,9 @@ Um card de desenvolvimento so vai para `Concluido` quando:
 - validacoes relevantes tiverem sido executadas ou a ausencia delas registrada;
 - documentacao tecnica/produto tiver sido atualizada quando necessario;
 - vulnerabilidades apontadas por build, auditoria de dependencias, Mend/SCA ou alertas de CVE tiverem sido reportadas.
+
+## Otimizacao De CI E Handoff
+
+Evite commits que reiniciam CI apenas para atualizar status transitorio de handoff, como trocar um card de `em andamento` para `concluido` sem nenhuma outra mudanca relevante. Para esses casos, registre PR, merge, validacoes e conclusao no Trello, e atualize `docs/tecnico/contexto-atual.md` no proximo commit funcional/documental ou em batch de manutencao.
+
+Se o handoff estiver enganoso a ponto de causar conflito operacional entre devs ou agentes, ajuste antes do merge mesmo que isso rode CI novamente e registre a razao no card.

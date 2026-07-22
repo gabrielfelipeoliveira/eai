@@ -153,6 +153,7 @@ Implementacao EAI-034 em 2026-07-22:
 - Atualizado `actions/setup-java` de `v4` para `v5`.
 - Atualizado `actions/setup-node` de `v4` para `v6`.
 - Mantido `node-version: "20"` no build frontend para nao alterar runtime da aplicacao neste card.
+- Registrada regra para evitar commits que reiniciam CI apenas por status transitorio de handoff.
 - Validacao local: parse YAML de `.github/workflows/ci.yml` passou.
 - CI remoto no PR `#31`: Backend e Frontend passaram sem annotation de Node.js 20 deprecated no output do run.
 
