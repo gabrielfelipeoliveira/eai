@@ -38,7 +38,7 @@ Padrao conhecido:
 - Refresh tokens sao persistidos.
 - Requisicoes protegidas usam `Authorization: Bearer <token>`.
 - Login e refresh sao publicos.
-- Health check, OpenAPI e metadados de apresentacao sao publicos.
+- Health check e metadados de apresentacao sao publicos. OpenAPI/Swagger e publico em perfis locais/teste, mas fica desabilitado por padrao em producao.
 - Usuario inativo deve receber mensagem generica.
 - Login em multiplas sessoes nao deve ser permitido.
 - Deve existir no maximo uma sessao ativa por usuario.
@@ -53,7 +53,7 @@ PARCIALMENTE DEFINIDO
 Perguntas para o Software Architect:
 
 - Refresh tokens devem continuar no corpo da resposta ou migrar para cookies HttpOnly?
-- O Swagger UI deve continuar publico em producao?
+- Swagger UI e OpenAPI devem permanecer desabilitados por padrao em producao e so podem ser reabilitados por configuracao explicita de ambiente.
 
 ## Metadados De Apresentacao
 
@@ -213,7 +213,8 @@ Perguntas para o Software Architect:
 - OpenAPI/Swagger faz parte da stack do backend.
 - A documentacao de API deve ser atualizada quando contratos mudarem.
 - Exemplos publicos de API nao devem usar segredos reais ou dados pessoais.
-- A suite backend valida automaticamente que `/v3/api-docs` e publico, possui metadados e security scheme esperados, cobre os endpoints Spring MVC em `com.eai.api` e nao gera `operationId` duplicado.
+- A suite backend valida automaticamente em perfil de teste/local que `/v3/api-docs` e publico, possui metadados e security scheme esperados, cobre os endpoints Spring MVC em `com.eai.api` e nao gera `operationId` duplicado.
+- Em producao, `SPRINGDOC_API_DOCS_ENABLED` e `SPRINGDOC_SWAGGER_UI_ENABLED` ficam `false` por padrao.
 
 Status:
 PARCIALMENTE DEFINIDO

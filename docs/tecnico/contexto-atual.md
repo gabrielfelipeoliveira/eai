@@ -148,6 +148,15 @@ Reserva operacional EAI-032 em 2026-07-22:
 - Escopo: parametrizar CORS, Swagger e defaults locais por ambiente, removendo defaults inseguros de producao.
 - UX dispensado: hardening backend/config sem impacto visual.
 
+Implementacao EAI-032 em 2026-07-22:
+
+- CORS passou a usar `eai.security.cors.allowed-origins`, `allowed-methods` e `allowed-headers`.
+- Producao exige `EAI_CORS_ALLOWED_ORIGINS` sem fallback local.
+- SpringDoc OpenAPI/Swagger fica desabilitado por padrao em producao via `SPRINGDOC_API_DOCS_ENABLED=false` e `SPRINGDOC_SWAGGER_UI_ENABLED=false`.
+- Documentacao de API e arquitetura atualizada com comportamento por ambiente.
+- Validacao focada: Docker `mvn -Dtest=FlywayProfileConfigurationTest,SecurityCorsPropertiesTest,AuthControllerTest,OpenApiContractTest test` passou com 14 testes.
+- Validacao backend completa: Docker `mvn clean verify` passou com 121 testes unitarios no Surefire e 2 testes de integracao no Failsafe/Testcontainers.
+
 Reserva operacional EAI-034 em 2026-07-22:
 
 - Card movido para `Em andamento` e atribuido a `Lucas Reiter`.

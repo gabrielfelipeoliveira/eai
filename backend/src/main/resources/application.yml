@@ -13,7 +13,10 @@ server:
   port: 8080
 
 springdoc:
+  api-docs:
+    enabled: ${SPRINGDOC_API_DOCS_ENABLED:true}
   swagger-ui:
+    enabled: ${SPRINGDOC_SWAGGER_UI_ENABLED:true}
     path: /swagger-ui.html
 
 management:
@@ -26,6 +29,10 @@ eai:
   security:
     access-token-ttl-minutes: 15
     refresh-token-ttl-hours: 720
+    cors:
+      allowed-origins: ${EAI_CORS_ALLOWED_ORIGINS:http://localhost:5173,http://127.0.0.1:5173}
+      allowed-methods: ${EAI_CORS_ALLOWED_METHODS:GET,POST,PUT,PATCH,DELETE,OPTIONS}
+      allowed-headers: ${EAI_CORS_ALLOWED_HEADERS:Authorization,Content-Type}
   email:
     credentials:
       secret: ${EAI_EMAIL_CREDENTIALS_SECRET:local-development-email-credential-secret}

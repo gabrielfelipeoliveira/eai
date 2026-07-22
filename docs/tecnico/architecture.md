@@ -415,6 +415,8 @@ Estado atual:
 - Refresh tokens sao persistidos.
 - Frontend armazena tokens no browser storage por meio de `tokenStorage`.
 - Producao exige `JWT_SECRET`.
+- Producao exige `EAI_CORS_ALLOWED_ORIGINS`; defaults locais de CORS ficam restritos aos perfis nao produtivos.
+- SpringDoc OpenAPI/Swagger fica desabilitado por padrao em producao por `SPRINGDOC_API_DOCS_ENABLED=false` e `SPRINGDOC_SWAGGER_UI_ENABLED=false`.
 
 Riscos conhecidos:
 
@@ -428,7 +430,7 @@ Perguntas para o Software Architect:
 
 - Refresh tokens devem migrar para cookies HttpOnly?
 - Qual e a politica de rotacao de chave e migracao em lote para credenciais IMAP?
-- Qual e a politica de CORS para producao?
+- Quais origens oficiais devem compor `EAI_CORS_ALLOWED_ORIGINS` em cada ambiente produtivo?
 
 ## Arquitetura de Testes
 
