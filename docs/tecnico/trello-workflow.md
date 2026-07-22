@@ -138,9 +138,11 @@ Esta regra nao tem excecao para mudancas pequenas, documentais ou de processo. T
 6. Se o card estiver livre, mova para `Em andamento`.
 7. Atribua o card ao membro responsavel pela execucao no workspace atual, pois neste ponto o card foi puxado.
 8. Crie a branch seguindo o padrao deste documento.
-9. Atualize `docs/tecnico/contexto-atual.md` com o card em andamento e a branch.
+9. Atualize `docs/tecnico/contexto-atual.md` com o card em andamento, a branch e o responsavel. Em trabalho paralelo, mantenha entradas separadas por responsavel.
 10. Adicione comentario de inicio no card.
 11. Faca commit e push dessa reserva/handoff antes de iniciar a analise tecnica ou implementacao.
+
+O lock operacional imediato e o Trello. `docs/tecnico/contexto-atual.md` e handoff versionado e pode ficar atrasado na `main` ate o PR de reserva ser mergeado. Por isso, todo agente deve consultar o Trello antes de escolher ou assumir um card, mesmo quando o handoff da `main` parecer livre.
 
 O commit inicial de reserva deve ser documental e pequeno. Exemplo:
 
