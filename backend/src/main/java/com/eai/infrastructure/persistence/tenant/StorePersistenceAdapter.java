@@ -2,6 +2,7 @@ package com.eai.infrastructure.persistence.tenant;
 
 import com.eai.application.tenant.StoreRepository;
 import com.eai.domain.tenant.Store;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -9,13 +10,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class StorePersistenceAdapter implements StoreRepository {
 
     private final SpringDataStoreRepository repository;
-
-    public StorePersistenceAdapter(SpringDataStoreRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public List<Store> findAll() {

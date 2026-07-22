@@ -4,6 +4,7 @@ import com.eai.application.security.AuthenticatedUser;
 import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadStatus;
 import com.eai.domain.user.UserRole;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,13 +14,10 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class PipelineService {
 
     private final LeadRepository leadRepository;
-
-    public PipelineService(LeadRepository leadRepository) {
-        this.leadRepository = leadRepository;
-    }
 
     @Transactional(readOnly = true)
     public Map<LeadStatus, List<Lead>> getPipeline(AuthenticatedUser authenticatedUser) {

@@ -2,6 +2,7 @@ package com.eai.infrastructure.persistence.tenant;
 
 import com.eai.application.tenant.CompanyRepository;
 import com.eai.domain.tenant.Company;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -9,13 +10,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class CompanyPersistenceAdapter implements CompanyRepository {
 
     private final SpringDataCompanyRepository repository;
-
-    public CompanyPersistenceAdapter(SpringDataCompanyRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public List<Company> findAll() {

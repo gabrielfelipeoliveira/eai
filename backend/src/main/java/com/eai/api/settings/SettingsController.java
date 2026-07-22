@@ -5,6 +5,7 @@ import com.eai.api.tenant.CompanyResponse;
 import com.eai.api.tenant.StoreResponse;
 import com.eai.application.security.AuthenticatedUser;
 import com.eai.application.settings.SettingsService;
+import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,13 +21,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/settings")
 @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+@RequiredArgsConstructor
 public class SettingsController {
 
     private final SettingsService settingsService;
-
-    public SettingsController(SettingsService settingsService) {
-        this.settingsService = settingsService;
-    }
 
     @GetMapping
     public SettingsResponse getSettings(

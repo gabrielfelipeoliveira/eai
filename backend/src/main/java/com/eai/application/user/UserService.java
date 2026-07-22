@@ -12,6 +12,7 @@ import com.eai.domain.tenant.Store;
 import com.eai.application.security.PasswordHasher;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserRole;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
@@ -26,20 +28,6 @@ public class UserService {
     private final CompanyService companyService;
     private final StoreService storeService;
     private final RefreshTokenRepository refreshTokenRepository;
-
-    public UserService(
-            UserRepository userRepository,
-            PasswordHasher passwordHasher,
-            CompanyService companyService,
-            StoreService storeService,
-            RefreshTokenRepository refreshTokenRepository
-    ) {
-        this.userRepository = userRepository;
-        this.passwordHasher = passwordHasher;
-        this.companyService = companyService;
-        this.storeService = storeService;
-        this.refreshTokenRepository = refreshTokenRepository;
-    }
 
     @Transactional(readOnly = true)
     public List<User> listUsers(AuthenticatedUser authenticatedUser) {

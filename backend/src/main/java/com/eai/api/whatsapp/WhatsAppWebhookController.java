@@ -1,6 +1,7 @@
 package com.eai.api.whatsapp;
 
 import com.eai.application.whatsapp.WhatsAppWebhookService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,13 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/webhooks/whatsapp")
+@RequiredArgsConstructor
 public class WhatsAppWebhookController {
 
     private final WhatsAppWebhookService webhookService;
-
-    public WhatsAppWebhookController(WhatsAppWebhookService webhookService) {
-        this.webhookService = webhookService;
-    }
 
     @GetMapping(produces = MediaType.TEXT_PLAIN_VALUE)
     public String verifyWebhook(

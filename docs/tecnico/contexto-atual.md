@@ -47,6 +47,12 @@ Se documentacao, Trello e codigo estiverem em conflito, nao escolha um lado sile
 - Correcao tecnica incluida: fluxo de conversas/WhatsApp passou a normalizar telefones pelo mesmo `PhoneNormalizer` de leads, preservando E.164 em PostgreSQL real.
 - Validacoes: backend `rtk mvn clean verify` passou com 106 testes unitarios no Surefire e 2 testes de integracao no Failsafe/Testcontainers.
 
+## Registro Operacional EAI-020
+
+- Status em 2026-07-22: implementado localmente na branch `chore/eai-020-lombok-seguro`.
+- Escopo entregue: services, controllers, adapters e configuracoes com construtores triviais equivalentes passaram a usar `@RequiredArgsConstructor`; dominio manteve `@Getter`; entidades JPA mantiveram `@Getter/@Setter`; DTOs `record` preservados.
+- Validacoes: backend `rtk mvn clean verify` passou com 106 testes unitarios no Surefire e 2 testes de integracao no Failsafe/Testcontainers.
+
 Toda mudanca versionada deve seguir o fluxo de card `EAI-###`, branch, commit, push, PR, comentario no Trello e fechamento rastreavel. Isso inclui documentacao, processo e ajustes pequenos. Nao commite direto na `main`.
 
 Todo novo problema, warning, vulnerabilidade, risco, melhoria ou item observado deve ser registrado no Trello como card novo ou comentario em card existente. Registrar no Trello nao significa tratar imediatamente; significa preservar historico para decisao posterior.

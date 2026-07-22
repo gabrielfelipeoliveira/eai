@@ -2,6 +2,7 @@ package com.eai.infrastructure.persistence.auth;
 
 import com.eai.application.auth.RefreshTokenRecord;
 import com.eai.application.auth.RefreshTokenRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -9,13 +10,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class RefreshTokenPersistenceAdapter implements RefreshTokenRepository {
 
     private final SpringDataRefreshTokenRepository repository;
-
-    public RefreshTokenPersistenceAdapter(SpringDataRefreshTokenRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public RefreshTokenRecord save(RefreshTokenRecord refreshToken) {

@@ -8,6 +8,7 @@ import com.eai.application.security.AuthenticatedUser;
 import com.eai.application.whatsapp.WhatsAppMediaSenderService;
 import com.eai.application.whatsapp.WhatsAppTextSenderService;
 import com.eai.domain.conversation.ConversationMessageStatus;
+import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -34,24 +35,13 @@ import java.time.Instant;
 @RestController
 @RequestMapping("/api/conversations")
 @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER')")
+@RequiredArgsConstructor
 public class ConversationController {
 
     private final ConversationService conversationService;
     private final WhatsAppTextSenderService whatsAppTextSenderService;
     private final WhatsAppMediaSenderService whatsAppMediaSenderService;
     private final ConversationMediaService conversationMediaService;
-
-    public ConversationController(
-            ConversationService conversationService,
-            WhatsAppTextSenderService whatsAppTextSenderService,
-            WhatsAppMediaSenderService whatsAppMediaSenderService,
-            ConversationMediaService conversationMediaService
-    ) {
-        this.conversationService = conversationService;
-        this.whatsAppTextSenderService = whatsAppTextSenderService;
-        this.whatsAppMediaSenderService = whatsAppMediaSenderService;
-        this.conversationMediaService = conversationMediaService;
-    }
 
     @GetMapping
     public List<ConversationSummaryResponse> listConversations(

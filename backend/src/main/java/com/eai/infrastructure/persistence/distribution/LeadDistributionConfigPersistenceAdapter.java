@@ -2,19 +2,17 @@ package com.eai.infrastructure.persistence.distribution;
 
 import com.eai.application.distribution.LeadDistributionConfigRepository;
 import com.eai.domain.distribution.LeadDistributionConfig;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class LeadDistributionConfigPersistenceAdapter implements LeadDistributionConfigRepository {
 
     private final SpringDataLeadDistributionConfigRepository repository;
-
-    public LeadDistributionConfigPersistenceAdapter(SpringDataLeadDistributionConfigRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public Optional<LeadDistributionConfig> findByCompanyIdAndStoreId(UUID companyId, UUID storeId) {

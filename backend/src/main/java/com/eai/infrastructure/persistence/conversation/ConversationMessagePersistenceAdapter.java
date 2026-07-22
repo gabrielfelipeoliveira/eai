@@ -4,6 +4,7 @@ import com.eai.application.conversation.ConversationMessageRepository;
 import com.eai.domain.conversation.ConversationMessage;
 import com.eai.domain.conversation.ConversationMessageDirection;
 import com.eai.domain.conversation.ConversationMessageStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -12,13 +13,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class ConversationMessagePersistenceAdapter implements ConversationMessageRepository {
 
     private final SpringDataConversationMessageRepository repository;
-
-    public ConversationMessagePersistenceAdapter(SpringDataConversationMessageRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public boolean existsByExternalMessageId(String externalMessageId) {

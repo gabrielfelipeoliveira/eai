@@ -4,6 +4,7 @@ import com.eai.application.message.CreateMessageTemplateCommand;
 import com.eai.application.message.MessageTemplateService;
 import com.eai.application.message.UpdateMessageTemplateCommand;
 import com.eai.application.security.AuthenticatedUser;
+import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,13 +23,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/templates")
 @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SELLER')")
+@RequiredArgsConstructor
 public class MessageTemplateController {
 
     private final MessageTemplateService templateService;
-
-    public MessageTemplateController(MessageTemplateService templateService) {
-        this.templateService = templateService;
-    }
 
     @GetMapping
     public List<MessageTemplateResponse> listTemplates(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {

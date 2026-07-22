@@ -3,6 +3,7 @@ package com.eai.api.dashboard;
 import com.eai.application.dashboard.DashboardAnalyticsService;
 import com.eai.application.dashboard.DashboardFilters;
 import com.eai.application.security.AuthenticatedUser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,13 +21,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/dashboard")
 @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SELLER')")
+@RequiredArgsConstructor
 public class DashboardController {
 
     private final DashboardAnalyticsService analyticsService;
-
-    public DashboardController(DashboardAnalyticsService analyticsService) {
-        this.analyticsService = analyticsService;
-    }
 
     @GetMapping("/summary")
     public DashboardSummaryResponse summary(

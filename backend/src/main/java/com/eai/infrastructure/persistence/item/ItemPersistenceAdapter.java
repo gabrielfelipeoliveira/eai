@@ -3,21 +3,18 @@ package com.eai.infrastructure.persistence.item;
 import com.eai.application.item.ItemRepository;
 import com.eai.domain.item.Item;
 import com.eai.domain.item.Vehicle;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class ItemPersistenceAdapter implements ItemRepository {
 
     private final SpringDataItemRepository itemRepository;
     private final SpringDataVehicleRepository vehicleRepository;
-
-    public ItemPersistenceAdapter(SpringDataItemRepository itemRepository, SpringDataVehicleRepository vehicleRepository) {
-        this.itemRepository = itemRepository;
-        this.vehicleRepository = vehicleRepository;
-    }
 
     @Override
     public ItemWithVehicle save(Item item, Vehicle vehicle) {

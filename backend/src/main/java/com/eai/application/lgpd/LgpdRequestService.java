@@ -11,12 +11,14 @@ import com.eai.domain.lgpd.LgpdRequest;
 import com.eai.domain.lgpd.LgpdRequestAction;
 import com.eai.domain.tenant.Store;
 import com.eai.domain.user.UserRole;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class LgpdRequestService {
 
     private final LgpdRequestRepository requestRepository;
@@ -24,20 +26,6 @@ public class LgpdRequestService {
     private final CompanyService companyService;
     private final StoreService storeService;
     private final LeadRepository leadRepository;
-
-    public LgpdRequestService(
-            LgpdRequestRepository requestRepository,
-            LgpdRequestActionRepository actionRepository,
-            CompanyService companyService,
-            StoreService storeService,
-            LeadRepository leadRepository
-    ) {
-        this.requestRepository = requestRepository;
-        this.actionRepository = actionRepository;
-        this.companyService = companyService;
-        this.storeService = storeService;
-        this.leadRepository = leadRepository;
-    }
 
     @Transactional
     public LgpdRequest create(CreateLgpdRequestCommand command, AuthenticatedUser authenticatedUser) {

@@ -7,6 +7,7 @@ import com.eai.application.lead.PageResult;
 import com.eai.domain.item.Item;
 import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadStatus;
+import lombok.RequiredArgsConstructor;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
@@ -24,6 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class LeadPersistenceAdapter implements LeadRepository {
 
     private static final List<LeadStatus> PENDING_STATUSES = List.of(LeadStatus.NEW, LeadStatus.AVAILABLE);
@@ -51,11 +53,6 @@ public class LeadPersistenceAdapter implements LeadRepository {
 
     private final SpringDataLeadRepository repository;
     private final ItemRepository itemRepository;
-
-    public LeadPersistenceAdapter(SpringDataLeadRepository repository, ItemRepository itemRepository) {
-        this.repository = repository;
-        this.itemRepository = itemRepository;
-    }
 
     @Override
     public PageResult<Lead> search(LeadSearchCriteria criteria, int page, int size) {

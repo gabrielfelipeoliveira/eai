@@ -2,16 +2,14 @@ package com.eai.infrastructure.persistence.conversation;
 
 import com.eai.application.conversation.ConversationAccessAuditRepository;
 import com.eai.domain.conversation.ConversationAccessAudit;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class ConversationAccessAuditPersistenceAdapter implements ConversationAccessAuditRepository {
 
     private final SpringDataConversationAccessAuditRepository repository;
-
-    public ConversationAccessAuditPersistenceAdapter(SpringDataConversationAccessAuditRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public ConversationAccessAudit save(ConversationAccessAudit audit) {

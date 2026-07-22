@@ -4,6 +4,7 @@ import com.eai.application.lgpd.LgpdRequestPageResult;
 import com.eai.application.lgpd.LgpdRequestRepository;
 import com.eai.application.lgpd.LgpdRequestSearchCriteria;
 import com.eai.domain.lgpd.LgpdRequest;
+import lombok.RequiredArgsConstructor;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -15,13 +16,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class LgpdRequestPersistenceAdapter implements LgpdRequestRepository {
 
     private final SpringDataLgpdRequestRepository repository;
-
-    public LgpdRequestPersistenceAdapter(SpringDataLgpdRequestRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public LgpdRequestPageResult<LgpdRequest> search(LgpdRequestSearchCriteria criteria, int page, int size) {

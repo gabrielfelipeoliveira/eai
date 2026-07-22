@@ -2,16 +2,14 @@ package com.eai.infrastructure.persistence.email;
 
 import com.eai.application.email.EmailImportHistoryRepository;
 import com.eai.domain.email.EmailImportHistory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class EmailImportHistoryPersistenceAdapter implements EmailImportHistoryRepository {
 
     private final SpringDataEmailImportHistoryRepository repository;
-
-    public EmailImportHistoryPersistenceAdapter(SpringDataEmailImportHistoryRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public EmailImportHistory save(EmailImportHistory history) {

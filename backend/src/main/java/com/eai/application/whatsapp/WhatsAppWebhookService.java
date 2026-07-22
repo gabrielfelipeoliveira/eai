@@ -9,6 +9,7 @@ import com.eai.application.media.StoreMediaCommand;
 import com.eai.application.media.StoredMedia;
 import com.eai.domain.conversation.ConversationMessageStatus;
 import com.eai.domain.conversation.ConversationMessageType;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class WhatsAppWebhookService {
 
     private static final Logger logger = LoggerFactory.getLogger(WhatsAppWebhookService.class);
@@ -30,20 +32,6 @@ public class WhatsAppWebhookService {
     private final WhatsAppMediaClient mediaClient;
     private final MediaStoragePort mediaStorage;
     private final ObjectMapper objectMapper;
-
-    public WhatsAppWebhookService(
-            WhatsAppChannelSettings settings,
-            ConversationService conversationService,
-            WhatsAppMediaClient mediaClient,
-            MediaStoragePort mediaStorage,
-            ObjectMapper objectMapper
-    ) {
-        this.settings = settings;
-        this.conversationService = conversationService;
-        this.mediaClient = mediaClient;
-        this.mediaStorage = mediaStorage;
-        this.objectMapper = objectMapper;
-    }
 
     public String verifyWebhook(String mode, String verifyToken, String challenge) {
         if (!settings.webhookConfigured()) {

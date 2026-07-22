@@ -4,6 +4,7 @@ import com.eai.application.security.AuthenticatedUser;
 import com.eai.application.tenant.CreateStoreCommand;
 import com.eai.application.tenant.StoreService;
 import com.eai.application.tenant.UpdateStoreCommand;
+import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,13 +23,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/stores")
 @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SELLER')")
+@RequiredArgsConstructor
 public class StoreController {
 
     private final StoreService storeService;
-
-    public StoreController(StoreService storeService) {
-        this.storeService = storeService;
-    }
 
     @GetMapping
     public List<StoreResponse> listStores(

@@ -22,6 +22,7 @@ import com.eai.domain.distribution.LeadSlaPolicy;
 import com.eai.domain.lead.Lead;
 import com.eai.domain.lead.LeadSource;
 import com.eai.domain.lead.LeadStatus;
+import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,6 +45,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/leads")
 @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STORE_MANAGER', 'SELLER')")
+@RequiredArgsConstructor
 public class LeadController {
 
     private final LeadService leadService;
@@ -51,20 +53,6 @@ public class LeadController {
     private final WhatsAppTemplateSenderService whatsAppTemplateSenderService;
     private final LeadDistributionService distributionService;
     private final ConversationService conversationService;
-
-    public LeadController(
-            LeadService leadService,
-            MessageTemplateService templateService,
-            WhatsAppTemplateSenderService whatsAppTemplateSenderService,
-            LeadDistributionService distributionService,
-            ConversationService conversationService
-    ) {
-        this.leadService = leadService;
-        this.templateService = templateService;
-        this.whatsAppTemplateSenderService = whatsAppTemplateSenderService;
-        this.distributionService = distributionService;
-        this.conversationService = conversationService;
-    }
 
     @PostMapping
     public LeadResponse createLead(@Valid @RequestBody LeadRequest request, @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {

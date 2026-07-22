@@ -5,6 +5,7 @@ import com.eai.application.common.ConflictException;
 import com.eai.application.common.ForbiddenException;
 import com.eai.application.common.NotFoundException;
 import com.eai.application.common.UnauthorizedException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.context.MessageSource;
@@ -18,13 +19,10 @@ import java.time.Instant;
 import java.util.Locale;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class ApiExceptionHandler {
 
     private final MessageSource messageSource;
-
-    public ApiExceptionHandler(MessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
 
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<ErrorResponse> handleApplicationException(ApplicationException exception) {

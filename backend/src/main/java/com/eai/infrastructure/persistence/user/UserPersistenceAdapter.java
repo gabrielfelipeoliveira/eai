@@ -3,6 +3,7 @@ package com.eai.infrastructure.persistence.user;
 import com.eai.application.user.UserRepository;
 import com.eai.domain.user.User;
 import com.eai.domain.user.UserStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -10,13 +11,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class UserPersistenceAdapter implements UserRepository {
 
     private final SpringDataUserRepository repository;
-
-    public UserPersistenceAdapter(SpringDataUserRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public List<User> findAll() {
