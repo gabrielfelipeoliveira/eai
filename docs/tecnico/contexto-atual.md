@@ -110,7 +110,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-014`: implementado em 2026-07-22. Implementar fluxo LGPD basico manual por ADMIN.
 - `EAI-015`: concluido. Padronizar validacao CI com backend clean verify e frontend build.
 - `EAI-016`: concluido em 2026-07-22 no PR `#21`. Adicionar testes de integracao com Postgres via Testcontainers. UX dispensado: ajuste tecnico sem impacto visual.
-- `EAI-017`: backlog. Adicionar testes unitarios e de componentes no frontend.
+- `EAI-017`: em andamento com Lucas Reiter. Adicionar testes unitarios e de componentes no frontend.
 - `EAI-018`: backlog. Criar testes E2E dos fluxos criticos do MVP.
 - `EAI-019`: concluido em 2026-07-22 no PR `#23`. Adicionar validacao de contrato OpenAPI. UX dispensado: ajuste tecnico sem impacto visual.
 - `EAI-020`: concluido em 2026-07-22 no PR `#22`. Padronizar uso seguro de Lombok no backend. UX dispensado: ajuste tecnico sem impacto visual.
@@ -129,7 +129,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-031`: concluido em 2026-07-22 no PR `#35`. Limitar e validar upload/download de midias WhatsApp. UX dispensado: hardening backend sem impacto visual.
 - `EAI-033`: concluido em 2026-07-22 no PR `#36`. Endurecer implementacao de JWT. UX dispensado: hardening backend sem impacto visual.
 - `EAI-036`: concluido em 2026-07-22 no PR `#37`. Implementar keyring e recriptografia de credenciais IMAP. UX dispensado: hardening backend sem impacto visual.
-- `EAI-030`: em andamento com Lucas Reiter. Reduzir exposicao de tokens no frontend e fluxo de refresh. UX dispensado: hardening de autenticacao sem mudanca visual planejada.
+- `EAI-030`: concluido em 2026-07-22 no PR `#38`. Reduzir exposicao de tokens no frontend e fluxo de refresh. UX dispensado: hardening de autenticacao sem mudanca visual planejada.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -137,15 +137,22 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-030` - reduzir exposicao de tokens no frontend.
+- Lucas Reiter: `EAI-017` - adicionar testes unitarios e de componentes no frontend.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: chore/eai-030-token-exposure-hardening
+Lucas Reiter: test/eai-017-frontend-tests
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
+
+Reserva operacional EAI-017 em 2026-07-22:
+
+- Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
+- Branch `test/eai-017-frontend-tests`.
+- Escopo: configurar stack de testes frontend, adicionar script de teste e cobrir fluxo de login/autenticacao, autorizacao por role e uma tela critica com cobertura inicial.
+- UX dispensado: ajuste de qualidade automatizada sem mudanca visual planejada.
 
 Reserva operacional EAI-030 em 2026-07-22:
 
