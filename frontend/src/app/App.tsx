@@ -12,7 +12,7 @@ export function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <AuthProvider>
-          <RouterProvider router={router} />
+          <RouterProvider router={router} future={{ v7_startTransition: true }} />
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

@@ -80,20 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-042` em andamento no Trello.
+- Lucas Reiter: `EAI-043` em andamento no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: docs/eai-042-clean-current-context
+Lucas Reiter: chore/eai-043-react-router-future-flag
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Finalizar `EAI-042`, abrir PR, validar CI, fazer Code Review, mergear e concluir o card no Trello.
-- Depois do merge do `EAI-042`, puxar `EAI-043` ou revalidar se nao ha cards em `Em andamento`, `Aguardando Code Review` ou `Aguardando Teste`.
+- Finalizar `EAI-043`, abrir PR, validar CI, fazer Code Review, mergear e concluir o card no Trello.
+- Depois do merge do `EAI-043`, revalidar se nao ha cards em `Em andamento`, `Aguardando Code Review` ou `Aguardando Teste`.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -140,8 +140,8 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-039`: concluido no PR `#45`. Separar `AuthProvider` e `useAuth` para remover warning Fast Refresh.
 - `EAI-040`: concluido no PR `#46`. Corrigir selects MUI indefinidos nos E2E de leads.
 - `EAI-041`: concluido no PR `#47`. Reduzir chunk principal do build frontend.
-- `EAI-042`: em andamento. Limpar historico operacional truncado do contexto atual.
-- `EAI-043`: backlog. Remover warning React Router future flag nos E2E.
+- `EAI-042`: concluido no PR `#48`. Limpar historico operacional truncado do contexto atual.
+- `EAI-043`: em andamento. Remover warning React Router future flag nos E2E.
 
 ## Historico Operacional Recente
 
@@ -180,9 +180,19 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 ### EAI-042
 
 - Branch: `docs/eai-042-clean-current-context`.
-- Status: em andamento em 2026-07-22.
-- Escopo: substituir blocos historicos truncados/pouco legiveis deste arquivo por estado operacional normalizado.
+- PR: `https://github.com/gabrielfelipeoliveira/eai/pull/48`.
+- Entrega: blocos historicos truncados/pouco legiveis substituidos por estado operacional normalizado.
+- Validacao: CI remoto da `main` passou.
 - UX: dispensado, ajuste documental.
+
+### EAI-043
+
+- Branch: `chore/eai-043-react-router-future-flag`.
+- Status: em andamento em 2026-07-22.
+- Escopo: ativar `future.v7_startTransition` no React Router para remover warning nos E2E.
+- Implementacao: `RouterProvider` recebe `future={{ v7_startTransition: true }}` e `createBrowserRouter` recebe a mesma flag via cast isolado por lacuna de tipagem da versao atual.
+- Validacao: `npm run test:e2e` passou sem warning React Router future flag.
+- UX: dispensado, ajuste tecnico de compatibilidade sem mudanca visual.
 
 ## Validacao Padrao
 
@@ -229,7 +239,7 @@ Avisos conhecidos nao bloqueantes:
 - Backend: Mockito usa self-attaching inline mock maker; JDK futuro pode exigir agente configurado.
 - Backend: compilacao ainda pode reportar notas de uso deprecated/unchecked em alguns pontos.
 - Frontend E2E: ambiente pode reportar `NO_COLOR` ignorado por `FORCE_COLOR`.
-- Frontend E2E: React Router ainda reporta future flag `v7_startTransition`; registrado no `EAI-043`.
+- Frontend E2E: warning React Router future flag `v7_startTransition` removido no `EAI-043`.
 
 ## Lacunas Ja Registradas Em Cards
 
