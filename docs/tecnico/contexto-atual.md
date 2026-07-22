@@ -121,6 +121,7 @@ Cards de desenvolvimento conhecidos:
 - `EAI-025`: concluido em 2026-07-22 no PR `#27`. Atualizar Vite/esbuild por vulnerabilidades npm audit.
 - `EAI-026`: concluido em 2026-07-22 no PR `#24`. Formalizar checklist de Code Review e registro de debitos por card. UX dispensado: ajuste de processo/documentacao sem impacto visual.
 - `EAI-027`: concluido em 2026-07-22 no PR `#28`. Registrar comportamentos de qualidade e otimizacao do agente. UX dispensado: ajuste de processo/documentacao sem impacto visual.
+- `EAI-029`: em andamento com Lucas Reiter. Substituir criptografia Base64 de credenciais IMAP. UX dispensado: hardening backend sem impacto visual esperado.
 
 Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda esta atual.
 
@@ -128,15 +129,21 @@ Antes de iniciar desenvolvimento, confirme no Trello se o status do card ainda e
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card com implementacao ativa.
+- Lucas Reiter: `EAI-029` - substituir criptografia Base64 de credenciais IMAP.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch de implementacao ativa.
+Lucas Reiter: chore/eai-029-imap-credential-encryption
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
+
+Reserva operacional EAI-029 em 2026-07-22:
+
+- Card movido para `Em andamento` e atribuido a `Lucas Reiter`.
+- Branch `chore/eai-029-imap-credential-encryption`.
+- Escopo: substituir uso de Base64 como protecao de credenciais IMAP por criptografia reversivel adequada no backend, com migracao/compatibilidade e testes.
 
 Reserva operacional EAI-027 em 2026-07-22:
 
