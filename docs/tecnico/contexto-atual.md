@@ -145,6 +145,14 @@ Reserva operacional EAI-029 em 2026-07-22:
 - Branch `chore/eai-029-imap-credential-encryption`.
 - Escopo: substituir uso de Base64 como protecao de credenciais IMAP por criptografia reversivel adequada no backend, com migracao/compatibilidade e testes.
 
+Implementacao EAI-029 em 2026-07-22:
+
+- Substituida a implementacao Base64 de desenvolvimento por AES/GCM com payload versionado `v1:<iv>:<ciphertext>`.
+- Mantida compatibilidade de leitura para credenciais IMAP legadas gravadas como Base64 simples.
+- Adicionada configuracao `eai.email.credentials.secret` via `EAI_EMAIL_CREDENTIALS_SECRET`; producao exige a variavel sem fallback local.
+- Atualizada documentacao tecnica de importador de e-mail e arquitetura para refletir o hardening.
+- Validacao backend: Docker `mvn clean verify` passou com 117 testes unitarios no Surefire e 2 testes de integracao no Failsafe/Testcontainers.
+
 Reserva operacional EAI-027 em 2026-07-22:
 
 - Card criado em `Em andamento` e atribuido a `Lucas Reiter`.

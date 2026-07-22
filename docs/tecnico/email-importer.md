@@ -95,7 +95,11 @@ Excluir uma conta de e-mail preserva o historico de importacao; nesse caso o ide
 
 Senhas nunca sao retornadas pela API e nao sao armazenadas como texto puro.
 
-A implementacao atual usa a interface `EncryptionService` com uma implementacao de desenvolvimento baseada em Base64. Isso e apenas uma obfuscacao temporaria para desenvolvimento local e deve ser substituido em producao por criptografia real baseada em chave gerenciada, como KMS, Vault ou segredo de aplicacao armazenado fora do banco.
+A implementacao atual usa a interface `EncryptionService` com AES/GCM e payload versionado `v1`. A chave efetiva e derivada de `eai.email.credentials.secret`, configurada por `EAI_EMAIL_CREDENTIALS_SECRET`; o valor padrao existe apenas para desenvolvimento local e nao deve ser usado em producao.
+
+Valores antigos gravados como Base64 simples continuam sendo lidos para compatibilidade. Ao atualizar a senha de uma conta IMAP, o novo valor passa a ser salvo no formato criptografado versionado.
+
+Para producao, o segredo deve vir de um gerenciador externo ou variavel protegida fora do banco. Rotacao automatica de chave e migracao em lote de credenciais legadas ainda devem ser tratadas em card especifico quando houver definicao operacional.
 
 ## Limitacoes
 
