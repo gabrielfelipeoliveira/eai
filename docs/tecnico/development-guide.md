@@ -38,7 +38,7 @@ Executar o frontend:
 
 ```bash
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
 
@@ -55,11 +55,13 @@ Executar testes E2E do frontend:
 
 ```bash
 cd frontend
-npx playwright install chromium
+npm run setup:e2e
 npm run test:e2e
 ```
 
 A suite E2E sobe o Vite local automaticamente e usa API mockada nos testes para validar os fluxos criticos no navegador sem exigir backend ou banco locais.
+
+Os scripts do frontend devem funcionar em Windows, macOS e Linux. Evite comandos especificos de shell Unix ou PowerShell em `package.json`; quando precisar tratar variaveis de ambiente, arquivos ou encadear comportamento, prefira scripts Node em `frontend/scripts/*.mjs`.
 
 Credenciais seed de desenvolvimento:
 

@@ -168,7 +168,7 @@ O perfil `dev` carrega apenas seed tecnico: empresa padrao, loja padrao e usuari
 
 ```bash
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
 
@@ -199,6 +199,7 @@ Frontend:
 ```bash
 cd frontend
 npm ci
+npm run setup:e2e
 npm run build
 ```
 
