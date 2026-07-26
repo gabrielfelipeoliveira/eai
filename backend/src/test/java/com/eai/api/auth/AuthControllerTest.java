@@ -127,7 +127,7 @@ class AuthControllerTest {
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/auth/me")
-                        .header("Authorization", "Bearer " + avaliadorLogin.get("accessToken").asText()))
+                        .header("Authorization", "Bearer " + avaliadorLogin.get("accessToken").asString()))
                 .andExpect(status().isUnauthorized());
 
         mockMvc.perform(post("/api/auth/refresh")
@@ -148,7 +148,7 @@ class AuthControllerTest {
     }
 
     private String login(String email) throws Exception {
-        return loginTokens(email).get("accessToken").asText();
+        return loginTokens(email).get("accessToken").asString();
     }
 
     private Cookie loginRefreshCookie(String email) throws Exception {

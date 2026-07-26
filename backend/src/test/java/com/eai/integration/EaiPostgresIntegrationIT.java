@@ -115,7 +115,7 @@ class EaiPostgresIntegrationIT extends AbstractPostgresIntegrationTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return objectMapper.readTree(response).get("accessToken").asText();
+        return objectMapper.readTree(response).get("accessToken").asString();
     }
 
     private String createLead(String token) throws Exception {
@@ -131,13 +131,13 @@ class EaiPostgresIntegrationIT extends AbstractPostgresIntegrationTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return objectMapper.readTree(response).get("id").asText();
+        return objectMapper.readTree(response).get("id").asString();
     }
 
     private String findConversationId(JsonNode conversations, String leadId) {
         for (JsonNode conversation : conversations) {
-            if (leadId.equals(conversation.path("leadId").asText())) {
-                return conversation.path("id").asText();
+            if (leadId.equals(conversation.path("leadId").asString())) {
+                return conversation.path("id").asString();
             }
         }
         return null;

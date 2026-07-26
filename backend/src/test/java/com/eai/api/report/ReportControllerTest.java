@@ -128,7 +128,7 @@ class ReportControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return objectMapper.readTree(response).get("accessToken").asText();
+        return objectMapper.readTree(response).get("accessToken").asString();
     }
 
     private String createLead(String token, String customerName, String customerPhone, String source, String saleValue) throws Exception {
@@ -154,6 +154,6 @@ class ReportControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return objectMapper.readTree(response).get("id").asText();
+        return objectMapper.readTree(response).get("id").asString();
     }
 }

@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello.
+- Lucas Reiter: `EAI-050` em andamento para zerar warnings backend e validar vulnerabilidades.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida.
+Lucas Reiter: `chore/eai-050-zero-backend-warnings`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Consultar o Trello para selecionar o proximo card antes de abrir nova branch.
+- Implementar e validar a limpeza de warnings no card `EAI-050`.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -147,6 +147,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-047`: concluido no PR `#58`. Ampliar cobertura unitária de fluxos críticos.
 - `EAI-048`: concluido no PR `#59`. Fechar contexto operacional do `EAI-047`.
 - `EAI-049`: concluido no PR `#60`. Adicionar SCA Maven e coverage backend.
+- `EAI-050`: em andamento. Zerar warnings backend e validar vulnerabilidades.
 
 ## Historico Operacional Recente
 

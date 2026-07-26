@@ -389,7 +389,7 @@ class LeadControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        String noteId = objectMapper.readTree(response).get("id").asText();
+        String noteId = objectMapper.readTree(response).get("id").asString();
 
         mockMvc.perform(put("/api/leads/{id}/notes/{noteId}", leadId, noteId)
                         .header("Authorization", "Bearer " + token)
@@ -434,7 +434,7 @@ class LeadControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        String firstTagId = objectMapper.readTree(firstTagResponse).get("id").asText();
+        String firstTagId = objectMapper.readTree(firstTagResponse).get("id").asString();
         String secondTagResponse = mockMvc.perform(post("/api/leads/tags/catalog")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -447,7 +447,7 @@ class LeadControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        String secondTagId = objectMapper.readTree(secondTagResponse).get("id").asText();
+        String secondTagId = objectMapper.readTree(secondTagResponse).get("id").asString();
 
         mockMvc.perform(post("/api/leads/{id}/tags", leadId)
                         .header("Authorization", "Bearer " + token)
@@ -492,7 +492,7 @@ class LeadControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return objectMapper.readTree(response).get("accessToken").asText();
+        return objectMapper.readTree(response).get("accessToken").asString();
     }
 
     private String createManualLead(String token) throws Exception {
@@ -524,7 +524,7 @@ class LeadControllerTest {
                 .getResponse()
                 .getContentAsString();
         JsonNode node = objectMapper.readTree(response);
-        return node.get("id").asText();
+        return node.get("id").asString();
     }
 
     private String createFollowUp(String token, String leadId) throws Exception {
@@ -545,6 +545,6 @@ class LeadControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return objectMapper.readTree(response).get("id").asText();
+        return objectMapper.readTree(response).get("id").asString();
     }
 }

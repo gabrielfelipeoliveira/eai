@@ -25,6 +25,7 @@
         <jacoco.minimum.instruction.coverage>0.70</jacoco.minimum.instruction.coverage>
         <jackson2.version>2.21.5</jackson2.version>
         <jackson3.version>3.1.5</jackson3.version>
+        <h2.version>2.3.232</h2.version>
         <postgresql.version>42.7.12</postgresql.version>
         <springdoc.version>3.0.3</springdoc.version>
         <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
@@ -190,6 +191,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
+                    <argLine>@{argLine} -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar -Xshare:off</argLine>
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
@@ -204,6 +206,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${maven-failsafe-plugin.version}</version>
                 <configuration>
+                    <argLine>@{argLine} -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar -Xshare:off</argLine>
                     <includes>
                         <include>**/*IT.java</include>
                         <include>**/*IntegrationTest.java</include>

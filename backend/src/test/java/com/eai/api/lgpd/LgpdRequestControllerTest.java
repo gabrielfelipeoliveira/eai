@@ -60,7 +60,7 @@ class LgpdRequestControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        String requestId = objectMapper.readTree(createResponse).get("id").asText();
+        String requestId = objectMapper.readTree(createResponse).get("id").asString();
 
         mockMvc.perform(get("/api/lgpd-requests")
                         .header("Authorization", "Bearer " + token)
@@ -140,7 +140,7 @@ class LgpdRequestControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return objectMapper.readTree(response).get("accessToken").asText();
+        return objectMapper.readTree(response).get("accessToken").asString();
     }
 
     private void createUser(String token, String name, String email, String role) throws Exception {

@@ -31,10 +31,10 @@ jobs:
 
       - name: Generate backend SBOM
         working-directory: backend
-        run: mvn org.cyclonedx:cyclonedx-maven-plugin:2.9.2:makeAggregateBom -DoutputFormat=json
+        run: mvn org.cyclonedx:cyclonedx-maven-plugin:2.9.2:makeAggregateBom -DoutputFormat=xml
 
       - name: Audit backend SBOM
-        run: docker run --rm -v "$PWD:/src" ghcr.io/google/osv-scanner:v2.3.8 scan source -L /src/backend/target/bom.json
+        run: docker run --rm -v "$PWD:/src" ghcr.io/google/osv-scanner:v2.3.8 scan source -L /src/backend/target/bom.xml
 
       - name: Cache backend SCA database
         if: env.NVD_API_KEY_AVAILABLE == 'true'
