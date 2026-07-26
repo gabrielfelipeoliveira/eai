@@ -229,7 +229,7 @@ mvn org.owasp:dependency-check-maven:check
 
 Frontend:
 
-Nota `EAI-049`: o SCA Maven do backend usa OWASP Dependency-Check com `NVD_API_KEY` no CI para evitar rate limit da NVD. Vulnerabilidades OSV encontradas em `jackson-databind` 2.x/3.x e `org.postgresql:postgresql` foram tratadas por version overrides no `pom.xml`. Coverage minimo inicial fica em 70%; 90% e alvo de maturidade por ratchet.
+Nota `EAI-049`: o CI gera SBOM Maven com CycloneDX e executa OSV como gate SCA sempre ativo. O OWASP Dependency-Check Maven fica configurado e roda no CI quando `NVD_API_KEY` estiver disponivel, evitando rate limit da NVD. Vulnerabilidades OSV encontradas em `jackson-databind` 2.x/3.x e `org.postgresql:postgresql` foram tratadas por BOMs/override no `pom.xml`. Coverage minimo inicial fica em 70%; 90% e alvo de maturidade por ratchet.
 
 ```bash
 npm audit --audit-level=moderate

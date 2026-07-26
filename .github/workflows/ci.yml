@@ -27,7 +27,15 @@ jobs:
         working-directory: backend
         run: mvn clean verify
 
+      - name: Generate backend SBOM
+        working-directory: backend
+        run: mvn org.cyclonedx:cyclonedx-maven-plugin:2.9.2:makeAggregateBom -DoutputFormat=json
+
+      - name: Audit backend SBOM
+        run: docker run --rm -v "$PWD:/src" ghcr.io/google/osv-scanner:v2.3.8 scan source -L /src/backend/target/bom.json
+
       - name: Cache backend SCA database
+        if: ${{ secrets.NVD_API_KEY != '' }}
         uses: actions/cache@v4
         with:
           path: ~/.m2/dependency-check-data
@@ -35,16 +43,8 @@ jobs:
           restore-keys: |
             dependency-check-${{ runner.os }}-
 
-      - name: Check backend SCA configuration
-        env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-        run: |
-          if [ -z "$NVD_API_KEY" ]; then
-            echo "NVD_API_KEY secret is required for OWASP Dependency-Check to avoid NVD API rate limits."
-            exit 1
-          fi
-
       - name: Audit backend dependencies
+        if: ${{ secrets.NVD_API_KEY != '' }}
         working-directory: backend
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
