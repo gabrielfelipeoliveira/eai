@@ -1,6 +1,6 @@
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { RouterProvider } from 'react-router-dom';
+import { RouterProvider } from 'react-router';
 import { queryClient } from './queryClient';
 import { router } from './router';
 import { AuthProvider } from '../hooks/AuthProvider';
@@ -12,7 +12,7 @@ export function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <AuthProvider>
-          <RouterProvider router={router} future={{ v7_startTransition: true }} />
+          <RouterProvider router={router} />
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

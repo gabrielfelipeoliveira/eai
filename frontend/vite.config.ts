@@ -16,7 +16,7 @@ export default defineConfig({
           if (id.indexOf('@mui/material') !== -1 || id.indexOf('@emotion/') !== -1) {
             return 'vendor-mui';
           }
-          if (id.indexOf('react-dom') !== -1 || id.indexOf('react-router-dom') !== -1 || id.indexOf('/react/') !== -1) {
+          if (id.indexOf('react-dom') !== -1 || id.indexOf('react-router') !== -1 || id.indexOf('/react/') !== -1) {
             return 'vendor-react';
           }
           if (id.indexOf('@tanstack/react-query') !== -1) {
@@ -38,6 +38,11 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    environmentOptions: {
+      jsdom: {
+        url: 'http://localhost',
+      },
+    },
     exclude: ['e2e/**', 'node_modules/**', 'dist/**'],
     globals: true,
     setupFiles: './src/test/setup.ts',

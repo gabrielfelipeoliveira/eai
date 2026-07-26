@@ -1,7 +1,7 @@
 import { Box, CircularProgress } from '@mui/material';
 import { lazy, Suspense } from 'react';
 import type { ReactNode } from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { MainLayout } from '../layouts/MainLayout';
 
@@ -39,12 +39,6 @@ function page(element: ReactNode) {
     </Suspense>
   );
 }
-
-const routerFuture = {
-  future: {
-    v7_startTransition: true,
-  },
-} as unknown as Parameters<typeof createBrowserRouter>[1];
 
 export const router = createBrowserRouter([
   {
@@ -168,4 +162,4 @@ export const router = createBrowserRouter([
       },
     ],
   },
-], routerFuture);
+]);
