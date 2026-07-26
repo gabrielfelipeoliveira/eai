@@ -50,14 +50,14 @@ class OpenApiContractTest {
     void openApiContractIsPublicValidAndCoversApiEndpoints() throws Exception {
         JsonNode openApi = loadOpenApi();
 
-        assertTrue(openApi.path("openapi").asText().startsWith("3."), "OpenAPI deve usar versao 3.x");
-        assertEquals("EAI API", openApi.path("info").path("title").asText());
-        assertEquals("v1", openApi.path("info").path("version").asText());
+        assertTrue(openApi.path("openapi").asString().startsWith("3."), "OpenAPI deve usar versao 3.x");
+        assertEquals("EAI API", openApi.path("info").path("title").asString());
+        assertEquals("v1", openApi.path("info").path("version").asString());
 
         JsonNode bearerAuth = openApi.path("components").path("securitySchemes").path("bearerAuth");
-        assertEquals("http", bearerAuth.path("type").asText());
-        assertEquals("bearer", bearerAuth.path("scheme").asText());
-        assertEquals("JWT", bearerAuth.path("bearerFormat").asText());
+        assertEquals("http", bearerAuth.path("type").asString());
+        assertEquals("bearer", bearerAuth.path("scheme").asString());
+        assertEquals("JWT", bearerAuth.path("bearerFormat").asString());
 
         assertOpenApiDocumentsAllApiEndpoints(openApi);
         assertEveryOperationHasResponse(openApi);
@@ -158,7 +158,7 @@ class OpenApiContractTest {
         Set<String> duplicatedOperationIds = new TreeSet<>();
 
         forEachOperation(openApi, (endpoint, operation) -> {
-            String operationId = operation.path("operationId").asText();
+            String operationId = operation.path("operationId").asString();
             assertFalse(operationId.isBlank(), endpoint + " deve declarar operationId");
             if (!operationIds.add(operationId)) {
                 duplicatedOperationIds.add(operationId);

@@ -70,10 +70,12 @@ class EmailLeadImporterTest {
         when(leadExtractor.extract(firstMessage)).thenReturn(firstParsed);
         when(leadExtractor.extract(duplicateMessage)).thenReturn(duplicateParsed);
         when(duplicateLeadChecker.findPossibleDuplicate(STORE_ID, "(11) 99999-8888"))
-                .thenReturn(Optional.empty(), Optional.of(previousLead));
-        when(leadRepository.save(any(Lead.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(historyRepository.save(any(LeadHistory.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(importHistoryRepository.save(any(EmailImportHistory.class))).thenAnswer(invocation -> invocation.getArgument(0));
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(previousLead));
+        when(leadRepository.save(any(Lead.class))).thenAnswer(invocation -> invocation.getArgument(0, Lead.class));
+        when(historyRepository.save(any(LeadHistory.class))).thenAnswer(invocation -> invocation.getArgument(0, LeadHistory.class));
+        when(importHistoryRepository.save(any(EmailImportHistory.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0, EmailImportHistory.class));
 
         EmailImportResult result = importer.importAccount(account, USER_ID);
 
@@ -115,7 +117,8 @@ class EmailLeadImporterTest {
         when(encryptionService.decrypt("encrypted-password")).thenReturn("plain-password");
         when(emailReader.readMessages(account, "plain-password", account.getLastReadAt()))
                 .thenThrow(new RuntimeException("IMAP indisponivel"));
-        when(importHistoryRepository.save(any(EmailImportHistory.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(importHistoryRepository.save(any(EmailImportHistory.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0, EmailImportHistory.class));
 
         EmailImportResult result = importer.importAccount(account, USER_ID);
 

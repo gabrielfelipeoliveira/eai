@@ -365,7 +365,7 @@ public class WhatsAppWebhookService {
         if (node == null || node.isMissingNode() || node.isNull()) {
             return null;
         }
-        String value = node.asText();
+        String value = node.asString();
         return value == null || value.isBlank() ? null : value;
     }
 }

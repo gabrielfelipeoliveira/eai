@@ -45,7 +45,7 @@ class NotificationControllerTest {
     @Test
     void userManagesOnlyOwnNotifications() throws Exception {
         String adminToken = login("admin@eai.com", "admin123");
-        UUID adminId = UUID.fromString(me(adminToken).get("id").asText());
+        UUID adminId = UUID.fromString(me(adminToken).get("id").asString());
         UUID sellerId = createUser(adminToken, "Vendedor Notificacao", "vendedor.notificacao@eai.com", "SELLER");
 
         Notification adminNotification = notificationRepository.save(Notification.create(
@@ -113,7 +113,7 @@ class NotificationControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return objectMapper.readTree(response).get("accessToken").asText();
+        return objectMapper.readTree(response).get("accessToken").asString();
     }
 
     private UUID createUser(String token, String name, String email, String role) throws Exception {
@@ -136,6 +136,6 @@ class NotificationControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return UUID.fromString(objectMapper.readTree(response).get("id").asText());
+        return UUID.fromString(objectMapper.readTree(response).get("id").asString());
     }
 }

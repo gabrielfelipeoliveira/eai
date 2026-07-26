@@ -153,7 +153,7 @@ class SettingsControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return objectMapper.readTree(response).get("accessToken").asText();
+        return objectMapper.readTree(response).get("accessToken").asString();
     }
 
     private void createUser(String token, String name, String email, String role) throws Exception {

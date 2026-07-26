@@ -258,7 +258,7 @@ public class WhatsAppCloudTemplateClient implements WhatsAppTemplateClient, What
         try {
             JsonNode messages = objectMapper.readTree(responseBody).path("messages");
             if (messages.isArray() && !messages.isEmpty()) {
-                String id = messages.get(0).path("id").asText();
+                String id = messages.get(0).path("id").asString();
                 return id == null || id.isBlank() ? null : id;
             }
         } catch (Exception ignored) {
@@ -271,7 +271,7 @@ public class WhatsAppCloudTemplateClient implements WhatsAppTemplateClient, What
         if (node == null || node.isMissingNode() || node.isNull()) {
             return null;
         }
-        String value = node.asText();
+        String value = node.asString();
         return value == null || value.isBlank() ? null : value;
     }
 }

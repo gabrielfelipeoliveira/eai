@@ -133,8 +133,8 @@ class WhatsAppWebhookControllerTest {
         JsonNode conversations = objectMapper.readTree(conversationsResponse);
         String conversationId = null;
         for (JsonNode conversation : conversations) {
-            if ("00000000-0000-0000-0000-000000000501".equals(conversation.path("leadId").asText())) {
-                conversationId = conversation.get("id").asText();
+            if ("00000000-0000-0000-0000-000000000501".equals(conversation.path("leadId").asString())) {
+                conversationId = conversation.get("id").asString();
                 break;
             }
         }
@@ -165,7 +165,7 @@ class WhatsAppWebhookControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return objectMapper.readTree(response).get("accessToken").asText();
+        return objectMapper.readTree(response).get("accessToken").asString();
     }
 
     private String signatureFor(String payload) throws Exception {
