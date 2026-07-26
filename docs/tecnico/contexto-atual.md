@@ -1,6 +1,6 @@
 # Contexto Atual Do Projeto
 
-Ultima atualizacao: 2026-07-22.
+Ultima atualizacao: 2026-07-26.
 
 Este arquivo e o handoff operacional do projeto EAI. Ele existe para que qualquer desenvolvedor ou agente de IA consiga retomar o trabalho sem depender do historico de uma conversa especifica.
 
@@ -80,20 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello.
+- Lucas Reiter: `EAI-045` em andamento para corrigir vulnerabilidades do `npm audit` no frontend.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida.
+Lucas Reiter: `chore/eai-045-frontend-audit-deps`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Revalidar Trello e GitHub antes de puxar o proximo card.
-- Nao ha card ativo conhecido para Lucas Reiter ou Gabriel Felipe Ferreira de Oliveira.
+- Corrigir vulnerabilidades reportadas por `npm audit --audit-level=moderate` no frontend no card `EAI-045`.
+- Revalidar Trello e GitHub antes de puxar qualquer card adicional.
 
 ## Cards De Desenvolvimento Conhecidos
 
