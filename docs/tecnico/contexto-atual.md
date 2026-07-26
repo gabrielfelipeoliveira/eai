@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello.
+- Lucas Reiter: `EAI-049` em andamento para adicionar SCA Maven e coverage backend.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida.
+Lucas Reiter: `chore/eai-049-backend-sca-coverage`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Consultar o Trello para selecionar o proximo card antes de abrir nova branch.
+- Implementar e validar gates de qualidade backend no card `EAI-049`.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -146,6 +146,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-046`: concluido no PR `#56`. Fechar contexto operacional do `EAI-045`.
 - `EAI-047`: concluido no PR `#58`. Ampliar cobertura unitária de fluxos críticos.
 - `EAI-048`: concluido no PR `#59`. Fechar contexto operacional do `EAI-047`.
+- `EAI-049`: em andamento. Adicionar SCA Maven e coverage backend.
 
 ## Historico Operacional Recente
 
@@ -221,11 +222,14 @@ Backend:
 
 ```bash
 mvn clean verify
+mvn org.owasp:dependency-check-maven:check
 ```
 
-`mvn verify` executa unitarios `*Test` pelo Surefire e integracoes `*IT`/`*IntegrationTest` pelo Failsafe. A suite de integracao backend usa Testcontainers e exige Docker disponivel.
+`mvn verify` executa unitarios `*Test` pelo Surefire, integracoes `*IT`/`*IntegrationTest` pelo Failsafe e gate de coverage JaCoCo com minimo global inicial de 70% de instrucoes. A suite de integracao backend usa Testcontainers e exige Docker disponivel. O Dependency-Check executa SCA das dependencias Maven e falha para CVSS 7.0 ou superior. O alvo de maturidade para coverage e 90%, a ser perseguido por incremento/ratchet para evitar bloquear entregas enquanto a cobertura global atual estiver abaixo disso.
 
 Frontend:
+
+Nota `EAI-049`: o CI gera SBOM Maven com CycloneDX e executa OSV como gate SCA sempre ativo. O OWASP Dependency-Check Maven fica configurado e roda no CI quando `NVD_API_KEY` estiver disponivel, evitando rate limit da NVD. Vulnerabilidades OSV encontradas em `jackson-databind` 2.x/3.x e `org.postgresql:postgresql` foram tratadas por BOMs/override no `pom.xml`. Coverage minimo inicial fica em 70%; 90% e alvo de maturidade por ratchet.
 
 ```bash
 npm audit --audit-level=moderate
@@ -242,7 +246,7 @@ docker run --rm -v "$PWD/backend:/workspace" -v eai-maven-cache:/root/.m2 -w /wo
 docker run --rm -v "$PWD/frontend:/workspace" -w /workspace node:20-alpine npm run build
 ```
 
-Use `mvn clean verify` como validacao padrao do backend. `mvn test` sem `clean` pode reaproveitar artefatos antigos em `target/classes` e gerar falso erro de migration.
+Use `mvn clean verify` como validacao padrao do backend e rode `mvn org.owasp:dependency-check-maven:check` para SCA Maven. `mvn test` sem `clean` pode reaproveitar artefatos antigos em `target/classes` e gerar falso erro de migration.
 
 ## Estado Tecnico Validado
 

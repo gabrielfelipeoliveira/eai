@@ -12,6 +12,8 @@ jobs:
   backend:
     name: Backend
     runs-on: ubuntu-latest
+    env:
+      NVD_API_KEY_AVAILABLE: ${{ secrets.NVD_API_KEY != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -26,6 +28,29 @@ jobs:
       - name: Verify backend
         working-directory: backend
         run: mvn clean verify
+
+      - name: Generate backend SBOM
+        working-directory: backend
+        run: mvn org.cyclonedx:cyclonedx-maven-plugin:2.9.2:makeAggregateBom -DoutputFormat=json
+
+      - name: Audit backend SBOM
+        run: docker run --rm -v "$PWD:/src" ghcr.io/google/osv-scanner:v2.3.8 scan source -L /src/backend/target/bom.json
+
+      - name: Cache backend SCA database
+        if: env.NVD_API_KEY_AVAILABLE == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/dependency-check-data
+          key: dependency-check-${{ runner.os }}-${{ hashFiles('backend/pom.xml') }}
+          restore-keys: |
+            dependency-check-${{ runner.os }}-
+
+      - name: Audit backend dependencies
+        if: env.NVD_API_KEY_AVAILABLE == 'true'
+        working-directory: backend
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: mvn org.owasp:dependency-check-maven:check
 
   frontend:
     name: Frontend
