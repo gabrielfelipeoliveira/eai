@@ -1,6 +1,9 @@
 package com.eai.application.user;
 
 import com.eai.application.auth.RefreshTokenRepository;
+import com.eai.application.common.ConflictException;
+import com.eai.application.common.ForbiddenException;
+import com.eai.application.security.AuthenticatedUser;
 import com.eai.application.security.PasswordHasher;
 import com.eai.application.tenant.CompanyService;
 import com.eai.application.tenant.StoreService;
@@ -13,6 +16,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,6 +32,7 @@ class UserServiceTest {
 
     private static final UUID COMPANY_ID = UUID.fromString("00000000-0000-0000-0000-000000000101");
     private static final UUID STORE_ID = UUID.fromString("00000000-0000-0000-0000-000000000201");
+    private static final UUID OTHER_STORE_ID = UUID.fromString("00000000-0000-0000-0000-000000000202");
 
     private final UserRepository userRepository = mock(UserRepository.class);
     private final PasswordHasher passwordHasher = mock(PasswordHasher.class);
@@ -90,11 +96,81 @@ class UserServiceTest {
         assertThat(user.getStoreId()).isEqualTo(STORE_ID);
     }
 
+    @DisplayName("Lista todos os usuarios para administrador")
+    @Test
+    void listsAllUsersForAdmin() {
+        User user = user(UserRole.ADMIN);
+        when(userRepository.findAll()).thenReturn(List.of(user));
+
+        List<User> users = service.listUsers(authenticatedUser(UserRole.ADMIN, null, null));
+
+        assertThat(users).containsExactly(user);
+    }
+
+    @DisplayName("Lista usuarios da loja para gerente vinculado a loja")
+    @Test
+    void listsStoreUsersForStoreManager() {
+        User user = user(UserRole.SELLER);
+        when(userRepository.findByStoreId(STORE_ID)).thenReturn(List.of(user));
+
+        List<User> users = service.listUsers(authenticatedUser(UserRole.MANAGER, COMPANY_ID, STORE_ID));
+
+        assertThat(users).containsExactly(user);
+    }
+
+    @DisplayName("Bloqueia acesso de gerente a usuario de outra loja")
+    @Test
+    void blocksManagerAccessToUserFromAnotherStore() {
+        User user = user(UserRole.SELLER);
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        assertThatThrownBy(() -> service.getUser(user.getId(), authenticatedUser(UserRole.MANAGER, COMPANY_ID, OTHER_STORE_ID)))
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessageContaining("Access denied");
+    }
+
+    @DisplayName("Atualiza usuario normalizando email e senha quando informada")
+    @Test
+    void updatesUserNormalizingEmailAndPasswordWhenProvided() {
+        User user = user(UserRole.SELLER);
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userRepository.existsByEmailAndIdNot("novo@eai.com", user.getId())).thenReturn(false);
+        arrangeActiveCompany();
+        when(storeService.findRequired(STORE_ID)).thenReturn(store(TenantStatus.ACTIVE));
+        when(passwordHasher.hash("nova-senha")).thenReturn("new-hash");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0, User.class));
+
+        User updatedUser = service.updateUser(user.getId(), new UpdateUserCommand(
+                "Novo Nome",
+                " Novo@EAI.COM ",
+                "nova-senha",
+                "11999999999",
+                "Consultor",
+                COMPANY_ID,
+                STORE_ID,
+                Set.of(UserRole.SELLER)
+        ));
+
+        assertThat(updatedUser.getName()).isEqualTo("Novo Nome");
+        assertThat(updatedUser.getEmail()).isEqualTo("novo@eai.com");
+        assertThat(updatedUser.getPasswordHash()).isEqualTo("new-hash");
+    }
+
+    @DisplayName("Rejeita criacao com email ja cadastrado")
+    @Test
+    void rejectsCreationWithDuplicatedEmail() {
+        when(userRepository.existsByEmail("seller@eai.com")).thenReturn(true);
+
+        assertThatThrownBy(() -> service.createUser(command(UserRole.SELLER, COMPANY_ID, STORE_ID)))
+                .isInstanceOf(ConflictException.class)
+                .hasMessageContaining("Email already registered");
+    }
+
     @DisplayName("Desativacao de usuario marca inativo e revoga sessoes")
     @Test
     void deactivateUserMarksUserInactiveAndRevokesSessions() {
         User user = user(UserRole.SELLER);
-        when(userRepository.findById(user.getId())).thenReturn(java.util.Optional.of(user));
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         User deactivatedUser = service.deactivateUser(user.getId());
@@ -129,5 +205,9 @@ class UserServiceTest {
     private User user(UserRole role) {
         Instant now = Instant.parse("2026-07-18T12:00:00Z");
         return new User(UUID.randomUUID(), "User", "user@eai.com", "hash", null, null, COMPANY_ID, STORE_ID, com.eai.domain.user.UserStatus.ACTIVE, Set.of(role), now, now);
+    }
+
+    private AuthenticatedUser authenticatedUser(UserRole role, UUID companyId, UUID storeId) {
+        return new AuthenticatedUser(UUID.randomUUID(), role.name().toLowerCase() + "@eai.com", companyId, storeId, Set.of(role));
     }
 }
