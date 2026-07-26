@@ -80,20 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-046` em andamento para fechar o contexto operacional apos merge do `EAI-045`.
+- Lucas Reiter: nenhum card ativo conhecido no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `docs/eai-046-close-eai-045-context`.
+Lucas Reiter: sem branch ativa conhecida.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Fechar contexto operacional do `EAI-045` no card `EAI-046`.
-- Revalidar Trello e GitHub antes de puxar qualquer card adicional.
+- Revalidar Trello e GitHub antes de puxar o proximo card.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -144,7 +143,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-043`: concluido no PR `#49`. Remover warning React Router future flag nos E2E.
 - `EAI-044`: concluido no PR `#51`. Remover warning ambiental `NO_COLOR`/`FORCE_COLOR` dos E2E.
 - `EAI-045`: concluido no PR `#55`. Atualizar dependencias frontend por vulnerabilidades `npm audit`.
-- `EAI-046`: em andamento. Fechar contexto operacional do `EAI-045`.
+- `EAI-046`: concluido no PR `#56`. Fechar contexto operacional do `EAI-045`.
 
 ## Historico Operacional Recente
 
