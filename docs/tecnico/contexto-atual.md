@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-049` em andamento para adicionar SCA Maven e coverage backend.
+- Lucas Reiter: nenhum card ativo conhecido no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `chore/eai-049-backend-sca-coverage`.
+Lucas Reiter: sem branch ativa conhecida.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Implementar e validar gates de qualidade backend no card `EAI-049`.
+- Consultar o Trello para selecionar o proximo card antes de abrir nova branch.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -146,7 +146,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-046`: concluido no PR `#56`. Fechar contexto operacional do `EAI-045`.
 - `EAI-047`: concluido no PR `#58`. Ampliar cobertura unitária de fluxos críticos.
 - `EAI-048`: concluido no PR `#59`. Fechar contexto operacional do `EAI-047`.
-- `EAI-049`: em andamento. Adicionar SCA Maven e coverage backend.
+- `EAI-049`: concluido no PR `#60`. Adicionar SCA Maven e coverage backend.
 
 ## Historico Operacional Recente
 
