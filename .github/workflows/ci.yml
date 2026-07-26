@@ -27,6 +27,29 @@ jobs:
         working-directory: backend
         run: mvn clean verify
 
+      - name: Cache backend SCA database
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/dependency-check-data
+          key: dependency-check-${{ runner.os }}-${{ hashFiles('backend/pom.xml') }}
+          restore-keys: |
+            dependency-check-${{ runner.os }}-
+
+      - name: Check backend SCA configuration
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: |
+          if [ -z "$NVD_API_KEY" ]; then
+            echo "NVD_API_KEY secret is required for OWASP Dependency-Check to avoid NVD API rate limits."
+            exit 1
+          fi
+
+      - name: Audit backend dependencies
+        working-directory: backend
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: mvn org.owasp:dependency-check-maven:check
+
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
