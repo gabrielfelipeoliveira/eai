@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello.
+- Lucas Reiter: `EAI-052` em andamento para sequenciar testes unitarios rumo a 90% coverage.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida.
+Lucas Reiter: `test/eai-052-coverage-backend-ratchet-2`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Consultar o Trello para selecionar o proximo card antes de abrir nova branch.
+- Abrir PR e fazer Code Review do card `EAI-052`; validacoes locais passaram, exceto OWASP Dependency-Check bloqueado por rate limit NVD 429 sem `NVD_API_KEY`.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -149,6 +149,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-049`: concluido no PR `#60`. Adicionar SCA Maven e coverage backend.
 - `EAI-050`: concluido no PR `#62`. Zerar warnings backend e validar vulnerabilidades.
 - `EAI-051`: concluido no PR `#64`. Aumentar coverage backend por ratchet.
+- `EAI-052`: em andamento. Sequenciar testes unitarios rumo a 90% coverage.
 
 ## Historico Operacional Recente
 
@@ -218,6 +219,15 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Vulnerabilidades: `npm audit --audit-level=moderate` reportou 0 vulnerabilidades; backend nao possui gate SCA/Mend/OWASP Maven configurado.
 - Gates futuros: avaliar card para SCA de dependencias Maven e politica minima de coverage.
 
+### EAI-052
+
+- Branch: `test/eai-052-coverage-backend-ratchet-2`.
+- Entrega: adicionados testes unitarios para `WhatsAppCloudTemplateClient`, `FollowUpTaskService` e cenarios complementares de `LeadDistributionService`; construtor do cliente WhatsApp passou a aceitar `graphBaseUrl` injetavel para testes sem rede externa.
+- Coverage: backend subiu de 76,18% para 80,10% instruction coverage; gate JaCoCo elevado de 76% para 80%. Para 90%, ainda faltam aproximadamente 2.765 instrucoes cobertas.
+- Validacao backend: `mvn clean verify` via Docker/Testcontainers passou com 220 unitarios e 2 integracoes.
+- Validacao frontend: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build` e `npm run test:e2e` passaram.
+- SCA: CycloneDX SBOM XML gerado; OSV Scanner reportou `No issues found`; OWASP Dependency-Check Maven ficou bloqueado por rate limit externo da NVD (`429`) sem `NVD_API_KEY`, antes de concluir a analise.
+
 ## Validacao Padrao
 
 Backend:
@@ -231,7 +241,7 @@ mvn org.owasp:dependency-check-maven:check
 
 Frontend:
 
-Nota `EAI-049`: o CI gera SBOM Maven com CycloneDX e executa OSV como gate SCA sempre ativo. O OWASP Dependency-Check Maven fica configurado e roda no CI quando `NVD_API_KEY` estiver disponivel, evitando rate limit da NVD. Vulnerabilidades OSV encontradas em `jackson-databind` 2.x/3.x e `org.postgresql:postgresql` foram tratadas por BOMs/override no `pom.xml`. Coverage minimo inicial ficou em 70%; `EAI-051` elevou o ratchet para 76%. 90% segue como alvo de maturidade incremental.
+Nota `EAI-049`: o CI gera SBOM Maven com CycloneDX e executa OSV como gate SCA sempre ativo. O OWASP Dependency-Check Maven fica configurado e roda no CI quando `NVD_API_KEY` estiver disponivel, evitando rate limit da NVD. Vulnerabilidades OSV encontradas em `jackson-databind` 2.x/3.x e `org.postgresql:postgresql` foram tratadas por BOMs/override no `pom.xml`. Coverage minimo inicial ficou em 70%; `EAI-051` elevou o ratchet para 76%; `EAI-052` elevou para 80% com coverage consolidado de 80,10% instruction. 90% segue como alvo de maturidade incremental.
 
 ```bash
 npm audit --audit-level=moderate

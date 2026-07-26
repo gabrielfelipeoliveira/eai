@@ -22,7 +22,7 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <dependency-check-maven.version>12.2.2</dependency-check-maven.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
-        <jacoco.minimum.instruction.coverage>0.76</jacoco.minimum.instruction.coverage>
+        <jacoco.minimum.instruction.coverage>0.80</jacoco.minimum.instruction.coverage>
         <jackson2.version>2.21.5</jackson2.version>
         <jackson3.version>3.1.5</jackson3.version>
         <h2.version>2.3.232</h2.version>
