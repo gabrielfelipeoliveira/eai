@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-051` em andamento para aumentar coverage backend por ratchet.
+- Lucas Reiter: nenhum card ativo conhecido no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `test/eai-051-coverage-backend-ratchet`.
+Lucas Reiter: sem branch ativa conhecida.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Implementar e validar aumento de coverage backend no card `EAI-051`.
+- Consultar o Trello para selecionar o proximo card antes de abrir nova branch.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -148,7 +148,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-048`: concluido no PR `#59`. Fechar contexto operacional do `EAI-047`.
 - `EAI-049`: concluido no PR `#60`. Adicionar SCA Maven e coverage backend.
 - `EAI-050`: concluido no PR `#62`. Zerar warnings backend e validar vulnerabilidades.
-- `EAI-051`: em andamento. Aumentar coverage backend por ratchet.
+- `EAI-051`: concluido no PR `#64`. Aumentar coverage backend por ratchet.
 
 ## Historico Operacional Recente
 
