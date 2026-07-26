@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-047` em andamento para ampliar cobertura unitária de fluxos críticos.
+- Lucas Reiter: nenhum card ativo conhecido no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `test/eai-047-critical-unit-coverage`.
+Lucas Reiter: sem branch ativa conhecida.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Ampliar cobertura unitária de frontend e backend no card `EAI-047`.
+- Consultar o Trello para selecionar o proximo card antes de abrir nova branch.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -144,7 +144,8 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-044`: concluido no PR `#51`. Remover warning ambiental `NO_COLOR`/`FORCE_COLOR` dos E2E.
 - `EAI-045`: concluido no PR `#55`. Atualizar dependencias frontend por vulnerabilidades `npm audit`.
 - `EAI-046`: concluido no PR `#56`. Fechar contexto operacional do `EAI-045`.
-- `EAI-047`: em andamento. Ampliar cobertura unitária de fluxos críticos.
+- `EAI-047`: concluido no PR `#58`. Ampliar cobertura unitária de fluxos críticos.
+- `EAI-048`: concluido no PR `#59`. Fechar contexto operacional do `EAI-047`.
 
 ## Historico Operacional Recente
 
@@ -205,6 +206,15 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Validacao: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build` e `npm run test:e2e` passaram; E2E local sem warning `NO_COLOR`/`FORCE_COLOR`; CI remoto do PR passou.
 - UX: dispensado, ajuste tecnico de ambiente/teste sem mudanca visual.
 
+### EAI-047
+
+- Branch: `test/eai-047-critical-unit-coverage`.
+- PR: `https://github.com/gabrielfelipeoliveira/eai/pull/58`.
+- Entrega: cobertura unitária adicionada para helpers de exibicao de conversas no frontend e para `LeadDistributionService` no backend.
+- Validacao: frontend `npm run lint`, `npm test`, `npm run build`, `npm audit --audit-level=moderate` e `npm run test:e2e` passaram; backend `mvn clean verify` passou via Docker/Testcontainers.
+- Vulnerabilidades: `npm audit --audit-level=moderate` reportou 0 vulnerabilidades; backend nao possui gate SCA/Mend/OWASP Maven configurado.
+- Gates futuros: avaliar card para SCA de dependencias Maven e politica minima de coverage.
+
 ## Validacao Padrao
 
 Backend:
@@ -236,13 +246,13 @@ Use `mvn clean verify` como validacao padrao do backend. `mvn test` sem `clean` 
 
 ## Estado Tecnico Validado
 
-Ultima validacao completa em 2026-07-22:
+Ultima validacao completa em 2026-07-26:
 
-- `main` apos PR `#47`.
+- `main` apos PR `#58`.
 - GitHub Actions `CI`: Backend e Frontend passaram.
-- Backend remoto: `mvn clean verify` passou.
-- Frontend remoto: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build` e `npm run test:e2e` passaram.
-- Frontend local no EAI-041: `npm run build` passou sem warning de chunk acima de 500 kB.
+- Backend local: `mvn clean verify` passou via Docker/Testcontainers com 163 unitarios e 2 integracoes.
+- Frontend local: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build` e `npm run test:e2e` passaram.
+- Vulnerabilidades: `npm audit --audit-level=moderate` reportou 0 vulnerabilidades no frontend; backend nao possui gate SCA/Mend/OWASP Maven configurado.
 
 Avisos conhecidos nao bloqueantes:
 
