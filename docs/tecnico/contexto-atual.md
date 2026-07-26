@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello.
+- Lucas Reiter: `EAI-047` em andamento para ampliar cobertura unitária de fluxos críticos.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida.
+Lucas Reiter: `test/eai-047-critical-unit-coverage`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Revalidar Trello e GitHub antes de puxar o proximo card.
+- Ampliar cobertura unitária de frontend e backend no card `EAI-047`.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -144,6 +144,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-044`: concluido no PR `#51`. Remover warning ambiental `NO_COLOR`/`FORCE_COLOR` dos E2E.
 - `EAI-045`: concluido no PR `#55`. Atualizar dependencias frontend por vulnerabilidades `npm audit`.
 - `EAI-046`: concluido no PR `#56`. Fechar contexto operacional do `EAI-045`.
+- `EAI-047`: em andamento. Ampliar cobertura unitária de fluxos críticos.
 
 ## Historico Operacional Recente
 
