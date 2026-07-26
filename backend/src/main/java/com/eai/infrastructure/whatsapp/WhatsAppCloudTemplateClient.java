@@ -11,6 +11,7 @@ import com.eai.application.whatsapp.WhatsAppOutboundMediaType;
 import com.eai.application.whatsapp.WhatsAppTextClient;
 import com.eai.application.whatsapp.WhatsAppTextProviderResult;
 import com.eai.infrastructure.config.WhatsAppCloudApiProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -35,13 +36,20 @@ public class WhatsAppCloudTemplateClient implements WhatsAppTemplateClient, What
     private final WhatsAppCloudApiProperties properties;
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
+    private final String graphBaseUrl;
 
+    @Autowired
     public WhatsAppCloudTemplateClient(WhatsAppCloudApiProperties properties, ObjectMapper objectMapper) {
+        this(properties, objectMapper, HttpClient.newBuilder()
+                .connectTimeout(REQUEST_TIMEOUT)
+                .build(), GRAPH_BASE_URL);
+    }
+
+    WhatsAppCloudTemplateClient(WhatsAppCloudApiProperties properties, ObjectMapper objectMapper, HttpClient httpClient, String graphBaseUrl) {
         this.properties = properties;
         this.objectMapper = objectMapper;
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(REQUEST_TIMEOUT)
-                .build();
+        this.httpClient = httpClient;
+        this.graphBaseUrl = graphBaseUrl;
     }
 
     @Override
@@ -161,15 +169,15 @@ public class WhatsAppCloudTemplateClient implements WhatsAppTemplateClient, What
     }
 
     private URI endpoint() {
-        return URI.create(GRAPH_BASE_URL + "/" + graphApiVersion() + "/" + properties.phoneNumberId() + "/messages");
+        return URI.create(graphBaseUrl + "/" + graphApiVersion() + "/" + properties.phoneNumberId() + "/messages");
     }
 
     private URI mediaEndpoint(String mediaId) {
-        return URI.create(GRAPH_BASE_URL + "/" + graphApiVersion() + "/" + mediaId);
+        return URI.create(graphBaseUrl + "/" + graphApiVersion() + "/" + mediaId);
     }
 
     private URI mediaUploadEndpoint() {
-        return URI.create(GRAPH_BASE_URL + "/" + graphApiVersion() + "/" + properties.phoneNumberId() + "/media");
+        return URI.create(graphBaseUrl + "/" + graphApiVersion() + "/" + properties.phoneNumberId() + "/media");
     }
 
     private String graphApiVersion() {
