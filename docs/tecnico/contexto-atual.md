@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello.
+- Lucas Reiter: `EAI-053` em andamento para elevar coverage backend a 90%.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida.
+Lucas Reiter: `test/eai-053-coverage-backend-90`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Consultar o Trello para selecionar o proximo card antes de abrir nova branch.
+- Abrir PR do card `EAI-053`, revisar diff contra `main` e concluir fluxo de Code Review/Trello.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -150,6 +150,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-050`: concluido no PR `#62`. Zerar warnings backend e validar vulnerabilidades.
 - `EAI-051`: concluido no PR `#64`. Aumentar coverage backend por ratchet.
 - `EAI-052`: concluido no PR `#66`. Sequenciar testes unitarios rumo a 90% coverage.
+- `EAI-053`: em andamento. Elevar coverage backend para 90%.
 
 ## Historico Operacional Recente
 
@@ -228,6 +229,15 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Validacao frontend: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build` e `npm run test:e2e` passaram.
 - SCA: CycloneDX SBOM XML gerado; OSV Scanner reportou `No issues found`; OWASP Dependency-Check Maven ficou bloqueado por rate limit externo da NVD (`429`) sem `NVD_API_KEY`, antes de concluir a analise.
 
+### EAI-053
+
+- Branch: `test/eai-053-coverage-backend-90`.
+- Entrega: adicionados testes unitarios e de contrato para controllers, services, dominio, adapters de persistencia e integracoes de email/configuracao; gate JaCoCo de instruction coverage elevado de 80% para 90%.
+- Coverage: backend atingiu 90,01% instruction coverage e 90,58% line coverage.
+- Validacao backend: `mvn clean verify` via Docker/Testcontainers passou com 339 unitarios, 2 integracoes e gate JaCoCo de 90%.
+- Validacao frontend: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build` e `npm run test:e2e` passaram.
+- SCA: CycloneDX SBOM XML gerado; OSV Scanner reportou `No issues found`; OWASP Dependency-Check Maven ficou bloqueado por rate limit externo da NVD (`429`) sem `NVD_API_KEY`, antes de concluir a analise.
+
 ## Validacao Padrao
 
 Backend:
@@ -237,11 +247,11 @@ mvn clean verify
 mvn org.owasp:dependency-check-maven:check
 ```
 
-`mvn verify` executa unitarios `*Test` pelo Surefire, integracoes `*IT`/`*IntegrationTest` pelo Failsafe e gate de coverage JaCoCo com minimo global inicial de 70% de instrucoes. A suite de integracao backend usa Testcontainers e exige Docker disponivel. O Dependency-Check executa SCA das dependencias Maven e falha para CVSS 7.0 ou superior. O alvo de maturidade para coverage e 90%, a ser perseguido por incremento/ratchet para evitar bloquear entregas enquanto a cobertura global atual estiver abaixo disso.
+`mvn verify` executa unitarios `*Test` pelo Surefire, integracoes `*IT`/`*IntegrationTest` pelo Failsafe e gate de coverage JaCoCo com minimo global de 90% de instrucoes. A suite de integracao backend usa Testcontainers e exige Docker disponivel. O Dependency-Check executa SCA das dependencias Maven e falha para CVSS 7.0 ou superior quando a base NVD esta acessivel.
 
 Frontend:
 
-Nota `EAI-049`: o CI gera SBOM Maven com CycloneDX e executa OSV como gate SCA sempre ativo. O OWASP Dependency-Check Maven fica configurado e roda no CI quando `NVD_API_KEY` estiver disponivel, evitando rate limit da NVD. Vulnerabilidades OSV encontradas em `jackson-databind` 2.x/3.x e `org.postgresql:postgresql` foram tratadas por BOMs/override no `pom.xml`. Coverage minimo inicial ficou em 70%; `EAI-051` elevou o ratchet para 76%; `EAI-052` elevou para 80% com coverage consolidado de 80,10% instruction. 90% segue como alvo de maturidade incremental.
+Nota `EAI-049`: o CI gera SBOM Maven com CycloneDX e executa OSV como gate SCA sempre ativo. O OWASP Dependency-Check Maven fica configurado e roda no CI quando `NVD_API_KEY` estiver disponivel, evitando rate limit da NVD. Vulnerabilidades OSV encontradas em `jackson-databind` 2.x/3.x e `org.postgresql:postgresql` foram tratadas por BOMs/override no `pom.xml`. Coverage minimo inicial ficou em 70%; `EAI-051` elevou o ratchet para 76%; `EAI-052` elevou para 80%; `EAI-053` elevou o gate para 90% com coverage consolidado de 90,01% instruction.
 
 ```bash
 npm audit --audit-level=moderate
@@ -264,11 +274,11 @@ Use `mvn clean verify` como validacao padrao do backend e rode `mvn org.owasp:de
 
 Ultima validacao completa em 2026-07-26:
 
-- `main` apos PR `#58`.
-- GitHub Actions `CI`: Backend e Frontend passaram.
-- Backend local: `mvn clean verify` passou via Docker/Testcontainers com 163 unitarios e 2 integracoes.
+- Branch `test/eai-053-coverage-backend-90`.
+- GitHub Actions `CI`: pendente ate abertura do PR.
+- Backend local: `mvn clean verify` passou via Docker/Testcontainers com 339 unitarios, 2 integracoes e gate JaCoCo de 90%.
 - Frontend local: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build` e `npm run test:e2e` passaram.
-- Vulnerabilidades: `npm audit --audit-level=moderate` reportou 0 vulnerabilidades no frontend; backend nao possui gate SCA/Mend/OWASP Maven configurado.
+- Vulnerabilidades: `npm audit --audit-level=moderate` reportou 0 vulnerabilidades no frontend; OSV Scanner sobre SBOM Maven reportou `No issues found`; OWASP Dependency-Check Maven ficou bloqueado por rate limit externo da NVD (`429`) sem `NVD_API_KEY`.
 
 Avisos conhecidos nao bloqueantes:
 
