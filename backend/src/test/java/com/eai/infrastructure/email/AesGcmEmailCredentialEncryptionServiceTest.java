@@ -103,6 +103,31 @@ class AesGcmEmailCredentialEncryptionServiceTest {
                 .hasMessage("password required");
     }
 
+    @DisplayName("Rejeita credencial IMAP vazia ao descriptografar e ao avaliar recriptografia")
+    @Test
+    void rejectsBlankEncryptedCredentialWhenDecryptingOrCheckingReencryption() {
+        assertThatThrownBy(() -> service.decrypt(" "))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("encrypted password required");
+        assertThatThrownBy(() -> service.requiresReencryption(null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("encrypted password required");
+    }
+
+    @DisplayName("Rejeita formatos invalidos de credencial IMAP versionada e legada")
+    @Test
+    void rejectsInvalidCredentialFormats() {
+        assertThatThrownBy(() -> service.decrypt("v1:sem-separador"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Invalid encrypted email credential format");
+        assertThatThrownBy(() -> service.decrypt("nao-base64"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Invalid legacy email credential format");
+        assertThatThrownBy(() -> service.decrypt("v1:@@@:@@@"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Could not decrypt email credential");
+    }
+
     @DisplayName("Rejeita inicializacao sem segredo de criptografia IMAP")
     @Test
     void rejectsBlankEncryptionSecret() {
