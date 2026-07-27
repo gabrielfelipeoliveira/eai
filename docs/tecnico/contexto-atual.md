@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-053` em andamento para elevar coverage backend a 90%.
+- Lucas Reiter: nenhum card ativo conhecido no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `test/eai-053-coverage-backend-90`.
+Lucas Reiter: sem branch ativa conhecida.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Abrir PR do card `EAI-053`, revisar diff contra `main` e concluir fluxo de Code Review/Trello.
+- Consultar o Trello para selecionar o proximo card antes de abrir nova branch.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -150,7 +150,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-050`: concluido no PR `#62`. Zerar warnings backend e validar vulnerabilidades.
 - `EAI-051`: concluido no PR `#64`. Aumentar coverage backend por ratchet.
 - `EAI-052`: concluido no PR `#66`. Sequenciar testes unitarios rumo a 90% coverage.
-- `EAI-053`: em andamento. Elevar coverage backend para 90%.
+- `EAI-053`: concluido no PR `#68`. Elevar coverage backend para 90%.
 
 ## Historico Operacional Recente
 
@@ -232,6 +232,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 ### EAI-053
 
 - Branch: `test/eai-053-coverage-backend-90`.
+- PR: `https://github.com/gabrielfelipeoliveira/eai/pull/68`.
 - Entrega: adicionados testes unitarios e de contrato para controllers, services, dominio, adapters de persistencia e integracoes de email/configuracao; gate JaCoCo de instruction coverage elevado de 80% para 90%.
 - Coverage: backend atingiu 90,01% instruction coverage e 90,58% line coverage.
 - Validacao backend: `mvn clean verify` via Docker/Testcontainers passou com 339 unitarios, 2 integracoes e gate JaCoCo de 90%.
@@ -274,8 +275,8 @@ Use `mvn clean verify` como validacao padrao do backend e rode `mvn org.owasp:de
 
 Ultima validacao completa em 2026-07-26:
 
-- Branch `test/eai-053-coverage-backend-90`.
-- GitHub Actions `CI`: pendente ate abertura do PR.
+- `main` apos PR `#68`.
+- GitHub Actions `CI`: Backend e Frontend passaram.
 - Backend local: `mvn clean verify` passou via Docker/Testcontainers com 339 unitarios, 2 integracoes e gate JaCoCo de 90%.
 - Frontend local: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build` e `npm run test:e2e` passaram.
 - Vulnerabilidades: `npm audit --audit-level=moderate` reportou 0 vulnerabilidades no frontend; OSV Scanner sobre SBOM Maven reportou `No issues found`; OWASP Dependency-Check Maven ficou bloqueado por rate limit externo da NVD (`429`) sem `NVD_API_KEY`.
