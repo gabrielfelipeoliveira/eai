@@ -1,6 +1,6 @@
 # Contexto Atual Do Projeto
 
-Ultima atualizacao: 2026-07-26.
+Ultima atualizacao: 2026-08-14.
 
 Este arquivo e o handoff operacional do projeto EAI. Ele existe para que qualquer desenvolvedor ou agente de IA consiga retomar o trabalho sem depender do historico de uma conversa especifica.
 
@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello.
+- Lucas Reiter: nenhum card ativo conhecido no Trello; `EAI-054` em PR `#70`.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida.
+Lucas Reiter: sem branch ativa conhecida; PR `#70` aberta para `EAI-054`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Consultar o Trello para selecionar o proximo card antes de abrir nova branch.
+- Acompanhar PR `#70` do `EAI-054` ate merge e fechamento no Trello.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -151,6 +151,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-051`: concluido no PR `#64`. Aumentar coverage backend por ratchet.
 - `EAI-052`: concluido no PR `#66`. Sequenciar testes unitarios rumo a 90% coverage.
 - `EAI-053`: concluido no PR `#68`. Elevar coverage backend para 90%.
+- `EAI-054`: em PR `#70`. Corrigir vulnerabilidades `npm audit` frontend e SCA backend.
 
 ## Historico Operacional Recente
 
