@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello; `EAI-055` em PR `#71`.
+- Lucas Reiter: `EAI-056` em andamento.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida; PR `#71` aberta para `EAI-055`.
+Lucas Reiter: `chore/eai-056-nvd-dependency-check`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Acompanhar PR `#71` do `EAI-055` ate merge e fechamento no Trello.
+- Finalizar `EAI-056`, garantindo que o CI reporte explicitamente quando o segredo `NVD_API_KEY` estiver ausente e documentando a configuracao necessaria para ativar o gate OWASP Dependency-Check.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -152,7 +152,8 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-052`: concluido no PR `#66`. Sequenciar testes unitarios rumo a 90% coverage.
 - `EAI-053`: concluido no PR `#68`. Elevar coverage backend para 90%.
 - `EAI-054`: concluido no PR `#70`. Corrigir vulnerabilidades `npm audit` frontend e SCA backend.
-- `EAI-055`: em PR `#71`. Definir gate Mend/Dependabot/CodeQL.
+- `EAI-055`: concluido no PR `#71`. Definir gate Mend/Dependabot/CodeQL.
+- `EAI-056`: em andamento. Configurar `NVD_API_KEY` para Dependency-Check.
 
 ## Historico Operacional Recente
 
@@ -251,6 +252,8 @@ mvn org.owasp:dependency-check-maven:check
 ```
 
 `mvn verify` executa unitarios `*Test` pelo Surefire, integracoes `*IT`/`*IntegrationTest` pelo Failsafe e gate de coverage JaCoCo com minimo global de 90% de instrucoes. A suite de integracao backend usa Testcontainers e exige Docker disponivel. O Dependency-Check executa SCA das dependencias Maven e falha para CVSS 7.0 ou superior quando a base NVD esta acessivel.
+
+No CI, o OWASP Dependency-Check Maven roda somente quando o segredo `NVD_API_KEY` estiver configurado no repositorio GitHub. Quando o segredo nao existe, o workflow emite um notice explicito e mantem o gate OSV sobre o SBOM backend. Para ativar o gate completo, configure o segredo `NVD_API_KEY` em Settings > Secrets and variables > Actions, ou via GitHub CLI usando uma variavel de ambiente local segura: `gh secret set NVD_API_KEY --body "$NVD_API_KEY"`. Nao registre a chave em commits, docs, logs ou conversas.
 
 Frontend:
 
