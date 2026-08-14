@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello; `EAI-054` em PR `#70`.
+- Lucas Reiter: `EAI-055` em andamento no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida; PR `#70` aberta para `EAI-054`.
+Lucas Reiter: `chore/eai-055-dependabot-codeql`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Acompanhar PR `#70` do `EAI-054` ate merge e fechamento no Trello.
+- Concluir `EAI-055`: definir gates Dependabot/CodeQL e documentar decisao sobre Mend.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -151,7 +151,8 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-051`: concluido no PR `#64`. Aumentar coverage backend por ratchet.
 - `EAI-052`: concluido no PR `#66`. Sequenciar testes unitarios rumo a 90% coverage.
 - `EAI-053`: concluido no PR `#68`. Elevar coverage backend para 90%.
-- `EAI-054`: em PR `#70`. Corrigir vulnerabilidades `npm audit` frontend e SCA backend.
+- `EAI-054`: concluido no PR `#70`. Corrigir vulnerabilidades `npm audit` frontend e SCA backend.
+- `EAI-055`: em andamento. Definir gate Mend/Dependabot/CodeQL.
 
 ## Historico Operacional Recente
 
