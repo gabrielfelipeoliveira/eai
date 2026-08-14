@@ -52,6 +52,11 @@ jobs:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: mvn org.owasp:dependency-check-maven:check
 
+      - name: Report skipped backend Dependency-Check
+        if: env.NVD_API_KEY_AVAILABLE != 'true'
+        run: |
+          echo "::notice title=Dependency-Check skipped::Configure the NVD_API_KEY repository secret to enable the OWASP Dependency-Check Maven gate. The backend SBOM remains audited by OSV in this workflow."
+
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
