@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-058` em andamento.
+- Lucas Reiter: `EAI-059` em andamento.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: triagem de PRs Dependabot abertas.
+Lucas Reiter: `chore/eai-059-codeql-alerts`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Finalizar `EAI-058`, triando PRs Dependabot abertas, mergeando apenas as verdes e registrando bloqueios das que falharem.
+- Finalizar `EAI-059`, corrigindo alertas CodeQL high de CSRF e path injection.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -155,7 +155,8 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-055`: concluido no PR `#71`. Definir gate Mend/Dependabot/CodeQL.
 - `EAI-056`: concluido no PR `#85`. Configurar `NVD_API_KEY` para Dependency-Check.
 - `EAI-057`: concluido no PR `#86`. Adicionar auditoria de imagem Docker.
-- `EAI-058`: em andamento. Triar PRs Dependabot abertas.
+- `EAI-058`: concluido no PR `#87`. Triar PRs Dependabot abertas.
+- `EAI-059`: em andamento. Corrigir alertas CodeQL high de CSRF e path injection.
 
 ## Historico Operacional Recente
 

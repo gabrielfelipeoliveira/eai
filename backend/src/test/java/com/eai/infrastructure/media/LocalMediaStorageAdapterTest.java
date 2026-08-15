@@ -52,6 +52,28 @@ class LocalMediaStorageAdapterTest {
         assertThat(Files.readAllBytes(storageDirectory.resolve(storedMedia.key()))).isEqualTo(content);
     }
 
+    @DisplayName("Neutraliza segmentos reservados ao armazenar midia local")
+    @Test
+    void neutralizesReservedPathSegmentsWhenStoringLocalMedia() throws Exception {
+        LocalMediaStorageAdapter adapter = adapter("local");
+        byte[] content = "conteudo".getBytes();
+
+        StoredMedia storedMedia = adapter.store(new StoreMediaCommand(
+                COMPANY_ID,
+                STORE_ID,
+                "..",
+                ".",
+                "..",
+                "image/jpeg",
+                content,
+                null
+        ));
+
+        assertThat(storedMedia.key()).isEqualTo(COMPANY_ID + "/" + STORE_ID + "/_/_/media.bin");
+        assertThat(storageDirectory.resolve(storedMedia.key()).normalize()).startsWith(storageDirectory);
+        assertThat(Files.readAllBytes(storageDirectory.resolve(storedMedia.key()))).isEqualTo(content);
+    }
+
     @DisplayName("Le midia local armazenada")
     @Test
     void readsStoredLocalMedia() throws Exception {

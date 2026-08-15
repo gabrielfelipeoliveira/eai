@@ -36,7 +36,7 @@ public class LocalMediaStorageAdapter implements MediaStoragePort {
         String sha256 = command.sha256() == null || command.sha256().isBlank() ? sha256(content) : command.sha256().trim();
         String fileName = sanitizeFileName(command.fileName());
         String key = key(command, fileName);
-        Path target = root().resolve(key).normalize();
+        Path target = resolveInsideRoot(key);
         try {
             Files.createDirectories(target.getParent());
             Files.write(target, content);
@@ -51,10 +51,7 @@ public class LocalMediaStorageAdapter implements MediaStoragePort {
         if (!PROVIDER.equals(provider) || key == null || key.isBlank()) {
             throw new ApplicationException("MEDIA_STORAGE_OBJECT_NOT_FOUND", "Media file not found");
         }
-        Path target = root().resolve(key).normalize();
-        if (!target.startsWith(root())) {
-            throw new ApplicationException("MEDIA_STORAGE_OBJECT_NOT_FOUND", "Media file not found");
-        }
+        Path target = resolveInsideRoot(key);
         try {
             byte[] content = Files.readAllBytes(target);
             String fileName = target.getFileName().toString();
@@ -68,6 +65,15 @@ public class LocalMediaStorageAdapter implements MediaStoragePort {
         return Path.of(properties.effectiveLocalDirectory()).toAbsolutePath().normalize();
     }
 
+    private Path resolveInsideRoot(String key) {
+        Path storageRoot = root();
+        Path target = storageRoot.resolve(key).normalize();
+        if (!target.startsWith(storageRoot)) {
+            throw new ApplicationException("MEDIA_STORAGE_OBJECT_NOT_FOUND", "Media file not found");
+        }
+        return target;
+    }
+
     private String key(StoreMediaCommand command, String fileName) {
         String source = sanitizePathPart(command.source() == null ? "media" : command.source());
         String externalId = sanitizePathPart(command.externalMediaId() == null ? UUID.randomUUID().toString() : command.externalMediaId());
@@ -77,11 +83,19 @@ public class LocalMediaStorageAdapter implements MediaStoragePort {
     private String sanitizeFileName(String fileName) {
         String value = fileName == null || fileName.isBlank() ? "media.bin" : fileName.trim();
         value = value.replace('\\', '_').replace('/', '_').replaceAll("[^A-Za-z0-9._-]", "_");
+        if (isReservedPathSegment(value)) {
+            return "media.bin";
+        }
         return value.length() > 120 ? value.substring(value.length() - 120) : value;
     }
 
     private String sanitizePathPart(String value) {
-        return value.replaceAll("[^A-Za-z0-9._-]", "_");
+        String sanitized = value.replaceAll("[^A-Za-z0-9._-]", "_");
+        return isReservedPathSegment(sanitized) ? "_" : sanitized;
+    }
+
+    private boolean isReservedPathSegment(String value) {
+        return ".".equals(value) || "..".equals(value);
     }
 
     private String sha256(byte[] content) {
