@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-057` em andamento.
+- Lucas Reiter: `EAI-058` em andamento.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `chore/eai-057-docker-image-audit`.
+Lucas Reiter: triagem de PRs Dependabot abertas.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Finalizar `EAI-057`, adicionando auditoria automatizada para imagens Docker usadas pelo projeto.
+- Finalizar `EAI-058`, triando PRs Dependabot abertas, mergeando apenas as verdes e registrando bloqueios das que falharem.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -154,7 +154,8 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-054`: concluido no PR `#70`. Corrigir vulnerabilidades `npm audit` frontend e SCA backend.
 - `EAI-055`: concluido no PR `#71`. Definir gate Mend/Dependabot/CodeQL.
 - `EAI-056`: concluido no PR `#85`. Configurar `NVD_API_KEY` para Dependency-Check.
-- `EAI-057`: em andamento. Adicionar auditoria de imagem Docker.
+- `EAI-057`: concluido no PR `#86`. Adicionar auditoria de imagem Docker.
+- `EAI-058`: em andamento. Triar PRs Dependabot abertas.
 
 ## Historico Operacional Recente
 
