@@ -38,7 +38,7 @@ jobs:
 
       - name: Cache backend SCA database
         if: env.NVD_API_KEY_AVAILABLE == 'true'
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.m2/dependency-check-data
           key: dependency-check-${{ runner.os }}-${{ hashFiles('backend/pom.xml') }}
