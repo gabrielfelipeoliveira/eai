@@ -256,6 +256,14 @@ mvn org.owasp:dependency-check-maven:check
 
 No CI, o OWASP Dependency-Check Maven roda somente quando o segredo `NVD_API_KEY` estiver configurado no repositorio GitHub. Quando o segredo nao existe, o workflow emite um notice explicito e mantem o gate OSV sobre o SBOM backend. Para ativar o gate completo, configure o segredo `NVD_API_KEY` em Settings > Secrets and variables > Actions, ou via GitHub CLI usando uma variavel de ambiente local segura: `gh secret set NVD_API_KEY --body "$NVD_API_KEY"`. Nao registre a chave em commits, docs, logs ou conversas.
 
+Imagens Docker:
+
+```bash
+trivy image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 postgres:16-alpine
+```
+
+O CI executa Trivy sobre `postgres:16-alpine` em modo nao bloqueante enquanto a imagem oficial atual ainda reporta vulnerabilidades HIGH/CRITICAL no binario `gosu`. Todo achado novo deve ser registrado no Trello, e o gate deve virar bloqueante quando a imagem base estiver corrigida ou quando houver politica formal de excecoes.
+
 Frontend:
 
 Nota `EAI-049`: o CI gera SBOM Maven com CycloneDX e executa OSV como gate SCA sempre ativo. O OWASP Dependency-Check Maven fica configurado e roda no CI quando `NVD_API_KEY` estiver disponivel, evitando rate limit da NVD. Vulnerabilidades OSV encontradas em `jackson-databind` 2.x/3.x e `org.postgresql:postgresql` foram tratadas por BOMs/override no `pom.xml`. Coverage minimo inicial ficou em 70%; `EAI-051` elevou o ratchet para 76%; `EAI-052` elevou para 80%; `EAI-053` elevou o gate para 90% com coverage consolidado de 90,01% instruction.
