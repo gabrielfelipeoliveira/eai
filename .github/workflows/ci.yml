@@ -57,6 +57,28 @@ jobs:
         run: |
           echo "::notice title=Dependency-Check skipped::Configure the NVD_API_KEY repository secret to enable the OWASP Dependency-Check Maven gate. The backend SBOM remains audited by OSV in this workflow."
 
+  container-images:
+    name: Container Images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Audit PostgreSQL image
+        id: trivy-postgres
+        uses: aquasecurity/trivy-action@v0.36.0
+        continue-on-error: true
+        with:
+          image-ref: postgres:16-alpine
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+          format: table
+          version: v0.74.0
+
+      - name: Report PostgreSQL image findings
+        if: steps.trivy-postgres.outcome == 'failure'
+        run: |
+          echo "::warning title=PostgreSQL image vulnerabilities::Trivy found HIGH or CRITICAL vulnerabilities in postgres:16-alpine. The audit is non-blocking until the base image can be updated or exceptions are documented."
+
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
