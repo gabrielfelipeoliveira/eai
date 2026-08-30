@@ -187,7 +187,9 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Branch: `chore/eai-060-dependabot-triage`.
 - Card: `https://trello.com/c/R9nEILpj`.
 - Escopo: triagem da nova rodada de PRs Dependabot, com merge/correcao/cancelamento conforme checks, conflitos e vulnerabilidades.
-- Validacao esperada: checks remotos de cada PR tratado, validacoes locais proporcionais ao pacote afetado e registro de achados no Trello.
+- Entrega parcial: PRs Dependabot backend `#90`, `#91`, `#92`, `#98` e `#99` mergeados diretamente apos checks verdes; updates frontend restantes absorvidos neste card junto com ajuste de Node 22.22.2+.
+- Validacao local: `npm ci`, `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run setup:e2e`, `npm run test:e2e`, `mvn clean verify` via Docker/Testcontainers e OSV frontend/backend passaram.
+- Achados: `jsdom 30` exige Node mais novo que o Node 20 do CI; CI, README e `frontend/package.json` foram alinhados para Node 22.22.2+. `npm outdated` ainda lista majors/pins fora do escopo seguro deste card, como MUI 9, Zod 4, TypeScript 7 e React Router 8.3.1.
 
 ### EAI-038
 
