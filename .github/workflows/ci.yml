@@ -61,13 +61,16 @@ jobs:
     name: Container Images
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
       - name: Audit PostgreSQL image
         id: trivy-postgres
         uses: aquasecurity/trivy-action@v0.36.0
-        continue-on-error: true
         with:
-          image-ref: postgres:16-alpine
+          image-ref: postgres:16-bookworm
           scanners: vuln
+          trivyignores: .trivyignore.yaml
           severity: HIGH,CRITICAL
           ignore-unfixed: true
           exit-code: "1"
@@ -77,7 +80,7 @@ jobs:
       - name: Report PostgreSQL image findings
         if: steps.trivy-postgres.outcome == 'failure'
         run: |
-          echo "::warning title=PostgreSQL image vulnerabilities::Trivy found HIGH or CRITICAL vulnerabilities in postgres:16-alpine. The audit is non-blocking until the base image can be updated or exceptions are documented."
+          echo "::error title=PostgreSQL image vulnerabilities::Trivy found non-ignored HIGH or CRITICAL vulnerabilities in postgres:16-bookworm. Review the image tag or the documented exceptions in .trivyignore.yaml."
 
   frontend:
     name: Frontend
