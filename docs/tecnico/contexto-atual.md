@@ -195,8 +195,10 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 
 - Branch: `chore/eai-061-postgres-trivy`.
 - Card: `https://trello.com/c/FcEp0Cl7`.
-- Escopo: investigar e tratar vulnerabilidades HIGH/CRITICAL reportadas pelo Trivy na imagem `postgres:16-alpine`.
-- Validacao esperada: auditoria Trivy da imagem adotada, backend `mvn clean verify` via Docker/Testcontainers e checks remotos.
+- Escopo: investigar e tratar vulnerabilidades HIGH/CRITICAL reportadas pelo Trivy na imagem Postgres.
+- Entrega em andamento: imagem local/Testcontainers/CI ajustada para `postgres:16-bookworm`; gate Trivy do CI voltou a ser bloqueante com excecoes temporarias e estreitas para `usr/local/bin/gosu` em `.trivyignore.yaml`.
+- Validacao local: Trivy `0.74.0` em `postgres:16-bookworm` passou com 0 HIGH/CRITICAL nao ignorados; backend `mvn clean verify` via Docker/Testcontainers passou com 340 unitarios, 2 integracoes e PostgreSQL 16.15.
+- Achado/debito: a imagem oficial ainda inclui `gosu` compilado com Go vulneravel segundo Trivy. Excecoes expiram em `2026-09-30` e devem ser removidas quando a imagem oficial atualizar o binario.
 
 ### EAI-038
 
@@ -299,10 +301,10 @@ No CI, o OWASP Dependency-Check Maven roda somente quando o segredo `NVD_API_KEY
 Imagens Docker:
 
 ```bash
-trivy image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 postgres:16-alpine
+trivy image --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --ignorefile .trivyignore.yaml --exit-code 1 postgres:16-bookworm
 ```
 
-O CI executa Trivy sobre `postgres:16-alpine` em modo nao bloqueante enquanto a imagem oficial atual ainda reporta vulnerabilidades HIGH/CRITICAL no binario `gosu`. Todo achado novo deve ser registrado no Trello, e o gate deve virar bloqueante quando a imagem base estiver corrigida ou quando houver politica formal de excecoes.
+O CI executa Trivy sobre `postgres:16-bookworm` como gate bloqueante. A tag Debian Bookworm nao reporta vulnerabilidades HIGH/CRITICAL de pacotes do SO na validacao de `2026-08-30`; os achados remanescentes sao restritos ao binario `usr/local/bin/gosu` da imagem oficial e ficam documentados com expiracao em `.trivyignore.yaml`. Todo novo achado nao ignorado deve quebrar o CI e ser registrado no Trello.
 
 Frontend:
 
