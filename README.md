@@ -12,7 +12,7 @@ EAI e uma base SaaS para lojas de veiculos e concessionarias gerenciarem leads, 
 
 - JDK Java 21. O backend esta fixado em Java 21 e o Maven falha cedo quando executado com outra versao.
 - Maven 3.9+
-- Node.js 20+
+- Node.js 22.22.2+
 - npm 10+
 - Docker e Docker Compose
 

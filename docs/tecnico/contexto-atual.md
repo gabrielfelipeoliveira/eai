@@ -80,20 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-062` em andamento.
+- Lucas Reiter: `EAI-060` em andamento.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `docs/eai-062-atualiza-handoff-pos-eai-059`.
+Lucas Reiter: `chore/eai-060-dependabot-triage`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Finalizar `EAI-062`, atualizando este handoff apos conclusao do `EAI-059`.
-- Em seguida, triagem recomendada: `EAI-060` para PRs Dependabot abertas e `EAI-061` para vulnerabilidades Trivy da imagem Postgres.
+- Finalizar `EAI-060`, triando e tratando a nova rodada de PRs Dependabot.
+- Em seguida, tratar `EAI-061` para vulnerabilidades Trivy da imagem Postgres.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -158,9 +158,9 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-057`: concluido no PR `#86`. Adicionar auditoria de imagem Docker.
 - `EAI-058`: concluido no PR `#87`. Triar PRs Dependabot abertas.
 - `EAI-059`: concluido. Corrigir alertas CodeQL high de CSRF e path injection.
-- `EAI-060`: backlog. Triar nova rodada de PRs Dependabot.
+- `EAI-060`: em andamento. Triar nova rodada de PRs Dependabot.
 - `EAI-061`: backlog. Tratar vulnerabilidades Trivy da imagem Postgres.
-- `EAI-062`: em andamento. Atualizar handoff operacional pos `EAI-059`.
+- `EAI-062`: concluido no PR `#100`. Atualizar handoff operacional pos `EAI-059`.
 
 ## Historico Operacional Recente
 
@@ -177,7 +177,19 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Branch: `docs/eai-062-atualiza-handoff-pos-eai-059`.
 - Card: `https://trello.com/c/uXI0qeF5`.
 - Escopo: atualizar este handoff operacional para refletir a conclusao do `EAI-059` e registrar proximos cards `EAI-060` e `EAI-061`.
-- Validacao esperada: revisao documental e `git diff --check`.
+- PR: `https://github.com/gabrielfelipeoliveira/eai/pull/100`.
+- Commit na `main`: `91e1b442959b1ed57af98ee64126a0e20d81e391`.
+- Status Trello: concluido.
+- Validacao: `git diff --check` e checks remotos Backend, Frontend, Container Images e CodeQL passaram.
+
+### EAI-060
+
+- Branch: `chore/eai-060-dependabot-triage`.
+- Card: `https://trello.com/c/R9nEILpj`.
+- Escopo: triagem da nova rodada de PRs Dependabot, com merge/correcao/cancelamento conforme checks, conflitos e vulnerabilidades.
+- Entrega parcial: PRs Dependabot backend `#90`, `#91`, `#92`, `#98` e `#99` mergeados diretamente apos checks verdes; updates frontend restantes absorvidos neste card junto com ajuste de Node 22.22.2+.
+- Validacao local: `npm ci`, `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run setup:e2e`, `npm run test:e2e`, `mvn clean verify` via Docker/Testcontainers e OSV frontend/backend passaram.
+- Achados: `jsdom 30` exige Node mais novo que o Node 20 do CI; CI, README e `frontend/package.json` foram alinhados para Node 22.22.2+. `npm outdated` ainda lista majors/pins fora do escopo seguro deste card, como MUI 9, Zod 4, TypeScript 7 e React Router 8.3.1.
 
 ### EAI-038
 
