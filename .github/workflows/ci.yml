@@ -61,6 +61,9 @@ jobs:
     name: Container Images
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
       - name: Audit PostgreSQL image
         id: trivy-postgres
         uses: aquasecurity/trivy-action@v0.36.0
