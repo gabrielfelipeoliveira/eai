@@ -1,6 +1,6 @@
 # Contexto Atual Do Projeto
 
-Ultima atualizacao: 2026-08-14.
+Ultima atualizacao: 2026-08-30.
 
 Este arquivo e o handoff operacional do projeto EAI. Ele existe para que qualquer desenvolvedor ou agente de IA consiga retomar o trabalho sem depender do historico de uma conversa especifica.
 
@@ -80,19 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-059` em andamento.
+- Lucas Reiter: `EAI-062` em andamento.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `chore/eai-059-codeql-alerts`.
+Lucas Reiter: `docs/eai-062-atualiza-handoff-pos-eai-059`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Finalizar `EAI-059`, corrigindo alertas CodeQL high de CSRF e path injection.
+- Finalizar `EAI-062`, atualizando este handoff apos conclusao do `EAI-059`.
+- Em seguida, triagem recomendada: `EAI-060` para PRs Dependabot abertas e `EAI-061` para vulnerabilidades Trivy da imagem Postgres.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -156,9 +157,27 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-056`: concluido no PR `#85`. Configurar `NVD_API_KEY` para Dependency-Check.
 - `EAI-057`: concluido no PR `#86`. Adicionar auditoria de imagem Docker.
 - `EAI-058`: concluido no PR `#87`. Triar PRs Dependabot abertas.
-- `EAI-059`: em andamento. Corrigir alertas CodeQL high de CSRF e path injection.
+- `EAI-059`: concluido. Corrigir alertas CodeQL high de CSRF e path injection.
+- `EAI-060`: backlog. Triar nova rodada de PRs Dependabot.
+- `EAI-061`: backlog. Tratar vulnerabilidades Trivy da imagem Postgres.
+- `EAI-062`: em andamento. Atualizar handoff operacional pos `EAI-059`.
 
 ## Historico Operacional Recente
+
+### EAI-059
+
+- Branch: `chore/eai-059-codeql-alerts`.
+- Entrega: corrigidos alertas CodeQL high de CSRF e path injection.
+- Commit na `main`: `6440a96 fix: EAI-059 corrige alertas CodeQL high`.
+- Status Trello: concluido em `https://trello.com/c/m0MFcF77`.
+- Observacao: este handoff estava atrasado e ainda apontava `EAI-059` como em andamento; correcao documental tratada no `EAI-062`.
+
+### EAI-062
+
+- Branch: `docs/eai-062-atualiza-handoff-pos-eai-059`.
+- Card: `https://trello.com/c/uXI0qeF5`.
+- Escopo: atualizar este handoff operacional para refletir a conclusao do `EAI-059` e registrar proximos cards `EAI-060` e `EAI-061`.
+- Validacao esperada: revisao documental e `git diff --check`.
 
 ### EAI-038
 
