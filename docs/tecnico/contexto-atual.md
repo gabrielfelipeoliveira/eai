@@ -80,20 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-060` em andamento.
+- Lucas Reiter: `EAI-061` em andamento.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `chore/eai-060-dependabot-triage`.
+Lucas Reiter: `chore/eai-061-postgres-trivy`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Finalizar `EAI-060`, triando e tratando a nova rodada de PRs Dependabot.
-- Em seguida, tratar `EAI-061` para vulnerabilidades Trivy da imagem Postgres.
+- Finalizar `EAI-061`, tratando vulnerabilidades Trivy da imagem Postgres.
+- Em seguida, revisar preparacao para reestruturacao UX/frontend.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -158,8 +158,8 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-057`: concluido no PR `#86`. Adicionar auditoria de imagem Docker.
 - `EAI-058`: concluido no PR `#87`. Triar PRs Dependabot abertas.
 - `EAI-059`: concluido. Corrigir alertas CodeQL high de CSRF e path injection.
-- `EAI-060`: em andamento. Triar nova rodada de PRs Dependabot.
-- `EAI-061`: backlog. Tratar vulnerabilidades Trivy da imagem Postgres.
+- `EAI-060`: concluido no PR `#101`. Triar nova rodada de PRs Dependabot.
+- `EAI-061`: em andamento. Tratar vulnerabilidades Trivy da imagem Postgres.
 - `EAI-062`: concluido no PR `#100`. Atualizar handoff operacional pos `EAI-059`.
 
 ## Historico Operacional Recente
@@ -187,9 +187,16 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Branch: `chore/eai-060-dependabot-triage`.
 - Card: `https://trello.com/c/R9nEILpj`.
 - Escopo: triagem da nova rodada de PRs Dependabot, com merge/correcao/cancelamento conforme checks, conflitos e vulnerabilidades.
-- Entrega parcial: PRs Dependabot backend `#90`, `#91`, `#92`, `#98` e `#99` mergeados diretamente apos checks verdes; updates frontend restantes absorvidos neste card junto com ajuste de Node 22.22.2+.
+- Entrega: PRs Dependabot backend `#90`, `#91`, `#92`, `#98` e `#99` mergeados diretamente apos checks verdes; updates frontend restantes absorvidos neste card junto com ajuste de Node 22.22.2+.
 - Validacao local: `npm ci`, `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run setup:e2e`, `npm run test:e2e`, `mvn clean verify` via Docker/Testcontainers e OSV frontend/backend passaram.
 - Achados: `jsdom 30` exige Node mais novo que o Node 20 do CI; CI, README e `frontend/package.json` foram alinhados para Node 22.22.2+. `npm outdated` ainda lista majors/pins fora do escopo seguro deste card, como MUI 9, Zod 4, TypeScript 7 e React Router 8.3.1.
+
+### EAI-061
+
+- Branch: `chore/eai-061-postgres-trivy`.
+- Card: `https://trello.com/c/FcEp0Cl7`.
+- Escopo: investigar e tratar vulnerabilidades HIGH/CRITICAL reportadas pelo Trivy na imagem `postgres:16-alpine`.
+- Validacao esperada: auditoria Trivy da imagem adotada, backend `mvn clean verify` via Docker/Testcontainers e checks remotos.
 
 ### EAI-038
 
