@@ -80,20 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-063` em andamento.
+- Lucas Reiter: `EAI-064` em andamento.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `chore/eai-063-frontend-dependencies`.
+Lucas Reiter: `chore/eai-064-postgres-gosu-trivy`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Finalizar `EAI-063`, avaliando e tratando PRs Dependabot/majors/pins do frontend antes da reestruturacao UX.
-- Em seguida, revisar preparacao para reestruturacao UX/frontend ou tratar `EAI-064` se as excecoes Trivy de `gosu` estiverem proximas do vencimento.
+- Finalizar `EAI-064`, revisando se as excecoes Trivy do `gosu` na imagem Postgres ainda sao necessarias antes de `2026-09-30`.
+- Em seguida, revisar preparacao para reestruturacao UX/frontend ou tratar PRs Dependabot restantes `#103` e `#104` com card proprio se ainda estiverem abertas.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -161,8 +161,8 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-060`: concluido no PR `#101`. Triar nova rodada de PRs Dependabot.
 - `EAI-061`: concluido no PR `#102`. Tratar vulnerabilidades Trivy da imagem Postgres.
 - `EAI-062`: concluido no PR `#100`. Atualizar handoff operacional pos `EAI-059`.
-- `EAI-063`: em andamento. Avaliar migracao de majors e pins de dependencias frontend.
-- `EAI-064`: backlog. Revisar excecoes Trivy do `gosu` na imagem Postgres antes de `2026-09-30`.
+- `EAI-063`: concluido no PR `#110`. Avaliar migracao de majors e pins de dependencias frontend.
+- `EAI-064`: em andamento. Revisar excecoes Trivy do `gosu` na imagem Postgres antes de `2026-09-30`.
 
 ## Historico Operacional Recente
 
@@ -193,14 +193,22 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Validacao local: `npm ci`, `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run setup:e2e`, `npm run test:e2e`, `mvn clean verify` via Docker/Testcontainers e OSV frontend/backend passaram.
 - Achados: `jsdom 30` exige Node mais novo que o Node 20 do CI; CI, README e `frontend/package.json` foram alinhados para Node 22.22.2+. `npm outdated` ainda lista majors/pins fora do escopo seguro deste card, como MUI 9, Zod 4, TypeScript 7 e React Router 8.3.1.
 
+### EAI-064
+
+- Branch: `chore/eai-064-postgres-gosu-trivy`.
+- Card: `https://trello.com/c/F6mxDThh`.
+- Escopo: revisar se as excecoes Trivy do `gosu` na imagem `postgres:16-bookworm` ainda sao necessarias antes de `2026-09-30`.
+- Entrega em andamento: card reservado e triagem inicial pendente.
+
 ### EAI-063
 
 - Branch: `chore/eai-063-frontend-dependencies`.
 - Card: `https://trello.com/c/S9ffu7Ej`.
+- PR: `https://github.com/gabrielfelipeoliveira/eai/pull/110`.
 - Escopo: avaliar PRs Dependabot abertos do frontend e decidir quais updates podem ser integrados agora sem bloquear a reestruturacao UX.
-- Entrega em andamento: absorvidos updates frontend dos PRs Dependabot `#105`, `#106`, `#107`, `#108` e `#109` em uma branch unica; Zod 4 exige `@hookform/resolvers` 5 e tipagem explicita `z.input`/`z.output` para formularios com `z.coerce.number()`.
-- Validacao local: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e` e `npm ci` com Node `22.22.2` em container passaram.
-- Achados/debitos: MUI `9.4.0` quebra APIs usadas no frontend (`Grid2`, `PaperProps`, props tipadas de componentes MUI) e TypeScript `7.0.2` e rejeitado por `typescript-eslint` `8.69.0`; ambos ficam fora do escopo seguro deste card e devem aguardar card especifico de migracao.
+- Entrega: absorvidos updates frontend dos PRs Dependabot `#105`, `#106`, `#107`, `#108` e `#109` em uma branch unica; Zod 4 exige `@hookform/resolvers` 5 e tipagem explicita `z.input`/`z.output` para formularios com `z.coerce.number()`.
+- Validacao local/remota: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e`, `npm ci` com Node `22.22.2` em container e checks remotos passaram.
+- Achados/debitos: MUI `9.4.0` quebra APIs usadas no frontend e TypeScript `7.0.2` e rejeitado por `typescript-eslint` `8.69.0`; ambos ficam para cards futuros.
 
 ### EAI-061
 
