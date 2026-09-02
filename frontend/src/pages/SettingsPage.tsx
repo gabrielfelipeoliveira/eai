@@ -80,7 +80,8 @@ const slaSchema = z.object({
 type CompanyForm = z.infer<typeof companySchema>;
 type StoreForm = z.infer<typeof storeSchema>;
 type DistributionForm = z.infer<typeof distributionSchema>;
-type SlaForm = z.infer<typeof slaSchema>;
+type SlaFormInput = z.input<typeof slaSchema>;
+type SlaForm = z.output<typeof slaSchema>;
 
 const tabs = ['Empresa', 'Loja', 'Usuarios', 'Distribuicao', 'SLA', 'Templates', 'E-mail', 'Sistema'];
 
@@ -105,7 +106,7 @@ export function SettingsPage() {
   const companyForm = useForm<CompanyForm>({ resolver: zodResolver(companySchema) });
   const storeForm = useForm<StoreForm>({ resolver: zodResolver(storeSchema) });
   const distributionForm = useForm<DistributionForm>({ resolver: zodResolver(distributionSchema) });
-  const slaForm = useForm<SlaForm>({ resolver: zodResolver(slaSchema) });
+  const slaForm = useForm<SlaFormInput, unknown, SlaForm>({ resolver: zodResolver(slaSchema) });
 
   useEffect(() => {
     if (!settingsQuery.data) {

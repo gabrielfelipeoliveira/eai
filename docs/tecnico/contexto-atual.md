@@ -198,7 +198,9 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Branch: `chore/eai-063-frontend-dependencies`.
 - Card: `https://trello.com/c/S9ffu7Ej`.
 - Escopo: avaliar PRs Dependabot abertos do frontend e decidir quais updates podem ser integrados agora sem bloquear a reestruturacao UX.
-- Validacao esperada: `npm ci`, `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e`, checks remotos e registro de PRs fechados/mergeados.
+- Entrega em andamento: absorvidos updates frontend dos PRs Dependabot `#105`, `#106`, `#107`, `#108` e `#109` em uma branch unica; Zod 4 exige `@hookform/resolvers` 5 e tipagem explicita `z.input`/`z.output` para formularios com `z.coerce.number()`.
+- Validacao local: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e` e `npm ci` com Node `22.22.2` em container passaram.
+- Achados/debitos: MUI `9.4.0` quebra APIs usadas no frontend (`Grid2`, `PaperProps`, props tipadas de componentes MUI) e TypeScript `7.0.2` e rejeitado por `typescript-eslint` `8.69.0`; ambos ficam fora do escopo seguro deste card e devem aguardar card especifico de migracao.
 
 ### EAI-061
 

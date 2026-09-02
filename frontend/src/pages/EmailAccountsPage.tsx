@@ -60,7 +60,8 @@ const schema = z.object({
   active: z.boolean(),
 });
 
-type FormValues = z.infer<typeof schema>;
+type FormInput = z.input<typeof schema>;
+type FormValues = z.output<typeof schema>;
 
 export function EmailAccountsPage() {
   const { hasAnyRole, user } = useAuth();
@@ -71,7 +72,7 @@ export function EmailAccountsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
 
-  const emptyValues = useMemo<FormValues>(
+  const emptyValues = useMemo<FormInput>(
     () => ({
       companyId: user?.companyId ?? '',
       storeId: user?.storeId ?? '',
@@ -91,7 +92,7 @@ export function EmailAccountsPage() {
   const storesQuery = useQuery({ queryKey: ['stores'], queryFn: () => listStores() });
   const companiesQuery = useQuery({ queryKey: ['companies'], queryFn: listCompanies, enabled: isAdmin });
 
-  const { control, formState: { errors }, handleSubmit, register, reset, setValue } = useForm<FormValues>({
+  const { control, formState: { errors }, handleSubmit, register, reset, setValue } = useForm<FormInput, unknown, FormValues>({
     resolver: zodResolver(schema),
     defaultValues: emptyValues,
   });
