@@ -80,19 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello.
+- Lucas Reiter: `EAI-067` UX em andamento.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida.
+Lucas Reiter: `docs/eai-067-frontend-ux-restructuring`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Revisar preparacao para reestruturacao UX/frontend.
+- Finalizar `EAI-067`, mapeando a reestruturacao UX do frontend e gerando cards derivados quando aplicavel.
+- Depois do `EAI-067`, puxar `EAI-068` para iniciar a implementacao do shell responsivo.
 - Tratar `EAI-065` quando se aproximar de `2026-10-31`.
 
 ## Cards De Desenvolvimento Conhecidos
@@ -165,8 +166,20 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-064`: concluido no PR `#111`. Revisar excecoes Trivy do `gosu` na imagem Postgres e renovar controle temporario ate `2026-10-31`.
 - `EAI-065`: backlog. Revisar excecoes Trivy do `gosu` ate `2026-10-31`.
 - `EAI-066`: concluido. Triar PRs Dependabot restantes `#103` e `#104`.
+- `EAI-067`: UX em andamento. Mapear reestruturacao UX do frontend.
+- `EAI-068`: backlog. Criar shell responsivo e padroes globais de UX.
+- `EAI-069`: backlog. Padronizar listas, filtros e estados responsivos.
+- `EAI-070`: backlog. Reestruturar fluxo Leads/Pipeline/Conversas.
+- `EAI-071`: backlog. Validar navegacao e responsividade dos fluxos comerciais.
 
 ## Historico Operacional Recente
+
+### EAI-067
+
+- Branch: `docs/eai-067-frontend-ux-restructuring`.
+- Card: `https://trello.com/c/BNgWJd2z`.
+- Escopo: mapear a reestruturacao UX do frontend, revisar experiencia atual e gerar plano/cards derivados sem inventar regra de negocio nova.
+- Entrega em andamento: documento `docs/ux/frontend-restructuring-plan.md` criado com diagnostico, fases e criterios; cards derivados `EAI-068`, `EAI-069`, `EAI-070` e `EAI-071` criados no Backlog.
 
 ### EAI-059
 
