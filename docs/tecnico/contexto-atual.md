@@ -1,6 +1,6 @@
 # Contexto Atual Do Projeto
 
-Ultima atualizacao: 2026-08-30.
+Ultima atualizacao: 2026-09-02.
 
 Este arquivo e o handoff operacional do projeto EAI. Ele existe para que qualquer desenvolvedor ou agente de IA consiga retomar o trabalho sem depender do historico de uma conversa especifica.
 
@@ -80,20 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-061` em andamento.
+- Lucas Reiter: `EAI-063` em andamento.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `chore/eai-061-postgres-trivy`.
+Lucas Reiter: `chore/eai-063-frontend-dependencies`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Finalizar `EAI-061`, tratando vulnerabilidades Trivy da imagem Postgres.
-- Em seguida, revisar preparacao para reestruturacao UX/frontend.
+- Finalizar `EAI-063`, avaliando e tratando PRs Dependabot/majors/pins do frontend antes da reestruturacao UX.
+- Em seguida, revisar preparacao para reestruturacao UX/frontend ou tratar `EAI-064` se as excecoes Trivy de `gosu` estiverem proximas do vencimento.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -159,8 +159,10 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-058`: concluido no PR `#87`. Triar PRs Dependabot abertas.
 - `EAI-059`: concluido. Corrigir alertas CodeQL high de CSRF e path injection.
 - `EAI-060`: concluido no PR `#101`. Triar nova rodada de PRs Dependabot.
-- `EAI-061`: em andamento. Tratar vulnerabilidades Trivy da imagem Postgres.
+- `EAI-061`: concluido no PR `#102`. Tratar vulnerabilidades Trivy da imagem Postgres.
 - `EAI-062`: concluido no PR `#100`. Atualizar handoff operacional pos `EAI-059`.
+- `EAI-063`: em andamento. Avaliar migracao de majors e pins de dependencias frontend.
+- `EAI-064`: backlog. Revisar excecoes Trivy do `gosu` na imagem Postgres antes de `2026-09-30`.
 
 ## Historico Operacional Recente
 
@@ -191,12 +193,21 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Validacao local: `npm ci`, `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run setup:e2e`, `npm run test:e2e`, `mvn clean verify` via Docker/Testcontainers e OSV frontend/backend passaram.
 - Achados: `jsdom 30` exige Node mais novo que o Node 20 do CI; CI, README e `frontend/package.json` foram alinhados para Node 22.22.2+. `npm outdated` ainda lista majors/pins fora do escopo seguro deste card, como MUI 9, Zod 4, TypeScript 7 e React Router 8.3.1.
 
+### EAI-063
+
+- Branch: `chore/eai-063-frontend-dependencies`.
+- Card: `https://trello.com/c/S9ffu7Ej`.
+- Escopo: avaliar PRs Dependabot abertos do frontend e decidir quais updates podem ser integrados agora sem bloquear a reestruturacao UX.
+- Entrega em andamento: absorvidos updates frontend dos PRs Dependabot `#105`, `#106`, `#107`, `#108` e `#109` em uma branch unica; Zod 4 exige `@hookform/resolvers` 5 e tipagem explicita `z.input`/`z.output` para formularios com `z.coerce.number()`.
+- Validacao local: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e` e `npm ci` com Node `22.22.2` em container passaram.
+- Achados/debitos: MUI `9.4.0` quebra APIs usadas no frontend (`Grid2`, `PaperProps`, props tipadas de componentes MUI) e TypeScript `7.0.2` e rejeitado por `typescript-eslint` `8.69.0`; ambos ficam fora do escopo seguro deste card e devem aguardar card especifico de migracao.
+
 ### EAI-061
 
 - Branch: `chore/eai-061-postgres-trivy`.
 - Card: `https://trello.com/c/FcEp0Cl7`.
 - Escopo: investigar e tratar vulnerabilidades HIGH/CRITICAL reportadas pelo Trivy na imagem Postgres.
-- Entrega em andamento: imagem local/Testcontainers/CI ajustada para `postgres:16-bookworm`; gate Trivy do CI voltou a ser bloqueante com excecoes temporarias e estreitas para `usr/local/bin/gosu` em `.trivyignore.yaml`.
+- Entrega: imagem local/Testcontainers/CI ajustada para `postgres:16-bookworm`; gate Trivy do CI voltou a ser bloqueante com excecoes temporarias e estreitas para `usr/local/bin/gosu` em `.trivyignore.yaml`.
 - Validacao local: Trivy `0.74.0` em `postgres:16-bookworm` passou com 0 HIGH/CRITICAL nao ignorados; backend `mvn clean verify` via Docker/Testcontainers passou com 340 unitarios, 2 integracoes e PostgreSQL 16.15.
 - Achado/debito: a imagem oficial ainda inclui `gosu` compilado com Go vulneravel segundo Trivy. Excecoes expiram em `2026-09-30` e devem ser removidas quando a imagem oficial atualizar o binario.
 
