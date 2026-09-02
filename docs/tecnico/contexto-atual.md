@@ -80,20 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-068` em andamento.
+- Lucas Reiter: `EAI-069` em andamento.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `feature/eai-068-responsive-shell-ux`.
+Lucas Reiter: `feature/eai-069-responsive-lists-states`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Finalizar `EAI-068`, implementando shell responsivo e padroes globais de UX.
-- Depois do `EAI-068`, puxar `EAI-069` para padronizar listas, filtros e estados responsivos.
+- Implementar `EAI-069`, padronizando listas, filtros e estados responsivos conforme `docs/ux/frontend-restructuring-plan.md`.
+- Depois do `EAI-069`, puxar `EAI-070` para reestruturar o fluxo Leads/Pipeline/Conversas.
 - Tratar `EAI-065` quando se aproximar de `2026-10-31`.
 
 ## Cards De Desenvolvimento Conhecidos
@@ -167,20 +167,30 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-065`: backlog. Revisar excecoes Trivy do `gosu` ate `2026-10-31`.
 - `EAI-066`: concluido. Triar PRs Dependabot restantes `#103` e `#104`.
 - `EAI-067`: concluido no PR `#113`. Mapear reestruturacao UX do frontend.
-- `EAI-068`: em andamento. Criar shell responsivo e padroes globais de UX.
-- `EAI-069`: backlog. Padronizar listas, filtros e estados responsivos.
+- `EAI-068`: concluido no PR `#114`. Criar shell responsivo e padroes globais de UX.
+- `EAI-069`: em andamento. Padronizar listas, filtros e estados responsivos.
 - `EAI-070`: backlog. Reestruturar fluxo Leads/Pipeline/Conversas.
 - `EAI-071`: backlog. Validar navegacao e responsividade dos fluxos comerciais.
 
 ## Historico Operacional Recente
 
+### EAI-069
+
+- Branch: `feature/eai-069-responsive-lists-states`.
+- Card: `https://trello.com/c/Mo5QPOXr`.
+- Escopo: padronizar listas, filtros e estados responsivos conforme `docs/ux/frontend-restructuring-plan.md`.
+- Entrega em andamento: card puxado do backlog, movido para `Em andamento`, atribuido a Lucas Reiter e branch criada para iniciar a implementacao.
+- Validacao planejada: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e` e `git diff --check`.
+
 ### EAI-068
 
 - Branch: `feature/eai-068-responsive-shell-ux`.
 - Card: `https://trello.com/c/JU3ratWk`.
+- PR: `https://github.com/gabrielfelipeoliveira/eai/pull/114`.
 - Escopo: implementar shell responsivo e padroes globais de UX conforme `docs/ux/frontend-restructuring-plan.md`.
-- Entrega em andamento: `MainLayout` ajustado com drawer permanente em desktop, drawer temporario no mobile, botao de menu, conteudo com espacamento responsivo e fechamento da navegacao ao selecionar item; adicionados testes unitario e E2E do shell responsivo.
-- Validacao local: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e` passaram.
+- Entrega: `MainLayout` ajustado com drawer permanente em desktop, drawer temporario no mobile, botao de menu, conteudo com espacamento responsivo e fechamento da navegacao ao selecionar item; adicionados testes unitario e E2E do shell responsivo.
+- Validacao local: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e -- responsive-shell.spec.ts`, `npm run test:e2e` e `git diff --check` passaram.
+- Validacao remota: checks Backend, Frontend, Container Images e CodeQL passaram no PR `#114`; merge/squash em `7ae2fae721d4bbf6b2292ddcb6512ee78fcc02a4`.
 
 ### EAI-067
 
