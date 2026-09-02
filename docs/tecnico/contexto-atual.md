@@ -80,20 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-064` em andamento.
+- Lucas Reiter: nenhum card ativo conhecido no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `chore/eai-064-postgres-gosu-trivy`.
+Lucas Reiter: sem branch ativa conhecida.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Finalizar `EAI-064`, renovando o controle temporario das excecoes Trivy do `gosu` na imagem Postgres ate `2026-10-31`.
-- Em seguida, revisar preparacao para reestruturacao UX/frontend, tratar `EAI-065` quando se aproximar de `2026-10-31` ou tratar PRs Dependabot restantes `#103` e `#104` com card proprio se ainda estiverem abertas.
+- Revisar preparacao para reestruturacao UX/frontend.
+- Tratar `EAI-065` quando se aproximar de `2026-10-31`.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -162,8 +162,9 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-061`: concluido no PR `#102`. Tratar vulnerabilidades Trivy da imagem Postgres.
 - `EAI-062`: concluido no PR `#100`. Atualizar handoff operacional pos `EAI-059`.
 - `EAI-063`: concluido no PR `#110`. Avaliar migracao de majors e pins de dependencias frontend.
-- `EAI-064`: em andamento. Revisar excecoes Trivy do `gosu` na imagem Postgres e renovar controle temporario ate `2026-10-31`.
+- `EAI-064`: concluido no PR `#111`. Revisar excecoes Trivy do `gosu` na imagem Postgres e renovar controle temporario ate `2026-10-31`.
 - `EAI-065`: backlog. Revisar excecoes Trivy do `gosu` ate `2026-10-31`.
+- `EAI-066`: concluido. Triar PRs Dependabot restantes `#103` e `#104`.
 
 ## Historico Operacional Recente
 
@@ -193,6 +194,14 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Entrega: PRs Dependabot backend `#90`, `#91`, `#92`, `#98` e `#99` mergeados diretamente apos checks verdes; updates frontend restantes absorvidos neste card junto com ajuste de Node 22.22.2+.
 - Validacao local: `npm ci`, `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run setup:e2e`, `npm run test:e2e`, `mvn clean verify` via Docker/Testcontainers e OSV frontend/backend passaram.
 - Achados: `jsdom 30` exige Node mais novo que o Node 20 do CI; CI, README e `frontend/package.json` foram alinhados para Node 22.22.2+. `npm outdated` ainda lista majors/pins fora do escopo seguro deste card, como MUI 9, Zod 4, TypeScript 7 e React Router 8.3.1.
+
+### EAI-066
+
+- Branch: `chore/eai-066-dependabot-restantes`.
+- Card: `https://trello.com/c/Owt8gwX2`.
+- Escopo: triagem das PRs Dependabot restantes `#103` (`actions/setup-java` 5 -> 6) e `#104` (`tools.jackson:jackson-bom` 3.1.5 -> 3.2.2).
+- Entrega: PRs Dependabot `#103` e `#104` revisadas e mergeadas.
+- Validacao: checks remotos Backend, Frontend, Container Images e CodeQL passaram nas duas PRs; lista de PRs abertas ficou vazia.
 
 ### EAI-064
 
