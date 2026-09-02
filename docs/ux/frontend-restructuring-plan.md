@@ -80,9 +80,9 @@ Principais pontos de UX observados no codigo:
 
 ## Cards Derivados Criados
 
-- `EAI-068` - `[Dev][Frontend] Criar shell responsivo e padroes globais de UX`: `https://trello.com/c/Znhuu0Sx`.
-- `EAI-069` - `[Dev][Frontend] Padronizar listas filtros e estados responsivos`: `https://trello.com/c/JU3ratWk`.
-- `EAI-070` - `[Dev][Frontend] Reestruturar fluxo Leads Pipeline Conversas`: `https://trello.com/c/Mo5QPOXr`.
+- `EAI-068` - `[Dev][Frontend] Criar shell responsivo e padroes globais de UX`: `https://trello.com/c/JU3ratWk`.
+- `EAI-069` - `[Dev][Frontend] Padronizar listas filtros e estados responsivos`: `https://trello.com/c/Mo5QPOXr`.
+- `EAI-070` - `[Dev][Frontend] Reestruturar fluxo Leads Pipeline Conversas`: `https://trello.com/c/Znhuu0Sx`.
 - `EAI-071` - `[QA][Frontend] Validar navegacao e responsividade dos fluxos comerciais`: `https://trello.com/c/CUIQxGpx`.
 - Decisao futura - tratamento visual de telas/funcionalidades de segunda fase: registrar em pendencia de produto se bloquear implementacao.
 
