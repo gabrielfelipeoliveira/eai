@@ -92,8 +92,8 @@ Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 
 Proximo passo operacional:
 
-- Finalizar `EAI-064`, revisando se as excecoes Trivy do `gosu` na imagem Postgres ainda sao necessarias antes de `2026-09-30`.
-- Em seguida, revisar preparacao para reestruturacao UX/frontend ou tratar PRs Dependabot restantes `#103` e `#104` com card proprio se ainda estiverem abertas.
+- Finalizar `EAI-064`, renovando o controle temporario das excecoes Trivy do `gosu` na imagem Postgres ate `2026-10-31`.
+- Em seguida, revisar preparacao para reestruturacao UX/frontend, tratar `EAI-065` quando se aproximar de `2026-10-31` ou tratar PRs Dependabot restantes `#103` e `#104` com card proprio se ainda estiverem abertas.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -162,7 +162,8 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-061`: concluido no PR `#102`. Tratar vulnerabilidades Trivy da imagem Postgres.
 - `EAI-062`: concluido no PR `#100`. Atualizar handoff operacional pos `EAI-059`.
 - `EAI-063`: concluido no PR `#110`. Avaliar migracao de majors e pins de dependencias frontend.
-- `EAI-064`: em andamento. Revisar excecoes Trivy do `gosu` na imagem Postgres antes de `2026-09-30`.
+- `EAI-064`: em andamento. Revisar excecoes Trivy do `gosu` na imagem Postgres e renovar controle temporario ate `2026-10-31`.
+- `EAI-065`: backlog. Revisar excecoes Trivy do `gosu` ate `2026-10-31`.
 
 ## Historico Operacional Recente
 
@@ -198,7 +199,9 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Branch: `chore/eai-064-postgres-gosu-trivy`.
 - Card: `https://trello.com/c/F6mxDThh`.
 - Escopo: revisar se as excecoes Trivy do `gosu` na imagem `postgres:16-bookworm` ainda sao necessarias antes de `2026-09-30`.
-- Entrega em andamento: card reservado e triagem inicial pendente.
+- Entrega em andamento: imagem `postgres:16-bookworm` atualizada confirmada no digest `sha256:bb3e1a57e5407e0a5280b4211980a5e537f4abd234a87014ac979849a78dd825`; Trivy `0.74.0` sem ignore ainda reporta 22 achados HIGH/CRITICAL em `usr/local/bin/gosu` e 0 achados Debian; excecoes renovadas ate `2026-10-31`.
+- Validacao local: Trivy `0.74.0` com `.trivyignore.yaml` atualizado passou com 0 HIGH/CRITICAL nao ignorados em `postgres:16-bookworm`.
+- Debito registrado: `EAI-065` criado para nova revisao antes de `2026-10-31` (`https://trello.com/c/2xYml9AH`).
 
 ### EAI-063
 
