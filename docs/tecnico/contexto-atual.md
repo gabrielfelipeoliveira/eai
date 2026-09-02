@@ -179,8 +179,8 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Branch: `feature/eai-069-responsive-lists-states`.
 - Card: `https://trello.com/c/Mo5QPOXr`.
 - Escopo: padronizar listas, filtros e estados responsivos conforme `docs/ux/frontend-restructuring-plan.md`.
-- Entrega em andamento: card puxado do backlog, movido para `Em andamento`, atribuido a Lucas Reiter e branch criada para iniciar a implementacao.
-- Validacao planejada: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e` e `git diff --check`.
+- Entrega em andamento: criados componentes compartilhados `PageHeader`, `ResponsiveDataView` e `RecordCard`; `CompaniesPage`, `StoresPage` e `UsersPage` passaram a alternar tabela desktop e cards mobile com estados loading/erro/vazio padronizados; `LeadsPage` passou a usar cabecalho comum, filtros com espacamento responsivo e tabela com overflow horizontal controlado.
+- Validacao local: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e` e `git diff --check` passaram.
 
 ### EAI-068
 

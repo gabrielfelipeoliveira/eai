@@ -16,12 +16,16 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { PageHeader } from '../components/PageHeader';
+import { RecordCard } from '../components/RecordCard';
+import { ResponsiveDataView } from '../components/ResponsiveDataView';
 import { useMetadata } from '../hooks/useMetadata';
 import { apiErrorMessage } from '../services/api';
 import { createCompany, listCompanies, updateCompany } from '../services/companyService';
@@ -85,19 +89,42 @@ export function CompaniesPage() {
     saveCompanyMutation.mutate(values);
   }
 
+  const companies = companiesQuery.data ?? [];
+
   return (
     <Box sx={{ display: 'grid', gap: 3 }}>
-      <Box>
-        <Typography component="h2" variant="h4" fontWeight={800}>
-          Empresas
-        </Typography>
-        <Typography color="text.secondary">Cadastro das empresas que utilizam o EAI.</Typography>
-      </Box>
+      <PageHeader description="Cadastro das empresas que utilizam o EAI." title="Empresas" />
 
       <Grid2 container spacing={3}>
         <Grid2 size={{ xs: 12, lg: 8 }}>
-          <Paper variant="outlined" sx={{ borderRadius: 1, overflow: 'hidden' }}>
-            <Table>
+          <ResponsiveDataView
+            cards={companies.map((company) => (
+              <RecordCard
+                key={company.id}
+                actions={
+                  <Tooltip title="Editar">
+                    <IconButton aria-label="Editar empresa" onClick={() => setEditingCompany(company)}>
+                      <EditIcon />
+                    </IconButton>
+                  </Tooltip>
+                }
+                status={
+                  <Chip
+                    color={metadata.color('tenantStatuses', company.status)}
+                    label={metadata.label('tenantStatuses', company.status)}
+                    size="small"
+                  />
+                }
+                title={company.name}
+              />
+            ))}
+            empty={companies.length === 0}
+            emptyMessage="Nenhuma empresa encontrada."
+            error={companiesQuery.isError}
+            loading={companiesQuery.isLoading}
+            loadingLabel="Carregando empresas"
+            table={
+              <Table>
               <TableHead>
                 <TableRow>
                   <TableCell>Nome</TableCell>
@@ -106,7 +133,7 @@ export function CompaniesPage() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {companiesQuery.data?.map((company) => (
+                {companies.map((company) => (
                   <TableRow key={company.id}>
                     <TableCell>{company.name}</TableCell>
                     <TableCell>
@@ -119,14 +146,10 @@ export function CompaniesPage() {
                     </TableCell>
                   </TableRow>
                 ))}
-                {!companiesQuery.isLoading && companiesQuery.data?.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={3}>Nenhuma empresa encontrada.</TableCell>
-                  </TableRow>
-                )}
               </TableBody>
-            </Table>
-          </Paper>
+              </Table>
+            }
+          />
         </Grid2>
 
         <Grid2 size={{ xs: 12, lg: 4 }}>
