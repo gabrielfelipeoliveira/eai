@@ -80,20 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-066` em andamento.
+- Lucas Reiter: nenhum card ativo conhecido no Trello.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `chore/eai-066-dependabot-restantes`.
+Lucas Reiter: sem branch ativa conhecida.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Finalizar `EAI-066`, triando PRs Dependabot restantes `#103` e `#104`.
-- Em seguida, revisar preparacao para reestruturacao UX/frontend ou tratar `EAI-065` quando se aproximar de `2026-10-31`.
+- Revisar preparacao para reestruturacao UX/frontend.
+- Tratar `EAI-065` quando se aproximar de `2026-10-31`.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -164,7 +164,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-063`: concluido no PR `#110`. Avaliar migracao de majors e pins de dependencias frontend.
 - `EAI-064`: concluido no PR `#111`. Revisar excecoes Trivy do `gosu` na imagem Postgres e renovar controle temporario ate `2026-10-31`.
 - `EAI-065`: backlog. Revisar excecoes Trivy do `gosu` ate `2026-10-31`.
-- `EAI-066`: em andamento. Triar PRs Dependabot restantes `#103` e `#104`.
+- `EAI-066`: concluido. Triar PRs Dependabot restantes `#103` e `#104`.
 
 ## Historico Operacional Recente
 
@@ -200,7 +200,8 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Branch: `chore/eai-066-dependabot-restantes`.
 - Card: `https://trello.com/c/Owt8gwX2`.
 - Escopo: triagem das PRs Dependabot restantes `#103` (`actions/setup-java` 5 -> 6) e `#104` (`tools.jackson:jackson-bom` 3.1.5 -> 3.2.2).
-- Entrega em andamento: card reservado e triagem inicial pendente.
+- Entrega: PRs Dependabot `#103` e `#104` revisadas e mergeadas.
+- Validacao: checks remotos Backend, Frontend, Container Images e CodeQL passaram nas duas PRs; lista de PRs abertas ficou vazia.
 
 ### EAI-064
 
