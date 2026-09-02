@@ -13,6 +13,7 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import ChatIcon from '@mui/icons-material/Chat';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
+import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import {
   AppBar,
@@ -51,6 +52,7 @@ export function MainLayout() {
   const metadata = useMetadata();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [notificationsAnchor, setNotificationsAnchor] = useState<HTMLElement | null>(null);
   const isAdmin = hasAnyRole(['ADMIN']);
 
@@ -107,6 +109,45 @@ export function MainLayout() {
     navigate('/login', { replace: true });
   }
 
+  const navigation = (
+    <>
+      <Box sx={{ px: 3, py: 2.5 }}>
+        <Typography variant="h6" fontWeight={800}>
+          EAI
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          Automotive Lead Intelligence
+        </Typography>
+      </Box>
+      <Divider />
+      <List sx={{ px: 1.5, py: 2 }}>
+        {menuItems.map((item) => (
+          <ListItemButton
+            key={item.path}
+            component={NavLink}
+            to={item.path}
+            end={item.path === '/'}
+            onClick={() => setMobileNavOpen(false)}
+            sx={{
+              borderRadius: 1,
+              mb: 0.5,
+              '&.active': {
+                bgcolor: 'primary.main',
+                color: 'primary.contrastText',
+                '& .MuiListItemIcon-root': {
+                  color: 'inherit',
+                },
+              },
+            }}
+          >
+            <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
+            <ListItemText primary={item.label} />
+          </ListItemButton>
+        ))}
+      </List>
+    </>
+  );
+
   const unreadCount = unreadCountQuery.data?.count ?? 0;
 
   return (
@@ -115,16 +156,33 @@ export function MainLayout() {
         color="inherit"
         elevation={0}
         position="fixed"
-        sx={{ borderBottom: 1, borderColor: 'divider', ml: `${drawerWidth}px`, width: `calc(100% - ${drawerWidth}px)` }}
+        sx={{
+          borderBottom: 1,
+          borderColor: 'divider',
+          ml: { md: `${drawerWidth}px` },
+          width: { xs: '100%', md: `calc(100% - ${drawerWidth}px)` },
+        }}
       >
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Box>
-            <Typography component="span" variant="subtitle2" color="text.secondary">
-              EAI
-            </Typography>
-            <Typography component="h1" variant="h6" fontWeight={700}>
-              Operacao comercial
-            </Typography>
+        <Toolbar sx={{ justifyContent: 'space-between', gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minWidth: 0 }}>
+            <Tooltip title="Abrir menu">
+              <IconButton
+                aria-label="Abrir menu"
+                edge="start"
+                onClick={() => setMobileNavOpen(true)}
+                sx={{ display: { md: 'none' } }}
+              >
+                <MenuIcon />
+              </IconButton>
+            </Tooltip>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography component="span" variant="subtitle2" color="text.secondary">
+                EAI
+              </Typography>
+              <Typography component="h1" variant="h6" fontWeight={700} noWrap>
+                Operacao comercial
+              </Typography>
+            </Box>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             {isAdmin && (
@@ -224,6 +282,24 @@ export function MainLayout() {
       </AppBar>
 
       <Drawer
+        onClose={() => setMobileNavOpen(false)}
+        open={mobileNavOpen}
+        variant="temporary"
+        ModalProps={{ keepMounted: true }}
+        PaperProps={{
+          sx: {
+            width: drawerWidth,
+            borderRight: 1,
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+          },
+        }}
+        sx={{ display: { xs: 'block', md: 'none' } }}
+      >
+        {navigation}
+      </Drawer>
+
+      <Drawer
         open
         variant="permanent"
         PaperProps={{
@@ -234,43 +310,22 @@ export function MainLayout() {
             bgcolor: 'background.paper',
           },
         }}
+        sx={{ display: { xs: 'none', md: 'block' } }}
       >
-        <Box sx={{ px: 3, py: 2.5 }}>
-          <Typography variant="h6" fontWeight={800}>
-            EAI
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            Automotive Lead Intelligence
-          </Typography>
-        </Box>
-        <Divider />
-        <List sx={{ px: 1.5, py: 2 }}>
-          {menuItems.map((item) => (
-            <ListItemButton
-              key={item.path}
-              component={NavLink}
-              to={item.path}
-              end={item.path === '/'}
-              sx={{
-                borderRadius: 1,
-                mb: 0.5,
-                '&.active': {
-                  bgcolor: 'primary.main',
-                  color: 'primary.contrastText',
-                  '& .MuiListItemIcon-root': {
-                    color: 'inherit',
-                  },
-                },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.label} />
-            </ListItemButton>
-          ))}
-        </List>
+        {navigation}
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, pt: 12, px: 4, pb: 5, ml: `${drawerWidth}px` }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          minWidth: 0,
+          ml: { md: `${drawerWidth}px` },
+          px: { xs: 2, sm: 3, md: 4 },
+          pb: { xs: 3, md: 5 },
+          pt: { xs: 10, md: 12 },
+        }}
+      >
         <Outlet />
       </Box>
     </Box>

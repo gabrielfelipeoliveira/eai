@@ -179,7 +179,8 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Branch: `feature/eai-068-responsive-shell-ux`.
 - Card: `https://trello.com/c/JU3ratWk`.
 - Escopo: implementar shell responsivo e padroes globais de UX conforme `docs/ux/frontend-restructuring-plan.md`.
-- Entrega em andamento: card reservado; corrigido mapeamento dos links dos cards derivados no plano UX.
+- Entrega em andamento: `MainLayout` ajustado com drawer permanente em desktop, drawer temporario no mobile, botao de menu, conteudo com espacamento responsivo e fechamento da navegacao ao selecionar item; adicionados testes unitario e E2E do shell responsivo.
+- Validacao local: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e` passaram.
 
 ### EAI-067
 
