@@ -31,6 +31,12 @@ Use `docs/tecnico/` para decisoes e contexto de engenharia. Esta pasta deve ser 
 - [Importador de leads por e-mail](tecnico/email-importer.md)
 - [ADRs](tecnico/adr/)
 
+## Documentos UX
+
+Use `docs/ux/` para diagnosticos, planos de experiencia, fluxo de telas e criterios visuais antes de abrir cards de desenvolvimento frontend.
+
+- [Plano de reestruturacao UX do frontend](ux/frontend-restructuring-plan.md)
+
 ## Regra De Uso
 
 - Se a pergunta for sobre comportamento esperado, regra, ator, fluxo, prioridade ou escopo de produto, comece por `docs/negocio/`.
