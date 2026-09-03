@@ -130,6 +130,19 @@ interface MockEmailAccount {
   lastSyncAt: string | null;
 }
 
+interface MockFollowUpTask {
+  id: string;
+  leadId: string;
+  userId: string;
+  title: string;
+  description: string | null;
+  dueAt: string;
+  completedAt: string | null;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const adminUser: MockUser = {
   id: 'user-admin',
   name: 'Admin EAI',
@@ -263,6 +276,32 @@ export async function mockApi(page: Page) {
       lastSyncAt: null,
     },
   ];
+  const followUps: MockFollowUpTask[] = [
+    {
+      id: 'follow-up-1',
+      leadId: 'lead-1',
+      userId: 'user-admin',
+      title: 'Retornar contato',
+      description: 'Confirmar disponibilidade para visita.',
+      dueAt: '2026-07-23T13:00:00Z',
+      completedAt: null,
+      status: 'PENDING',
+      createdAt: '2026-07-22T12:00:00Z',
+      updatedAt: '2026-07-22T12:00:00Z',
+    },
+    {
+      id: 'follow-up-2',
+      leadId: 'lead-1',
+      userId: 'user-seller',
+      title: 'Primeiro contato pendente',
+      description: 'Lead sem resposta dentro do SLA.',
+      dueAt: '2026-07-21T13:00:00Z',
+      completedAt: null,
+      status: 'OVERDUE',
+      createdAt: '2026-07-20T12:00:00Z',
+      updatedAt: '2026-07-20T12:00:00Z',
+    },
+  ];
 
   await page.route('http://localhost:8080/api/**', async (route) => {
     const request = route.request();
@@ -311,6 +350,29 @@ export async function mockApi(page: Page) {
 
     if (path === '/email-accounts' && method === 'GET') {
       return json(route, emailAccounts);
+    }
+
+    if (path === '/follow-ups/my' && method === 'GET') {
+      return json(route, followUps.filter((task) => task.userId === authenticatedUser.id));
+    }
+
+    if (path === '/follow-ups' && method === 'GET') {
+      return json(route, followUps);
+    }
+
+    if (path === '/leads/sla/overdue' && method === 'GET') {
+      return json(route, [
+        lead({
+          id: 'lead-overdue-1',
+          customerName: 'Cliente Atrasado',
+          customerPhone: '+5511888880000',
+          vehicleInterest: 'Toyota Corolla',
+          assignedToUserId: 'user-seller',
+          overdueToAssign: true,
+          overdueToFirstContact: true,
+          createdAt: '2026-07-20T09:00:00Z',
+        }),
+      ]);
     }
 
     if (path === '/users') {
@@ -373,6 +435,10 @@ export async function mockApi(page: Page) {
 
     if (path.startsWith('/dashboard/')) {
       return json(route, dashboardResponse(path));
+    }
+
+    if (path.startsWith('/reports/')) {
+      return json(route, reportResponse(path));
     }
 
     if (path === '/notifications/unread-count') {
@@ -463,6 +529,77 @@ function dashboardResponse(path: string) {
   return [{ label: 'MANUAL', value: 1 }];
 }
 
+function reportResponse(path: string) {
+  if (path === '/reports/leads') {
+    return [{ period: '2026-07-22', leadCount: 4, soldLeads: 1, lostLeads: 1, conversionRate: 25 }];
+  }
+
+  if (path === '/reports/sellers') {
+    return [
+      {
+        sellerId: 'user-seller',
+        sellerName: 'Ana Vendedora',
+        leadCount: 4,
+        soldLeads: 1,
+        lostLeads: 1,
+        conversionRate: 25,
+        averageFirstResponseTimeMinutes: 18,
+        saleValue: 120000,
+      },
+    ];
+  }
+
+  if (path === '/reports/sources') {
+    return [{ source: 'MANUAL', leadCount: 4, soldLeads: 1, lostLeads: 1, conversionRate: 25 }];
+  }
+
+  if (path === '/reports/lost') {
+    return [
+      {
+        leadId: 'lead-lost-1',
+        customerName: 'Cliente Perdido',
+        vehicleInterest: 'Jeep Compass',
+        sellerId: 'user-seller',
+        sellerName: 'Ana Vendedora',
+        source: 'MANUAL',
+        lostReason: 'Comprou de concorrente',
+        createdAt: '2026-07-21T12:00:00Z',
+        lostAt: '2026-07-22T12:00:00Z',
+      },
+    ];
+  }
+
+  if (path === '/reports/sales') {
+    return [
+      {
+        leadId: 'lead-sale-1',
+        customerName: 'Cliente Vendido',
+        vehicleInterest: 'Honda Civic',
+        sellerId: 'user-seller',
+        sellerName: 'Ana Vendedora',
+        source: 'MANUAL',
+        saleValue: 120000,
+        createdAt: '2026-07-21T12:00:00Z',
+        soldAt: '2026-07-22T12:00:00Z',
+      },
+    ];
+  }
+
+  if (path === '/reports/sla') {
+    return {
+      leadCount: 4,
+      overdueToAssign: 1,
+      overdueToFirstContact: 1,
+      overdueTotal: 2,
+      averageFirstResponseTimeMinutes: 18,
+      firstContactWithinSla: 2,
+      firstContactOutsideSla: 1,
+    };
+  }
+
+  return {};
+}
+
 function metadata() {
   const option = (code: string, label: string, order: number, color = 'default') => ({
     code,
@@ -499,7 +636,12 @@ function metadata() {
       option('OLX', 'OLX', 8),
       option('API', 'API', 9),
     ],
-    followUpStatuses: [],
+    followUpStatuses: [
+      option('PENDING', 'Pendente', 1, 'warning'),
+      option('DONE', 'Concluido', 2, 'success'),
+      option('CANCELED', 'Cancelado', 3),
+      option('OVERDUE', 'Atrasado', 4, 'error'),
+    ],
     userRoles: [
       option('ADMIN', 'Administrador', 1, 'error'),
       option('SELLER', 'Vendedor', 2, 'success'),

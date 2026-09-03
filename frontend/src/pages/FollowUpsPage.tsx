@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Chip,
+  CircularProgress,
   Grid2,
   Paper,
   Stack,
@@ -14,6 +15,7 @@ import {
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
+import { PageHeader } from '../components/PageHeader';
 import { useMetadata } from '../hooks/useMetadata';
 import { completeFollowUpTask, listFollowUps, listMyFollowUps } from '../services/leadService';
 import type { FollowUpTask } from '../types/lead';
@@ -64,19 +66,24 @@ export function FollowUpsPage() {
     };
   }, [allQuery.data, myQuery.data]);
 
+  const loading = myQuery.isLoading || allQuery.isLoading;
+  const error = myQuery.isError || allQuery.isError;
+
   function renderTask(task: FollowUpTask) {
     return (
       <Paper key={task.id} variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
         <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" spacing={1.5}>
-          <Box>
+          <Box sx={{ minWidth: 0 }}>
             <Stack direction="row" alignItems="center" flexWrap="wrap" gap={1} sx={{ mb: 0.75 }}>
-              <Typography fontWeight={800}>{task.title}</Typography>
+              <Typography fontWeight={800} sx={{ overflowWrap: 'anywhere' }}>
+                {task.title}
+              </Typography>
               <Chip color={metadata.color('followUpStatuses', task.status)} label={metadata.label('followUpStatuses', task.status)} size="small" />
             </Stack>
-            <Typography color="text.secondary" variant="body2">
+            <Typography color="text.secondary" sx={{ overflowWrap: 'anywhere' }} variant="body2">
               {task.description ?? 'Sem descricao'}
             </Typography>
-            <Typography color="text.secondary" variant="caption">
+            <Typography color="text.secondary" component="div" sx={{ mt: 0.5 }} variant="caption">
               Lead {task.leadId} - vencimento {new Date(task.dueAt).toLocaleString('pt-BR')}
             </Typography>
           </Box>
@@ -84,6 +91,7 @@ export function FollowUpsPage() {
             disabled={task.status === 'DONE' || task.status === 'CANCELED' || completeMutation.isPending}
             onClick={() => completeMutation.mutate(task.id)}
             startIcon={<CheckCircleIcon />}
+            sx={{ alignSelf: { xs: 'stretch', md: 'center' } }}
             variant="outlined"
           >
             Concluir
@@ -95,12 +103,7 @@ export function FollowUpsPage() {
 
   return (
     <Box sx={{ display: 'grid', gap: 3 }}>
-      <Box>
-        <Typography component="h2" variant="h4" fontWeight={800}>
-          Agenda
-        </Typography>
-        <Typography color="text.secondary">Follow-ups, minhas tarefas e itens atrasados.</Typography>
-      </Box>
+      <PageHeader description="Follow-ups, minhas tarefas e itens atrasados." title="Agenda" />
 
       <Grid2 container spacing={1.5}>
         <Grid2 size={{ xs: 12, md: 4 }}>
@@ -133,17 +136,34 @@ export function FollowUpsPage() {
         </Grid2>
       </Grid2>
 
-      <Paper variant="outlined" sx={{ borderRadius: 1 }}>
-        <Tabs onChange={(_, value) => setTab(value)} value={tab}>
+      <Paper variant="outlined" sx={{ borderRadius: 1, overflow: 'hidden' }}>
+        <Tabs onChange={(_, value) => setTab(value)} value={tab} variant="scrollable" scrollButtons="auto">
           <Tab label="Minhas tarefas" value="my" />
           <Tab label="Atrasadas" value="overdue" />
           <Tab label="Todas" value="all" />
         </Tabs>
       </Paper>
 
+      {loading && (
+        <Paper variant="outlined" sx={{ borderRadius: 1, p: 3 }}>
+          <Stack alignItems="center" spacing={1.5}>
+            <CircularProgress aria-label="Carregando agenda" size={28} />
+            <Typography color="text.secondary" variant="body2">
+              Carregando agenda
+            </Typography>
+          </Stack>
+        </Paper>
+      )}
+
+      {error && (
+        <Paper variant="outlined" sx={{ borderColor: 'error.main', borderRadius: 1, p: 2 }}>
+          <Typography color="error">Nao foi possivel carregar a agenda.</Typography>
+        </Paper>
+      )}
+
       <Stack spacing={1.25}>
-        {tasks.map(renderTask)}
-        {!myQuery.isLoading && !allQuery.isLoading && tasks.length === 0 && (
+        {!loading && !error && tasks.map(renderTask)}
+        {!loading && !error && tasks.length === 0 && (
           <Paper variant="outlined" sx={{ borderRadius: 1, p: 2 }}>
             <Typography color="text.secondary">Nenhum follow-up encontrado.</Typography>
           </Paper>
