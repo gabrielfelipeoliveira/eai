@@ -56,6 +56,46 @@ interface MockLead {
   overdueToFirstContact: boolean;
 }
 
+interface MockConversation {
+  id: string;
+  companyId: string;
+  storeId: string;
+  contactId: string;
+  leadId: string | null;
+  responsibleUserId: string | null;
+  leadName: string | null;
+  phone: string;
+  contactDisplayName: string | null;
+  lastMessageId: string | null;
+  lastMessageDirection: string | null;
+  lastMessageType: string | null;
+  lastMessageStatus: string | null;
+  lastMessageContent: string | null;
+  lastInteractionAt: string;
+  unreadCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface MockConversationMessage {
+  id: string;
+  conversationId: string;
+  direction: string;
+  type: string;
+  status: string;
+  externalMessageId: string | null;
+  content: string | null;
+  mediaId: string | null;
+  mediaMimeType: string | null;
+  mediaStorageProvider: string | null;
+  mediaStorageKey: string | null;
+  mediaFileName: string | null;
+  mediaSizeBytes: number | null;
+  mediaSha256: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const adminUser: MockUser = {
   id: 'user-admin',
   name: 'Admin EAI',
@@ -113,6 +153,46 @@ export async function mockApi(page: Page) {
       source: 'MANUAL',
     }),
   ];
+  const conversations: MockConversation[] = [
+    {
+      id: 'conversation-1',
+      companyId: 'company-1',
+      storeId: 'store-1',
+      contactId: 'contact-1',
+      leadId: 'lead-1',
+      responsibleUserId: 'user-admin',
+      leadName: 'Cliente Inicial',
+      phone: '+5511999990000',
+      contactDisplayName: null,
+      lastMessageId: 'message-2',
+      lastMessageDirection: 'OUTBOUND',
+      lastMessageType: 'TEXT',
+      lastMessageStatus: 'DELIVERED',
+      lastMessageContent: 'Combinado, vou enviar os detalhes.',
+      lastInteractionAt: '2026-07-22T12:12:00Z',
+      unreadCount: 1,
+      createdAt: '2026-07-22T12:00:00Z',
+      updatedAt: '2026-07-22T12:12:00Z',
+    },
+  ];
+  const conversationMessages: MockConversationMessage[] = [
+    conversationMessage({
+      id: 'message-1',
+      direction: 'INBOUND',
+      status: 'RECEIVED',
+      content: 'Ola, tenho interesse no Honda Civic.',
+      createdAt: '2026-07-22T12:05:00Z',
+      updatedAt: '2026-07-22T12:05:00Z',
+    }),
+    conversationMessage({
+      id: 'message-2',
+      direction: 'OUTBOUND',
+      status: 'DELIVERED',
+      content: 'Combinado, vou enviar os detalhes.',
+      createdAt: '2026-07-22T12:12:00Z',
+      updatedAt: '2026-07-22T12:12:00Z',
+    }),
+  ];
 
   await page.route('http://localhost:8080/api/**', async (route) => {
     const request = route.request();
@@ -157,6 +237,33 @@ export async function mockApi(page: Page) {
 
     if (path === '/users') {
       return json(route, [toAuthUser(adminUser), toAuthUser(sellerUser)]);
+    }
+
+    if (path === '/conversations' && method === 'GET') {
+      return json(route, conversations);
+    }
+
+    if (path === '/conversations/conversation-1/messages' && method === 'GET') {
+      return json(route, conversationMessages);
+    }
+
+    if (path === '/conversations/conversation-1/messages' && method === 'POST') {
+      const body = request.postDataJSON() as { content?: string };
+      const message = conversationMessage({
+        id: `message-${conversationMessages.length + 1}`,
+        direction: 'OUTBOUND',
+        status: 'SENT',
+        content: body.content ?? '',
+        createdAt: '2026-07-22T12:20:00Z',
+        updatedAt: '2026-07-22T12:20:00Z',
+      });
+      conversationMessages.push(message);
+      conversations[0].lastMessageId = message.id;
+      conversations[0].lastMessageContent = message.content;
+      conversations[0].lastMessageDirection = message.direction;
+      conversations[0].lastMessageStatus = message.status;
+      conversations[0].lastInteractionAt = message.createdAt;
+      return json(route, message, 201);
     }
 
     if (path === '/leads' && method === 'GET') {
@@ -328,6 +435,34 @@ function metadata() {
     emailProtocols: [],
     conversationMessageDirections: [],
     conversationMessageTypes: [],
-    conversationMessageStatuses: [],
+    conversationMessageStatuses: [
+      option('RECEIVED', 'Recebida', 1, 'success'),
+      option('SENT', 'Enviada', 2, 'info'),
+      option('DELIVERED', 'Entregue', 3, 'primary'),
+      option('READ', 'Lida', 4, 'success'),
+      option('FAILED', 'Falhou', 5, 'error'),
+    ],
+  };
+}
+
+function conversationMessage(overrides: Partial<MockConversationMessage>): MockConversationMessage {
+  return {
+    id: 'message-1',
+    conversationId: 'conversation-1',
+    direction: 'INBOUND',
+    type: 'TEXT',
+    status: 'RECEIVED',
+    externalMessageId: null,
+    content: null,
+    mediaId: null,
+    mediaMimeType: null,
+    mediaStorageProvider: null,
+    mediaStorageKey: null,
+    mediaFileName: null,
+    mediaSizeBytes: null,
+    mediaSha256: null,
+    createdAt: '2026-07-22T12:00:00Z',
+    updatedAt: '2026-07-22T12:00:00Z',
+    ...overrides,
   };
 }

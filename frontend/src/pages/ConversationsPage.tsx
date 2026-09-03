@@ -267,7 +267,7 @@ export function ConversationsPage() {
             </Stack>
           </Stack>
         }
-        description="WhatsApp"
+        description="Atendimento comercial por WhatsApp."
         title="Conversas"
       />
 
@@ -349,8 +349,40 @@ export function ConversationsPage() {
           overflow: 'hidden',
         }}
       >
-        <Box sx={{ borderRight: { lg: 1 }, borderColor: 'divider', minWidth: 0 }}>
-          <List disablePadding>
+        <Box
+          sx={{
+            boxShadow: {
+              xs: 'inset 0 -1px 0 rgba(148, 163, 184, 0.28)',
+              lg: 'inset -1px 0 0 rgba(148, 163, 184, 0.28)',
+            },
+            display: 'grid',
+            gridTemplateRows: 'auto minmax(0, 1fr)',
+            maxHeight: { xs: 360, lg: 'none' },
+            minWidth: 0,
+          }}
+        >
+          <Box
+            sx={{
+              alignItems: 'center',
+              borderBottom: 1,
+              borderColor: 'divider',
+              display: 'flex',
+              justifyContent: 'space-between',
+              px: 2,
+              py: 1.5,
+            }}
+          >
+            <Box>
+              <Typography fontWeight={800} variant="subtitle2">
+                Caixa de entrada
+              </Typography>
+              <Typography color="text.secondary" variant="caption">
+                {conversations.length} conversas filtradas
+              </Typography>
+            </Box>
+            <Chip color={unreadTotal > 0 ? 'warning' : 'default'} label={`${unreadTotal} nao lidas`} size="small" variant="outlined" />
+          </Box>
+          <List disablePadding sx={{ overflowY: 'auto' }}>
             {conversations.map((conversation) => {
               const hasUnread = conversation.unreadCount > 0;
               const selected = conversation.id === selectedConversationId;
@@ -363,7 +395,7 @@ export function ConversationsPage() {
                   sx={{
                     alignItems: 'flex-start',
                     gap: 1,
-                    minHeight: 96,
+                    minHeight: 104,
                     bgcolor: hasUnread ? 'rgba(237, 108, 2, 0.08)' : 'background.paper',
                     '&.Mui-selected': {
                       bgcolor: 'action.selected',
@@ -383,7 +415,7 @@ export function ConversationsPage() {
                   <ListItemText
                     primary={
                       <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={1}>
-                        <Typography fontWeight={hasUnread ? 800 : 700} noWrap>
+                        <Typography fontWeight={hasUnread ? 800 : 700} sx={{ overflowWrap: 'anywhere' }}>
                           {displayName(conversation)}
                         </Typography>
                         <Typography color={hasUnread ? 'warning.dark' : 'text.secondary'} fontWeight={hasUnread ? 800 : 500} variant="body2">
@@ -417,8 +449,21 @@ export function ConversationsPage() {
               );
             })}
             {!conversationsQuery.isLoading && conversations.length === 0 && (
-              <Box sx={{ p: 3 }}>
-                <Typography color="text.secondary">Nenhuma conversa encontrada.</Typography>
+              <Box sx={{ p: 2 }}>
+                <Box
+                  sx={{
+                    alignItems: 'center',
+                    border: 1,
+                    borderColor: 'divider',
+                    borderRadius: 1,
+                    borderStyle: 'dashed',
+                    display: 'flex',
+                    minHeight: 120,
+                    px: 2,
+                  }}
+                >
+                  <Typography color="text.secondary">Nenhuma conversa encontrada.</Typography>
+                </Box>
               </Box>
             )}
           </List>
@@ -427,19 +472,22 @@ export function ConversationsPage() {
         <Box sx={{ display: 'grid', gridTemplateRows: 'auto minmax(0, 1fr) auto', minWidth: 0 }}>
           {selectedConversation ? (
             <>
-              <Stack spacing={0.5} sx={{ borderBottom: 1, borderColor: 'divider', px: 3, py: 2 }}>
-                <Typography fontWeight={800} variant="h6" noWrap>
+              <Stack spacing={0.75} sx={{ bgcolor: 'background.paper', borderBottom: 1, borderColor: 'divider', px: { xs: 2, md: 3 }, py: 2 }}>
+                <Typography fontWeight={800} sx={{ overflowWrap: 'anywhere' }} variant="h6">
                   {displayName(selectedConversation)}
                 </Typography>
                 <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
                   <Chip label={formatPhone(selectedConversation.phone)} size="small" variant="outlined" />
                   {selectedConversation.leadName && <Chip label="Lead vinculado" size="small" color="primary" variant="outlined" />}
+                  {selectedConversation.lastMessageStatus && (
+                    <Chip label={metadata.label('conversationMessageStatuses', selectedConversation.lastMessageStatus)} size="small" variant="outlined" />
+                  )}
                 </Stack>
               </Stack>
 
               <Box
                 sx={{
-                  bgcolor: 'grey.50',
+                  bgcolor: 'background.default',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 1.25,
@@ -455,7 +503,7 @@ export function ConversationsPage() {
                       key={message.id}
                       sx={{
                         alignSelf: outbound ? 'flex-end' : 'flex-start',
-                        maxWidth: { xs: '88%', md: '68%' },
+                        maxWidth: { xs: '92%', md: '68%' },
                         minWidth: 120,
                       }}
                     >
@@ -473,9 +521,9 @@ export function ConversationsPage() {
                           borderColor: outbound ? 'primary.main' : 'divider',
                           borderRadius: 1,
                           color: outbound ? 'primary.contrastText' : 'text.primary',
+                          boxShadow: outbound ? 0 : 1,
                           px: 1.5,
                           py: 1,
-                          boxShadow: outbound ? 0 : 1,
                         }}
                       >
                         <Typography sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }} variant="body2">
@@ -523,7 +571,20 @@ export function ConversationsPage() {
                 })}
 
                 {!messagesQuery.isLoading && messages.length === 0 && (
-                  <Box sx={{ alignSelf: 'center', mt: 8 }}>
+                  <Box
+                    sx={{
+                      alignItems: 'center',
+                      alignSelf: 'center',
+                      border: 1,
+                      borderColor: 'divider',
+                      borderRadius: 1,
+                      borderStyle: 'dashed',
+                      display: 'flex',
+                      minHeight: 120,
+                      mt: 8,
+                      px: 3,
+                    }}
+                  >
                     <Typography color="text.secondary">Sem mensagens registradas.</Typography>
                   </Box>
                 )}
@@ -659,7 +720,22 @@ export function ConversationsPage() {
             </>
           ) : (
             <Box sx={{ alignItems: 'center', display: 'flex', justifyContent: 'center', minHeight: 360, p: 3 }}>
-              <Typography color="text.secondary">Nenhuma conversa selecionada.</Typography>
+              <Box
+                sx={{
+                  alignItems: 'center',
+                  border: 1,
+                  borderColor: 'divider',
+                  borderRadius: 1,
+                  borderStyle: 'dashed',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  minHeight: 160,
+                  px: 3,
+                  width: '100%',
+                }}
+              >
+                <Typography color="text.secondary">Nenhuma conversa selecionada.</Typography>
+              </Box>
             </Box>
           )}
         </Box>
