@@ -29,6 +29,8 @@ import {
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
+import { CommercialFlowNavigation } from '../components/CommercialFlowNavigation';
+import { PageHeader } from '../components/PageHeader';
 import {
   displayName,
   formatFileSize,
@@ -250,26 +252,24 @@ export function ConversationsPage() {
 
   return (
     <Box sx={{ display: 'grid', gap: 3 }}>
-      <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" spacing={2}>
-        <Box>
-          <Typography component="h2" variant="h4" fontWeight={800}>
-            Conversas
-          </Typography>
-          <Typography color="text.secondary" variant="body1">
-            WhatsApp
-          </Typography>
-        </Box>
-
-        <Stack direction="row" spacing={1}>
-          <Chip icon={<WhatsAppIcon />} label={`${conversations.length} conversas`} variant="outlined" />
-          <Chip
-            color={unreadTotal > 0 ? 'warning' : 'default'}
-            icon={<MarkChatUnreadIcon />}
-            label={`${unreadTotal} nao lidas`}
-            variant={unreadTotal > 0 ? 'filled' : 'outlined'}
-          />
-        </Stack>
-      </Stack>
+      <PageHeader
+        action={
+          <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+            <CommercialFlowNavigation current="conversations" />
+            <Stack direction="row" spacing={1}>
+              <Chip icon={<WhatsAppIcon />} label={`${conversations.length} conversas`} variant="outlined" />
+              <Chip
+                color={unreadTotal > 0 ? 'warning' : 'default'}
+                icon={<MarkChatUnreadIcon />}
+                label={`${unreadTotal} nao lidas`}
+                variant={unreadTotal > 0 ? 'filled' : 'outlined'}
+              />
+            </Stack>
+          </Stack>
+        }
+        description="WhatsApp"
+        title="Conversas"
+      />
 
       <Paper variant="outlined" sx={{ borderRadius: 1, p: 2 }}>
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={1.5}>

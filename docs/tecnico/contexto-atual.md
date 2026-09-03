@@ -179,8 +179,8 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Branch: `feature/eai-070-commercial-flow-ux`.
 - Card: `https://trello.com/c/Znhuu0Sx`.
 - Escopo: reestruturar o fluxo Leads/Pipeline/Conversas conforme `docs/ux/frontend-restructuring-plan.md`, priorizando continuidade operacional sem alterar regras de negocio.
-- Entrega em andamento: card puxado do backlog, movido para `Em andamento`, atribuido a Lucas Reiter e branch criada para iniciar a implementacao.
-- Validacao planejada: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e` e `git diff --check`.
+- Entrega em andamento: criado `CommercialFlowNavigation` com atalhos cruzados entre Leads, Pipeline e Conversas; `LeadsPage`, `PipelinePage` e `ConversationsPage` passaram a expor navegacao contextual compartilhada nos cabecalhos sem alterar endpoints, permissoes ou regras de negocio.
+- Validacao local: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e` e `git diff --check` passaram. Observacao: uma primeira execucao completa do E2E ficou instavel com telas presas em loading; specs isoladas `auth`, `leads` e `responsive-lists` passaram e o rerun completo passou com 9 testes.
 
 ### EAI-069
 
