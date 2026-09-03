@@ -39,13 +39,17 @@ export function ResponsiveDataView({
   }
 
   if (error) {
-    return <Alert severity="error">{errorMessage}</Alert>;
+    return (
+      <Alert severity="error" variant="outlined">
+        {errorMessage}
+      </Alert>
+    );
   }
 
   if (empty) {
     return (
       <Paper variant="outlined" sx={{ borderRadius: 1, p: 3 }}>
-        <Typography color="text.secondary" textAlign="center">
+        <Typography color="text.secondary" textAlign="center" variant="body2">
           {emptyMessage}
         </Typography>
       </Paper>
@@ -59,7 +63,7 @@ export function ResponsiveDataView({
           <TableContainer>{table}</TableContainer>
         </Paper>
       ) : (
-        <Box sx={{ display: 'grid', gap: 1.5 }}>{cards}</Box>
+        <Box sx={{ display: 'grid', gap: 1 }}>{cards}</Box>
       )}
     </>
   );
