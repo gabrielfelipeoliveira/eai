@@ -3,6 +3,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import {
   Alert,
   Box,
+  Divider,
   FormControl,
   Grid2,
   InputLabel,
@@ -47,7 +48,7 @@ interface HomePageProps {
   title?: string;
 }
 
-const chartColors = ['#1976d2', '#2e7d32', '#ed6c02', '#9c27b0', '#00838f', '#d32f2f', '#455a64', '#7b1fa2'];
+const chartColors = ['#2563eb', '#15803d', '#f59e0b', '#7c3aed', '#0891b2', '#dc2626', '#475569', '#0f766e'];
 
 function today() {
   return new Date().toISOString().slice(0, 10);
@@ -135,61 +136,69 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
   }
 
   return (
-    <Box sx={{ display: 'grid', gap: 3 }}>
-      <Stack direction={{ xs: 'column', lg: 'row' }} justifyContent="space-between" spacing={2}>
-        <Box>
-          <Typography component="h2" variant="h4" fontWeight={800}>
+    <Box sx={{ display: 'grid', gap: 2.5 }}>
+      <Stack direction={{ xs: 'column', lg: 'row' }} justifyContent="space-between" spacing={2.5}>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography component="h2" sx={{ overflowWrap: 'anywhere' }} variant="h4">
             {title}
           </Typography>
-          <Typography color="text.secondary" variant="body1">
+          <Typography color="text.secondary" sx={{ maxWidth: 560 }} variant="body2">
             Indicadores comerciais, conversao, origem de leads e SLA de atendimento.
           </Typography>
         </Box>
 
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={1.5} sx={{ minWidth: { lg: 680 } }}>
-          {isAdmin && (
-            <FormControl size="small" fullWidth>
-              <InputLabel>Empresa</InputLabel>
-              <Select label="Empresa" value={filters.companyId ?? ''} onChange={(event) => updateFilter('companyId', event.target.value)}>
-                <MenuItem value="">Todas</MenuItem>
-                {(companiesQuery.data ?? []).map((company) => (
-                  <MenuItem key={company.id} value={company.id}>
-                    {company.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-          {canFilterTenant && (
-            <FormControl size="small" fullWidth>
-              <InputLabel>Loja</InputLabel>
-              <Select label="Loja" value={filters.storeId ?? ''} onChange={(event) => updateFilter('storeId', event.target.value)}>
-                <MenuItem value="">Todas</MenuItem>
-                {(storesQuery.data ?? []).map((store) => (
-                  <MenuItem key={store.id} value={store.id}>
-                    {store.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-          <TextField
-            label="De"
-            size="small"
-            type="date"
-            value={filters.dateFrom ?? ''}
-            onChange={(event) => updateFilter('dateFrom', event.target.value)}
-            slotProps={{ inputLabel: { shrink: true } }}
-          />
-          <TextField
-            label="Ate"
-            size="small"
-            type="date"
-            value={filters.dateTo ?? ''}
-            onChange={(event) => updateFilter('dateTo', event.target.value)}
-            slotProps={{ inputLabel: { shrink: true } }}
-          />
-        </Stack>
+        <Paper
+          aria-label="Filtros do dashboard"
+          variant="outlined"
+          sx={{ alignSelf: { lg: 'flex-start' }, borderRadius: 1, p: 1.5, width: { xs: '100%', lg: 700 } }}
+        >
+          <Stack direction={{ xs: 'column', md: 'row' }} spacing={1.25}>
+            {isAdmin && (
+              <FormControl size="small" fullWidth>
+                <InputLabel>Empresa</InputLabel>
+                <Select label="Empresa" value={filters.companyId ?? ''} onChange={(event) => updateFilter('companyId', event.target.value)}>
+                  <MenuItem value="">Todas</MenuItem>
+                  {(companiesQuery.data ?? []).map((company) => (
+                    <MenuItem key={company.id} value={company.id}>
+                      {company.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+            {canFilterTenant && (
+              <FormControl size="small" fullWidth>
+                <InputLabel>Loja</InputLabel>
+                <Select label="Loja" value={filters.storeId ?? ''} onChange={(event) => updateFilter('storeId', event.target.value)}>
+                  <MenuItem value="">Todas</MenuItem>
+                  {(storesQuery.data ?? []).map((store) => (
+                    <MenuItem key={store.id} value={store.id}>
+                      {store.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+            <TextField
+              fullWidth
+              label="De"
+              size="small"
+              type="date"
+              value={filters.dateFrom ?? ''}
+              onChange={(event) => updateFilter('dateFrom', event.target.value)}
+              slotProps={{ inputLabel: { shrink: true } }}
+            />
+            <TextField
+              fullWidth
+              label="Ate"
+              size="small"
+              type="date"
+              value={filters.dateTo ?? ''}
+              onChange={(event) => updateFilter('dateTo', event.target.value)}
+              slotProps={{ inputLabel: { shrink: true } }}
+            />
+          </Stack>
+        </Paper>
       </Stack>
 
       {isLoading && <LinearProgress />}
@@ -206,11 +215,11 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
           ['Primeira resposta', formatMinutes(summary?.averageFirstResponseTimeMinutes ?? 0)],
         ].map(([label, value]) => (
           <Grid2 key={label} size={{ xs: 12, sm: 6, md: 3 }}>
-            <Paper variant="outlined" sx={{ p: 2, borderRadius: 1, minHeight: 104 }}>
-              <Typography variant="body2" color="text.secondary">
+            <Paper variant="outlined" sx={{ borderRadius: 1, minHeight: 104, p: 2 }}>
+              <Typography color="text.secondary" fontWeight={700} sx={{ textTransform: 'uppercase' }} variant="caption">
                 {label}
               </Typography>
-              <Typography variant="h5" fontWeight={800} sx={{ mt: 1 }}>
+              <Typography sx={{ mt: 1, overflowWrap: 'anywhere' }} variant="h5">
                 {value}
               </Typography>
             </Paper>
@@ -223,13 +232,14 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
           <Alert
             severity={(summary?.overdueLeads ?? 0) > 0 ? 'warning' : 'success'}
             icon={<WarningAmberIcon />}
-            sx={{ borderRadius: 1, alignItems: 'center' }}
+            variant="outlined"
+            sx={{ alignItems: 'center', borderRadius: 1 }}
           >
             {summary?.overdueLeads ?? 0} leads fora do SLA no periodo filtrado.
           </Alert>
         </Grid2>
         <Grid2 size={{ xs: 12, md: 4 }}>
-          <Alert severity="info" icon={<TrendingUpIcon />} sx={{ borderRadius: 1, alignItems: 'center' }}>
+          <Alert severity="info" icon={<TrendingUpIcon />} variant="outlined" sx={{ alignItems: 'center', borderRadius: 1 }}>
             Conversao atual em {(summary?.conversionRate ?? 0).toFixed(1)}%.
           </Alert>
         </Grid2>
@@ -237,11 +247,12 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
 
       <Grid2 container spacing={2}>
         <Grid2 size={{ xs: 12, lg: 6 }}>
-          <Paper variant="outlined" sx={{ p: 3, borderRadius: 1, height: 360 }}>
-            <Typography variant="h6" fontWeight={700}>
-              Leads por origem
-            </Typography>
-            <Box sx={{ height: 280, mt: 2 }}>
+          <Paper variant="outlined" sx={{ borderRadius: 1, height: 360, overflow: 'hidden' }}>
+            <Box sx={{ px: 2.5, py: 2 }}>
+              <Typography variant="h6">Leads por origem</Typography>
+            </Box>
+            <Divider />
+            <Box sx={{ height: 280, p: 2 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie data={sourceData} dataKey="value" nameKey="label" outerRadius={100} label>
@@ -257,18 +268,19 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
         </Grid2>
 
         <Grid2 size={{ xs: 12, lg: 6 }}>
-          <Paper variant="outlined" sx={{ p: 3, borderRadius: 1, height: 360 }}>
-            <Typography variant="h6" fontWeight={700}>
-              Leads por status
-            </Typography>
-            <Box sx={{ height: 280, mt: 2 }}>
+          <Paper variant="outlined" sx={{ borderRadius: 1, height: 360, overflow: 'hidden' }}>
+            <Box sx={{ px: 2.5, py: 2 }}>
+              <Typography variant="h6">Leads por status</Typography>
+            </Box>
+            <Divider />
+            <Box sx={{ height: 280, p: 2 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={statusData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="label" tick={{ fontSize: 12 }} />
                   <YAxis allowDecimals={false} />
                   <Tooltip />
-                  <Bar dataKey="value" fill="#1976d2" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="value" fill="#2563eb" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </Box>
@@ -278,18 +290,19 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
 
       <Grid2 container spacing={2}>
         <Grid2 size={{ xs: 12, lg: 7 }}>
-          <Paper variant="outlined" sx={{ p: 3, borderRadius: 1, height: 360 }}>
-            <Typography variant="h6" fontWeight={700}>
-              Vendas por periodo
-            </Typography>
-            <Box sx={{ height: 280, mt: 2 }}>
+          <Paper variant="outlined" sx={{ borderRadius: 1, height: 360, overflow: 'hidden' }}>
+            <Box sx={{ px: 2.5, py: 2 }}>
+              <Typography variant="h6">Vendas por periodo</Typography>
+            </Box>
+            <Divider />
+            <Box sx={{ height: 280, p: 2 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={salesData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="period" tick={{ fontSize: 12 }} />
                   <YAxis allowDecimals={false} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="soldLeads" stroke="#2e7d32" strokeWidth={3} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="soldLeads" stroke="#15803d" strokeWidth={3} dot={{ r: 3 }} />
                 </LineChart>
               </ResponsiveContainer>
             </Box>
@@ -297,17 +310,28 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
         </Grid2>
 
         <Grid2 size={{ xs: 12, lg: 5 }}>
-          <Paper variant="outlined" sx={{ p: 3, borderRadius: 1, minHeight: 360 }}>
-            <Typography variant="h6" fontWeight={700}>
-              Ranking de vendedores
-            </Typography>
-            <Box sx={{ display: 'grid', gap: 1.5, mt: 2 }}>
+          <Paper variant="outlined" sx={{ borderRadius: 1, minHeight: 360, overflow: 'hidden' }}>
+            <Box sx={{ px: 2.5, py: 2 }}>
+              <Typography variant="h6">Ranking de vendedores</Typography>
+            </Box>
+            <Divider />
+            <Box sx={{ display: 'grid', p: 2 }}>
               {sellerData.map((item, index) => (
                 <Box
                   key={item.sellerId}
-                  sx={{ display: 'grid', gridTemplateColumns: '32px 1fr auto', alignItems: 'center', gap: 1.5 }}
+                  sx={{
+                    alignItems: 'center',
+                    borderBottom: index === sellerData.length - 1 ? 0 : 1,
+                    borderColor: 'divider',
+                    display: 'grid',
+                    gap: 1.5,
+                    gridTemplateColumns: '32px 1fr auto',
+                    py: 1.25,
+                  }}
                 >
-                  <Typography fontWeight={800}>{index + 1}</Typography>
+                  <Typography color="text.secondary" fontWeight={800}>
+                    {index + 1}
+                  </Typography>
                   <Box sx={{ minWidth: 0 }}>
                     <Typography fontWeight={700} noWrap>
                       {item.sellerName}
