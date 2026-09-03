@@ -80,20 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-070` em andamento.
+- Lucas Reiter: `EAI-072` em andamento como epic tecnico da reestruturacao UX; proxima historia tecnica: `EAI-073`.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `feature/eai-070-commercial-flow-ux`.
+Lucas Reiter: `epic/eai-072-ux-restructure`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Implementar `EAI-070`, reestruturando o fluxo Leads/Pipeline/Conversas conforme `docs/ux/frontend-restructuring-plan.md`.
-- Depois do `EAI-070`, puxar `EAI-071` para validar navegacao e responsividade dos fluxos comerciais.
+- Executar a fase 1 do epic `EAI-072`, reestruturando visualmente apenas telas e funcionalidades ja existentes com base no prototipo anexado ao Trello.
+- Puxar `EAI-073` para implementar a fundacao visual do prototipo na branch derivada da epic.
 - Tratar `EAI-065` quando se aproximar de `2026-10-31`.
 
 ## Cards De Desenvolvimento Conhecidos
