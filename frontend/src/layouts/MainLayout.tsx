@@ -47,6 +47,8 @@ import {
 } from '../services/notificationService';
 
 const drawerWidth = 264;
+const sidebarColor = '#0f172a';
+const sidebarMutedColor = '#94a3b8';
 
 export function MainLayout() {
   const { hasAnyRole, logout, user } = useAuth();
@@ -113,14 +115,14 @@ export function MainLayout() {
   const navigation = (
     <>
       <Box sx={{ px: 2.5, py: 2.25 }}>
-        <Typography variant="h6" fontWeight={800} letterSpacing={0}>
+        <Typography color="common.white" variant="h6" fontWeight={800} letterSpacing={0}>
           EAI
         </Typography>
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.25 }}>
+        <Typography variant="caption" sx={{ color: sidebarMutedColor, display: 'block', lineHeight: 1.25 }}>
           Automotive Lead Intelligence
         </Typography>
       </Box>
-      <Divider />
+      <Divider sx={{ borderColor: 'rgba(148, 163, 184, 0.2)' }} />
       <List sx={{ px: 1.25, py: 1.5 }}>
         {menuItems.map((item) => (
           <ListItemButton
@@ -131,7 +133,7 @@ export function MainLayout() {
             onClick={() => setMobileNavOpen(false)}
             sx={{
               borderRadius: 1,
-              color: 'text.secondary',
+              color: sidebarMutedColor,
               minHeight: 42,
               mb: 0.25,
               px: 1.25,
@@ -144,6 +146,10 @@ export function MainLayout() {
                 '& .MuiListItemIcon-root': {
                   color: 'inherit',
                 },
+              },
+              '&:hover': {
+                bgcolor: 'rgba(148, 163, 184, 0.12)',
+                color: 'common.white',
               },
             }}
           >
@@ -301,7 +307,7 @@ export function MainLayout() {
             width: drawerWidth,
             borderRight: 1,
             borderColor: 'divider',
-            bgcolor: '#fbfcfe',
+            bgcolor: sidebarColor,
           },
         }}
         sx={{ display: { xs: 'block', md: 'none' } }}
@@ -317,7 +323,7 @@ export function MainLayout() {
             width: drawerWidth,
             borderRight: 1,
             borderColor: 'divider',
-            bgcolor: '#fbfcfe',
+            bgcolor: sidebarColor,
           },
         }}
         sx={{ display: { xs: 'none', md: 'block' } }}

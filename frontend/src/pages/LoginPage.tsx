@@ -1,6 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { Alert, Box, Button, Paper, TextField, Typography } from '@mui/material';
+import StorefrontIcon from '@mui/icons-material/Storefront';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import { Alert, Box, Button, Chip, Paper, Stack, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Navigate, useLocation, useNavigate } from 'react-router';
@@ -48,22 +50,79 @@ export function LoginPage() {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', bgcolor: 'background.default', px: 2 }}>
+    <Box
+      sx={{
+        alignItems: 'center',
+        bgcolor: 'background.default',
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', md: 'minmax(320px, 0.95fr) minmax(360px, 420px)' },
+        minHeight: '100vh',
+        px: { xs: 2, sm: 4, md: 6 },
+        py: { xs: 4, md: 6 },
+      }}
+    >
+      <Box sx={{ display: { xs: 'none', md: 'grid' }, gap: 3, maxWidth: 560 }}>
+        <Box>
+          <Typography color="text.secondary" fontWeight={700} variant="caption">
+            EAI CRM
+          </Typography>
+          <Typography component="h2" sx={{ mt: 1, maxWidth: 520 }} variant="h4">
+            Operacao comercial automotiva em um unico painel.
+          </Typography>
+          <Typography color="text.secondary" sx={{ mt: 1.5, maxWidth: 460 }} variant="body2">
+            Acompanhe leads, pipeline, conversas e rotinas da loja com foco em acao rapida.
+          </Typography>
+        </Box>
+
+        <Stack direction="row" flexWrap="wrap" gap={1}>
+          <Chip icon={<StorefrontIcon />} label="Multi-loja" variant="outlined" />
+          <Chip icon={<TrendingUpIcon />} label="Pipeline" variant="outlined" />
+          <Chip icon={<LockOutlinedIcon />} label="Acesso seguro" variant="outlined" />
+        </Stack>
+      </Box>
+
       <Paper
         component="form"
         onSubmit={handleSubmit(onSubmit)}
         variant="outlined"
-        sx={{ width: '100%', maxWidth: 420, p: 4, borderRadius: 1, display: 'grid', gap: 2.5 }}
+        sx={{
+          borderRadius: 1,
+          display: 'grid',
+          gap: 2.25,
+          justifySelf: { xs: 'center', md: 'end' },
+          maxWidth: 420,
+          p: { xs: 3, sm: 4 },
+          width: '100%',
+        }}
       >
         <Box sx={{ display: 'grid', gap: 1 }}>
-          <LockOutlinedIcon color="primary" />
-          <Typography component="h1" variant="h4" fontWeight={800}>
+          <Box
+            sx={{
+              alignItems: 'center',
+              bgcolor: 'primary.main',
+              borderRadius: 1,
+              color: 'primary.contrastText',
+              display: 'grid',
+              height: 40,
+              placeItems: 'center',
+              width: 40,
+            }}
+          >
+            <LockOutlinedIcon fontSize="small" />
+          </Box>
+          <Typography component="h1" variant="h4">
             EAI
           </Typography>
-          <Typography color="text.secondary">Acesse a operacao da loja.</Typography>
+          <Typography color="text.secondary" variant="body2">
+            Acesse a operacao da loja.
+          </Typography>
         </Box>
 
-        {error && <Alert severity="error">{error}</Alert>}
+        {error && (
+          <Alert severity="error" variant="outlined">
+            {error}
+          </Alert>
+        )}
 
         <TextField
           autoComplete="email"
