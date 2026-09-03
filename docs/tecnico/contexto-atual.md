@@ -1,6 +1,6 @@
 # Contexto Atual Do Projeto
 
-Ultima atualizacao: 2026-09-02.
+Ultima atualizacao: 2026-09-03.
 
 Este arquivo e o handoff operacional do projeto EAI. Ele existe para que qualquer desenvolvedor ou agente de IA consiga retomar o trabalho sem depender do historico de uma conversa especifica.
 
@@ -178,9 +178,12 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 
 - Branch: `feature/eai-070-commercial-flow-ux`.
 - Card: `https://trello.com/c/Znhuu0Sx`.
-- Escopo: reestruturar o fluxo Leads/Pipeline/Conversas conforme `docs/ux/frontend-restructuring-plan.md`, priorizando continuidade operacional sem alterar regras de negocio.
-- Entrega em andamento: criado `CommercialFlowNavigation` com atalhos cruzados entre Leads, Pipeline e Conversas; `LeadsPage`, `PipelinePage` e `ConversationsPage` passaram a expor navegacao contextual compartilhada nos cabecalhos sem alterar endpoints, permissoes ou regras de negocio.
-- Validacao local: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e` e `git diff --check` passaram. Observacao: uma primeira execucao completa do E2E ficou instavel com telas presas em loading; specs isoladas `auth`, `leads` e `responsive-lists` passaram e o rerun completo passou com 9 testes.
+- PR: `https://github.com/gabrielfelipeoliveira/eai/pull/116`.
+- Escopo: reestruturar o fluxo comercial Leads/Pipeline/Conversas conforme `docs/ux/frontend-restructuring-plan.md`.
+- Entrega: `CommercialFlowNavigation` criado para navegacao contextual entre Leads, Pipeline e Conversas; `LeadsPage`, `PipelinePage` e `ConversationsPage` conectadas ao fluxo comercial com layouts responsivos e estados de loading/erro/vazio.
+- Vulnerabilidade tratada: check Backend da PR `#116` falhou no OSV por vulnerabilidades criticas em `org.apache.tomcat.embed:tomcat-embed-core`; backend passou a fixar `tomcat.version` em `11.0.25`.
+- Validacao local: `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e`, `git diff --check`, `mvn clean verify` via Docker/Testcontainers e OSV sobre `backend/target/bom.xml` passaram.
+- Status: aguardando nova rodada dos checks remotos da PR `#116` apos push da correcao de Tomcat.
 
 ### EAI-069
 
