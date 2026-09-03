@@ -96,6 +96,40 @@ interface MockConversationMessage {
   updatedAt: string;
 }
 
+interface MockTemplate {
+  id: string;
+  companyId: string;
+  storeId: string | null;
+  name: string;
+  type: string;
+  content: string;
+  languageCode: string;
+  metaStatus: string;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
+interface MockEmailAccount {
+  id: string;
+  companyId: string;
+  storeId: string;
+  name: string;
+  host: string;
+  port: number;
+  username: string;
+  protocol: string;
+  useSsl: boolean;
+  active: boolean;
+  lastReadAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  lastSyncStatus: string;
+  lastSyncMessage: string | null;
+  lastSyncAt: string | null;
+}
+
 const adminUser: MockUser = {
   id: 'user-admin',
   name: 'Admin EAI',
@@ -193,6 +227,42 @@ export async function mockApi(page: Page) {
       updatedAt: '2026-07-22T12:12:00Z',
     }),
   ];
+  const templates: MockTemplate[] = [
+    {
+      id: 'template-1',
+      companyId: 'company-1',
+      storeId: 'store-1',
+      name: 'primeiro_contato',
+      type: 'FIRST_CONTACT',
+      content: 'Ola {cliente}, tudo bem? Aqui e {vendedor}.',
+      languageCode: 'pt-BR',
+      metaStatus: 'APPROVED',
+      active: true,
+      createdAt: '2026-07-22T12:00:00Z',
+      updatedAt: '2026-07-22T12:00:00Z',
+      deletedAt: null,
+    },
+  ];
+  const emailAccounts: MockEmailAccount[] = [
+    {
+      id: 'email-account-1',
+      companyId: 'company-1',
+      storeId: 'store-1',
+      name: 'Leads IMAP',
+      host: 'imap.example.com',
+      port: 993,
+      username: 'leads@example.com',
+      protocol: 'IMAP',
+      useSsl: true,
+      active: true,
+      lastReadAt: null,
+      createdAt: '2026-07-22T12:00:00Z',
+      updatedAt: '2026-07-22T12:00:00Z',
+      lastSyncStatus: 'NEVER_SYNCED',
+      lastSyncMessage: 'Sem sincronizacao',
+      lastSyncAt: null,
+    },
+  ];
 
   await page.route('http://localhost:8080/api/**', async (route) => {
     const request = route.request();
@@ -233,6 +303,14 @@ export async function mockApi(page: Page) {
 
     if (path === '/stores') {
       return json(route, stores);
+    }
+
+    if (path === '/templates' && method === 'GET') {
+      return json(route, templates);
+    }
+
+    if (path === '/email-accounts' && method === 'GET') {
+      return json(route, emailAccounts);
     }
 
     if (path === '/users') {
@@ -428,11 +506,29 @@ function metadata() {
     ],
     userStatuses: [],
     tenantStatuses: [option('ACTIVE', 'Ativo', 1, 'success'), option('INACTIVE', 'Inativo', 2)],
-    messageTemplateTypes: [],
-    messageTemplateMetaStatuses: [],
+    messageTemplateTypes: [
+      option('FIRST_CONTACT', 'Primeiro contato', 1, 'info'),
+      option('FOLLOW_UP', 'Follow-up', 2, 'warning'),
+      option('VISIT_INVITE', 'Convite para visita', 3, 'primary'),
+      option('PROPOSAL', 'Proposta', 4, 'secondary'),
+      option('NO_RESPONSE', 'Sem resposta', 5),
+      option('SOLD', 'Vendido', 6, 'success'),
+      option('LOST', 'Perdido', 7, 'error'),
+    ],
+    messageTemplateMetaStatuses: [
+      option('PENDING', 'Pendente', 1, 'warning'),
+      option('APPROVED', 'Aprovado na Meta', 2, 'success'),
+      option('REJECTED', 'Rejeitado', 3, 'error'),
+      option('PAUSED', 'Pausado', 4),
+      option('DISABLED', 'Desativado', 5),
+    ],
     leadDistributionModes: [],
-    emailAccountStatuses: [],
-    emailProtocols: [],
+    emailAccountStatuses: [
+      option('NEVER_SYNCED', 'Nunca sincronizada', 1),
+      option('SUCCESS', 'Sucesso', 2, 'success'),
+      option('FAILED', 'Falhou', 3, 'error'),
+    ],
+    emailProtocols: [option('IMAP', 'IMAP', 1)],
     conversationMessageDirections: [],
     conversationMessageTypes: [],
     conversationMessageStatuses: [

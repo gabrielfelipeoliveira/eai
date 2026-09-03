@@ -17,7 +17,6 @@ import {
   Grid2,
   IconButton,
   MenuItem,
-  Paper,
   Stack,
   Switch,
   Table,
@@ -33,6 +32,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { PageHeader } from '../components/PageHeader';
+import { RecordCard, RecordCardRow } from '../components/RecordCard';
+import { ResponsiveDataView } from '../components/ResponsiveDataView';
 import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
 import { listCompanies } from '../services/companyService';
@@ -169,84 +171,132 @@ export function EmailAccountsPage() {
     saveMutation.mutate(values);
   }
 
+  const accounts = accountsQuery.data ?? [];
+
   return (
     <Box sx={{ display: 'grid', gap: 3 }}>
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2 }}>
-        <Box>
-          <Typography component="h2" variant="h4" fontWeight={800}>
-            Contas de E-mail
-          </Typography>
-          <Typography color="text.secondary">Captura automatica de leads via caixas IMAP por loja.</Typography>
-        </Box>
-        <Button onClick={openCreate} startIcon={<AddIcon />} variant="contained">
-          Nova conta
-        </Button>
-      </Box>
+      <PageHeader
+        action={
+          <Button onClick={openCreate} startIcon={<AddIcon />} variant="contained">
+            Nova conta
+          </Button>
+        }
+        description="Captura automatica de leads via caixas IMAP por loja."
+        title="Contas de E-mail"
+      />
 
       {feedback && <Alert onClose={() => setFeedback(null)} severity="success">{feedback}</Alert>}
       {(saveMutation.isError || testMutation.isError || syncMutation.isError) && <Alert severity="error">Operacao nao concluida.</Alert>}
 
-      <Paper variant="outlined" sx={{ borderRadius: 1, overflow: 'hidden' }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Conta</TableCell>
-              <TableCell>Servidor</TableCell>
-              <TableCell>Loja</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Ultima leitura</TableCell>
-              <TableCell align="right">Acoes</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {accountsQuery.data?.map((account) => (
-              <TableRow hover key={account.id}>
-                <TableCell>
-                  <Typography variant="body2" fontWeight={700}>{account.name}</Typography>
-                  <Typography variant="caption" color="text.secondary">{account.username}</Typography>
-                </TableCell>
-                <TableCell>{account.host}:{account.port}</TableCell>
-                <TableCell>
-                  <Typography variant="body2">{storeName(account.storeId)}</Typography>
-                  {isAdmin && <Typography variant="caption" color="text.secondary">{companyName(account.companyId)}</Typography>}
-                </TableCell>
-                <TableCell>
-                  <Stack spacing={0.5}>
-                    <Chip
-                      color={metadata.color('emailAccountStatuses', account.lastSyncStatus)}
-                      label={metadata.label('emailAccountStatuses', account.lastSyncStatus)}
-                      size="small"
-                    />
-                    <Typography variant="caption" color="text.secondary">{account.lastSyncMessage ?? 'Sem sincronizacao'}</Typography>
-                  </Stack>
-                </TableCell>
-                <TableCell>{account.lastReadAt ? new Date(account.lastReadAt).toLocaleString('pt-BR') : '-'}</TableCell>
-                <TableCell align="right">
-                  <Stack direction="row" justifyContent="flex-end" spacing={1}>
-                    <Tooltip title="Testar conexao">
-                      <IconButton onClick={() => testMutation.mutate(account.id)}><MarkEmailReadIcon /></IconButton>
-                    </Tooltip>
-                    <Tooltip title="Sincronizar">
-                      <IconButton onClick={() => syncMutation.mutate(account.id)}><SyncIcon /></IconButton>
-                    </Tooltip>
-                    <Tooltip title="Editar">
-                      <IconButton onClick={() => openEdit(account)}><EditIcon /></IconButton>
-                    </Tooltip>
-                    <Tooltip title="Excluir">
-                      <IconButton onClick={() => deleteMutation.mutate(account.id)}><DeleteIcon /></IconButton>
-                    </Tooltip>
-                  </Stack>
-                </TableCell>
-              </TableRow>
-            ))}
-            {!accountsQuery.isLoading && accountsQuery.data?.length === 0 && (
+      <ResponsiveDataView
+        cards={accounts.map((account) => (
+          <RecordCard
+            key={account.id}
+            actions={
+              <>
+                <Tooltip title="Testar conexao">
+                  <IconButton aria-label="Testar conexao" onClick={() => testMutation.mutate(account.id)} size="small">
+                    <MarkEmailReadIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Sincronizar">
+                  <IconButton aria-label="Sincronizar" onClick={() => syncMutation.mutate(account.id)} size="small">
+                    <SyncIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Editar">
+                  <IconButton aria-label="Editar conta" onClick={() => openEdit(account)} size="small">
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Excluir">
+                  <IconButton aria-label="Excluir conta" onClick={() => deleteMutation.mutate(account.id)} size="small">
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </>
+            }
+            status={
+              <Chip
+                color={metadata.color('emailAccountStatuses', account.lastSyncStatus)}
+                label={metadata.label('emailAccountStatuses', account.lastSyncStatus)}
+                size="small"
+              />
+            }
+            subtitle={account.username}
+            title={account.name}
+          >
+            <RecordCardRow label="Servidor" value={`${account.host}:${account.port}`} />
+            <RecordCardRow label="Loja" value={storeName(account.storeId)} />
+            {isAdmin && <RecordCardRow label="Empresa" value={companyName(account.companyId)} />}
+            <RecordCardRow label="Ultima leitura" value={account.lastReadAt ? new Date(account.lastReadAt).toLocaleString('pt-BR') : '-'} />
+            <RecordCardRow label="Sincronizacao" value={account.lastSyncMessage ?? 'Sem sincronizacao'} />
+          </RecordCard>
+        ))}
+        empty={!accountsQuery.isLoading && accounts.length === 0}
+        emptyMessage="Nenhuma conta cadastrada."
+        error={accountsQuery.isError}
+        loading={accountsQuery.isLoading}
+        loadingLabel="Carregando contas de e-mail"
+        table={
+          <Table sx={{ minWidth: 1080 }}>
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={6}>Nenhuma conta cadastrada.</TableCell>
+                <TableCell>Conta</TableCell>
+                <TableCell>Servidor</TableCell>
+                <TableCell>Loja</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Ultima leitura</TableCell>
+                <TableCell align="right" sx={{ minWidth: 180 }}>
+                  Acoes
+                </TableCell>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </Paper>
+            </TableHead>
+            <TableBody>
+              {accounts.map((account) => (
+                <TableRow hover key={account.id}>
+                  <TableCell>
+                    <Typography variant="body2" fontWeight={700}>{account.name}</Typography>
+                    <Typography variant="caption" color="text.secondary">{account.username}</Typography>
+                  </TableCell>
+                  <TableCell>{account.host}:{account.port}</TableCell>
+                  <TableCell>
+                    <Typography variant="body2">{storeName(account.storeId)}</Typography>
+                    {isAdmin && <Typography variant="caption" color="text.secondary">{companyName(account.companyId)}</Typography>}
+                  </TableCell>
+                  <TableCell>
+                    <Stack spacing={0.5}>
+                      <Chip
+                        color={metadata.color('emailAccountStatuses', account.lastSyncStatus)}
+                        label={metadata.label('emailAccountStatuses', account.lastSyncStatus)}
+                        size="small"
+                      />
+                      <Typography variant="caption" color="text.secondary">{account.lastSyncMessage ?? 'Sem sincronizacao'}</Typography>
+                    </Stack>
+                  </TableCell>
+                  <TableCell>{account.lastReadAt ? new Date(account.lastReadAt).toLocaleString('pt-BR') : '-'}</TableCell>
+                  <TableCell align="right">
+                    <Stack direction="row" justifyContent="flex-end" spacing={1}>
+                      <Tooltip title="Testar conexao">
+                        <IconButton aria-label="Testar conexao" onClick={() => testMutation.mutate(account.id)}><MarkEmailReadIcon /></IconButton>
+                      </Tooltip>
+                      <Tooltip title="Sincronizar">
+                        <IconButton aria-label="Sincronizar" onClick={() => syncMutation.mutate(account.id)}><SyncIcon /></IconButton>
+                      </Tooltip>
+                      <Tooltip title="Editar">
+                        <IconButton aria-label="Editar conta" onClick={() => openEdit(account)}><EditIcon /></IconButton>
+                      </Tooltip>
+                      <Tooltip title="Excluir">
+                        <IconButton aria-label="Excluir conta" onClick={() => deleteMutation.mutate(account.id)}><DeleteIcon /></IconButton>
+                      </Tooltip>
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        }
+      />
 
       <Dialog fullWidth maxWidth="md" onClose={() => setDialogOpen(false)} open={dialogOpen}>
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>
