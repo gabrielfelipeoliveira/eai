@@ -17,12 +17,16 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { PageHeader } from '../components/PageHeader';
+import { RecordCard, RecordCardRow } from '../components/RecordCard';
+import { ResponsiveDataView } from '../components/ResponsiveDataView';
 import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
 import { apiErrorMessage } from '../services/api';
@@ -132,19 +136,51 @@ export function StoresPage() {
     saveStoreMutation.mutate(values);
   }
 
+  const stores = storesQuery.data ?? [];
+
   return (
     <Box sx={{ display: 'grid', gap: 3 }}>
-      <Box>
-        <Typography component="h2" variant="h4" fontWeight={800}>
-          Lojas
-        </Typography>
-        <Typography color="text.secondary">Cadastro das lojas vinculadas as empresas.</Typography>
-      </Box>
+      <PageHeader description="Cadastro das lojas vinculadas as empresas." title="Lojas" />
 
       <Grid2 container spacing={3}>
         <Grid2 size={{ xs: 12, lg: 8 }}>
-          <Paper variant="outlined" sx={{ borderRadius: 1, overflow: 'hidden' }}>
-            <Table>
+          <ResponsiveDataView
+            cards={stores.map((store) => (
+              <RecordCard
+                key={store.id}
+                actions={
+                  <Tooltip title="Editar">
+                    <IconButton aria-label="Editar loja" onClick={() => setEditingStore(store)}>
+                      <EditIcon />
+                    </IconButton>
+                  </Tooltip>
+                }
+                status={
+                  <Chip
+                    color={metadata.color('tenantStatuses', store.status)}
+                    label={metadata.label('tenantStatuses', store.status)}
+                    size="small"
+                  />
+                }
+                subtitle={[store.city, store.state].filter(Boolean).join(' / ') || '-'}
+                title={
+                  <Box sx={{ alignItems: 'center', display: 'flex', gap: 1 }}>
+                    <StorefrontIcon color="action" fontSize="small" />
+                    {store.name}
+                  </Box>
+                }
+              >
+                {isAdmin && <RecordCardRow label="Empresa" value={companyName(store.companyId)} />}
+                <RecordCardRow label="Documento" value={store.document} />
+              </RecordCard>
+            ))}
+            empty={stores.length === 0}
+            emptyMessage="Nenhuma loja encontrada."
+            error={storesQuery.isError}
+            loading={storesQuery.isLoading}
+            loadingLabel="Carregando lojas"
+            table={
+              <Table>
               <TableHead>
                 <TableRow>
                   <TableCell>Loja</TableCell>
@@ -155,7 +191,7 @@ export function StoresPage() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {storesQuery.data?.map((store) => (
+                {stores.map((store) => (
                   <TableRow key={store.id}>
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -175,14 +211,10 @@ export function StoresPage() {
                     </TableCell>
                   </TableRow>
                 ))}
-                {!storesQuery.isLoading && storesQuery.data?.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={isAdmin ? 5 : 4}>Nenhuma loja encontrada.</TableCell>
-                  </TableRow>
-                )}
               </TableBody>
-            </Table>
-          </Paper>
+              </Table>
+            }
+          />
         </Grid2>
 
         <Grid2 size={{ xs: 12, lg: 4 }}>

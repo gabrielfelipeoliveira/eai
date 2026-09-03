@@ -24,6 +24,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { useEffect, useMemo } from 'react';
 import { z } from 'zod';
+import { PageHeader } from '../components/PageHeader';
+import { RecordCard, RecordCardRow } from '../components/RecordCard';
+import { ResponsiveDataView } from '../components/ResponsiveDataView';
 import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
 import { apiErrorMessage } from '../services/api';
@@ -243,19 +246,57 @@ export function UsersPage() {
     });
   }
 
+  const users = usersQuery.data ?? [];
+
   return (
     <Box sx={{ display: 'grid', gap: 3 }}>
-      <Box>
-        <Typography component="h2" variant="h4" fontWeight={800}>
-          Usuarios
-        </Typography>
-        <Typography color="text.secondary">Controle de acesso da equipe comercial.</Typography>
-      </Box>
+      <PageHeader description="Controle de acesso da equipe comercial." title="Usuarios" />
 
       <Grid2 container spacing={3}>
         <Grid2 size={{ xs: 12, lg: canManageUsers ? 8 : 12 }}>
-          <Paper variant="outlined" sx={{ borderRadius: 1, overflow: 'hidden' }}>
-            <Table>
+          <ResponsiveDataView
+            cards={users.map((user) => (
+              <RecordCard
+                key={user.id}
+                actions={
+                  canManageUsers && (
+                    <Button onClick={() => startTenantAssignment(user)} size="small" startIcon={<LinkIcon />} variant="outlined">
+                      Vincular
+                    </Button>
+                  )
+                }
+                status={
+                  <Chip
+                    color={metadata.color('userStatuses', user.status)}
+                    label={metadata.label('userStatuses', user.status)}
+                    size="small"
+                  />
+                }
+                subtitle={user.email}
+                title={user.name}
+              >
+                <RecordCardRow label="Cargo" value={user.jobTitle ?? '-'} />
+                <RecordCardRow label="Empresa" value={companyName(user.companyId)} />
+                <RecordCardRow label="Loja" value={storeName(user.storeId)} />
+                <Box sx={{ display: 'grid', gap: 0.75 }}>
+                  <Typography color="text.secondary" variant="caption">
+                    Roles
+                  </Typography>
+                  <Stack direction="row" flexWrap="wrap" gap={0.75}>
+                    {user.roles.map((role) => (
+                      <Chip key={role} label={metadata.label('userRoles', role)} size="small" variant="outlined" />
+                    ))}
+                  </Stack>
+                </Box>
+              </RecordCard>
+            ))}
+            empty={users.length === 0}
+            emptyMessage="Nenhum usuario encontrado."
+            error={usersQuery.isError}
+            loading={usersQuery.isLoading}
+            loadingLabel="Carregando usuarios"
+            table={
+              <Table>
               <TableHead>
                 <TableRow>
                   <TableCell>Nome</TableCell>
@@ -269,7 +310,7 @@ export function UsersPage() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {usersQuery.data?.map((user) => (
+                {users.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
@@ -295,14 +336,10 @@ export function UsersPage() {
                     )}
                   </TableRow>
                 ))}
-                {!usersQuery.isLoading && usersQuery.data?.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={canManageUsers ? 8 : 7}>Nenhum usuario encontrado.</TableCell>
-                  </TableRow>
-                )}
               </TableBody>
-            </Table>
-          </Paper>
+              </Table>
+            }
+          />
         </Grid2>
 
         {canManageUsers && (

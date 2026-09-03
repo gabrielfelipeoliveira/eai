@@ -30,6 +30,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { PageHeader } from '../components/PageHeader';
 import { LeadDetailDrawer } from '../features/leads/LeadDetailDrawer';
 import { vehicleLabel } from '../features/leads/leadDisplay';
 import { useAuth } from '../hooks/useAuth';
@@ -281,45 +282,44 @@ export function LeadsPage() {
     createLeadMutation.mutate(values);
   }
 
+  const leads = useMemo(() => leadsQuery.data?.content ?? [], [leadsQuery.data?.content]);
+
   const statusCounts = useMemo(() => {
     const counts = new Map<LeadStatus, number>();
-    leadsQuery.data?.content.forEach((lead) => counts.set(lead.status, (counts.get(lead.status) ?? 0) + 1));
+    leads.forEach((lead) => counts.set(lead.status, (counts.get(lead.status) ?? 0) + 1));
     return counts;
-  }, [leadsQuery.data?.content]);
+  }, [leads]);
 
   const slaCounts = useMemo(() => {
-    const leads = leadsQuery.data?.content ?? [];
     return {
       overdueToAssign: leads.filter((lead) => lead.overdueToAssign).length,
       overdueToFirstContact: leads.filter((lead) => lead.overdueToFirstContact).length,
     };
-  }, [leadsQuery.data?.content]);
+  }, [leads]);
 
   return (
     <Box sx={{ display: 'grid', gap: 3 }}>
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2 }}>
-        <Box>
-          <Typography component="h2" variant="h4" fontWeight={800}>
-            Leads
-          </Typography>
-          <Typography color="text.secondary">Gestao comercial de oportunidades por loja, origem e vendedor.</Typography>
-        </Box>
-        <Stack direction="row" spacing={1}>
-          {canDistribute && (
-            <Button
-              disabled={distributePendingMutation.isPending}
-              onClick={() => distributePendingMutation.mutate()}
-              startIcon={<SyncIcon />}
-              variant="outlined"
-            >
-              Distribuir pendentes
+      <PageHeader
+        action={
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+            {canDistribute && (
+              <Button
+                disabled={distributePendingMutation.isPending}
+                onClick={() => distributePendingMutation.mutate()}
+                startIcon={<SyncIcon />}
+                variant="outlined"
+              >
+                Distribuir pendentes
+              </Button>
+            )}
+            <Button onClick={openCreateDrawer} startIcon={<AddIcon />} variant="contained">
+              Novo lead
             </Button>
-          )}
-          <Button onClick={openCreateDrawer} startIcon={<AddIcon />} variant="contained">
-            Novo lead
-          </Button>
-        </Stack>
-      </Box>
+          </Stack>
+        }
+        description="Gestao comercial de oportunidades por loja, origem e vendedor."
+        title="Leads"
+      />
 
       <Grid2 container spacing={1.5}>
         <Grid2 size={{ xs: 6, md: 2.4 }}>
@@ -356,7 +356,7 @@ export function LeadsPage() {
         ))}
       </Grid2>
 
-      <Paper variant="outlined" sx={{ borderRadius: 1, p: 2 }}>
+      <Paper variant="outlined" sx={{ borderRadius: 1, p: { xs: 1.5, md: 2 } }}>
         <Grid2 container spacing={2}>
           <Grid2 size={{ xs: 12, md: 3 }}>
             <TextField
@@ -482,16 +482,16 @@ export function LeadsPage() {
               value={draftFilters.createdTo?.slice(0, 10) ?? ''}
             />
           </Grid2>
-          <Grid2 size={{ xs: 12, md: 1 }}>
-            <Button fullWidth onClick={applyFilters} startIcon={<SearchIcon />} variant="outlined">
+          <Grid2 size={{ xs: 12, sm: 6, md: 1 }}>
+            <Button fullWidth onClick={applyFilters} startIcon={<SearchIcon />} sx={{ minHeight: 40 }} variant="outlined">
               Filtrar
             </Button>
           </Grid2>
         </Grid2>
       </Paper>
 
-      <Paper variant="outlined" sx={{ borderRadius: 1, overflow: 'hidden' }}>
-        <Table>
+      <Paper variant="outlined" sx={{ borderRadius: 1, overflow: 'auto' }}>
+        <Table sx={{ minWidth: 960 }}>
           <TableHead>
             <TableRow>
               <TableCell>Cliente</TableCell>
