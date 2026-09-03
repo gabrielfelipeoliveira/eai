@@ -362,56 +362,83 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
   const availableTagDefinitions = tagDefinitionsQuery.data?.filter((tagDefinition) => !usedTagTypes.has(tagDefinition.type)) ?? [];
 
   return (
-    <Drawer anchor="right" onClose={onClose} open={open} PaperProps={{ sx: { width: { xs: '100%', md: 560 } } }}>
-      <Box sx={{ p: 3, display: 'grid', gap: 2 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography component="h3" variant="h5" fontWeight={800}>
-            {selectedLead?.customerName}
-          </Typography>
+    <Drawer
+      anchor="right"
+      onClose={onClose}
+      open={open}
+      PaperProps={{ sx: { bgcolor: 'background.default', width: { xs: '100%', md: 640 } } }}
+    >
+      <Box sx={{ display: 'grid', gap: 2, p: { xs: 2, md: 3 } }}>
+        <Box
+          sx={{
+            alignItems: 'center',
+            bgcolor: 'background.paper',
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: 1,
+            display: 'flex',
+            gap: 1.5,
+            justifyContent: 'space-between',
+            p: 2,
+            position: 'sticky',
+            top: 0,
+            zIndex: 1,
+          }}
+        >
+          <Box sx={{ minWidth: 0 }}>
+            <Typography component="h3" sx={{ overflowWrap: 'anywhere' }} variant="h5">
+              {selectedLead?.customerName}
+            </Typography>
+            <Typography color="text.secondary" variant="body2">
+              Detalhe comercial do lead
+            </Typography>
+          </Box>
           <IconButton aria-label="Fechar" onClick={onClose}>
             <CloseIcon />
           </IconButton>
         </Box>
 
         {selectedLead && (
-          <Stack spacing={2.5}>
-            <Stack direction="row" flexWrap="wrap" gap={1}>
-              <Chip color={metadata.color('leadStatuses', selectedLead.status)} label={metadata.label('leadStatuses', selectedLead.status)} />
-              <Chip label={metadata.label('leadSources', selectedLead.source)} variant="outlined" />
-              {selectedLead.overdueToAssign && <Chip color="error" icon={<WarningAmberIcon />} label="Atrasado para atribuir" variant="outlined" />}
-              {selectedLead.overdueToFirstContact && <Chip color="error" icon={<WarningAmberIcon />} label="Atrasado para contato" variant="outlined" />}
-              <Chip label={storeName(selectedLead.storeId)} variant="outlined" />
-              {isAdmin && <Chip label={companyName(selectedLead.companyId)} variant="outlined" />}
-            </Stack>
+          <Stack spacing={2}>
+            <Paper variant="outlined" sx={{ borderRadius: 1, p: 2 }}>
+              <Stack direction="row" flexWrap="wrap" gap={1}>
+                <Chip color={metadata.color('leadStatuses', selectedLead.status)} label={metadata.label('leadStatuses', selectedLead.status)} />
+                <Chip label={metadata.label('leadSources', selectedLead.source)} variant="outlined" />
+                {selectedLead.overdueToAssign && <Chip color="error" icon={<WarningAmberIcon />} label="Atrasado para atribuir" variant="outlined" />}
+                {selectedLead.overdueToFirstContact && <Chip color="error" icon={<WarningAmberIcon />} label="Atrasado para contato" variant="outlined" />}
+                <Chip label={storeName(selectedLead.storeId)} variant="outlined" />
+                {isAdmin && <Chip label={companyName(selectedLead.companyId)} variant="outlined" />}
+              </Stack>
 
-            <Grid2 container spacing={1.5}>
-              <Grid2 size={6}>
-                <Typography variant="caption" color="text.secondary">
-                  Telefone
-                </Typography>
-                <Typography>{selectedLead.customerPhone ?? '-'}</Typography>
+              <Grid2 container spacing={1.5} sx={{ mt: 2 }}>
+                <Grid2 size={6}>
+                  <Typography variant="caption" color="text.secondary">
+                    Telefone
+                  </Typography>
+                  <Typography>{selectedLead.customerPhone ?? '-'}</Typography>
+                </Grid2>
+                <Grid2 size={6}>
+                  <Typography variant="caption" color="text.secondary">
+                    Vendedor
+                  </Typography>
+                  <Typography>{userName(selectedLead.assignedToUserId)}</Typography>
+                </Grid2>
+                <Grid2 size={12}>
+                  <Typography variant="caption" color="text.secondary">
+                    Veiculo
+                  </Typography>
+                  <Typography>{vehicleLabel(selectedLead)}</Typography>
+                </Grid2>
+                <Grid2 size={6}>
+                  <Typography variant="caption" color="text.secondary">
+                    Moeda
+                  </Typography>
+                  <Typography>{selectedLead.saleCurrency}</Typography>
+                </Grid2>
               </Grid2>
-              <Grid2 size={6}>
-                <Typography variant="caption" color="text.secondary">
-                  Vendedor
-                </Typography>
-                <Typography>{userName(selectedLead.assignedToUserId)}</Typography>
-              </Grid2>
-              <Grid2 size={12}>
-                <Typography variant="caption" color="text.secondary">
-                  Veiculo
-                </Typography>
-                <Typography>{vehicleLabel(selectedLead)}</Typography>
-              </Grid2>
-              <Grid2 size={6}>
-                <Typography variant="caption" color="text.secondary">
-                  Moeda
-                </Typography>
-                <Typography>{selectedLead.saleCurrency}</Typography>
-              </Grid2>
-            </Grid2>
+            </Paper>
 
-            <Stack direction="row" spacing={1}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} flexWrap="wrap" spacing={1}>
               <Button onClick={() => assignToMeMutation.mutate(selectedLead.id)} startIcon={<AssignmentIndIcon />} variant="outlined">
                 Assumir lead
               </Button>
