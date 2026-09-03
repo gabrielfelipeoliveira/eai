@@ -30,6 +30,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { CommercialFlowNavigation } from '../components/CommercialFlowNavigation';
 import { PageHeader } from '../components/PageHeader';
 import { LeadDetailDrawer } from '../features/leads/LeadDetailDrawer';
 import { vehicleLabel } from '../features/leads/leadDisplay';
@@ -301,20 +302,23 @@ export function LeadsPage() {
     <Box sx={{ display: 'grid', gap: 3 }}>
       <PageHeader
         action={
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-            {canDistribute && (
-              <Button
-                disabled={distributePendingMutation.isPending}
-                onClick={() => distributePendingMutation.mutate()}
-                startIcon={<SyncIcon />}
-                variant="outlined"
-              >
-                Distribuir pendentes
+          <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+            <CommercialFlowNavigation current="leads" />
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+              {canDistribute && (
+                <Button
+                  disabled={distributePendingMutation.isPending}
+                  onClick={() => distributePendingMutation.mutate()}
+                  startIcon={<SyncIcon />}
+                  variant="outlined"
+                >
+                  Distribuir pendentes
+                </Button>
+              )}
+              <Button onClick={openCreateDrawer} startIcon={<AddIcon />} variant="contained">
+                Novo lead
               </Button>
-            )}
-            <Button onClick={openCreateDrawer} startIcon={<AddIcon />} variant="contained">
-              Novo lead
-            </Button>
+            </Stack>
           </Stack>
         }
         description="Gestao comercial de oportunidades por loja, origem e vendedor."

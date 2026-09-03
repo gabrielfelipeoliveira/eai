@@ -12,6 +12,8 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { useMemo, useState } from 'react';
+import { CommercialFlowNavigation } from '../components/CommercialFlowNavigation';
+import { PageHeader } from '../components/PageHeader';
 import { LeadDetailDrawer } from '../features/leads/LeadDetailDrawer';
 import { vehicleLabel } from '../features/leads/leadDisplay';
 import { useMetadata } from '../hooks/useMetadata';
@@ -86,12 +88,11 @@ export function PipelinePage() {
 
   return (
     <Box sx={{ display: 'grid', gap: 3 }}>
-      <Box>
-        <Typography component="h2" variant="h4" fontWeight={800}>
-          Pipeline
-        </Typography>
-        <Typography color="text.secondary">Kanban operacional por etapa do funil.</Typography>
-      </Box>
+      <PageHeader
+        action={<CommercialFlowNavigation current="pipeline" />}
+        description="Kanban operacional por etapa do funil."
+        title="Pipeline"
+      />
 
       {(pipelineQuery.isLoading || fallbackLeadsQuery.isLoading) && <LinearProgress />}
       {pipelineQuery.isError && (
