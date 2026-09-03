@@ -14,20 +14,23 @@ export function PageHeader({ action, description, title }: PageHeaderProps) {
         alignItems: { xs: 'stretch', sm: 'flex-start' },
         display: 'flex',
         flexDirection: { xs: 'column', sm: 'row' },
-        gap: 2,
+        gap: 1.5,
         justifyContent: 'space-between',
+        minWidth: 0,
       }}
     >
       <Box sx={{ minWidth: 0 }}>
         <Typography
           component="h2"
-          fontWeight={800}
-          sx={{ fontSize: { xs: '1.75rem', md: '2.125rem' }, lineHeight: 1.15 }}
+          fontWeight={700}
+          sx={{ fontSize: { xs: '1.5rem', md: '1.75rem' }, lineHeight: 1.2, overflowWrap: 'anywhere' }}
           variant="h4"
         >
           {title}
         </Typography>
-        <Typography color="text.secondary">{description}</Typography>
+        <Typography color="text.secondary" sx={{ maxWidth: 720, overflowWrap: 'anywhere' }} variant="body2">
+          {description}
+        </Typography>
       </Box>
       {action && <Box sx={{ flexShrink: 0 }}>{action}</Box>}
     </Box>
