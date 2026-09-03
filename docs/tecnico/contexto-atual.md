@@ -80,20 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-072` em andamento como epic tecnico da reestruturacao UX; `EAI-073` em andamento para fundacao visual.
+- Lucas Reiter: `EAI-072` em andamento como epic tecnico da reestruturacao UX; `EAI-074` em andamento para login e shell principal.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `feature/eai-073-ux-foundation` derivada de `epic/eai-072-ux-restructure`.
+Lucas Reiter: `feature/eai-074-login-shell` derivada de `epic/eai-072-ux-restructure`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
 - Executar a fase 1 do epic `EAI-072`, reestruturando visualmente apenas telas e funcionalidades ja existentes com base no prototipo anexado ao Trello.
-- Implementar `EAI-073`, aplicando fundacao visual do prototipo nas bases compartilhadas sem alterar regras de negocio.
+- Implementar `EAI-074`, aplicando o novo layout visual ao login e ao shell principal sem alterar regras de negocio, roles, rotas ou APIs.
 - Tratar `EAI-065` quando se aproximar de `2026-10-31`.
 
 ## Cards De Desenvolvimento Conhecidos
