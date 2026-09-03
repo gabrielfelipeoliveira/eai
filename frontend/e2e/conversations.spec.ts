@@ -45,9 +45,18 @@ test.describe('Conversas responsivas', () => {
     await loginAsAdmin(page);
 
     await page.goto('/conversations');
+    await expect(page.getByText('Combinado, vou enviar os detalhes.').nth(1)).toBeVisible();
 
-    await page.getByPlaceholder('Digite uma mensagem').fill('Mensagem enviada pelo e2e');
-    await page.getByRole('button', { name: 'Enviar', exact: true }).click();
+    const composer = page.getByPlaceholder('Digite uma mensagem');
+    const sendButton = page.getByRole('button', { name: 'Enviar', exact: true });
+    await composer.fill('Mensagem enviada pelo e2e');
+    await expect(sendButton).toBeEnabled();
+
+    const sendResponse = page.waitForResponse(
+      (response) => response.url().includes('/conversations/conversation-1/messages') && response.request().method() === 'POST',
+    );
+    await sendButton.click();
+    expect((await sendResponse).status()).toBe(201);
 
     await expect(page.getByText('Mensagem enviada pelo e2e')).toBeVisible();
   });

@@ -5,10 +5,16 @@ import type { AuthTokens } from '../types/auth';
 const baseURL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api';
 
 export function apiErrorCode(error: unknown) {
+  if (!error || typeof error !== 'object') {
+    return undefined;
+  }
   return (error as { response?: { data?: { code?: string } } }).response?.data?.code;
 }
 
 export function apiErrorMessage(error: unknown) {
+  if (!error || typeof error !== 'object') {
+    return undefined;
+  }
   const message = (error as { response?: { data?: { message?: string } } }).response?.data?.message;
   return message && message.trim() ? message : undefined;
 }
