@@ -29,6 +29,7 @@ import { z } from 'zod';
 import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
 import { apiErrorMessage } from '../services/api';
+import { PageHeader } from '../components/PageHeader';
 import {
   getSettings,
   updateSettingsCompany,
@@ -198,12 +199,10 @@ export function SettingsPage() {
 
   return (
     <Box sx={{ display: 'grid', gap: 3 }}>
-      <Box>
-        <Typography component="h2" variant="h4" fontWeight={800}>
-          Configuracoes
-        </Typography>
-        <Typography color="text.secondary">Central administrativa de empresa, loja, distribuicao, SLA e canais operacionais.</Typography>
-      </Box>
+      <PageHeader
+        description="Central administrativa de empresa, loja, distribuicao, SLA e canais operacionais."
+        title="Configuracoes"
+      />
 
       {settingsQuery.isLoading && <LinearProgress />}
       {settingsQuery.isError && <Alert severity="error">{apiErrorMessage(settingsQuery.error) ?? 'Nao foi possivel carregar as configuracoes.'}</Alert>}
