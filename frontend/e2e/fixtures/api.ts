@@ -165,6 +165,13 @@ export async function mockApi(page: Page) {
       return json(route, { content, page: 0, size: 10, totalElements: content.length, totalPages: 1 });
     }
 
+    if (path === '/pipeline' && method === 'GET') {
+      return json(route, {
+        AVAILABLE: leads.filter((item) => item.status === 'AVAILABLE'),
+        NEW: leads.filter((item) => item.status === 'NEW'),
+      });
+    }
+
     if (path === '/leads' && method === 'POST') {
       const body = request.postDataJSON() as Partial<MockLead>;
       const created = lead({

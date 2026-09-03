@@ -4,6 +4,7 @@ import {
   Alert,
   Box,
   Chip,
+  Divider,
   LinearProgress,
   Paper,
   Stack,
@@ -101,13 +102,28 @@ export function PipelinePage() {
         </Alert>
       )}
 
-      <Box sx={{ display: 'flex', gap: 2, overflowX: 'auto', pb: 1 }}>
+      <Box
+        sx={{
+          alignItems: 'stretch',
+          display: 'grid',
+          gap: 2,
+          gridAutoColumns: { xs: 'minmax(280px, 86vw)', md: 320 },
+          gridAutoFlow: 'column',
+          overflowX: 'auto',
+          pb: 1,
+          scrollPaddingInline: 16,
+          scrollSnapType: 'x proximity',
+        }}
+      >
         {statuses.map((status) => {
           const leads = groupedLeads[status];
           const isOver = dragOverStatus === status;
+          const statusLabel = metadata.label('leadStatuses', status);
           return (
             <Paper
               key={status}
+              aria-label={`Etapa ${statusLabel}`}
+              component="section"
               onDragOver={(event) => {
                 event.preventDefault();
                 setDragOverStatus(status);
@@ -115,24 +131,40 @@ export function PipelinePage() {
               onDrop={() => dropOnStatus(status)}
               variant="outlined"
               sx={{
+                bgcolor: isOver ? 'action.hover' : 'background.paper',
                 borderColor: isOver ? 'primary.main' : 'divider',
+                borderStyle: isOver ? 'dashed' : 'solid',
                 borderRadius: 1,
                 display: 'grid',
-                flex: '0 0 300px',
                 gap: 1.25,
-                p: 1.5,
-                bgcolor: isOver ? 'action.hover' : 'background.paper',
-                minHeight: 520,
+                gridTemplateRows: 'auto 1fr',
+                minHeight: { xs: 440, md: 520 },
+                p: 1,
+                scrollSnapAlign: 'start',
               }}
             >
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Chip color={metadata.color('leadStatuses', status)} label={metadata.label('leadStatuses', status)} size="small" />
-                <Typography variant="caption" color="text.secondary">
-                  {leads.length}
-                </Typography>
-              </Stack>
+              <Box
+                sx={{
+                  alignItems: 'center',
+                  bgcolor: 'background.paper',
+                  borderBottom: 1,
+                  borderColor: 'divider',
+                  display: 'flex',
+                  gap: 1,
+                  justifyContent: 'space-between',
+                  mx: -1,
+                  px: 1.25,
+                  pb: 1,
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                <Chip color={metadata.color('leadStatuses', status)} label={statusLabel} size="small" />
+                <Chip label={leads.length} size="small" variant="outlined" />
+              </Box>
 
-              <Stack spacing={1}>
+              <Stack spacing={1} sx={{ minWidth: 0 }}>
                 {leads.map((lead) => (
                   <Paper
                     draggable
@@ -152,18 +184,30 @@ export function PipelinePage() {
                     role="button"
                     tabIndex={0}
                     variant="outlined"
-                    sx={{ borderRadius: 1, cursor: 'pointer', p: 1.25 }}
+                    sx={{
+                      borderColor: draggedLead?.id === lead.id ? 'primary.main' : 'divider',
+                      borderRadius: 1,
+                      cursor: 'pointer',
+                      p: 1.25,
+                      transition: 'border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease',
+                      '&:hover': {
+                        boxShadow: 2,
+                        transform: 'translateY(-1px)',
+                      },
+                    }}
                   >
-                    <Typography variant="body2" fontWeight={800}>
+                    <Typography sx={{ overflowWrap: 'anywhere' }} variant="body2" fontWeight={800}>
                       {lead.customerName}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary" display="block">
+                    <Typography variant="caption" color="text.secondary" display="block" sx={{ overflowWrap: 'anywhere' }}>
                       {vehicleLabel(lead)}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary" display="block">
+                    <Typography variant="caption" color="text.secondary" display="block" sx={{ overflowWrap: 'anywhere' }}>
                       {lead.customerPhone ?? lead.customerEmail ?? 'Sem contato'}
                     </Typography>
+                    <Divider sx={{ my: 1 }} />
                     <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mt: 1 }}>
+                      <Chip label={metadata.label('leadSources', lead.source)} size="small" variant="outlined" />
                       {lead.assignedToUserId && <Chip icon={<AssignmentIndIcon />} label="Atribuido" size="small" variant="outlined" />}
                       {(lead.overdueToAssign || lead.overdueToFirstContact) && (
                         <Chip color="error" icon={<WarningAmberIcon />} label="SLA" size="small" variant="outlined" />
@@ -172,9 +216,22 @@ export function PipelinePage() {
                   </Paper>
                 ))}
                 {!pipelineQuery.isLoading && !fallbackLeadsQuery.isLoading && leads.length === 0 && (
-                  <Typography color="text.secondary" variant="body2">
-                    Sem leads nesta etapa.
-                  </Typography>
+                  <Box
+                    sx={{
+                      alignItems: 'center',
+                      border: 1,
+                      borderColor: 'divider',
+                      borderRadius: 1,
+                      borderStyle: 'dashed',
+                      display: 'flex',
+                      minHeight: 96,
+                      px: 2,
+                    }}
+                  >
+                    <Typography color="text.secondary" variant="body2">
+                      Sem leads nesta etapa.
+                    </Typography>
+                  </Box>
                 )}
               </Stack>
             </Paper>
