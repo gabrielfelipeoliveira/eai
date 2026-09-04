@@ -16,11 +16,11 @@ interface RecordCardRowProps {
 
 export function RecordCard({ actions, children, status, subtitle, title }: RecordCardProps) {
   return (
-    <Paper variant="outlined" sx={{ borderRadius: 1, p: 2 }}>
-      <Stack spacing={1.5}>
+    <Paper variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
+      <Stack spacing={1.25}>
         <Box sx={{ alignItems: 'flex-start', display: 'flex', gap: 1.5, justifyContent: 'space-between' }}>
           <Box sx={{ minWidth: 0 }}>
-            <Typography component="div" fontWeight={700} sx={{ overflowWrap: 'anywhere' }} variant="body1">
+            <Typography component="div" fontWeight={700} sx={{ lineHeight: 1.3, overflowWrap: 'anywhere' }} variant="body2">
               {title}
             </Typography>
             {subtitle && (
@@ -34,13 +34,13 @@ export function RecordCard({ actions, children, status, subtitle, title }: Recor
         {children && (
           <>
             <Divider />
-            <Stack spacing={1}>{children}</Stack>
+            <Stack spacing={0.75}>{children}</Stack>
           </>
         )}
         {actions && (
           <>
             <Divider />
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>{actions}</Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, justifyContent: 'flex-end' }}>{actions}</Box>
           </>
         )}
       </Stack>

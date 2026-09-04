@@ -80,20 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-070` em andamento.
+- Lucas Reiter: `EAI-072` em andamento como epic tecnico da reestruturacao UX, validado localmente e pronto para PR de promocao para `main`.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `feature/eai-070-commercial-flow-ux`.
+Lucas Reiter: `epic/eai-072-ux-restructure` pronta para PR de promocao para `main`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Implementar `EAI-070`, reestruturando o fluxo Leads/Pipeline/Conversas conforme `docs/ux/frontend-restructuring-plan.md`.
-- Depois do `EAI-070`, puxar `EAI-071` para validar navegacao e responsividade dos fluxos comerciais.
+- Abrir PR do epic `EAI-072` de `epic/eai-072-ux-restructure` para `main`, revisar diff consolidado e validar checks remotos antes do merge.
 - Tratar `EAI-065` quando se aproximar de `2026-10-31`.
 
 ## Cards De Desenvolvimento Conhecidos
@@ -170,7 +169,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-068`: concluido no PR `#114`. Criar shell responsivo e padroes globais de UX.
 - `EAI-069`: concluido no PR `#115`. Padronizar listas, filtros e estados responsivos.
 - `EAI-070`: em andamento. Reestruturar fluxo Leads/Pipeline/Conversas.
-- `EAI-071`: backlog. Validar navegacao e responsividade dos fluxos comerciais.
+- `EAI-071`: cancelado como duplicado/absorvido pelo `EAI-081`. Validacao de navegacao e responsividade dos fluxos comerciais coberta na validacao integrada.
 
 ## Historico Operacional Recente
 

@@ -19,6 +19,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import type React from 'react';
 import { useMemo, useState } from 'react';
+import { PageHeader } from '../components/PageHeader';
 import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
 import { listCompanies } from '../services/companyService';
@@ -92,6 +93,8 @@ export function ReportsPage() {
 
   const loading =
     leadsQuery.isLoading || sellersQuery.isLoading || sourcesQuery.isLoading || lostQuery.isLoading || salesQuery.isLoading || slaQuery.isLoading;
+  const error =
+    leadsQuery.isError || sellersQuery.isError || sourcesQuery.isError || lostQuery.isError || salesQuery.isError || slaQuery.isError;
   const saleTotal = (salesQuery.data ?? []).reduce((total, item) => total + (item.saleValue ?? 0), 0);
 
   function updateFilter(name: keyof ReportFilters, value: string) {
@@ -104,83 +107,97 @@ export function ReportsPage() {
 
   return (
     <Box sx={{ display: 'grid', gap: 3 }}>
-      <Stack direction={{ xs: 'column', lg: 'row' }} justifyContent="space-between" spacing={2}>
-        <Box>
-          <Typography component="h2" variant="h4" fontWeight={800}>
-            Relatorios
-          </Typography>
-          <Typography color="text.secondary">Indicadores gerenciais por periodo, loja, vendedor e origem.</Typography>
-        </Box>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-          <Button startIcon={<DownloadIcon />} variant="outlined" onClick={() => downloadReportCsv('/reports/leads/export.csv', filters, 'reports-leads.csv')}>
-            Leads CSV
-          </Button>
-          <Button startIcon={<DownloadIcon />} variant="outlined" onClick={() => downloadReportCsv('/reports/sellers/export.csv', filters, 'reports-sellers.csv')}>
-            Vendedores CSV
-          </Button>
-        </Stack>
-      </Stack>
+      <PageHeader
+        action={
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ width: { xs: '100%', sm: 'auto' } }}>
+            <Button
+              fullWidth
+              startIcon={<DownloadIcon />}
+              variant="outlined"
+              onClick={() => downloadReportCsv('/reports/leads/export.csv', filters, 'reports-leads.csv')}
+            >
+              Leads CSV
+            </Button>
+            <Button
+              fullWidth
+              startIcon={<DownloadIcon />}
+              variant="outlined"
+              onClick={() => downloadReportCsv('/reports/sellers/export.csv', filters, 'reports-sellers.csv')}
+            >
+              Vendedores CSV
+            </Button>
+          </Stack>
+        }
+        description="Indicadores gerenciais por periodo, loja, vendedor e origem."
+        title="Relatorios"
+      />
 
       <Paper variant="outlined" sx={{ borderRadius: 1, p: 2 }}>
-        <Grid2 container spacing={2}>
-          {isAdmin && (
-            <Grid2 size={{ xs: 12, md: 2 }}>
-              <TextField select fullWidth size="small" label="Empresa" value={filters.companyId ?? ''} onChange={(event) => updateFilter('companyId', event.target.value)}>
-                <MenuItem value="">Todas</MenuItem>
-                {(companiesQuery.data ?? []).map((company) => (
-                  <MenuItem key={company.id} value={company.id}>
-                    {company.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid2>
-          )}
-          {canFilterTenant && (
-            <Grid2 size={{ xs: 12, md: 2 }}>
-              <TextField select fullWidth size="small" label="Loja" value={filters.storeId ?? ''} onChange={(event) => updateFilter('storeId', event.target.value)}>
-                <MenuItem value="">Todas</MenuItem>
-                {(storesQuery.data ?? []).map((store) => (
-                  <MenuItem key={store.id} value={store.id}>
-                    {store.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid2>
-          )}
-          {canFilterSellers && (
-            <Grid2 size={{ xs: 12, md: 2 }}>
-              <TextField select fullWidth size="small" label="Vendedor" value={filters.sellerId ?? ''} onChange={(event) => updateFilter('sellerId', event.target.value)}>
-                <MenuItem value="">Todos</MenuItem>
-                {(usersQuery.data ?? [])
-                  .filter((item) => item.roles.includes('SELLER'))
-                  .map((seller) => (
-                    <MenuItem key={seller.id} value={seller.id}>
-                      {seller.name}
+        <Stack spacing={1.5}>
+          <Typography fontWeight={800} variant="body2">
+            Filtros
+          </Typography>
+          <Grid2 container spacing={2}>
+            {isAdmin && (
+              <Grid2 size={{ xs: 12, md: 2 }}>
+                <TextField select fullWidth size="small" label="Empresa" value={filters.companyId ?? ''} onChange={(event) => updateFilter('companyId', event.target.value)}>
+                  <MenuItem value="">Todas</MenuItem>
+                  {(companiesQuery.data ?? []).map((company) => (
+                    <MenuItem key={company.id} value={company.id}>
+                      {company.name}
                     </MenuItem>
                   ))}
+                </TextField>
+              </Grid2>
+            )}
+            {canFilterTenant && (
+              <Grid2 size={{ xs: 12, md: 2 }}>
+                <TextField select fullWidth size="small" label="Loja" value={filters.storeId ?? ''} onChange={(event) => updateFilter('storeId', event.target.value)}>
+                  <MenuItem value="">Todas</MenuItem>
+                  {(storesQuery.data ?? []).map((store) => (
+                    <MenuItem key={store.id} value={store.id}>
+                      {store.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid2>
+            )}
+            {canFilterSellers && (
+              <Grid2 size={{ xs: 12, md: 2 }}>
+                <TextField select fullWidth size="small" label="Vendedor" value={filters.sellerId ?? ''} onChange={(event) => updateFilter('sellerId', event.target.value)}>
+                  <MenuItem value="">Todos</MenuItem>
+                  {(usersQuery.data ?? [])
+                    .filter((item) => item.roles.includes('SELLER'))
+                    .map((seller) => (
+                      <MenuItem key={seller.id} value={seller.id}>
+                        {seller.name}
+                      </MenuItem>
+                    ))}
+                </TextField>
+              </Grid2>
+            )}
+            <Grid2 size={{ xs: 12, md: 2 }}>
+              <TextField select fullWidth size="small" label="Origem" value={filters.source ?? ''} onChange={(event) => updateFilter('source', event.target.value)}>
+                <MenuItem value="">Todas</MenuItem>
+                {sources.map((source) => (
+                  <MenuItem key={source} value={source}>
+                    {metadata.label('leadSources', source)}
+                  </MenuItem>
+                ))}
               </TextField>
             </Grid2>
-          )}
-          <Grid2 size={{ xs: 12, md: 2 }}>
-            <TextField select fullWidth size="small" label="Origem" value={filters.source ?? ''} onChange={(event) => updateFilter('source', event.target.value)}>
-              <MenuItem value="">Todas</MenuItem>
-              {sources.map((source) => (
-                <MenuItem key={source} value={source}>
-                  {metadata.label('leadSources', source)}
-                </MenuItem>
-              ))}
-            </TextField>
+            <Grid2 size={{ xs: 12, md: 2 }}>
+              <TextField fullWidth size="small" type="date" label="De" value={filters.dateFrom ?? ''} onChange={(event) => updateFilter('dateFrom', event.target.value)} slotProps={{ inputLabel: { shrink: true } }} />
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 2 }}>
+              <TextField fullWidth size="small" type="date" label="Ate" value={filters.dateTo ?? ''} onChange={(event) => updateFilter('dateTo', event.target.value)} slotProps={{ inputLabel: { shrink: true } }} />
+            </Grid2>
           </Grid2>
-          <Grid2 size={{ xs: 12, md: 2 }}>
-            <TextField fullWidth size="small" type="date" label="De" value={filters.dateFrom ?? ''} onChange={(event) => updateFilter('dateFrom', event.target.value)} slotProps={{ inputLabel: { shrink: true } }} />
-          </Grid2>
-          <Grid2 size={{ xs: 12, md: 2 }}>
-            <TextField fullWidth size="small" type="date" label="Ate" value={filters.dateTo ?? ''} onChange={(event) => updateFilter('dateTo', event.target.value)} slotProps={{ inputLabel: { shrink: true } }} />
-          </Grid2>
-        </Grid2>
+        </Stack>
       </Paper>
 
-      {loading && <LinearProgress />}
+      {loading && <LinearProgress aria-label="Carregando relatorios" />}
+      {error && <Alert severity="error">Nao foi possivel carregar todos os relatorios.</Alert>}
 
       <Grid2 container spacing={2}>
         {[

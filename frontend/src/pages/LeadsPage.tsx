@@ -32,6 +32,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { CommercialFlowNavigation } from '../components/CommercialFlowNavigation';
 import { PageHeader } from '../components/PageHeader';
+import { RecordCard, RecordCardRow } from '../components/RecordCard';
+import { ResponsiveDataView } from '../components/ResponsiveDataView';
 import { LeadDetailDrawer } from '../features/leads/LeadDetailDrawer';
 import { vehicleLabel } from '../features/leads/leadDisplay';
 import { useAuth } from '../hooks/useAuth';
@@ -494,47 +496,14 @@ export function LeadsPage() {
         </Grid2>
       </Paper>
 
-      <Paper variant="outlined" sx={{ borderRadius: 1, overflow: 'auto' }}>
-        <Table sx={{ minWidth: 960 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Cliente</TableCell>
-              <TableCell>Veiculo</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Origem</TableCell>
-              <TableCell>Vendedor</TableCell>
-              <TableCell>Loja</TableCell>
-              <TableCell>Criado em</TableCell>
-              <TableCell align="right">Acoes</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {leadsQuery.data?.content.map((lead) => (
-              <TableRow hover key={lead.id}>
-                <TableCell>
-                  <Typography variant="body2" fontWeight={700}>
-                    {lead.customerName}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {lead.customerPhone ?? lead.customerEmail ?? '-'}
-                  </Typography>
-                </TableCell>
-                <TableCell>{vehicleLabel(lead)}</TableCell>
-                <TableCell>
-                  <Stack direction="row" flexWrap="wrap" gap={0.75}>
-                    <Chip color={metadata.color('leadStatuses', lead.status)} label={metadata.label('leadStatuses', lead.status)} size="small" />
-                    {lead.overdueToAssign && <Chip color="error" icon={<WarningAmberIcon />} label="Atribuicao" size="small" variant="outlined" />}
-                    {lead.overdueToFirstContact && <Chip color="error" icon={<WarningAmberIcon />} label="Contato" size="small" variant="outlined" />}
-                  </Stack>
-                </TableCell>
-                <TableCell>
-                  <Chip label={metadata.label('leadSources', lead.source)} size="small" variant="outlined" />
-                </TableCell>
-                <TableCell>{userName(lead.assignedToUserId)}</TableCell>
-                <TableCell>{storeName(lead.storeId)}</TableCell>
-                <TableCell>{new Date(lead.createdAt).toLocaleDateString('pt-BR')}</TableCell>
-                <TableCell align="right">
-                  <Stack direction="row" justifyContent="flex-end" spacing={1}>
+      <ResponsiveDataView
+        cards={
+          <>
+            {leads.map((lead) => (
+              <RecordCard
+                key={lead.id}
+                actions={
+                  <>
                     {!lead.assignedToUserId && (
                       <Button onClick={() => assignToMeMutation.mutate(lead.id)} size="small" startIcon={<AssignmentIndIcon />} variant="outlined">
                         Assumir
@@ -548,41 +517,155 @@ export function LeadsPage() {
                     <Button onClick={() => openDetailDrawer(lead)} size="small" variant="contained">
                       Detalhe
                     </Button>
+                  </>
+                }
+                status={<Chip color={metadata.color('leadStatuses', lead.status)} label={metadata.label('leadStatuses', lead.status)} size="small" />}
+                subtitle={lead.customerPhone ?? lead.customerEmail ?? '-'}
+                title={lead.customerName}
+              >
+                <RecordCardRow label="Veiculo" value={vehicleLabel(lead)} />
+                <RecordCardRow label="Origem" value={metadata.label('leadSources', lead.source)} />
+                <RecordCardRow label="Vendedor" value={userName(lead.assignedToUserId)} />
+                <RecordCardRow label="Loja" value={storeName(lead.storeId)} />
+                <RecordCardRow label="Criado em" value={new Date(lead.createdAt).toLocaleDateString('pt-BR')} />
+                {(lead.overdueToAssign || lead.overdueToFirstContact) && (
+                  <Stack direction="row" flexWrap="wrap" gap={0.75}>
+                    {lead.overdueToAssign && <Chip color="error" icon={<WarningAmberIcon />} label="Atribuicao" size="small" variant="outlined" />}
+                    {lead.overdueToFirstContact && <Chip color="error" icon={<WarningAmberIcon />} label="Contato" size="small" variant="outlined" />}
                   </Stack>
-                </TableCell>
-              </TableRow>
+                )}
+              </RecordCard>
             ))}
-            {!leadsQuery.isLoading && leadsQuery.data?.content.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={8}>Nenhum lead encontrado.</TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        <TablePagination
-          component="div"
-          count={leadsQuery.data?.totalElements ?? 0}
-          onPageChange={(_, page) => setFilters((current) => ({ ...current, page }))}
-          onRowsPerPageChange={(event) => setFilters((current) => ({ ...current, page: 0, size: Number(event.target.value) }))}
-          page={filters.page ?? 0}
-          rowsPerPage={filters.size ?? 10}
-          rowsPerPageOptions={[10, 20, 50]}
-        />
-      </Paper>
+            <TablePagination
+              component="div"
+              count={leadsQuery.data?.totalElements ?? 0}
+              onPageChange={(_, page) => setFilters((current) => ({ ...current, page }))}
+              onRowsPerPageChange={(event) => setFilters((current) => ({ ...current, page: 0, size: Number(event.target.value) }))}
+              page={filters.page ?? 0}
+              rowsPerPage={filters.size ?? 10}
+              rowsPerPageOptions={[10, 20, 50]}
+            />
+          </>
+        }
+        empty={!leadsQuery.isLoading && leads.length === 0}
+        emptyMessage="Nenhum lead encontrado."
+        error={leadsQuery.isError}
+        errorMessage={leadsQuery.error ? apiErrorMessage(leadsQuery.error) ?? 'Nao foi possivel carregar os leads.' : 'Nao foi possivel carregar os leads.'}
+        loading={leadsQuery.isLoading}
+        table={
+          <>
+            <Table sx={{ minWidth: 1120 }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Cliente</TableCell>
+                  <TableCell>Veiculo</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Origem</TableCell>
+                  <TableCell>Vendedor</TableCell>
+                  <TableCell>Loja</TableCell>
+                  <TableCell>Criado em</TableCell>
+                  <TableCell align="right" sx={{ minWidth: 260 }}>
+                    Acoes
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {leads.map((lead) => (
+                  <TableRow hover key={lead.id}>
+                    <TableCell>
+                      <Typography variant="body2" fontWeight={700}>
+                        {lead.customerName}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {lead.customerPhone ?? lead.customerEmail ?? '-'}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>{vehicleLabel(lead)}</TableCell>
+                    <TableCell>
+                      <Stack direction="row" flexWrap="wrap" gap={0.75}>
+                        <Chip color={metadata.color('leadStatuses', lead.status)} label={metadata.label('leadStatuses', lead.status)} size="small" />
+                        {lead.overdueToAssign && <Chip color="error" icon={<WarningAmberIcon />} label="Atribuicao" size="small" variant="outlined" />}
+                        {lead.overdueToFirstContact && <Chip color="error" icon={<WarningAmberIcon />} label="Contato" size="small" variant="outlined" />}
+                      </Stack>
+                    </TableCell>
+                    <TableCell>
+                      <Chip label={metadata.label('leadSources', lead.source)} size="small" variant="outlined" />
+                    </TableCell>
+                    <TableCell>{userName(lead.assignedToUserId)}</TableCell>
+                    <TableCell>{storeName(lead.storeId)}</TableCell>
+                    <TableCell>{new Date(lead.createdAt).toLocaleDateString('pt-BR')}</TableCell>
+                    <TableCell align="right" sx={{ minWidth: 260 }}>
+                      <Stack direction="row" flexWrap="nowrap" gap={1} justifyContent="flex-end">
+                        {!lead.assignedToUserId && (
+                          <Button onClick={() => assignToMeMutation.mutate(lead.id)} size="small" startIcon={<AssignmentIndIcon />} variant="outlined">
+                            Assumir
+                          </Button>
+                        )}
+                        {canDistribute && !lead.assignedToUserId && (
+                          <Button onClick={() => assignAutomaticallyMutation.mutate(lead.id)} size="small" startIcon={<AutoModeIcon />} variant="outlined">
+                            Auto
+                          </Button>
+                        )}
+                        <Button onClick={() => openDetailDrawer(lead)} size="small" variant="contained">
+                          Detalhe
+                        </Button>
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <TablePagination
+              component="div"
+              count={leadsQuery.data?.totalElements ?? 0}
+              onPageChange={(_, page) => setFilters((current) => ({ ...current, page }))}
+              onRowsPerPageChange={(event) => setFilters((current) => ({ ...current, page: 0, size: Number(event.target.value) }))}
+              page={filters.page ?? 0}
+              rowsPerPage={filters.size ?? 10}
+              rowsPerPageOptions={[10, 20, 50]}
+            />
+          </>
+        }
+      />
 
-      <Drawer anchor="right" onClose={() => setDrawerMode(null)} open={drawerMode === 'create'} PaperProps={{ sx: { width: { xs: '100%', md: 560 } } }}>
-        <Box sx={{ p: 3, display: 'grid', gap: 2 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography component="h3" variant="h5" fontWeight={800}>
-              Novo lead
-            </Typography>
+      <Drawer
+        anchor="right"
+        onClose={() => setDrawerMode(null)}
+        open={drawerMode === 'create'}
+        PaperProps={{ sx: { bgcolor: 'background.default', width: { xs: '100%', md: 640 } } }}
+      >
+        <Box sx={{ display: 'grid', gap: 2, p: { xs: 2, md: 3 } }}>
+          <Box
+            sx={{
+              alignItems: 'center',
+              bgcolor: 'background.paper',
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: 1,
+              display: 'flex',
+              gap: 1.5,
+              justifyContent: 'space-between',
+              p: 2,
+              position: 'sticky',
+              top: 0,
+              zIndex: 1,
+            }}
+          >
+            <Box sx={{ minWidth: 0 }}>
+              <Typography component="h3" variant="h5">
+                Novo lead
+              </Typography>
+              <Typography color="text.secondary" variant="body2">
+                Cadastro manual de oportunidade
+              </Typography>
+            </Box>
             <IconButton aria-label="Fechar" onClick={() => setDrawerMode(null)}>
               <CloseIcon />
             </IconButton>
           </Box>
 
           {drawerMode === 'create' && (
-            <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ display: 'grid', gap: 2 }}>
+            <Paper component="form" onSubmit={handleSubmit(onSubmit)} variant="outlined" sx={{ borderRadius: 1, display: 'grid', gap: 2, p: 2 }}>
               {createLeadMutation.isError && (
                 <Alert severity="error">{apiErrorMessage(createLeadMutation.error) ?? 'Nao foi possivel criar o lead.'}</Alert>
               )}
@@ -648,7 +731,7 @@ export function LeadsPage() {
               <Button disabled={createLeadMutation.isPending} type="submit" variant="contained">
                 Criar lead
               </Button>
-            </Box>
+            </Paper>
           )}
 
         </Box>

@@ -2,6 +2,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import { Alert, Box, Button, Grid2, LinearProgress, MenuItem, Paper, Stack, Switch, TextField, Typography } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { PageHeader } from '../components/PageHeader';
 import { useMetadata } from '../hooks/useMetadata';
 import { apiErrorMessage } from '../services/api';
 import { getDistributionConfig, updateDistributionConfig } from '../services/distributionService';
@@ -55,12 +56,7 @@ export function DistributionSettingsPage() {
 
   return (
     <Box sx={{ display: 'grid', gap: 3 }}>
-      <Box>
-        <Typography component="h2" variant="h4" fontWeight={800}>
-          Configuracoes
-        </Typography>
-        <Typography color="text.secondary">Distribuicao de leads e prazos de SLA da loja atual.</Typography>
-      </Box>
+      <PageHeader description="Distribuicao de leads e prazos de SLA da loja atual." title="Configuracoes" />
 
       {configQuery.isLoading && <LinearProgress />}
       {configQuery.isError && <Alert severity="error">{apiErrorMessage(configQuery.error) ?? 'Nao foi possivel carregar a configuracao.'}</Alert>}

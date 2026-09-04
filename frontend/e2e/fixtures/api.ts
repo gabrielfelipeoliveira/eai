@@ -56,6 +56,93 @@ interface MockLead {
   overdueToFirstContact: boolean;
 }
 
+interface MockConversation {
+  id: string;
+  companyId: string;
+  storeId: string;
+  contactId: string;
+  leadId: string | null;
+  responsibleUserId: string | null;
+  leadName: string | null;
+  phone: string;
+  contactDisplayName: string | null;
+  lastMessageId: string | null;
+  lastMessageDirection: string | null;
+  lastMessageType: string | null;
+  lastMessageStatus: string | null;
+  lastMessageContent: string | null;
+  lastInteractionAt: string;
+  unreadCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface MockConversationMessage {
+  id: string;
+  conversationId: string;
+  direction: string;
+  type: string;
+  status: string;
+  externalMessageId: string | null;
+  content: string | null;
+  mediaId: string | null;
+  mediaMimeType: string | null;
+  mediaStorageProvider: string | null;
+  mediaStorageKey: string | null;
+  mediaFileName: string | null;
+  mediaSizeBytes: number | null;
+  mediaSha256: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface MockTemplate {
+  id: string;
+  companyId: string;
+  storeId: string | null;
+  name: string;
+  type: string;
+  content: string;
+  languageCode: string;
+  metaStatus: string;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
+interface MockEmailAccount {
+  id: string;
+  companyId: string;
+  storeId: string;
+  name: string;
+  host: string;
+  port: number;
+  username: string;
+  protocol: string;
+  useSsl: boolean;
+  active: boolean;
+  lastReadAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  lastSyncStatus: string;
+  lastSyncMessage: string | null;
+  lastSyncAt: string | null;
+}
+
+interface MockFollowUpTask {
+  id: string;
+  leadId: string;
+  userId: string;
+  title: string;
+  description: string | null;
+  dueAt: string;
+  completedAt: string | null;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const adminUser: MockUser = {
   id: 'user-admin',
   name: 'Admin EAI',
@@ -113,6 +200,108 @@ export async function mockApi(page: Page) {
       source: 'MANUAL',
     }),
   ];
+  const conversations: MockConversation[] = [
+    {
+      id: 'conversation-1',
+      companyId: 'company-1',
+      storeId: 'store-1',
+      contactId: 'contact-1',
+      leadId: 'lead-1',
+      responsibleUserId: 'user-admin',
+      leadName: 'Cliente Inicial',
+      phone: '+5511999990000',
+      contactDisplayName: null,
+      lastMessageId: 'message-2',
+      lastMessageDirection: 'OUTBOUND',
+      lastMessageType: 'TEXT',
+      lastMessageStatus: 'DELIVERED',
+      lastMessageContent: 'Combinado, vou enviar os detalhes.',
+      lastInteractionAt: '2026-07-22T12:12:00Z',
+      unreadCount: 1,
+      createdAt: '2026-07-22T12:00:00Z',
+      updatedAt: '2026-07-22T12:12:00Z',
+    },
+  ];
+  const conversationMessages: MockConversationMessage[] = [
+    conversationMessage({
+      id: 'message-1',
+      direction: 'INBOUND',
+      status: 'RECEIVED',
+      content: 'Ola, tenho interesse no Honda Civic.',
+      createdAt: '2026-07-22T12:05:00Z',
+      updatedAt: '2026-07-22T12:05:00Z',
+    }),
+    conversationMessage({
+      id: 'message-2',
+      direction: 'OUTBOUND',
+      status: 'DELIVERED',
+      content: 'Combinado, vou enviar os detalhes.',
+      createdAt: '2026-07-22T12:12:00Z',
+      updatedAt: '2026-07-22T12:12:00Z',
+    }),
+  ];
+  const templates: MockTemplate[] = [
+    {
+      id: 'template-1',
+      companyId: 'company-1',
+      storeId: 'store-1',
+      name: 'primeiro_contato',
+      type: 'FIRST_CONTACT',
+      content: 'Ola {cliente}, tudo bem? Aqui e {vendedor}.',
+      languageCode: 'pt-BR',
+      metaStatus: 'APPROVED',
+      active: true,
+      createdAt: '2026-07-22T12:00:00Z',
+      updatedAt: '2026-07-22T12:00:00Z',
+      deletedAt: null,
+    },
+  ];
+  const emailAccounts: MockEmailAccount[] = [
+    {
+      id: 'email-account-1',
+      companyId: 'company-1',
+      storeId: 'store-1',
+      name: 'Leads IMAP',
+      host: 'imap.example.com',
+      port: 993,
+      username: 'leads@example.com',
+      protocol: 'IMAP',
+      useSsl: true,
+      active: true,
+      lastReadAt: null,
+      createdAt: '2026-07-22T12:00:00Z',
+      updatedAt: '2026-07-22T12:00:00Z',
+      lastSyncStatus: 'NEVER_SYNCED',
+      lastSyncMessage: 'Sem sincronizacao',
+      lastSyncAt: null,
+    },
+  ];
+  const followUps: MockFollowUpTask[] = [
+    {
+      id: 'follow-up-1',
+      leadId: 'lead-1',
+      userId: 'user-admin',
+      title: 'Retornar contato',
+      description: 'Confirmar disponibilidade para visita.',
+      dueAt: '2026-07-23T13:00:00Z',
+      completedAt: null,
+      status: 'PENDING',
+      createdAt: '2026-07-22T12:00:00Z',
+      updatedAt: '2026-07-22T12:00:00Z',
+    },
+    {
+      id: 'follow-up-2',
+      leadId: 'lead-1',
+      userId: 'user-seller',
+      title: 'Primeiro contato pendente',
+      description: 'Lead sem resposta dentro do SLA.',
+      dueAt: '2026-07-21T13:00:00Z',
+      completedAt: null,
+      status: 'OVERDUE',
+      createdAt: '2026-07-20T12:00:00Z',
+      updatedAt: '2026-07-20T12:00:00Z',
+    },
+  ];
 
   await page.route('http://localhost:8080/api/**', async (route) => {
     const request = route.request();
@@ -155,14 +344,79 @@ export async function mockApi(page: Page) {
       return json(route, stores);
     }
 
+    if (path === '/templates' && method === 'GET') {
+      return json(route, templates);
+    }
+
+    if (path === '/email-accounts' && method === 'GET') {
+      return json(route, emailAccounts);
+    }
+
+    if (path === '/follow-ups/my' && method === 'GET') {
+      return json(route, followUps.filter((task) => task.userId === authenticatedUser.id));
+    }
+
+    if (path === '/follow-ups' && method === 'GET') {
+      return json(route, followUps);
+    }
+
+    if (path === '/leads/sla/overdue' && method === 'GET') {
+      return json(route, [
+        lead({
+          id: 'lead-overdue-1',
+          customerName: 'Cliente Atrasado',
+          customerPhone: '+5511888880000',
+          vehicleInterest: 'Toyota Corolla',
+          assignedToUserId: 'user-seller',
+          overdueToAssign: true,
+          overdueToFirstContact: true,
+          createdAt: '2026-07-20T09:00:00Z',
+        }),
+      ]);
+    }
+
     if (path === '/users') {
       return json(route, [toAuthUser(adminUser), toAuthUser(sellerUser)]);
+    }
+
+    if (path === '/conversations' && method === 'GET') {
+      return json(route, conversations);
+    }
+
+    if (path === '/conversations/conversation-1/messages' && method === 'GET') {
+      return json(route, conversationMessages);
+    }
+
+    if (path === '/conversations/conversation-1/messages' && method === 'POST') {
+      const body = request.postDataJSON() as { content?: string };
+      const message = conversationMessage({
+        id: `message-${conversationMessages.length + 1}`,
+        direction: 'OUTBOUND',
+        status: 'SENT',
+        content: body.content ?? '',
+        createdAt: '2026-07-22T12:20:00Z',
+        updatedAt: '2026-07-22T12:20:00Z',
+      });
+      conversationMessages.push(message);
+      conversations[0].lastMessageId = message.id;
+      conversations[0].lastMessageContent = message.content;
+      conversations[0].lastMessageDirection = message.direction;
+      conversations[0].lastMessageStatus = message.status;
+      conversations[0].lastInteractionAt = message.createdAt;
+      return json(route, message, 201);
     }
 
     if (path === '/leads' && method === 'GET') {
       const text = url.searchParams.get('text')?.toLowerCase();
       const content = text ? leads.filter((item) => item.customerName.toLowerCase().includes(text)) : leads;
       return json(route, { content, page: 0, size: 10, totalElements: content.length, totalPages: 1 });
+    }
+
+    if (path === '/pipeline' && method === 'GET') {
+      return json(route, {
+        AVAILABLE: leads.filter((item) => item.status === 'AVAILABLE'),
+        NEW: leads.filter((item) => item.status === 'NEW'),
+      });
     }
 
     if (path === '/leads' && method === 'POST') {
@@ -181,6 +435,10 @@ export async function mockApi(page: Page) {
 
     if (path.startsWith('/dashboard/')) {
       return json(route, dashboardResponse(path));
+    }
+
+    if (path.startsWith('/reports/')) {
+      return json(route, reportResponse(path));
     }
 
     if (path === '/notifications/unread-count') {
@@ -271,6 +529,77 @@ function dashboardResponse(path: string) {
   return [{ label: 'MANUAL', value: 1 }];
 }
 
+function reportResponse(path: string) {
+  if (path === '/reports/leads') {
+    return [{ period: '2026-07-22', leadCount: 4, soldLeads: 1, lostLeads: 1, conversionRate: 25 }];
+  }
+
+  if (path === '/reports/sellers') {
+    return [
+      {
+        sellerId: 'user-seller',
+        sellerName: 'Ana Vendedora',
+        leadCount: 4,
+        soldLeads: 1,
+        lostLeads: 1,
+        conversionRate: 25,
+        averageFirstResponseTimeMinutes: 18,
+        saleValue: 120000,
+      },
+    ];
+  }
+
+  if (path === '/reports/sources') {
+    return [{ source: 'MANUAL', leadCount: 4, soldLeads: 1, lostLeads: 1, conversionRate: 25 }];
+  }
+
+  if (path === '/reports/lost') {
+    return [
+      {
+        leadId: 'lead-lost-1',
+        customerName: 'Cliente Perdido',
+        vehicleInterest: 'Jeep Compass',
+        sellerId: 'user-seller',
+        sellerName: 'Ana Vendedora',
+        source: 'MANUAL',
+        lostReason: 'Comprou de concorrente',
+        createdAt: '2026-07-21T12:00:00Z',
+        lostAt: '2026-07-22T12:00:00Z',
+      },
+    ];
+  }
+
+  if (path === '/reports/sales') {
+    return [
+      {
+        leadId: 'lead-sale-1',
+        customerName: 'Cliente Vendido',
+        vehicleInterest: 'Honda Civic',
+        sellerId: 'user-seller',
+        sellerName: 'Ana Vendedora',
+        source: 'MANUAL',
+        saleValue: 120000,
+        createdAt: '2026-07-21T12:00:00Z',
+        soldAt: '2026-07-22T12:00:00Z',
+      },
+    ];
+  }
+
+  if (path === '/reports/sla') {
+    return {
+      leadCount: 4,
+      overdueToAssign: 1,
+      overdueToFirstContact: 1,
+      overdueTotal: 2,
+      averageFirstResponseTimeMinutes: 18,
+      firstContactWithinSla: 2,
+      firstContactOutsideSla: 1,
+    };
+  }
+
+  return {};
+}
+
 function metadata() {
   const option = (code: string, label: string, order: number, color = 'default') => ({
     code,
@@ -307,20 +636,71 @@ function metadata() {
       option('OLX', 'OLX', 8),
       option('API', 'API', 9),
     ],
-    followUpStatuses: [],
+    followUpStatuses: [
+      option('PENDING', 'Pendente', 1, 'warning'),
+      option('DONE', 'Concluido', 2, 'success'),
+      option('CANCELED', 'Cancelado', 3),
+      option('OVERDUE', 'Atrasado', 4, 'error'),
+    ],
     userRoles: [
       option('ADMIN', 'Administrador', 1, 'error'),
       option('SELLER', 'Vendedor', 2, 'success'),
     ],
     userStatuses: [],
     tenantStatuses: [option('ACTIVE', 'Ativo', 1, 'success'), option('INACTIVE', 'Inativo', 2)],
-    messageTemplateTypes: [],
-    messageTemplateMetaStatuses: [],
+    messageTemplateTypes: [
+      option('FIRST_CONTACT', 'Primeiro contato', 1, 'info'),
+      option('FOLLOW_UP', 'Follow-up', 2, 'warning'),
+      option('VISIT_INVITE', 'Convite para visita', 3, 'primary'),
+      option('PROPOSAL', 'Proposta', 4, 'secondary'),
+      option('NO_RESPONSE', 'Sem resposta', 5),
+      option('SOLD', 'Vendido', 6, 'success'),
+      option('LOST', 'Perdido', 7, 'error'),
+    ],
+    messageTemplateMetaStatuses: [
+      option('PENDING', 'Pendente', 1, 'warning'),
+      option('APPROVED', 'Aprovado na Meta', 2, 'success'),
+      option('REJECTED', 'Rejeitado', 3, 'error'),
+      option('PAUSED', 'Pausado', 4),
+      option('DISABLED', 'Desativado', 5),
+    ],
     leadDistributionModes: [],
-    emailAccountStatuses: [],
-    emailProtocols: [],
+    emailAccountStatuses: [
+      option('NEVER_SYNCED', 'Nunca sincronizada', 1),
+      option('SUCCESS', 'Sucesso', 2, 'success'),
+      option('FAILED', 'Falhou', 3, 'error'),
+    ],
+    emailProtocols: [option('IMAP', 'IMAP', 1)],
     conversationMessageDirections: [],
     conversationMessageTypes: [],
-    conversationMessageStatuses: [],
+    conversationMessageStatuses: [
+      option('RECEIVED', 'Recebida', 1, 'success'),
+      option('SENT', 'Enviada', 2, 'info'),
+      option('DELIVERED', 'Entregue', 3, 'primary'),
+      option('READ', 'Lida', 4, 'success'),
+      option('FAILED', 'Falhou', 5, 'error'),
+    ],
+  };
+}
+
+function conversationMessage(overrides: Partial<MockConversationMessage>): MockConversationMessage {
+  return {
+    id: 'message-1',
+    conversationId: 'conversation-1',
+    direction: 'INBOUND',
+    type: 'TEXT',
+    status: 'RECEIVED',
+    externalMessageId: null,
+    content: null,
+    mediaId: null,
+    mediaMimeType: null,
+    mediaStorageProvider: null,
+    mediaStorageKey: null,
+    mediaFileName: null,
+    mediaSizeBytes: null,
+    mediaSha256: null,
+    createdAt: '2026-07-22T12:00:00Z',
+    updatedAt: '2026-07-22T12:00:00Z',
+    ...overrides,
   };
 }

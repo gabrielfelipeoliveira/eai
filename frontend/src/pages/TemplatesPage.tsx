@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -15,7 +16,6 @@ import {
   Grid2,
   IconButton,
   MenuItem,
-  Paper,
   Stack,
   Table,
   TableBody,
@@ -30,6 +30,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { PageHeader } from '../components/PageHeader';
+import { RecordCard, RecordCardRow } from '../components/RecordCard';
+import { ResponsiveDataView } from '../components/ResponsiveDataView';
 import { useAuth } from '../hooks/useAuth';
 import { useMetadata } from '../hooks/useMetadata';
 import { apiErrorMessage } from '../services/api';
@@ -146,76 +149,106 @@ export function TemplatesPage() {
     saveMutation.mutate(values);
   }
 
+  const templates = templatesQuery.data ?? [];
+
   return (
     <Box sx={{ display: 'grid', gap: 3 }}>
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2 }}>
-        <Box>
-          <Typography component="h2" variant="h4" fontWeight={800}>
-            Templates
-          </Typography>
-          <Typography color="text.secondary">Mensagens padronizadas para contatos comerciais por WhatsApp.</Typography>
-        </Box>
-        <Button onClick={openCreateDialog} startIcon={<AddIcon />} variant="contained">
-          Novo template
-        </Button>
-      </Box>
+      <PageHeader
+        action={
+          <Button onClick={openCreateDialog} startIcon={<AddIcon />} variant="contained">
+            Novo template
+          </Button>
+        }
+        description="Mensagens padronizadas para contatos comerciais por WhatsApp."
+        title="Templates"
+      />
 
-      <Paper variant="outlined" sx={{ borderRadius: 1, overflow: 'hidden' }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Nome Meta</TableCell>
-              <TableCell>Tipo</TableCell>
-              <TableCell>Escopo</TableCell>
-              <TableCell>Meta</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Mensagem</TableCell>
-              <TableCell align="right">Acoes</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {templatesQuery.data?.map((template) => (
-              <TableRow hover key={template.id}>
-                <TableCell>
-                  <Typography fontWeight={700}>{template.name}</Typography>
-                  <Typography color="text.secondary" variant="caption">
-                    {template.languageCode}
-                  </Typography>
-                </TableCell>
-                <TableCell>{metadata.label('messageTemplateTypes', template.type)}</TableCell>
-                <TableCell>{storeName(template.storeId)}</TableCell>
-                <TableCell>{metadata.label('messageTemplateMetaStatuses', template.metaStatus)}</TableCell>
-                <TableCell>{template.active ? 'Ativo' : 'Inativo'}</TableCell>
-                <TableCell sx={{ maxWidth: 420 }}>
-                  <Typography noWrap variant="body2">
-                    {template.content}
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Stack direction="row" justifyContent="flex-end" spacing={1}>
-                    <Tooltip title="Editar">
-                      <IconButton aria-label="Editar" onClick={() => openEditDialog(template)} size="small">
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Excluir">
-                      <IconButton aria-label="Excluir" onClick={() => deleteMutation.mutate(template.id)} size="small">
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                  </Stack>
-                </TableCell>
-              </TableRow>
-            ))}
-
-            {!templatesQuery.isLoading && templatesQuery.data?.length === 0 && (
+      <ResponsiveDataView
+        cards={templates.map((template) => (
+          <RecordCard
+            key={template.id}
+            actions={
+              <>
+                <Tooltip title="Editar">
+                  <IconButton aria-label="Editar" onClick={() => openEditDialog(template)} size="small">
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Excluir">
+                  <IconButton aria-label="Excluir" onClick={() => deleteMutation.mutate(template.id)} size="small">
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </>
+            }
+            status={<Chip label={template.active ? 'Ativo' : 'Inativo'} size="small" variant={template.active ? 'filled' : 'outlined'} />}
+            subtitle={template.languageCode}
+            title={template.name}
+          >
+            <RecordCardRow label="Tipo" value={metadata.label('messageTemplateTypes', template.type)} />
+            <RecordCardRow label="Escopo" value={storeName(template.storeId)} />
+            <RecordCardRow label="Meta" value={metadata.label('messageTemplateMetaStatuses', template.metaStatus)} />
+            <RecordCardRow label="Mensagem" value={template.content} />
+          </RecordCard>
+        ))}
+        empty={!templatesQuery.isLoading && templates.length === 0}
+        emptyMessage="Nenhum template encontrado."
+        error={templatesQuery.isError}
+        loading={templatesQuery.isLoading}
+        loadingLabel="Carregando templates"
+        table={
+          <Table sx={{ minWidth: 1040 }}>
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={7}>Nenhum template encontrado.</TableCell>
+                <TableCell>Nome Meta</TableCell>
+                <TableCell>Tipo</TableCell>
+                <TableCell>Escopo</TableCell>
+                <TableCell>Meta</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Mensagem</TableCell>
+                <TableCell align="right" sx={{ minWidth: 120 }}>
+                  Acoes
+                </TableCell>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </Paper>
+            </TableHead>
+            <TableBody>
+              {templates.map((template) => (
+                <TableRow hover key={template.id}>
+                  <TableCell>
+                    <Typography fontWeight={700}>{template.name}</Typography>
+                    <Typography color="text.secondary" variant="caption">
+                      {template.languageCode}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>{metadata.label('messageTemplateTypes', template.type)}</TableCell>
+                  <TableCell>{storeName(template.storeId)}</TableCell>
+                  <TableCell>{metadata.label('messageTemplateMetaStatuses', template.metaStatus)}</TableCell>
+                  <TableCell>{template.active ? 'Ativo' : 'Inativo'}</TableCell>
+                  <TableCell sx={{ maxWidth: 420 }}>
+                    <Typography noWrap variant="body2">
+                      {template.content}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Stack direction="row" justifyContent="flex-end" spacing={1}>
+                      <Tooltip title="Editar">
+                        <IconButton aria-label="Editar" onClick={() => openEditDialog(template)} size="small">
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Excluir">
+                        <IconButton aria-label="Excluir" onClick={() => deleteMutation.mutate(template.id)} size="small">
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        }
+      />
 
       <Dialog fullWidth maxWidth="md" onClose={() => setDialogOpen(false)} open={dialogOpen}>
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>

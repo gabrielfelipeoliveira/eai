@@ -17,6 +17,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import {
   AppBar,
+  Avatar,
   Badge,
   Box,
   Button,
@@ -45,7 +46,9 @@ import {
   markNotificationRead,
 } from '../services/notificationService';
 
-const drawerWidth = 248;
+const drawerWidth = 264;
+const sidebarColor = '#0f172a';
+const sidebarMutedColor = '#94a3b8';
 
 export function MainLayout() {
   const { hasAnyRole, logout, user } = useAuth();
@@ -111,16 +114,16 @@ export function MainLayout() {
 
   const navigation = (
     <>
-      <Box sx={{ px: 3, py: 2.5 }}>
-        <Typography variant="h6" fontWeight={800}>
+      <Box sx={{ px: 2.5, py: 2.25 }}>
+        <Typography color="common.white" variant="h6" fontWeight={800} letterSpacing={0}>
           EAI
         </Typography>
-        <Typography variant="caption" color="text.secondary">
+        <Typography variant="caption" sx={{ color: sidebarMutedColor, display: 'block', lineHeight: 1.25 }}>
           Automotive Lead Intelligence
         </Typography>
       </Box>
-      <Divider />
-      <List sx={{ px: 1.5, py: 2 }}>
+      <Divider sx={{ borderColor: 'rgba(148, 163, 184, 0.2)' }} />
+      <List sx={{ px: 1.25, py: 1.5 }}>
         {menuItems.map((item) => (
           <ListItemButton
             key={item.path}
@@ -130,7 +133,13 @@ export function MainLayout() {
             onClick={() => setMobileNavOpen(false)}
             sx={{
               borderRadius: 1,
-              mb: 0.5,
+              color: sidebarMutedColor,
+              minHeight: 42,
+              mb: 0.25,
+              px: 1.25,
+              '& .MuiListItemIcon-root': {
+                color: 'inherit',
+              },
               '&.active': {
                 bgcolor: 'primary.main',
                 color: 'primary.contrastText',
@@ -138,10 +147,14 @@ export function MainLayout() {
                   color: 'inherit',
                 },
               },
+              '&:hover': {
+                bgcolor: 'rgba(148, 163, 184, 0.12)',
+                color: 'common.white',
+              },
             }}
           >
-            <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.label} />
+            <ListItemIcon sx={{ minWidth: 34 }}>{item.icon}</ListItemIcon>
+            <ListItemText primary={item.label} primaryTypographyProps={{ fontSize: 14, fontWeight: 700 }} />
           </ListItemButton>
         ))}
       </List>
@@ -157,13 +170,14 @@ export function MainLayout() {
         elevation={0}
         position="fixed"
         sx={{
+          bgcolor: 'background.paper',
           borderBottom: 1,
           borderColor: 'divider',
           ml: { md: `${drawerWidth}px` },
           width: { xs: '100%', md: `calc(100% - ${drawerWidth}px)` },
         }}
       >
-        <Toolbar sx={{ justifyContent: 'space-between', gap: 2 }}>
+        <Toolbar sx={{ gap: 2, minHeight: { xs: 64, md: 68 }, justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minWidth: 0 }}>
             <Tooltip title="Abrir menu">
               <IconButton
@@ -176,15 +190,15 @@ export function MainLayout() {
               </IconButton>
             </Tooltip>
             <Box sx={{ minWidth: 0 }}>
-              <Typography component="span" variant="subtitle2" color="text.secondary">
+              <Typography component="span" variant="caption" color="text.secondary" fontWeight={700}>
                 EAI
               </Typography>
-              <Typography component="h1" variant="h6" fontWeight={700} noWrap>
+              <Typography component="h1" variant="h6" noWrap>
                 Operacao comercial
               </Typography>
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {isAdmin && (
               <>
                 <Tooltip title="Notificacoes">
@@ -263,7 +277,9 @@ export function MainLayout() {
                 </Menu>
               </>
             )}
-            <PersonIcon color="action" />
+            <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main', fontSize: 14, fontWeight: 700 }}>
+              {user?.name?.charAt(0).toUpperCase() ?? <PersonIcon fontSize="small" />}
+            </Avatar>
             <Box sx={{ display: { xs: 'none', sm: 'block' }, minWidth: 0 }}>
               <Typography variant="body2" fontWeight={700} noWrap>
                 {user?.name}
@@ -291,7 +307,7 @@ export function MainLayout() {
             width: drawerWidth,
             borderRight: 1,
             borderColor: 'divider',
-            bgcolor: 'background.paper',
+            bgcolor: sidebarColor,
           },
         }}
         sx={{ display: { xs: 'block', md: 'none' } }}
@@ -307,7 +323,7 @@ export function MainLayout() {
             width: drawerWidth,
             borderRight: 1,
             borderColor: 'divider',
-            bgcolor: 'background.paper',
+            bgcolor: sidebarColor,
           },
         }}
         sx={{ display: { xs: 'none', md: 'block' } }}
@@ -321,9 +337,10 @@ export function MainLayout() {
           flexGrow: 1,
           minWidth: 0,
           ml: { md: `${drawerWidth}px` },
+          maxWidth: { md: `calc(100vw - ${drawerWidth}px)` },
           px: { xs: 2, sm: 3, md: 4 },
           pb: { xs: 3, md: 5 },
-          pt: { xs: 10, md: 12 },
+          pt: { xs: 9.5, md: 11 },
         }}
       >
         <Outlet />
