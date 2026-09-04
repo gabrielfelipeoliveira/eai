@@ -80,20 +80,20 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: `EAI-072` em andamento como epic tecnico da reestruturacao UX, validado localmente e pronto para PR de promocao para `main`.
+- Lucas Reiter: `EAI-065` em andamento para revalidar excecoes Trivy do `gosu` em `postgres:16-bookworm`.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: `epic/eai-072-ux-restructure` pronta para PR de promocao para `main`.
+Lucas Reiter: `feature/eai-065-revisa-trivy-gosu`.
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Abrir PR do epic `EAI-072` de `epic/eai-072-ux-restructure` para `main`, revisar diff consolidado e validar checks remotos antes do merge.
-- Tratar `EAI-065` quando se aproximar de `2026-10-31`.
+- Finalizar `EAI-065`: validar CI, abrir PR para `main`, revisar e fechar Trello.
+- Proximos itens de negocio seguem no quadro `EAI - Pendencias de Negocio e Fluxo`, lista `A responder`.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -163,7 +163,7 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-062`: concluido no PR `#100`. Atualizar handoff operacional pos `EAI-059`.
 - `EAI-063`: concluido no PR `#110`. Avaliar migracao de majors e pins de dependencias frontend.
 - `EAI-064`: concluido no PR `#111`. Revisar excecoes Trivy do `gosu` na imagem Postgres e renovar controle temporario ate `2026-10-31`.
-- `EAI-065`: backlog. Revisar excecoes Trivy do `gosu` ate `2026-10-31`.
+- `EAI-065`: em andamento. Revalidado em 2026-09-03: excecoes Trivy do `gosu` ainda necessarias em `postgres:16-bookworm` no digest `sha256:bb3e1a57e5407e0a5280b4211980a5e537f4abd234a87014ac979849a78dd825`; revisar novamente ate `2026-10-31`.
 - `EAI-066`: concluido. Triar PRs Dependabot restantes `#103` e `#104`.
 - `EAI-067`: concluido no PR `#113`. Mapear reestruturacao UX do frontend.
 - `EAI-068`: concluido no PR `#114`. Criar shell responsivo e padroes globais de UX.
