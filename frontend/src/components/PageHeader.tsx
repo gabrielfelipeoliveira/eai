@@ -22,8 +22,8 @@ export function PageHeader({ action, description, title }: PageHeaderProps) {
       <Box sx={{ minWidth: 0 }}>
         <Typography
           component="h2"
-          fontWeight={700}
-          sx={{ fontSize: { xs: '1.5rem', md: '1.75rem' }, lineHeight: 1.2, overflowWrap: 'anywhere' }}
+
+          sx={{ fontWeight: 700,  fontSize: { xs: '1.5rem', md: '1.75rem' }, lineHeight: 1.2, overflowWrap: 'anywhere' }}
           variant="h4"
         >
           {title}

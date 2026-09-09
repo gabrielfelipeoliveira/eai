@@ -20,7 +20,7 @@ export function RecordCard({ actions, children, status, subtitle, title }: Recor
       <Stack spacing={1.25}>
         <Box sx={{ alignItems: 'flex-start', display: 'flex', gap: 1.5, justifyContent: 'space-between' }}>
           <Box sx={{ minWidth: 0 }}>
-            <Typography component="div" fontWeight={700} sx={{ lineHeight: 1.3, overflowWrap: 'anywhere' }} variant="body2">
+            <Typography component="div" sx={{ fontWeight: 700,  lineHeight: 1.3, overflowWrap: 'anywhere' }} variant="body2">
               {title}
             </Typography>
             {subtitle && (

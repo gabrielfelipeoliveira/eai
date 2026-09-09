@@ -13,7 +13,7 @@ import {
   DialogContent,
   DialogTitle,
   FormControlLabel,
-  Grid2,
+  Grid,
   IconButton,
   MenuItem,
   Stack,
@@ -215,7 +215,7 @@ export function TemplatesPage() {
               {templates.map((template) => (
                 <TableRow hover key={template.id}>
                   <TableCell>
-                    <Typography fontWeight={700}>{template.name}</Typography>
+                    <Typography sx={{ fontWeight: 700 }}>{template.name}</Typography>
                     <Typography color="text.secondary" variant="caption">
                       {template.languageCode}
                     </Typography>
@@ -230,7 +230,7 @@ export function TemplatesPage() {
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <Stack direction="row" justifyContent="flex-end" spacing={1}>
+                    <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
                       <Tooltip title="Editar">
                         <IconButton aria-label="Editar" onClick={() => openEditDialog(template)} size="small">
                           <EditIcon fontSize="small" />
@@ -259,11 +259,11 @@ export function TemplatesPage() {
                 <Alert severity="error">{apiErrorMessage(saveMutation.error) ?? 'Nao foi possivel salvar o template.'}</Alert>
               )}
 
-              <Grid2 container spacing={2}>
-                <Grid2 size={{ xs: 12, md: 6 }}>
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField fullWidth label="Nome Meta" error={Boolean(errors.name)} helperText={errors.name?.message ?? 'Ex.: primeiro_contato'} {...register('name')} />
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 6 }}>
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField fullWidth select label="Tipo" error={Boolean(errors.type)} helperText={errors.type?.message} {...register('type')}>
                     {templateTypes.map((type) => (
                       <MenuItem key={type} value={type}>
@@ -271,10 +271,10 @@ export function TemplatesPage() {
                       </MenuItem>
                     ))}
                   </TextField>
-                </Grid2>
+                </Grid>
 
                 {isAdmin && (
-                  <Grid2 size={{ xs: 12, md: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <TextField fullWidth select label="Empresa" error={Boolean(errors.companyId)} helperText={errors.companyId?.message} {...register('companyId')}>
                       {companiesQuery.data?.map((company) => (
                         <MenuItem key={company.id} value={company.id}>
@@ -282,16 +282,16 @@ export function TemplatesPage() {
                         </MenuItem>
                       ))}
                     </TextField>
-                  </Grid2>
+                  </Grid>
                 )}
 
                 {!isAdmin && (
-                  <Grid2 size={{ xs: 12, md: 6 }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <TextField fullWidth label="Empresa" value={user?.companyId ?? ''} slotProps={{ input: { readOnly: true } }} {...register('companyId')} />
-                  </Grid2>
+                  </Grid>
                 )}
 
-                <Grid2 size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Controller
                     control={control}
                     name="storeId"
@@ -314,12 +314,12 @@ export function TemplatesPage() {
                       </TextField>
                     )}
                   />
-                </Grid2>
+                </Grid>
 
-                <Grid2 size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField fullWidth label="Idioma Meta" error={Boolean(errors.languageCode)} helperText={errors.languageCode?.message} {...register('languageCode')} />
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 6 }}>
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField fullWidth select label="Status Meta" error={Boolean(errors.metaStatus)} helperText={errors.metaStatus?.message} {...register('metaStatus')}>
                     {metaStatuses.map((status) => (
                       <MenuItem key={status} value={status}>
@@ -327,8 +327,8 @@ export function TemplatesPage() {
                       </MenuItem>
                     ))}
                   </TextField>
-                </Grid2>
-              </Grid2>
+                </Grid>
+              </Grid>
 
               <TextField fullWidth label="Conteudo" minRows={5} multiline error={Boolean(errors.content)} helperText={errors.content?.message} {...register('content')} />
               <Controller

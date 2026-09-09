@@ -7,7 +7,7 @@ import {
   Box,
   Button,
   Chip,
-  Grid2,
+  Grid,
   IconButton,
   MenuItem,
   Paper,
@@ -142,8 +142,8 @@ export function StoresPage() {
     <Box sx={{ display: 'grid', gap: 3 }}>
       <PageHeader description="Cadastro das lojas vinculadas as empresas." title="Lojas" />
 
-      <Grid2 container spacing={3}>
-        <Grid2 size={{ xs: 12, lg: 8 }}>
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, lg: 8 }}>
           <ResponsiveDataView
             cards={stores.map((store) => (
               <RecordCard
@@ -215,13 +215,13 @@ export function StoresPage() {
               </Table>
             }
           />
-        </Grid2>
+        </Grid>
 
-        <Grid2 size={{ xs: 12, lg: 4 }}>
+        <Grid size={{ xs: 12, lg: 4 }}>
           <Paper component="form" onSubmit={handleSubmit(onSubmit)} variant="outlined" sx={{ p: 3, borderRadius: 1, display: 'grid', gap: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <AddBusinessIcon color="primary" />
-              <Typography component="h3" variant="h6" fontWeight={700}>
+              <Typography component="h3" variant="h6" sx={{ fontWeight: 700 }}>
                 {editingStore ? 'Editar loja' : 'Nova loja'}
               </Typography>
             </Box>
@@ -231,8 +231,18 @@ export function StoresPage() {
             )}
 
             {isAdmin ? (
-              <TextField select label="Empresa" error={Boolean(errors.companyId)} helperText={errors.companyId?.message} {...register('companyId')}>
-                {companiesQuery.data?.map((company) => (
+              <TextField
+                select
+                defaultValue=""
+                label="Empresa"
+                error={Boolean(errors.companyId)}
+                helperText={errors.companyId?.message}
+                {...register('companyId')}
+              >
+                <MenuItem value="" disabled>
+                  Selecione a empresa
+                </MenuItem>
+                {(companiesQuery.data ?? []).map((company) => (
                   <MenuItem key={company.id} value={company.id}>
                     {company.name}
                   </MenuItem>
@@ -248,7 +258,14 @@ export function StoresPage() {
             <TextField label="Cidade" error={Boolean(errors.city)} helperText={errors.city?.message} {...register('city')} />
             <TextField label="UF" error={Boolean(errors.state)} helperText={errors.state?.message} {...register('state')} />
             <TextField label="Endereco" error={Boolean(errors.address)} helperText={errors.address?.message} {...register('address')} />
-            <TextField select label="Status" error={Boolean(errors.status)} helperText={errors.status?.message} {...register('status')}>
+            <TextField
+              select
+              defaultValue="ACTIVE"
+              label="Status"
+              error={Boolean(errors.status)}
+              helperText={errors.status?.message}
+              {...register('status')}
+            >
               {metadata.options('tenantStatuses').map((status) => (
                 <MenuItem key={status.code} value={status.code}>
                   {status.label}
@@ -266,8 +283,8 @@ export function StoresPage() {
               )}
             </Box>
           </Paper>
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

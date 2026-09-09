@@ -1,5 +1,5 @@
 import SaveIcon from '@mui/icons-material/Save';
-import { Alert, Box, Button, Grid2, LinearProgress, MenuItem, Paper, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Grid, LinearProgress, MenuItem, Paper, Stack, Switch, TextField, Typography } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { PageHeader } from '../components/PageHeader';
@@ -64,9 +64,9 @@ export function DistributionSettingsPage() {
       {updateMutation.isError && <Alert severity="error">{apiErrorMessage(updateMutation.error) ?? 'Nao foi possivel salvar a configuracao.'}</Alert>}
 
       <Paper variant="outlined" sx={{ borderRadius: 1, p: 3 }}>
-        <Grid2 container spacing={2.5}>
-          <Grid2 size={{ xs: 12, md: 6 }}>
-            <Typography variant="h6" fontWeight={800} sx={{ mb: 2 }}>
+        <Grid container spacing={2.5}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Typography variant="h6" sx={{ fontWeight: 800,  mb: 2 }}>
               Distribuicao
             </Typography>
             <Stack spacing={2}>
@@ -77,15 +77,15 @@ export function DistributionSettingsPage() {
                   </MenuItem>
                 ))}
               </TextField>
-              <Stack alignItems="center" direction="row" justifyContent="space-between">
+              <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between" }}>
                 <Typography>Ativar distribuicao automatica</Typography>
                 <Switch checked={active} onChange={(event) => setActive(event.target.checked)} />
               </Stack>
             </Stack>
-          </Grid2>
+          </Grid>
 
-          <Grid2 size={{ xs: 12, md: 6 }}>
-            <Typography variant="h6" fontWeight={800} sx={{ mb: 2 }}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Typography variant="h6" sx={{ fontWeight: 800,  mb: 2 }}>
               SLA
             </Typography>
             <Stack spacing={2}>
@@ -101,13 +101,13 @@ export function DistributionSettingsPage() {
                 type="number"
                 value={minutesToFirstContact}
               />
-              <Stack alignItems="center" direction="row" justifyContent="space-between">
+              <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between" }}>
                 <Typography>Ativar controle de SLA</Typography>
                 <Switch checked={slaActive} onChange={(event) => setSlaActive(event.target.checked)} />
               </Stack>
             </Stack>
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
           <Button disabled={updateMutation.isPending || !configQuery.data} onClick={() => updateMutation.mutate()} startIcon={<SaveIcon />} variant="contained">

@@ -196,17 +196,17 @@ export function PipelinePage() {
                       },
                     }}
                   >
-                    <Typography sx={{ overflowWrap: 'anywhere' }} variant="body2" fontWeight={800}>
+                    <Typography sx={{ fontWeight: 800,  overflowWrap: 'anywhere' }} variant="body2">
                       {lead.customerName}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary" display="block" sx={{ overflowWrap: 'anywhere' }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflowWrap: 'anywhere' }}>
                       {vehicleLabel(lead)}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary" display="block" sx={{ overflowWrap: 'anywhere' }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', overflowWrap: 'anywhere' }}>
                       {lead.customerPhone ?? lead.customerEmail ?? 'Sem contato'}
                     </Typography>
                     <Divider sx={{ my: 1 }} />
-                    <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mt: 1 }}>
+                    <Stack direction="row" sx={{ flexWrap: "wrap", gap: 0.75,  mt: 1 }}>
                       <Chip label={metadata.label('leadSources', lead.source)} size="small" variant="outlined" />
                       {lead.assignedToUserId && <Chip icon={<AssignmentIndIcon />} label="Atribuido" size="small" variant="outlined" />}
                       {(lead.overdueToAssign || lead.overdueToFirstContact) && (

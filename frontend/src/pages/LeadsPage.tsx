@@ -12,7 +12,7 @@ import {
   Button,
   Chip,
   Drawer,
-  Grid2,
+  Grid,
   IconButton,
   MenuItem,
   Paper,
@@ -327,44 +327,44 @@ export function LeadsPage() {
         title="Leads"
       />
 
-      <Grid2 container spacing={1.5}>
-        <Grid2 size={{ xs: 6, md: 2.4 }}>
+      <Grid container spacing={1.5}>
+        <Grid size={{ xs: 6, md: 2.4 }}>
           <Paper variant="outlined" sx={{ borderRadius: 1, p: 1.5, borderColor: slaCounts.overdueToAssign ? 'error.main' : 'divider' }}>
             <Typography variant="caption" color="text.secondary">
               SLA atribuicao
             </Typography>
-            <Typography variant="h5" fontWeight={800} color={slaCounts.overdueToAssign ? 'error.main' : 'text.primary'}>
+            <Typography variant="h5" color={slaCounts.overdueToAssign ? 'error.main' : 'text.primary'} sx={{ fontWeight: 800 }}>
               {slaCounts.overdueToAssign}
             </Typography>
           </Paper>
-        </Grid2>
-        <Grid2 size={{ xs: 6, md: 2.4 }}>
+        </Grid>
+        <Grid size={{ xs: 6, md: 2.4 }}>
           <Paper variant="outlined" sx={{ borderRadius: 1, p: 1.5, borderColor: slaCounts.overdueToFirstContact ? 'error.main' : 'divider' }}>
             <Typography variant="caption" color="text.secondary">
               SLA contato
             </Typography>
-            <Typography variant="h5" fontWeight={800} color={slaCounts.overdueToFirstContact ? 'error.main' : 'text.primary'}>
+            <Typography variant="h5" color={slaCounts.overdueToFirstContact ? 'error.main' : 'text.primary'} sx={{ fontWeight: 800 }}>
               {slaCounts.overdueToFirstContact}
             </Typography>
           </Paper>
-        </Grid2>
+        </Grid>
         {statuses.map((status) => (
-          <Grid2 key={status} size={{ xs: 6, md: 2.4 }}>
+          <Grid key={status} size={{ xs: 6, md: 2.4 }}>
             <Paper variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
               <Typography variant="caption" color="text.secondary">
                 {metadata.label('leadStatuses', status)}
               </Typography>
-              <Typography variant="h5" fontWeight={800}>
+              <Typography variant="h5" sx={{ fontWeight: 800 }}>
                 {statusCounts.get(status) ?? 0}
               </Typography>
             </Paper>
-          </Grid2>
+          </Grid>
         ))}
-      </Grid2>
+      </Grid>
 
       <Paper variant="outlined" sx={{ borderRadius: 1, p: { xs: 1.5, md: 2 } }}>
-        <Grid2 container spacing={2}>
-          <Grid2 size={{ xs: 12, md: 3 }}>
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, md: 3 }}>
             <TextField
               fullWidth
               label="Texto livre"
@@ -372,8 +372,8 @@ export function LeadsPage() {
               size="small"
               value={draftFilters.text ?? ''}
             />
-          </Grid2>
-          <Grid2 size={{ xs: 12, md: 2 }}>
+          </Grid>
+          <Grid size={{ xs: 12, md: 2 }}>
             <TextField
               fullWidth
               label="Telefone"
@@ -381,8 +381,8 @@ export function LeadsPage() {
               size="small"
               value={draftFilters.phone ?? ''}
             />
-          </Grid2>
-          <Grid2 size={{ xs: 12, md: 2 }}>
+          </Grid>
+          <Grid size={{ xs: 12, md: 2 }}>
             <TextField
               fullWidth
               label="Veiculo"
@@ -390,8 +390,8 @@ export function LeadsPage() {
               size="small"
               value={draftFilters.vehicle ?? ''}
             />
-          </Grid2>
-          <Grid2 size={{ xs: 12, md: 2 }}>
+          </Grid>
+          <Grid size={{ xs: 12, md: 2 }}>
             <TextField
               fullWidth
               label="Status"
@@ -407,8 +407,8 @@ export function LeadsPage() {
                 </MenuItem>
               ))}
             </TextField>
-          </Grid2>
-          <Grid2 size={{ xs: 12, md: 2 }}>
+          </Grid>
+          <Grid size={{ xs: 12, md: 2 }}>
             <TextField
               fullWidth
               label="Origem"
@@ -424,8 +424,8 @@ export function LeadsPage() {
                 </MenuItem>
               ))}
             </TextField>
-          </Grid2>
-          <Grid2 size={{ xs: 12, md: 2 }}>
+          </Grid>
+          <Grid size={{ xs: 12, md: 2 }}>
             <TextField
               fullWidth
               label="Loja"
@@ -441,8 +441,8 @@ export function LeadsPage() {
                 </MenuItem>
               ))}
             </TextField>
-          </Grid2>
-          <Grid2 size={{ xs: 12, md: 2 }}>
+          </Grid>
+          <Grid size={{ xs: 12, md: 2 }}>
             <TextField
               fullWidth
               label="Vendedor"
@@ -465,8 +465,8 @@ export function LeadsPage() {
                   </MenuItem>
                 ))}
             </TextField>
-          </Grid2>
-          <Grid2 size={{ xs: 12, md: 2 }}>
+          </Grid>
+          <Grid size={{ xs: 12, md: 2 }}>
             <TextField
               fullWidth
               label="Inicio"
@@ -476,8 +476,8 @@ export function LeadsPage() {
               type="date"
               value={draftFilters.createdFrom?.slice(0, 10) ?? ''}
             />
-          </Grid2>
-          <Grid2 size={{ xs: 12, md: 2 }}>
+          </Grid>
+          <Grid size={{ xs: 12, md: 2 }}>
             <TextField
               fullWidth
               label="Fim"
@@ -487,13 +487,13 @@ export function LeadsPage() {
               type="date"
               value={draftFilters.createdTo?.slice(0, 10) ?? ''}
             />
-          </Grid2>
-          <Grid2 size={{ xs: 12, sm: 6, md: 1 }}>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 1 }}>
             <Button fullWidth onClick={applyFilters} startIcon={<SearchIcon />} sx={{ minHeight: 40 }} variant="outlined">
               Filtrar
             </Button>
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       </Paper>
 
       <ResponsiveDataView
@@ -529,7 +529,7 @@ export function LeadsPage() {
                 <RecordCardRow label="Loja" value={storeName(lead.storeId)} />
                 <RecordCardRow label="Criado em" value={new Date(lead.createdAt).toLocaleDateString('pt-BR')} />
                 {(lead.overdueToAssign || lead.overdueToFirstContact) && (
-                  <Stack direction="row" flexWrap="wrap" gap={0.75}>
+                  <Stack direction="row" sx={{ flexWrap: "wrap", gap: 0.75 }}>
                     {lead.overdueToAssign && <Chip color="error" icon={<WarningAmberIcon />} label="Atribuicao" size="small" variant="outlined" />}
                     {lead.overdueToFirstContact && <Chip color="error" icon={<WarningAmberIcon />} label="Contato" size="small" variant="outlined" />}
                   </Stack>
@@ -573,7 +573,7 @@ export function LeadsPage() {
                 {leads.map((lead) => (
                   <TableRow hover key={lead.id}>
                     <TableCell>
-                      <Typography variant="body2" fontWeight={700}>
+                      <Typography variant="body2" sx={{ fontWeight: 700 }}>
                         {lead.customerName}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
@@ -582,7 +582,7 @@ export function LeadsPage() {
                     </TableCell>
                     <TableCell>{vehicleLabel(lead)}</TableCell>
                     <TableCell>
-                      <Stack direction="row" flexWrap="wrap" gap={0.75}>
+                      <Stack direction="row" sx={{ flexWrap: "wrap", gap: 0.75 }}>
                         <Chip color={metadata.color('leadStatuses', lead.status)} label={metadata.label('leadStatuses', lead.status)} size="small" />
                         {lead.overdueToAssign && <Chip color="error" icon={<WarningAmberIcon />} label="Atribuicao" size="small" variant="outlined" />}
                         {lead.overdueToFirstContact && <Chip color="error" icon={<WarningAmberIcon />} label="Contato" size="small" variant="outlined" />}
@@ -595,7 +595,7 @@ export function LeadsPage() {
                     <TableCell>{storeName(lead.storeId)}</TableCell>
                     <TableCell>{new Date(lead.createdAt).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell align="right" sx={{ minWidth: 260 }}>
-                      <Stack direction="row" flexWrap="nowrap" gap={1} justifyContent="flex-end">
+                      <Stack direction="row" sx={{ flexWrap: "nowrap", justifyContent: "flex-end", gap: 1 }}>
                         {!lead.assignedToUserId && (
                           <Button onClick={() => assignToMeMutation.mutate(lead.id)} size="small" startIcon={<AssignmentIndIcon />} variant="outlined">
                             Assumir
@@ -632,7 +632,7 @@ export function LeadsPage() {
         anchor="right"
         onClose={() => setDrawerMode(null)}
         open={drawerMode === 'create'}
-        PaperProps={{ sx: { bgcolor: 'background.default', width: { xs: '100%', md: 640 } } }}
+        slotProps={{ paper: { sx: { bgcolor: 'background.default', width: { xs: '100%', md: 640 } } } }}
       >
         <Box sx={{ display: 'grid', gap: 2, p: { xs: 2, md: 3 } }}>
           <Box
@@ -675,20 +675,20 @@ export function LeadsPage() {
               <TextField label="Cidade" error={Boolean(errors.customerCity)} helperText={errors.customerCity?.message} {...register('customerCity')} />
               <TextField label="Veiculo de interesse" error={Boolean(errors.vehicleInterest)} helperText={errors.vehicleInterest?.message} {...register('vehicleInterest')} />
               <TextField label="Nome do item" error={Boolean(errors.itemName)} helperText={errors.itemName?.message} {...register('itemName')} />
-              <Grid2 container spacing={1.5}>
-                <Grid2 size={{ xs: 12, md: 6 }}>
+              <Grid container spacing={1.5}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField fullWidth label="Nome do veiculo" error={Boolean(errors.vehicleName)} helperText={errors.vehicleName?.message} {...register('vehicleName')} />
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 6 }}>
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField fullWidth label="Ano" type="number" error={Boolean(errors.vehicleYear)} helperText={errors.vehicleYear?.message} {...register('vehicleYear')} />
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 6 }}>
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField fullWidth label="Modelo" error={Boolean(errors.vehicleModel)} helperText={errors.vehicleModel?.message} {...register('vehicleModel')} />
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 6 }}>
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField fullWidth label="Valor do veiculo" type="number" error={Boolean(errors.vehicleValue)} helperText={errors.vehicleValue?.message} {...register('vehicleValue')} />
-                </Grid2>
-              </Grid2>
+                </Grid>
+              </Grid>
               <TextField select label="Origem" defaultValue={emptyLeadValues.source} error={Boolean(errors.source)} helperText={errors.source?.message} {...register('source')}>
                 {sources.map((source) => (
                   <MenuItem key={source} value={source}>
@@ -719,14 +719,14 @@ export function LeadsPage() {
                   </MenuItem>
                 ))}
               </TextField>
-              <Grid2 container spacing={1.5}>
-                <Grid2 size={{ xs: 12, md: 8 }}>
+              <Grid container spacing={1.5}>
+                <Grid size={{ xs: 12, md: 8 }}>
                   <TextField fullWidth label="Valor da venda" type="number" error={Boolean(errors.saleValue)} helperText={errors.saleValue?.message} {...register('saleValue')} />
-                </Grid2>
-                <Grid2 size={{ xs: 12, md: 4 }}>
+                </Grid>
+                <Grid size={{ xs: 12, md: 4 }}>
                   <TextField fullWidth label="Moeda" error={Boolean(errors.saleCurrency)} helperText={errors.saleCurrency?.message} {...register('saleCurrency')} />
-                </Grid2>
-              </Grid2>
+                </Grid>
+              </Grid>
               <TextField label="Mensagem original" minRows={3} multiline {...register('originalMessage')} />
               <Button disabled={createLeadMutation.isPending} type="submit" variant="contained">
                 Criar lead

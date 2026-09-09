@@ -30,7 +30,7 @@ export function OverdueLeadsPage() {
 
   function slaChips(lead: (typeof leads)[number]) {
     return (
-      <Stack direction="row" flexWrap="wrap" gap={0.75}>
+      <Stack direction="row" sx={{ flexWrap: "wrap", gap: 0.75 }}>
         {lead.overdueToAssign && <Chip color="error" icon={<AssignmentLateIcon />} label="Atribuicao" size="small" variant="outlined" />}
         {lead.overdueToFirstContact && <Chip color="error" icon={<WarningAmberIcon />} label="Primeiro contato" size="small" variant="outlined" />}
       </Stack>
@@ -69,7 +69,7 @@ export function OverdueLeadsPage() {
             {leads.map((lead) => (
               <TableRow key={lead.id} hover>
                 <TableCell>
-                  <Typography fontWeight={700}>{lead.customerName}</Typography>
+                  <Typography sx={{ fontWeight: 700 }}>{lead.customerName}</Typography>
                   <Typography color="text.secondary" variant="caption">
                     {lead.customerPhone ?? lead.customerEmail ?? '-'}
                   </Typography>

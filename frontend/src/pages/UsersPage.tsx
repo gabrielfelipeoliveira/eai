@@ -8,7 +8,7 @@ import {
   Checkbox,
   Chip,
   FormControlLabel,
-  Grid2,
+  Grid,
   MenuItem,
   Paper,
   Stack,
@@ -252,8 +252,8 @@ export function UsersPage() {
     <Box sx={{ display: 'grid', gap: 3 }}>
       <PageHeader description="Controle de acesso da equipe comercial." title="Usuarios" />
 
-      <Grid2 container spacing={3}>
-        <Grid2 size={{ xs: 12, lg: canManageUsers ? 8 : 12 }}>
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, lg: canManageUsers ? 8 : 12 }}>
           <ResponsiveDataView
             cards={users.map((user) => (
               <RecordCard
@@ -282,7 +282,7 @@ export function UsersPage() {
                   <Typography color="text.secondary" variant="caption">
                     Roles
                   </Typography>
-                  <Stack direction="row" flexWrap="wrap" gap={0.75}>
+                  <Stack direction="row" sx={{ flexWrap: "wrap", gap: 0.75 }}>
                     {user.roles.map((role) => (
                       <Chip key={role} label={metadata.label('userRoles', role)} size="small" variant="outlined" />
                     ))}
@@ -321,7 +321,7 @@ export function UsersPage() {
                       <Chip color={metadata.color('userStatuses', user.status)} label={metadata.label('userStatuses', user.status)} size="small" />
                     </TableCell>
                     <TableCell>
-                      <Stack direction="row" flexWrap="wrap" gap={0.75}>
+                      <Stack direction="row" sx={{ flexWrap: "wrap", gap: 0.75 }}>
                         {user.roles.map((role) => (
                           <Chip key={role} label={metadata.label('userRoles', role)} size="small" variant="outlined" />
                         ))}
@@ -340,10 +340,10 @@ export function UsersPage() {
               </Table>
             }
           />
-        </Grid2>
+        </Grid>
 
         {canManageUsers && (
-          <Grid2 size={{ xs: 12, lg: 4 }}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <Stack spacing={3}>
             <Paper
               component="form"
@@ -353,7 +353,7 @@ export function UsersPage() {
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <AddIcon color="primary" />
-                <Typography component="h3" variant="h6" fontWeight={700}>
+                <Typography component="h3" variant="h6" sx={{ fontWeight: 700 }}>
                   Novo usuario
                 </Typography>
               </Box>
@@ -405,7 +405,7 @@ export function UsersPage() {
                 name="roles"
                 render={({ field }) => (
                   <Box>
-                    <Typography variant="body2" fontWeight={700} sx={{ mb: 0.5 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 700,  mb: 0.5 }}>
                       Roles
                     </Typography>
                     {roles.map((role) => (
@@ -443,7 +443,7 @@ export function UsersPage() {
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <LinkIcon color="primary" />
-                <Typography component="h3" variant="h6" fontWeight={700}>
+                <Typography component="h3" variant="h6" sx={{ fontWeight: 700 }}>
                   Vincular loja
                 </Typography>
               </Box>
@@ -486,9 +486,9 @@ export function UsersPage() {
               </Button>
             </Paper>
             </Stack>
-          </Grid2>
+          </Grid>
         )}
-      </Grid2>
+      </Grid>
     </Box>
   );
 }

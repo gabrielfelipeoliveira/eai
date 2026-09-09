@@ -77,7 +77,7 @@ describe('StoresPage', () => {
 
     expect(await screen.findByText('Loja Centro')).toBeInTheDocument();
     expect(screen.getByText('Sao Paulo / SP')).toBeInTheDocument();
-    expect(screen.getByText('Ativo')).toBeInTheDocument();
+    expect(screen.getAllByText('Ativo').length).toBeGreaterThan(0);
   });
 
   it('deve validar campos obrigatorios antes de cadastrar loja', async () => {
