@@ -6,7 +6,7 @@ import {
   Box,
   Button,
   Chip,
-  Grid2,
+  Grid,
   IconButton,
   MenuItem,
   Paper,
@@ -95,8 +95,8 @@ export function CompaniesPage() {
     <Box sx={{ display: 'grid', gap: 3 }}>
       <PageHeader description="Cadastro das empresas que utilizam o EAI." title="Empresas" />
 
-      <Grid2 container spacing={3}>
-        <Grid2 size={{ xs: 12, lg: 8 }}>
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, lg: 8 }}>
           <ResponsiveDataView
             cards={companies.map((company) => (
               <RecordCard
@@ -150,13 +150,13 @@ export function CompaniesPage() {
               </Table>
             }
           />
-        </Grid2>
+        </Grid>
 
-        <Grid2 size={{ xs: 12, lg: 4 }}>
+        <Grid size={{ xs: 12, lg: 4 }}>
           <Paper component="form" onSubmit={handleSubmit(onSubmit)} variant="outlined" sx={{ p: 3, borderRadius: 1, display: 'grid', gap: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <AddBusinessIcon color="primary" />
-              <Typography component="h3" variant="h6" fontWeight={700}>
+              <Typography component="h3" variant="h6" sx={{ fontWeight: 700 }}>
                 {editingCompany ? 'Editar empresa' : 'Nova empresa'}
               </Typography>
             </Box>
@@ -184,8 +184,8 @@ export function CompaniesPage() {
               )}
             </Box>
           </Paper>
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

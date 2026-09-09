@@ -28,7 +28,7 @@ export function ResponsiveDataView({
   if (loading) {
     return (
       <Paper variant="outlined" sx={{ borderRadius: 1, p: 3 }}>
-        <Stack alignItems="center" spacing={1.5}>
+        <Stack spacing={1.5} sx={{ alignItems: "center" }}>
           <CircularProgress aria-label={loadingLabel} size={28} />
           <Typography color="text.secondary" variant="body2">
             {loadingLabel}
@@ -49,7 +49,7 @@ export function ResponsiveDataView({
   if (empty) {
     return (
       <Paper variant="outlined" sx={{ borderRadius: 1, p: 3 }}>
-        <Typography color="text.secondary" textAlign="center" variant="body2">
+        <Typography color="text.secondary" variant="body2" sx={{ textAlign: "center" }}>
           {emptyMessage}
         </Typography>
       </Paper>

@@ -3,7 +3,7 @@ import {
   Alert,
   Box,
   Button,
-  Grid2,
+  Grid,
   LinearProgress,
   MenuItem,
   Paper,
@@ -134,12 +134,12 @@ export function ReportsPage() {
 
       <Paper variant="outlined" sx={{ borderRadius: 1, p: 2 }}>
         <Stack spacing={1.5}>
-          <Typography fontWeight={800} variant="body2">
+          <Typography variant="body2" sx={{ fontWeight: 800 }}>
             Filtros
           </Typography>
-          <Grid2 container spacing={2}>
+          <Grid container spacing={2}>
             {isAdmin && (
-              <Grid2 size={{ xs: 12, md: 2 }}>
+              <Grid size={{ xs: 12, md: 2 }}>
                 <TextField select fullWidth size="small" label="Empresa" value={filters.companyId ?? ''} onChange={(event) => updateFilter('companyId', event.target.value)}>
                   <MenuItem value="">Todas</MenuItem>
                   {(companiesQuery.data ?? []).map((company) => (
@@ -148,10 +148,10 @@ export function ReportsPage() {
                     </MenuItem>
                   ))}
                 </TextField>
-              </Grid2>
+              </Grid>
             )}
             {canFilterTenant && (
-              <Grid2 size={{ xs: 12, md: 2 }}>
+              <Grid size={{ xs: 12, md: 2 }}>
                 <TextField select fullWidth size="small" label="Loja" value={filters.storeId ?? ''} onChange={(event) => updateFilter('storeId', event.target.value)}>
                   <MenuItem value="">Todas</MenuItem>
                   {(storesQuery.data ?? []).map((store) => (
@@ -160,10 +160,10 @@ export function ReportsPage() {
                     </MenuItem>
                   ))}
                 </TextField>
-              </Grid2>
+              </Grid>
             )}
             {canFilterSellers && (
-              <Grid2 size={{ xs: 12, md: 2 }}>
+              <Grid size={{ xs: 12, md: 2 }}>
                 <TextField select fullWidth size="small" label="Vendedor" value={filters.sellerId ?? ''} onChange={(event) => updateFilter('sellerId', event.target.value)}>
                   <MenuItem value="">Todos</MenuItem>
                   {(usersQuery.data ?? [])
@@ -174,9 +174,9 @@ export function ReportsPage() {
                       </MenuItem>
                     ))}
                 </TextField>
-              </Grid2>
+              </Grid>
             )}
-            <Grid2 size={{ xs: 12, md: 2 }}>
+            <Grid size={{ xs: 12, md: 2 }}>
               <TextField select fullWidth size="small" label="Origem" value={filters.source ?? ''} onChange={(event) => updateFilter('source', event.target.value)}>
                 <MenuItem value="">Todas</MenuItem>
                 {sources.map((source) => (
@@ -185,21 +185,21 @@ export function ReportsPage() {
                   </MenuItem>
                 ))}
               </TextField>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 2 }}>
+            </Grid>
+            <Grid size={{ xs: 12, md: 2 }}>
               <TextField fullWidth size="small" type="date" label="De" value={filters.dateFrom ?? ''} onChange={(event) => updateFilter('dateFrom', event.target.value)} slotProps={{ inputLabel: { shrink: true } }} />
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 2 }}>
+            </Grid>
+            <Grid size={{ xs: 12, md: 2 }}>
               <TextField fullWidth size="small" type="date" label="Ate" value={filters.dateTo ?? ''} onChange={(event) => updateFilter('dateTo', event.target.value)} slotProps={{ inputLabel: { shrink: true } }} />
-            </Grid2>
-          </Grid2>
+            </Grid>
+          </Grid>
         </Stack>
       </Paper>
 
       {loading && <LinearProgress aria-label="Carregando relatorios" />}
       {error && <Alert severity="error">Nao foi possivel carregar todos os relatorios.</Alert>}
 
-      <Grid2 container spacing={2}>
+      <Grid container spacing={2}>
         {[
           ['Leads', slaQuery.data?.leadCount ?? 0],
           ['Vendas', salesQuery.data?.length ?? 0],
@@ -208,18 +208,18 @@ export function ReportsPage() {
           ['Resposta media', minutes(slaQuery.data?.averageFirstResponseTimeMinutes ?? 0)],
           ['Fora SLA contato', slaQuery.data?.firstContactOutsideSla ?? 0],
         ].map(([label, value]) => (
-          <Grid2 key={label} size={{ xs: 12, sm: 6, md: 2 }}>
+          <Grid key={label} size={{ xs: 12, sm: 6, md: 2 }}>
             <Paper variant="outlined" sx={{ borderRadius: 1, p: 2, minHeight: 96 }}>
               <Typography variant="body2" color="text.secondary">
                 {label}
               </Typography>
-              <Typography variant="h6" fontWeight={800} sx={{ mt: 1 }}>
+              <Typography variant="h6" sx={{ fontWeight: 800,  mt: 1 }}>
                 {value}
               </Typography>
             </Paper>
-          </Grid2>
+          </Grid>
         ))}
-      </Grid2>
+      </Grid>
 
       <ReportTable title="Leads por periodo" empty="Nenhum lead no periodo." rowCount={leadsQuery.data?.length ?? 0}>
         <TableHead>
@@ -271,8 +271,8 @@ export function ReportsPage() {
         </TableBody>
       </ReportTable>
 
-      <Grid2 container spacing={2}>
-        <Grid2 size={{ xs: 12, lg: 5 }}>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, lg: 5 }}>
           <ReportTable title="Leads por origem" empty="Nenhuma origem no periodo." rowCount={sourcesQuery.data?.length ?? 0}>
             <TableHead>
               <TableRow>
@@ -293,34 +293,34 @@ export function ReportsPage() {
               ))}
             </TableBody>
           </ReportTable>
-        </Grid2>
-        <Grid2 size={{ xs: 12, lg: 7 }}>
+        </Grid>
+        <Grid size={{ xs: 12, lg: 7 }}>
           <Paper variant="outlined" sx={{ borderRadius: 1, p: 2, height: '100%' }}>
-            <Typography variant="h6" fontWeight={800} sx={{ mb: 1.5 }}>
+            <Typography variant="h6" sx={{ fontWeight: 800,  mb: 1.5 }}>
               SLA e atrasos
             </Typography>
             <Alert severity={(slaQuery.data?.overdueTotal ?? 0) > 0 ? 'warning' : 'success'} sx={{ borderRadius: 1 }}>
               {slaQuery.data?.overdueToAssign ?? 0} atrasados para atribuicao e {slaQuery.data?.overdueToFirstContact ?? 0} atrasados para primeiro contato.
             </Alert>
-            <Grid2 container spacing={1.5} sx={{ mt: 0.5 }}>
+            <Grid container spacing={1.5} sx={{ mt: 0.5 }}>
               {[
                 ['Primeiro contato no SLA', slaQuery.data?.firstContactWithinSla ?? 0],
                 ['Primeiro contato fora do SLA', slaQuery.data?.firstContactOutsideSla ?? 0],
                 ['Resposta media', minutes(slaQuery.data?.averageFirstResponseTimeMinutes ?? 0)],
               ].map(([label, value]) => (
-                <Grid2 key={label} size={{ xs: 12, sm: 4 }}>
+                <Grid key={label} size={{ xs: 12, sm: 4 }}>
                   <Paper variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
                     <Typography variant="caption" color="text.secondary">
                       {label}
                     </Typography>
-                    <Typography fontWeight={800}>{value}</Typography>
+                    <Typography sx={{ fontWeight: 800 }}>{value}</Typography>
                   </Paper>
-                </Grid2>
+                </Grid>
               ))}
-            </Grid2>
+            </Grid>
           </Paper>
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
 
       <ReportTable title="Vendas realizadas" empty="Nenhuma venda no periodo." rowCount={salesQuery.data?.length ?? 0}>
         <TableHead>
@@ -378,7 +378,7 @@ export function ReportsPage() {
 function ReportTable({ title, empty, rowCount, children }: { title: string; empty: string; rowCount: number; children: React.ReactNode }) {
   return (
     <Paper variant="outlined" sx={{ borderRadius: 1, p: 2, overflowX: 'auto' }}>
-      <Typography variant="h6" fontWeight={800} sx={{ mb: 1.5 }}>
+      <Typography variant="h6" sx={{ fontWeight: 800,  mb: 1.5 }}>
         {title}
       </Typography>
       <Table size="small">{children}</Table>

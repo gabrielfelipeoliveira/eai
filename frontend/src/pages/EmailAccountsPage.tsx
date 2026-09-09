@@ -14,7 +14,7 @@ import {
   DialogContent,
   DialogTitle,
   FormControlLabel,
-  Grid2,
+  Grid,
   IconButton,
   MenuItem,
   Stack,
@@ -256,7 +256,7 @@ export function EmailAccountsPage() {
               {accounts.map((account) => (
                 <TableRow hover key={account.id}>
                   <TableCell>
-                    <Typography variant="body2" fontWeight={700}>{account.name}</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 700 }}>{account.name}</Typography>
                     <Typography variant="caption" color="text.secondary">{account.username}</Typography>
                   </TableCell>
                   <TableCell>{account.host}:{account.port}</TableCell>
@@ -276,7 +276,7 @@ export function EmailAccountsPage() {
                   </TableCell>
                   <TableCell>{account.lastReadAt ? new Date(account.lastReadAt).toLocaleString('pt-BR') : '-'}</TableCell>
                   <TableCell align="right">
-                    <Stack direction="row" justifyContent="flex-end" spacing={1}>
+                    <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
                       <Tooltip title="Testar conexao">
                         <IconButton aria-label="Testar conexao" onClick={() => testMutation.mutate(account.id)}><MarkEmailReadIcon /></IconButton>
                       </Tooltip>
@@ -302,53 +302,53 @@ export function EmailAccountsPage() {
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>
           <DialogTitle>{editingAccount ? 'Editar conta' : 'Nova conta'}</DialogTitle>
           <DialogContent>
-            <Grid2 container spacing={2} sx={{ pt: 1 }}>
-              <Grid2 size={{ xs: 12, md: 6 }}>
+            <Grid container spacing={2} sx={{ pt: 1 }}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField fullWidth label="Nome" error={Boolean(errors.name)} helperText={errors.name?.message} {...register('name')} />
-              </Grid2>
-              <Grid2 size={{ xs: 12, md: 6 }}>
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField fullWidth label="Usuario" error={Boolean(errors.username)} helperText={errors.username?.message} {...register('username')} />
-              </Grid2>
-              <Grid2 size={{ xs: 12, md: 6 }}>
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField fullWidth label="Host IMAP" error={Boolean(errors.host)} helperText={errors.host?.message} {...register('host')} />
-              </Grid2>
-              <Grid2 size={{ xs: 12, md: 3 }}>
+              </Grid>
+              <Grid size={{ xs: 12, md: 3 }}>
                 <TextField fullWidth label="Porta" type="number" error={Boolean(errors.port)} helperText={errors.port?.message} {...register('port')} />
-              </Grid2>
-              <Grid2 size={{ xs: 12, md: 3 }}>
+              </Grid>
+              <Grid size={{ xs: 12, md: 3 }}>
                 <TextField fullWidth label="Protocolo" select {...register('protocol')}>
                   {metadata.options('emailProtocols').map((protocol) => (
                     <MenuItem key={protocol.code} value={protocol.code}>{protocol.label}</MenuItem>
                   ))}
                 </TextField>
-              </Grid2>
-              <Grid2 size={{ xs: 12, md: 6 }}>
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField fullWidth label={editingAccount ? 'Nova senha' : 'Senha'} type="password" error={Boolean(errors.password)} helperText={errors.password?.message} {...register('password')} />
-              </Grid2>
+              </Grid>
               {isAdmin && (
-                <Grid2 size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField fullWidth select label="Empresa" error={Boolean(errors.companyId)} helperText={errors.companyId?.message} {...register('companyId')}>
                     {companiesQuery.data?.map((company) => <MenuItem key={company.id} value={company.id}>{company.name}</MenuItem>)}
                   </TextField>
-                </Grid2>
+                </Grid>
               )}
               {!isAdmin && (
-                <Grid2 size={{ xs: 12, md: 6 }}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField fullWidth label="Empresa" value={user?.companyId ?? ''} slotProps={{ input: { readOnly: true } }} {...register('companyId')} />
-                </Grid2>
+                </Grid>
               )}
-              <Grid2 size={{ xs: 12, md: 6 }}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField fullWidth select label="Loja" error={Boolean(errors.storeId)} helperText={errors.storeId?.message} {...register('storeId')}>
                   {storesQuery.data?.map((store) => <MenuItem key={store.id} value={store.id}>{store.name}</MenuItem>)}
                 </TextField>
-              </Grid2>
-              <Grid2 size={{ xs: 12, md: 3 }}>
+              </Grid>
+              <Grid size={{ xs: 12, md: 3 }}>
                 <Controller control={control} name="useSsl" render={({ field }) => <FormControlLabel control={<Switch checked={field.value} onChange={(_, checked) => field.onChange(checked)} />} label="SSL" />} />
-              </Grid2>
-              <Grid2 size={{ xs: 12, md: 3 }}>
+              </Grid>
+              <Grid size={{ xs: 12, md: 3 }}>
                 <Controller control={control} name="active" render={({ field }) => <FormControlLabel control={<Switch checked={field.value} onChange={(_, checked) => field.onChange(checked)} />} label="Ativa" />} />
-              </Grid2>
-            </Grid2>
+              </Grid>
+            </Grid>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setDialogOpen(false)}>Cancelar</Button>

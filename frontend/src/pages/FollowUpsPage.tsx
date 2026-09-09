@@ -6,7 +6,7 @@ import {
   Button,
   Chip,
   CircularProgress,
-  Grid2,
+  Grid,
   Paper,
   Stack,
   Tab,
@@ -72,10 +72,10 @@ export function FollowUpsPage() {
   function renderTask(task: FollowUpTask) {
     return (
       <Paper key={task.id} variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
-        <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" spacing={1.5}>
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={1.5} sx={{ justifyContent: "space-between" }}>
           <Box sx={{ minWidth: 0 }}>
-            <Stack direction="row" alignItems="center" flexWrap="wrap" gap={1} sx={{ mb: 0.75 }}>
-              <Typography fontWeight={800} sx={{ overflowWrap: 'anywhere' }}>
+            <Stack direction="row" sx={{ alignItems: "center", flexWrap: "wrap", gap: 1,  mb: 0.75 }}>
+              <Typography sx={{ fontWeight: 800,  overflowWrap: 'anywhere' }}>
                 {task.title}
               </Typography>
               <Chip color={metadata.color('followUpStatuses', task.status)} label={metadata.label('followUpStatuses', task.status)} size="small" />
@@ -105,36 +105,36 @@ export function FollowUpsPage() {
     <Box sx={{ display: 'grid', gap: 3 }}>
       <PageHeader description="Follow-ups, minhas tarefas e itens atrasados." title="Agenda" />
 
-      <Grid2 container spacing={1.5}>
-        <Grid2 size={{ xs: 12, md: 4 }}>
+      <Grid container spacing={1.5}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
-            <Stack direction="row" alignItems="center" spacing={1}>
+            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
               <EventIcon color="primary" />
               <Box>
                 <Typography variant="caption" color="text.secondary">Minhas tarefas abertas</Typography>
-                <Typography variant="h5" fontWeight={800}>{counters.my}</Typography>
+                <Typography variant="h5" sx={{ fontWeight: 800 }}>{counters.my}</Typography>
               </Box>
             </Stack>
           </Paper>
-        </Grid2>
-        <Grid2 size={{ xs: 12, md: 4 }}>
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper variant="outlined" sx={{ borderColor: counters.overdue ? 'error.main' : 'divider', borderRadius: 1, p: 1.5 }}>
-            <Stack direction="row" alignItems="center" spacing={1}>
+            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
               <WarningAmberIcon color={counters.overdue ? 'error' : 'disabled'} />
               <Box>
                 <Typography variant="caption" color="text.secondary">Tarefas atrasadas</Typography>
-                <Typography color={counters.overdue ? 'error.main' : 'text.primary'} variant="h5" fontWeight={800}>{counters.overdue}</Typography>
+                <Typography color={counters.overdue ? 'error.main' : 'text.primary'} variant="h5" sx={{ fontWeight: 800 }}>{counters.overdue}</Typography>
               </Box>
             </Stack>
           </Paper>
-        </Grid2>
-        <Grid2 size={{ xs: 12, md: 4 }}>
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
             <Typography variant="caption" color="text.secondary">Agenda total</Typography>
-            <Typography variant="h5" fontWeight={800}>{counters.all}</Typography>
+            <Typography variant="h5" sx={{ fontWeight: 800 }}>{counters.all}</Typography>
           </Paper>
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
 
       <Paper variant="outlined" sx={{ borderRadius: 1, overflow: 'hidden' }}>
         <Tabs onChange={(_, value) => setTab(value)} value={tab} variant="scrollable" scrollButtons="auto">
@@ -146,7 +146,7 @@ export function FollowUpsPage() {
 
       {loading && (
         <Paper variant="outlined" sx={{ borderRadius: 1, p: 3 }}>
-          <Stack alignItems="center" spacing={1.5}>
+          <Stack spacing={1.5} sx={{ alignItems: "center" }}>
             <CircularProgress aria-label="Carregando agenda" size={28} />
             <Typography color="text.secondary" variant="body2">
               Carregando agenda

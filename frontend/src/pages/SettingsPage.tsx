@@ -10,7 +10,7 @@ import {
   Chip,
   Divider,
   FormControlLabel,
-  Grid2,
+  Grid,
   LinearProgress,
   MenuItem,
   Paper,
@@ -223,8 +223,8 @@ export function SettingsPage() {
       {settingsQuery.data && (
         <>
           <Paper variant="outlined" sx={{ borderRadius: 1, p: 2 }}>
-            <Grid2 container spacing={2}>
-              <Grid2 size={{ xs: 12, md: 6 }}>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField
                   disabled={!isAdmin}
                   fullWidth
@@ -239,8 +239,8 @@ export function SettingsPage() {
                     </MenuItem>
                   ))}
                 </TextField>
-              </Grid2>
-              <Grid2 size={{ xs: 12, md: 6 }}>
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField fullWidth label="Loja" onChange={(event) => handleStoreChange(event.target.value)} select value={selectedStoreId ?? ''}>
                   {settingsQuery.data.availableStores
                     .filter((store) => !selectedCompanyId || store.companyId === selectedCompanyId)
@@ -250,8 +250,8 @@ export function SettingsPage() {
                       </MenuItem>
                     ))}
                 </TextField>
-              </Grid2>
-            </Grid2>
+              </Grid>
+            </Grid>
           </Paper>
 
           <Paper variant="outlined" sx={{ borderRadius: 1 }}>
@@ -266,11 +266,11 @@ export function SettingsPage() {
             <Paper component="form" onSubmit={companyForm.handleSubmit((values) => companyMutation.mutate(clean(values)))} variant="outlined" sx={{ borderRadius: 1, p: 3 }}>
               <Stack spacing={2.5}>
                 <SectionTitle title="Empresa" description={isAdmin ? 'Dados cadastrais da empresa selecionada.' : 'Somente administradores alteram dados da empresa.'} />
-                <Grid2 container spacing={2}>
-                  <Grid2 size={{ xs: 12, md: 8 }}>
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 12, md: 8 }}>
                     <TextField disabled={!isAdmin} fullWidth label="Nome" {...companyForm.register('name')} error={Boolean(companyForm.formState.errors.name)} helperText={companyForm.formState.errors.name?.message} />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 4 }}>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 4 }}>
                     <TextField disabled={!isAdmin} fullWidth label="Status" select {...companyForm.register('status')}>
                       {metadata.options('tenantStatuses').map((status) => (
                         <MenuItem key={status.code} value={status.code}>
@@ -278,8 +278,8 @@ export function SettingsPage() {
                         </MenuItem>
                       ))}
                     </TextField>
-                  </Grid2>
-                </Grid2>
+                  </Grid>
+                </Grid>
                 <SaveButton disabled={!isAdmin || companyMutation.isPending} />
               </Stack>
             </Paper>
@@ -289,20 +289,20 @@ export function SettingsPage() {
             <Paper component="form" onSubmit={storeForm.handleSubmit((values) => storeMutation.mutate(clean(values)))} variant="outlined" sx={{ borderRadius: 1, p: 3 }}>
               <Stack spacing={2.5}>
                 <SectionTitle title="Loja" description="Dados comerciais e endereco da loja selecionada." />
-                <Grid2 container spacing={2}>
-                  <Grid2 size={{ xs: 12, md: 6 }}>
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <TextField fullWidth label="Nome" {...storeForm.register('name')} error={Boolean(storeForm.formState.errors.name)} helperText={storeForm.formState.errors.name?.message} />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 6 }}>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <TextField fullWidth label="Documento" {...storeForm.register('document')} error={Boolean(storeForm.formState.errors.document)} helperText={storeForm.formState.errors.document?.message} />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 4 }}>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 4 }}>
                     <TextField fullWidth label="E-mail" {...storeForm.register('email')} />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 4 }}>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 4 }}>
                     <TextField fullWidth label="Telefone" {...storeForm.register('phone')} />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 4 }}>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 4 }}>
                     <TextField fullWidth label="Status" select {...storeForm.register('status')}>
                       {metadata.options('tenantStatuses').map((status) => (
                         <MenuItem key={status.code} value={status.code}>
@@ -310,17 +310,17 @@ export function SettingsPage() {
                         </MenuItem>
                       ))}
                     </TextField>
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 5 }}>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 5 }}>
                     <TextField fullWidth label="Cidade" {...storeForm.register('city')} />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 2 }}>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 2 }}>
                     <TextField fullWidth label="UF" {...storeForm.register('state')} error={Boolean(storeForm.formState.errors.state)} helperText={storeForm.formState.errors.state?.message} />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 5 }}>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 5 }}>
                     <TextField fullWidth label="Endereco" {...storeForm.register('address')} />
-                  </Grid2>
-                </Grid2>
+                  </Grid>
+                </Grid>
                 <SaveButton disabled={storeMutation.isPending} />
               </Stack>
             </Paper>
@@ -344,8 +344,8 @@ export function SettingsPage() {
             <Paper component="form" onSubmit={distributionForm.handleSubmit((values) => distributionMutation.mutate(clean(values)))} variant="outlined" sx={{ borderRadius: 1, p: 3 }}>
               <Stack spacing={2.5}>
                 <SectionTitle title="Distribuicao" description="Controle de atribuicao automatica de leads da loja." />
-                <Grid2 container spacing={2}>
-                  <Grid2 size={{ xs: 12, md: 6 }}>
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <TextField fullWidth label="Modo" select {...distributionForm.register('mode')}>
                       {distributionModes.map((mode) => (
                         <MenuItem key={mode} value={mode}>
@@ -353,8 +353,8 @@ export function SettingsPage() {
                         </MenuItem>
                       ))}
                     </TextField>
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 6 }}>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 6 }}>
                     <Controller
                       control={distributionForm.control}
                       name="active"
@@ -362,8 +362,8 @@ export function SettingsPage() {
                         <FormControlLabel control={<Switch checked={field.value} onChange={(event) => field.onChange(event.target.checked)} />} label="Distribuicao automatica ativa" />
                       )}
                     />
-                  </Grid2>
-                </Grid2>
+                  </Grid>
+                </Grid>
                 <SaveButton disabled={distributionMutation.isPending} />
               </Stack>
             </Paper>
@@ -373,14 +373,14 @@ export function SettingsPage() {
             <Paper component="form" onSubmit={slaForm.handleSubmit((values) => slaMutation.mutate(clean(values)))} variant="outlined" sx={{ borderRadius: 1, p: 3 }}>
               <Stack spacing={2.5}>
                 <SectionTitle title="SLA" description="Prazos de resposta usados nos indicadores de leads atrasados." />
-                <Grid2 container spacing={2}>
-                  <Grid2 size={{ xs: 12, md: 4 }}>
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 12, md: 4 }}>
                     <TextField fullWidth label="Minutos para atribuir" type="number" {...slaForm.register('minutesToAssign')} error={Boolean(slaForm.formState.errors.minutesToAssign)} helperText={slaForm.formState.errors.minutesToAssign?.message} />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 4 }}>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 4 }}>
                     <TextField fullWidth label="Minutos para primeiro contato" type="number" {...slaForm.register('minutesToFirstContact')} error={Boolean(slaForm.formState.errors.minutesToFirstContact)} helperText={slaForm.formState.errors.minutesToFirstContact?.message} />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 4 }}>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 4 }}>
                     <Controller
                       control={slaForm.control}
                       name="active"
@@ -388,8 +388,8 @@ export function SettingsPage() {
                         <FormControlLabel control={<Switch checked={field.value} onChange={(event) => field.onChange(event.target.checked)} />} label="Controle de SLA ativo" />
                       )}
                     />
-                  </Grid2>
-                </Grid2>
+                  </Grid>
+                </Grid>
                 <SaveButton disabled={slaMutation.isPending} />
               </Stack>
             </Paper>
@@ -446,7 +446,7 @@ export function SettingsPage() {
 function SectionTitle({ description, title }: { description: string; title: string }) {
   return (
     <Box>
-      <Typography variant="h6" fontWeight={800}>
+      <Typography variant="h6" sx={{ fontWeight: 800 }}>
         {title}
       </Typography>
       <Typography color="text.secondary">{description}</Typography>
@@ -480,32 +480,32 @@ function SummaryPanel({
   return (
     <Paper variant="outlined" sx={{ borderRadius: 1, p: 3 }}>
       <Stack spacing={2.5}>
-        <Stack alignItems="center" direction="row" spacing={1.5}>
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
           {icon}
-          <Typography variant="h6" fontWeight={800}>
+          <Typography variant="h6" sx={{ fontWeight: 800 }}>
             {title}
           </Typography>
         </Stack>
         {empty ? (
           <Alert severity="info">{emptyText}</Alert>
         ) : (
-          <Grid2 container spacing={2}>
+          <Grid container spacing={2}>
             {metrics.map(([label, value]) => (
-              <Grid2 key={label} size={{ xs: 12, md: 3 }}>
+              <Grid key={label} size={{ xs: 12, md: 3 }}>
                 <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 2, minHeight: 88 }}>
                   <Typography color="text.secondary" variant="body2">
                     {label}
                   </Typography>
-                  <Typography variant="h6" fontWeight={800}>
+                  <Typography variant="h6" sx={{ fontWeight: 800 }}>
                     {value}
                   </Typography>
                 </Box>
-              </Grid2>
+              </Grid>
             ))}
-          </Grid2>
+          </Grid>
         )}
         <Divider />
-        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+        <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: "wrap" }}>
           <Chip label="ADMIN: acesso completo" size="small" />
           <Chip label="MANAGER: loja" size="small" />
           <Chip label="SELLER: sem acesso" size="small" />

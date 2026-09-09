@@ -2,7 +2,7 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import CheckIcon from '@mui/icons-material/Check';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import DownloadIcon from '@mui/icons-material/Download';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import MarkChatUnreadIcon from '@mui/icons-material/MarkChatUnread';
 import SendIcon from '@mui/icons-material/Send';
@@ -373,7 +373,7 @@ export function ConversationsPage() {
             }}
           >
             <Box>
-              <Typography fontWeight={800} variant="subtitle2">
+              <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>
                 Caixa de entrada
               </Typography>
               <Typography color="text.secondary" variant="caption">
@@ -414,11 +414,11 @@ export function ConversationsPage() {
                   </ListItemAvatar>
                   <ListItemText
                     primary={
-                      <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={1}>
-                        <Typography fontWeight={hasUnread ? 800 : 700} sx={{ overflowWrap: 'anywhere' }}>
+                      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ justifyContent: "space-between" }}>
+                        <Typography sx={{ fontWeight: hasUnread ? 800 : 700,  overflowWrap: 'anywhere' }}>
                           {displayName(conversation)}
                         </Typography>
-                        <Typography color={hasUnread ? 'warning.dark' : 'text.secondary'} fontWeight={hasUnread ? 800 : 500} variant="body2">
+                        <Typography color={hasUnread ? 'warning.dark' : 'text.secondary'} variant="body2" sx={{ fontWeight: hasUnread ? 800 : 500 }}>
                           {formatInteraction(conversation.lastInteractionAt)}
                         </Typography>
                       </Stack>
@@ -431,8 +431,8 @@ export function ConversationsPage() {
                         <Typography
                           component="span"
                           color={hasUnread ? 'text.primary' : 'text.secondary'}
-                          fontWeight={hasUnread ? 700 : 400}
-                          sx={{
+
+                          sx={{ fontWeight: hasUnread ? 700 : 400,
                             display: '-webkit-box',
                             overflow: 'hidden',
                             WebkitBoxOrient: 'vertical',
@@ -444,6 +444,10 @@ export function ConversationsPage() {
                         </Typography>
                       </Box>
                     }
+                    slotProps={{
+                      primary: { component: 'div' },
+                      secondary: { component: 'div' },
+                    }}
                   />
                 </ListItemButton>
               );
@@ -473,10 +477,10 @@ export function ConversationsPage() {
           {selectedConversation ? (
             <>
               <Stack spacing={0.75} sx={{ bgcolor: 'background.paper', borderBottom: 1, borderColor: 'divider', px: { xs: 2, md: 3 }, py: 2 }}>
-                <Typography fontWeight={800} sx={{ overflowWrap: 'anywhere' }} variant="h6">
+                <Typography sx={{ fontWeight: 800,  overflowWrap: 'anywhere' }} variant="h6">
                   {displayName(selectedConversation)}
                 </Typography>
-                <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: "wrap" }}>
                   <Chip label={formatPhone(selectedConversation.phone)} size="small" variant="outlined" />
                   {selectedConversation.leadName && <Chip label="Lead vinculado" size="small" color="primary" variant="outlined" />}
                   {selectedConversation.lastMessageStatus && (
@@ -545,7 +549,7 @@ export function ConversationsPage() {
                             {message.mediaFileName ?? 'Midia'} {formatFileSize(message.mediaSizeBytes)}
                           </Button>
                         )}
-                        <Stack direction="row" spacing={0.75} alignItems="center" justifyContent="flex-end" sx={{ mt: 0.75 }}>
+                        <Stack direction="row" spacing={0.75} sx={{ alignItems: "center", justifyContent: "flex-end",  mt: 0.75 }}>
                           <Typography color={outbound ? 'primary.contrastText' : 'text.secondary'} sx={{ opacity: outbound ? 0.82 : 1 }} variant="caption">
                             {formatTime(message.createdAt)}
                           </Typography>

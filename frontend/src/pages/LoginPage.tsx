@@ -63,7 +63,7 @@ export function LoginPage() {
     >
       <Box sx={{ display: { xs: 'none', md: 'grid' }, gap: 3, maxWidth: 560 }}>
         <Box>
-          <Typography color="text.secondary" fontWeight={700} variant="caption">
+          <Typography color="text.secondary" variant="caption" sx={{ fontWeight: 700 }}>
             EAI CRM
           </Typography>
           <Typography component="h2" sx={{ mt: 1, maxWidth: 520 }} variant="h4">
@@ -74,7 +74,7 @@ export function LoginPage() {
           </Typography>
         </Box>
 
-        <Stack direction="row" flexWrap="wrap" gap={1}>
+        <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
           <Chip icon={<StorefrontIcon />} label="Multi-loja" variant="outlined" />
           <Chip icon={<TrendingUpIcon />} label="Pipeline" variant="outlined" />
           <Chip icon={<LockOutlinedIcon />} label="Acesso seguro" variant="outlined" />

@@ -5,7 +5,7 @@ import {
   Box,
   Divider,
   FormControl,
-  Grid2,
+  Grid,
   InputLabel,
   LinearProgress,
   MenuItem,
@@ -137,7 +137,7 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
 
   return (
     <Box sx={{ display: 'grid', gap: 2.5 }}>
-      <Stack direction={{ xs: 'column', lg: 'row' }} justifyContent="space-between" spacing={2.5}>
+      <Stack direction={{ xs: 'column', lg: 'row' }} spacing={2.5} sx={{ justifyContent: "space-between" }}>
         <Box sx={{ minWidth: 0 }}>
           <Typography component="h2" sx={{ overflowWrap: 'anywhere' }} variant="h4">
             {title}
@@ -203,7 +203,7 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
 
       {isLoading && <LinearProgress />}
 
-      <Grid2 container spacing={2}>
+      <Grid container spacing={2}>
         {[
           ['Leads hoje', summary?.totalLeadsToday ?? 0],
           ['Leads no mes', summary?.totalLeadsThisMonth ?? 0],
@@ -214,21 +214,21 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
           ['Conversao', `${(summary?.conversionRate ?? 0).toFixed(1)}%`],
           ['Primeira resposta', formatMinutes(summary?.averageFirstResponseTimeMinutes ?? 0)],
         ].map(([label, value]) => (
-          <Grid2 key={label} size={{ xs: 12, sm: 6, md: 3 }}>
+          <Grid key={label} size={{ xs: 12, sm: 6, md: 3 }}>
             <Paper variant="outlined" sx={{ borderRadius: 1, minHeight: 104, p: 2 }}>
-              <Typography color="text.secondary" fontWeight={700} sx={{ textTransform: 'uppercase' }} variant="caption">
+              <Typography color="text.secondary" sx={{ fontWeight: 700,  textTransform: 'uppercase' }} variant="caption">
                 {label}
               </Typography>
               <Typography sx={{ mt: 1, overflowWrap: 'anywhere' }} variant="h5">
                 {value}
               </Typography>
             </Paper>
-          </Grid2>
+          </Grid>
         ))}
-      </Grid2>
+      </Grid>
 
-      <Grid2 container spacing={2}>
-        <Grid2 size={{ xs: 12, md: 8 }}>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Alert
             severity={(summary?.overdueLeads ?? 0) > 0 ? 'warning' : 'success'}
             icon={<WarningAmberIcon />}
@@ -237,16 +237,16 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
           >
             {summary?.overdueLeads ?? 0} leads fora do SLA no periodo filtrado.
           </Alert>
-        </Grid2>
-        <Grid2 size={{ xs: 12, md: 4 }}>
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Alert severity="info" icon={<TrendingUpIcon />} variant="outlined" sx={{ alignItems: 'center', borderRadius: 1 }}>
             Conversao atual em {(summary?.conversionRate ?? 0).toFixed(1)}%.
           </Alert>
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
 
-      <Grid2 container spacing={2}>
-        <Grid2 size={{ xs: 12, lg: 6 }}>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, lg: 6 }}>
           <Paper variant="outlined" sx={{ borderRadius: 1, height: 360, overflow: 'hidden' }}>
             <Box sx={{ px: 2.5, py: 2 }}>
               <Typography variant="h6">Leads por origem</Typography>
@@ -265,9 +265,9 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
               </ResponsiveContainer>
             </Box>
           </Paper>
-        </Grid2>
+        </Grid>
 
-        <Grid2 size={{ xs: 12, lg: 6 }}>
+        <Grid size={{ xs: 12, lg: 6 }}>
           <Paper variant="outlined" sx={{ borderRadius: 1, height: 360, overflow: 'hidden' }}>
             <Box sx={{ px: 2.5, py: 2 }}>
               <Typography variant="h6">Leads por status</Typography>
@@ -285,11 +285,11 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
               </ResponsiveContainer>
             </Box>
           </Paper>
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
 
-      <Grid2 container spacing={2}>
-        <Grid2 size={{ xs: 12, lg: 7 }}>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, lg: 7 }}>
           <Paper variant="outlined" sx={{ borderRadius: 1, height: 360, overflow: 'hidden' }}>
             <Box sx={{ px: 2.5, py: 2 }}>
               <Typography variant="h6">Vendas por periodo</Typography>
@@ -307,9 +307,9 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
               </ResponsiveContainer>
             </Box>
           </Paper>
-        </Grid2>
+        </Grid>
 
-        <Grid2 size={{ xs: 12, lg: 5 }}>
+        <Grid size={{ xs: 12, lg: 5 }}>
           <Paper variant="outlined" sx={{ borderRadius: 1, minHeight: 360, overflow: 'hidden' }}>
             <Box sx={{ px: 2.5, py: 2 }}>
               <Typography variant="h6">Ranking de vendedores</Typography>
@@ -329,18 +329,18 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
                     py: 1.25,
                   }}
                 >
-                  <Typography color="text.secondary" fontWeight={800}>
+                  <Typography color="text.secondary" sx={{ fontWeight: 800 }}>
                     {index + 1}
                   </Typography>
                   <Box sx={{ minWidth: 0 }}>
-                    <Typography fontWeight={700} noWrap>
+                    <Typography noWrap sx={{ fontWeight: 700 }}>
                       {item.sellerName}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
                       {item.leadCount} leads - {item.soldLeads} vendas
                     </Typography>
                   </Box>
-                  <Typography fontWeight={800}>{item.conversionRate.toFixed(1)}%</Typography>
+                  <Typography sx={{ fontWeight: 800 }}>{item.conversionRate.toFixed(1)}%</Typography>
                 </Box>
               ))}
               {!isLoading && sellerData.length === 0 && (
@@ -348,8 +348,8 @@ export function HomePage({ title = 'Dashboard' }: HomePageProps) {
               )}
             </Box>
           </Paper>
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

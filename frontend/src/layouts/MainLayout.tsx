@@ -115,7 +115,7 @@ export function MainLayout() {
   const navigation = (
     <>
       <Box sx={{ px: 2.5, py: 2.25 }}>
-        <Typography color="common.white" variant="h6" fontWeight={800} letterSpacing={0}>
+        <Typography color="common.white" variant="h6" sx={{ fontWeight: 800, letterSpacing: 0 }}>
           EAI
         </Typography>
         <Typography variant="caption" sx={{ color: sidebarMutedColor, display: 'block', lineHeight: 1.25 }}>
@@ -154,7 +154,7 @@ export function MainLayout() {
             }}
           >
             <ListItemIcon sx={{ minWidth: 34 }}>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.label} primaryTypographyProps={{ fontSize: 14, fontWeight: 700 }} />
+            <ListItemText primary={item.label} slotProps={{ primary: { sx: { fontSize: 14, fontWeight: 700 } } }} />
           </ListItemButton>
         ))}
       </List>
@@ -190,7 +190,7 @@ export function MainLayout() {
               </IconButton>
             </Tooltip>
             <Box sx={{ minWidth: 0 }}>
-              <Typography component="span" variant="caption" color="text.secondary" fontWeight={700}>
+              <Typography component="span" variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>
                 EAI
               </Typography>
               <Typography component="h1" variant="h6" noWrap>
@@ -215,10 +215,10 @@ export function MainLayout() {
                   anchorEl={notificationsAnchor}
                   open={Boolean(notificationsAnchor)}
                   onClose={() => setNotificationsAnchor(null)}
-                  PaperProps={{ sx: { width: 380, maxWidth: 'calc(100vw - 32px)' } }}
+                  slotProps={{ paper: { sx: { width: 380, maxWidth: 'calc(100vw - 32px)' } } }}
                 >
                   <Box sx={{ px: 2, py: 1.25, display: 'flex', justifyContent: 'space-between', gap: 1 }}>
-                    <Typography variant="subtitle2" fontWeight={700}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
                       Notificacoes
                     </Typography>
                     <Tooltip title="Marcar todas como lidas">
@@ -243,7 +243,7 @@ export function MainLayout() {
                         sx={{ alignItems: 'flex-start', whiteSpace: 'normal', py: 1.25 }}
                       >
                         <Box sx={{ minWidth: 0 }}>
-                          <Typography variant="body2" fontWeight={700}>
+                          <Typography variant="body2" sx={{ fontWeight: 700 }}>
                             {notification.title}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
@@ -281,7 +281,7 @@ export function MainLayout() {
               {user?.name?.charAt(0).toUpperCase() ?? <PersonIcon fontSize="small" />}
             </Avatar>
             <Box sx={{ display: { xs: 'none', sm: 'block' }, minWidth: 0 }}>
-              <Typography variant="body2" fontWeight={700} noWrap>
+              <Typography variant="body2" noWrap sx={{ fontWeight: 700 }}>
                 {user?.name}
               </Typography>
               <Typography variant="caption" color="text.secondary" noWrap>
@@ -302,12 +302,14 @@ export function MainLayout() {
         open={mobileNavOpen}
         variant="temporary"
         ModalProps={{ keepMounted: true }}
-        PaperProps={{
-          sx: {
-            width: drawerWidth,
-            borderRight: 1,
-            borderColor: 'divider',
-            bgcolor: sidebarColor,
+        slotProps={{
+          paper: {
+            sx: {
+              width: drawerWidth,
+              borderRight: 1,
+              borderColor: 'divider',
+              bgcolor: sidebarColor,
+            },
           },
         }}
         sx={{ display: { xs: 'block', md: 'none' } }}
@@ -318,12 +320,14 @@ export function MainLayout() {
       <Drawer
         open
         variant="permanent"
-        PaperProps={{
-          sx: {
-            width: drawerWidth,
-            borderRight: 1,
-            borderColor: 'divider',
-            bgcolor: sidebarColor,
+        slotProps={{
+          paper: {
+            sx: {
+              width: drawerWidth,
+              borderRight: 1,
+              borderColor: 'divider',
+              bgcolor: sidebarColor,
+            },
           },
         }}
         sx={{ display: { xs: 'none', md: 'block' } }}

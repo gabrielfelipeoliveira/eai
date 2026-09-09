@@ -17,7 +17,7 @@ import {
   Chip,
   Divider,
   Drawer,
-  Grid2,
+  Grid,
   IconButton,
   MenuItem,
   Paper,
@@ -366,7 +366,7 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
       anchor="right"
       onClose={onClose}
       open={open}
-      PaperProps={{ sx: { bgcolor: 'background.default', width: { xs: '100%', md: 640 } } }}
+      slotProps={{ paper: { sx: { bgcolor: 'background.default', width: { xs: '100%', md: 640 } } } }}
     >
       <Box sx={{ display: 'grid', gap: 2, p: { xs: 2, md: 3 } }}>
         <Box
@@ -401,7 +401,7 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
         {selectedLead && (
           <Stack spacing={2}>
             <Paper variant="outlined" sx={{ borderRadius: 1, p: 2 }}>
-              <Stack direction="row" flexWrap="wrap" gap={1}>
+              <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
                 <Chip color={metadata.color('leadStatuses', selectedLead.status)} label={metadata.label('leadStatuses', selectedLead.status)} />
                 <Chip label={metadata.label('leadSources', selectedLead.source)} variant="outlined" />
                 {selectedLead.overdueToAssign && <Chip color="error" icon={<WarningAmberIcon />} label="Atrasado para atribuir" variant="outlined" />}
@@ -410,35 +410,35 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
                 {isAdmin && <Chip label={companyName(selectedLead.companyId)} variant="outlined" />}
               </Stack>
 
-              <Grid2 container spacing={1.5} sx={{ mt: 2 }}>
-                <Grid2 size={6}>
+              <Grid container spacing={1.5} sx={{ mt: 2 }}>
+                <Grid size={6}>
                   <Typography variant="caption" color="text.secondary">
                     Telefone
                   </Typography>
                   <Typography>{selectedLead.customerPhone ?? '-'}</Typography>
-                </Grid2>
-                <Grid2 size={6}>
+                </Grid>
+                <Grid size={6}>
                   <Typography variant="caption" color="text.secondary">
                     Vendedor
                   </Typography>
                   <Typography>{userName(selectedLead.assignedToUserId)}</Typography>
-                </Grid2>
-                <Grid2 size={12}>
+                </Grid>
+                <Grid size={12}>
                   <Typography variant="caption" color="text.secondary">
                     Veiculo
                   </Typography>
                   <Typography>{vehicleLabel(selectedLead)}</Typography>
-                </Grid2>
-                <Grid2 size={6}>
+                </Grid>
+                <Grid size={6}>
                   <Typography variant="caption" color="text.secondary">
                     Moeda
                   </Typography>
                   <Typography>{selectedLead.saleCurrency}</Typography>
-                </Grid2>
-              </Grid2>
+                </Grid>
+              </Grid>
             </Paper>
 
-            <Stack direction={{ xs: 'column', sm: 'row' }} flexWrap="wrap" spacing={1}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ flexWrap: "wrap" }}>
               <Button onClick={() => assignToMeMutation.mutate(selectedLead.id)} startIcon={<AssignmentIndIcon />} variant="outlined">
                 Assumir lead
               </Button>
@@ -465,7 +465,7 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
             <Divider />
 
             <Box>
-              <Typography variant="subtitle1" fontWeight={800} sx={{ mb: 1 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800,  mb: 1 }}>
                 Enviar WhatsApp
               </Typography>
               <Stack spacing={1.5}>
@@ -501,7 +501,7 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
             <Divider />
 
             <Box>
-              <Typography variant="subtitle1" fontWeight={800} sx={{ mb: 1 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800,  mb: 1 }}>
                 Follow-ups
               </Typography>
               <Box component="form" onSubmit={handleFollowUpSubmit(onFollowUpSubmit)} sx={{ display: 'grid', gap: 1.25, mb: 1.5 }}>
@@ -540,10 +540,10 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
               <Stack spacing={1}>
                 {followUpsQuery.data?.map((task) => (
                   <Paper key={task.id} variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
-                    <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" spacing={1}>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ justifyContent: "space-between" }}>
                       <Box>
-                        <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mb: 0.5 }}>
-                          <Typography variant="body2" fontWeight={800}>
+                        <Stack direction="row" sx={{ flexWrap: "wrap", gap: 0.75,  mb: 0.5 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 800 }}>
                             {task.title}
                           </Typography>
                           <Chip color={metadata.color('followUpStatuses', task.status)} label={metadata.label('followUpStatuses', task.status)} size="small" />
@@ -577,10 +577,10 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
             <Divider />
 
             <Box>
-              <Typography variant="subtitle1" fontWeight={800} sx={{ mb: 1 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800,  mb: 1 }}>
                 Tags
               </Typography>
-              <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 1.5 }}>
+              <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1,  mb: 1.5 }}>
                 {tagsQuery.data?.map((tag) => (
                   <Chip
                     key={tag.id}
@@ -630,7 +630,7 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
             </Box>
 
             <Box>
-              <Typography variant="subtitle1" fontWeight={800} sx={{ mb: 1 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800,  mb: 1 }}>
                 Observacoes
               </Typography>
               <Stack direction="row" spacing={1} sx={{ mb: 1.5 }}>
@@ -674,13 +674,13 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
             </Box>
 
             <Box>
-              <Typography variant="subtitle1" fontWeight={800} sx={{ mb: 1 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800,  mb: 1 }}>
                 Comunicacoes
               </Typography>
               <Stack spacing={1}>
                 {communicationsQuery.data?.map((communication) => (
                   <Paper key={communication.id} variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
-                    <Typography variant="body2" fontWeight={700}>
+                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
                       {communication.channel}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
@@ -700,13 +700,13 @@ export function LeadDetailDrawer({ lead, onClose, onLeadChanged, open }: LeadDet
             </Box>
 
             <Box>
-              <Typography variant="subtitle1" fontWeight={800} sx={{ mb: 1 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800,  mb: 1 }}>
                 Historico
               </Typography>
               <Stack spacing={1}>
                 {historyQuery.data?.map((history) => (
                   <Paper key={history.id} variant="outlined" sx={{ borderRadius: 1, p: 1.5 }}>
-                    <Typography variant="body2" fontWeight={700}>
+                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
                       {history.previousStatus ? metadata.label('leadStatuses', history.previousStatus) : 'Criado'} {'>'}{' '}
                       {metadata.label('leadStatuses', history.newStatus)}
                     </Typography>
