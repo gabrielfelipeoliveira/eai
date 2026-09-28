@@ -239,6 +239,16 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Validacao local: `npm ci`, `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run setup:e2e`, `npm run test:e2e`, `mvn clean verify` via Docker/Testcontainers e OSV frontend/backend passaram.
 - Achados: `jsdom 30` exige Node mais novo que o Node 20 do CI; CI, README e `frontend/package.json` foram alinhados para Node 22.22.2+. `npm outdated` ainda lista majors/pins fora do escopo seguro deste card, como MUI 9, Zod 4, TypeScript 7 e React Router 8.3.1.
 
+### EAI-083
+
+- Branch: `chore/eai-083-dependency-security-triage`.
+- Card: `https://trello.com/c/1RGQOTlP`.
+- Escopo: triar as PRs Dependabot `#136` a `#143`, revalidar gates de seguranca, revisar as excecoes Trivy do `gosu` e tentar habilitar vulnerability alerts do Dependabot.
+- Entrega em andamento: PR `#142` revisada e mergeada; updates restantes consolidados para manter React, React DOM e respectivas tipagens na mesma versao e evitar peer dependencies inconsistentes.
+- Validacoes locais: frontend com `npm audit --audit-level=moderate`, lint, 26 testes unitarios, build e 20 E2E aprovados; OSV do lockfile sem achados; backend com 340 testes unitarios aprovados e integracoes locais bloqueadas apenas pela indisponibilidade do socket Docker dentro do container Maven; Trivy `0.74.0` confirmou 0 achados Debian e os mesmos 22 achados HIGH/CRITICAL restritos ao binario `gosu`, todos cobertos temporariamente ate `2026-10-31`.
+- Bloqueio administrativo: a API GitHub recusou a ativacao dos vulnerability alerts (`404` para o token atual); habilitacao exige permissao administrativa no repositorio.
+- Aviso avaliado: npm manteve bloqueados os scripts opcionais de `fsevents`; lint, testes, build e E2E nao dependem deles e passaram sem liberacao adicional.
+
 ### EAI-066
 
 - Branch: `chore/eai-066-dependabot-restantes`.
