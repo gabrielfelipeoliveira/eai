@@ -1,6 +1,6 @@
 # Contexto Atual Do Projeto
 
-Ultima atualizacao: 2026-09-03.
+Ultima atualizacao: 2026-09-28.
 
 Este arquivo e o handoff operacional do projeto EAI. Ele existe para que qualquer desenvolvedor ou agente de IA consiga retomar o trabalho sem depender do historico de uma conversa especifica.
 
@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello.
+- Lucas Reiter: `EAI-083` em andamento para triar dependencias abertas, revalidar gates de seguranca e revisar alertas Dependabot/Trivy.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida.
+Lucas Reiter: `chore/eai-083-dependency-security-triage` (`EAI-083`).
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Quadro de desenvolvimento sem card em `BACKLOG` conhecido apos fechamento do `EAI-065`.
+- Executar o `EAI-083`: triar PRs Dependabot abertas, revalidar os gates e tratar ou registrar os riscos de seguranca encontrados.
 - Proximos itens de negocio seguem no quadro `EAI - Pendencias de Negocio e Fluxo`, lista `A responder`.
 
 ## Cards De Desenvolvimento Conhecidos
