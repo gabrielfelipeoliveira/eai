@@ -1,6 +1,6 @@
 # Contexto Atual Do Projeto
 
-Ultima atualizacao: 2026-09-03.
+Ultima atualizacao: 2026-09-28.
 
 Este arquivo e o handoff operacional do projeto EAI. Ele existe para que qualquer desenvolvedor ou agente de IA consiga retomar o trabalho sem depender do historico de uma conversa especifica.
 
@@ -80,19 +80,19 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card ativo conhecido no Trello.
+- Lucas Reiter: nenhum card em implementacao ativa; `EAI-083` entregue na PR `#144`, aguardando integracao.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: sem branch ativa conhecida.
+Lucas Reiter: PR `#144` aberta a partir de `chore/eai-083-dependency-security-triage` (`EAI-083`).
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Quadro de desenvolvimento sem card em `BACKLOG` conhecido apos fechamento do `EAI-065`.
+- Integrar a PR `#144` do `EAI-083` apos Code Review e checks verdes; habilitar vulnerability alerts quando houver permissao administrativa no GitHub.
 - Proximos itens de negocio seguem no quadro `EAI - Pendencias de Negocio e Fluxo`, lista `A responder`.
 
 ## Cards De Desenvolvimento Conhecidos
@@ -238,6 +238,16 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - Entrega: PRs Dependabot backend `#90`, `#91`, `#92`, `#98` e `#99` mergeados diretamente apos checks verdes; updates frontend restantes absorvidos neste card junto com ajuste de Node 22.22.2+.
 - Validacao local: `npm ci`, `npm audit --audit-level=moderate`, `npm run lint`, `npm test`, `npm run build`, `npm run setup:e2e`, `npm run test:e2e`, `mvn clean verify` via Docker/Testcontainers e OSV frontend/backend passaram.
 - Achados: `jsdom 30` exige Node mais novo que o Node 20 do CI; CI, README e `frontend/package.json` foram alinhados para Node 22.22.2+. `npm outdated` ainda lista majors/pins fora do escopo seguro deste card, como MUI 9, Zod 4, TypeScript 7 e React Router 8.3.1.
+
+### EAI-083
+
+- Branch: `chore/eai-083-dependency-security-triage`.
+- Card: `https://trello.com/c/1RGQOTlP`.
+- Escopo: triar as PRs Dependabot `#136` a `#143`, revalidar gates de seguranca, revisar as excecoes Trivy do `gosu` e tentar habilitar vulnerability alerts do Dependabot.
+- Entrega: PR `#142` revisada e mergeada; updates restantes consolidados na PR `#144` para manter React, React DOM e respectivas tipagens na mesma versao e evitar peer dependencies inconsistentes; PRs Dependabot absorvidas foram fechadas com rastreabilidade.
+- Validacoes locais: frontend com `npm audit --audit-level=moderate`, lint, 26 testes unitarios, build e 20 E2E aprovados; OSV do lockfile sem achados; backend com 340 testes unitarios aprovados e integracoes locais bloqueadas apenas pela indisponibilidade do socket Docker dentro do container Maven; Trivy `0.74.0` confirmou 0 achados Debian e os mesmos 22 achados HIGH/CRITICAL restritos ao binario `gosu`, todos cobertos temporariamente ate `2026-10-31`.
+- Bloqueio administrativo: a API GitHub recusou a ativacao dos vulnerability alerts (`404` para o token atual); habilitacao exige permissao administrativa no repositorio.
+- Aviso avaliado: npm manteve bloqueados os scripts opcionais de `fsevents`; lint, testes, build e E2E nao dependem deles e passaram sem liberacao adicional.
 
 ### EAI-066
 
