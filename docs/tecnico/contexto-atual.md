@@ -1,6 +1,6 @@
 # Contexto Atual Do Projeto
 
-Ultima atualizacao: 2026-09-28.
+Ultima atualizacao: 2026-10-13.
 
 Este arquivo e o handoff operacional do projeto EAI. Ele existe para que qualquer desenvolvedor ou agente de IA consiga retomar o trabalho sem depender do historico de uma conversa especifica.
 
@@ -80,20 +80,58 @@ test/eai-003-slug-curto
 
 Cards em andamento por responsavel:
 
-- Lucas Reiter: nenhum card em implementacao ativa; `EAI-083` entregue na PR `#144`, aguardando integracao.
+- Lucas Reiter: `EAI-088`, atualizacao consolidada do cenario tecnico e de negocio.
 - Gabriel Felipe Ferreira de Oliveira: nenhum card ativo conhecido no Trello.
 
 Branches atuais:
 
 ```text
-Lucas Reiter: PR `#144` aberta a partir de `chore/eai-083-dependency-security-triage` (`EAI-083`).
+Lucas Reiter: `docs/eai-088-atualiza-cenario-total` (`EAI-088`).
 Gabriel Felipe Ferreira de Oliveira: sem branch ativa conhecida.
 ```
 
 Proximo passo operacional:
 
-- Integrar a PR `#144` do `EAI-083` apos Code Review e checks verdes; habilitar vulnerability alerts quando houver permissao administrativa no GitHub.
-- Proximos itens de negocio seguem no quadro `EAI - Pendencias de Negocio e Fluxo`, lista `A responder`.
+- Restaurar os gates compartilhados antes de integrar as PRs Dependabot `#145` a `#150`: tratar as vulnerabilidades frontend no `EAI-089` e os tres novos CVEs do `gosu` no `EAI-087`.
+- Executar o `EAI-087` antes do vencimento das excecoes Trivy em `2026-10-31`.
+- Restaurar a `NVD_API_KEY` no `EAI-085`, habilitar vulnerability alerts com permissao administrativa no `EAI-086` e validar a migracao do runner no `EAI-084`.
+- Negocio: obter decisao do Product Owner para a unica pendencia atual que bloqueia comportamento do MVP, a permissao especifica de `SELLER` para editar valor de venda ou motivo de perda.
+
+## Cenario Consolidado Em 2026-10-13
+
+### Negocio
+
+- O MVP documentado continua centrado em tenancy de empresa/loja, papeis operacionais, captacao por WhatsApp/e-mail, gestao e atribuicao manual de leads, pipeline comercial, historico, templates/midias e tratamento LGPD manual por `ADMIN`.
+- A documentacao oficial de negocio esta coerente entre `vision.md`, `business-rules.md`, `domain.md`, `use-cases.md` e `roadmap.md`; nenhuma nova regra foi inferida nesta revisao.
+- `docs/negocio/pendencias.md` mantem uma unica pendencia funcional atual: definir a permissao especifica para `SELLER` editar valor de venda ou motivo de perda, incluindo nome, autorizador, escopo e comportamento de excecao.
+- Distribuicao automatica, SLA/follow-ups/notificacoes, dashboards/relatorios gerenciais, parsers dedicados, funil configuravel, tela de auditoria, `AUDITOR`, automacoes LGPD irreversiveis, retencao formal, templates padrao e permissoes detalhadas de `AVALIADOR` permanecem planejados para fase posterior.
+- O board de negocio ainda contem cards historicos com descricoes anteriores a decisoes ja consolidadas; para implementar, prevalecem os documentos oficiais atuais e o estado/lista do card deve ser conferido no Trello.
+
+### Produto E UX
+
+- A reestruturacao frontend do epic `EAI-072` foi concluida e validada pelos cards `EAI-073` a `EAI-081`; o `EAI-071` foi cancelado por duplicidade com a validacao integrada do `EAI-081`.
+- O frontend atual cobre shell responsivo, fluxos comerciais de Leads/Pipeline/Conversas, administracao e operacao secundaria. A evidencia da validacao integrada esta em `docs/tecnico/eai-081-validacao-integrada-frontend.md`.
+- Nao ha card de produto ou UX em execucao conhecido no Trello em 2026-10-13.
+
+### Engenharia E Operacao
+
+- A `main` remota esta em `301d9c5` (`EAI-083`) e a PR `#144` foi integrada em `2026-09-28` com Backend, Frontend, Container Images e CodeQL verdes naquele momento.
+- Estao abertas seis PRs Dependabot: `#145` (`jsdom`), `#146` (`react-router`), `#147` (`eslint-plugin-react-refresh`), `#148` (`vitest`), `#149` (`vite`) e `#150` (`postgresql`). Todas compartilham falhas nos gates Frontend e Container Images; Backend e CodeQL passam.
+- O Frontend falha em `npm audit --audit-level=moderate` por tres dependencias com severidade alta: `brace-expansion`, `source-map-js` e `undici`. O tratamento esta registrado no `EAI-089`.
+- O Trivy `0.74.0` falha sobre `postgres:16-bookworm` por tres novos achados HIGH no `usr/local/bin/gosu`: `CVE-2026-78667`, `CVE-2026-78669` e `CVE-2026-97031`. O achado foi comentado no `EAI-087`, com prazo Trello em `2026-10-31`.
+- As excecoes Trivy antigas continuam documentadas ate `2026-10-31`; nao ampliar a lista sem revalidar imagem, digest, alcance e alternativa de remediacao.
+- O backend da PR `#150` passou em `mvn clean verify`, geracao de SBOM e OSV, mas o OWASP Dependency-Check foi pulado porque `NVD_API_KEY_AVAILABLE=false`; restauracao esta no `EAI-085`.
+- Vulnerability alerts do Dependabot continuam pendentes de permissao administrativa (`EAI-086`).
+- O runner observado em `2026-10-13` ainda usa Ubuntu 24.04; a migracao anunciada de `ubuntu-latest` a partir de `2026-10-19` segue registrada no `EAI-084`.
+
+### Prioridade Recomendada
+
+1. `EAI-089`: corrigir as vulnerabilidades frontend e restaurar o gate `npm audit`.
+2. `EAI-087`: revalidar a imagem Postgres/`gosu` e remover ou renovar excecoes com evidencia antes de `2026-10-31`.
+3. Triar novamente e integrar apenas as PRs `#145` a `#150` que ficarem verdes apos restaurar os gates.
+4. `EAI-085` e `EAI-086`: restaurar a cobertura administrativa de SCA/Dependabot.
+5. `EAI-084`: validar ou fixar o runner antes da mudanca de `ubuntu-latest`.
+6. Product Owner: decidir a permissao pendente de `SELLER`; depois derivar card de documentacao/desenvolvimento se houver impacto.
 
 ## Cards De Desenvolvimento Conhecidos
 
@@ -168,8 +206,26 @@ Todos os cards abaixo ficam no board `EAI - Desenvolvimento`. Consulte sempre o 
 - `EAI-067`: concluido no PR `#113`. Mapear reestruturacao UX do frontend.
 - `EAI-068`: concluido no PR `#114`. Criar shell responsivo e padroes globais de UX.
 - `EAI-069`: concluido no PR `#115`. Padronizar listas, filtros e estados responsivos.
-- `EAI-070`: em andamento. Reestruturar fluxo Leads/Pipeline/Conversas.
+- `EAI-070`: concluido. Reestruturar fluxo Leads/Pipeline/Conversas.
 - `EAI-071`: cancelado como duplicado/absorvido pelo `EAI-081`. Validacao de navegacao e responsividade dos fluxos comerciais coberta na validacao integrada.
+- `EAI-072`: concluido. Epic de reestruturacao frontend pelo prototipo navegavel.
+- `EAI-073`: concluido. Fundacao visual do prototipo.
+- `EAI-074`: concluido. Login e shell principal.
+- `EAI-075`: concluido. Dashboard existente.
+- `EAI-076`: concluido. Leads e detalhe existente.
+- `EAI-077`: concluido. Pipeline existente.
+- `EAI-078`: concluido. Conversas existentes.
+- `EAI-079`: concluido. Administracao existente.
+- `EAI-080`: concluido no PR `#124`. Operacao secundaria existente.
+- `EAI-081`: concluido no PR `#125`. Validacao integrada da reestruturacao frontend.
+- `EAI-082`: concluido. Triar PRs Dependabot abertas em 2026-09-09.
+- `EAI-083`: concluido no PR `#144`. Consolidar atualizacoes e revalidar seguranca.
+- `EAI-084`: backlog. Preparar migracao do runner `ubuntu-latest`.
+- `EAI-085`: backlog. Restaurar `NVD_API_KEY` do Dependency-Check.
+- `EAI-086`: backlog. Habilitar vulnerability alerts do Dependabot.
+- `EAI-087`: backlog, prazo `2026-10-31`. Revalidar excecoes Trivy do `gosu`; tres novos CVEs HIGH identificados em 2026-10-13.
+- `EAI-088`: em andamento. Atualizar cenario tecnico e de negocio.
+- `EAI-089`: backlog. Corrigir vulnerabilidades frontend detectadas em 2026-10-13.
 
 ## Historico Operacional Recente
 
